@@ -1,0 +1,13 @@
+{
+  "name": "givto",
+  "version": "0.0.1",
+  "description": "A secret santa app",
+  "private": true,
+  "repository": "https://github.com/eliasmeire/givto.git",
+  "author": "Elias Meire",
+  "license": "MIT",
+  "workspaces": [
+    "projects/*"
+  ],
+  "scripts": {}
+}
