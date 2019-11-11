@@ -1,0 +1,7 @@
+{
+  "presets": ["next/babel"],
+  "plugins": [
+    ["inline-react-svg", { "svgo": false }],
+    ["styled-components", { "ssr": true }]
+  ]
+}

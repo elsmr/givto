@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "jsx": "react",
-    "rootDirs": ["src", "stories", "config"]
-  },
-  "include": ["src", "stories", "config"]
-}

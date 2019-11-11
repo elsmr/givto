@@ -1,13 +1,40 @@
 {
   "name": "givto",
-  "version": "0.0.1",
-  "description": "A secret santa app",
-  "private": true,
-  "repository": "https://github.com/eliasmeire/givto.git",
-  "author": "Elias Meire",
+  "version": "1.0.0",
+  "description": "secret santa app",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "now-build": "next build"
+  },
+  "author": "",
   "license": "MIT",
-  "workspaces": [
-    "projects/*"
-  ],
-  "scripts": {}
+  "dependencies": {
+    "apollo-server-micro": "2.9.7",
+    "graphql": "14.5.8",
+    "graphql-hooks": "4.0.2",
+    "graphql-hooks-memcache": "1.2.4",
+    "graphql-hooks-ssr": "1.1.4",
+    "isomorphic-unfetch": "3.0.0",
+    "next": "9.1.2",
+    "next-offline": "4.0.6",
+    "react": "16.11.0",
+    "react-dom": "16.11.0",
+    "styled-components": "4.4.1",
+    "styled-tools": "1.7.1"
+  },
+  "browser": {
+    "graphql-hooks-ssr": false
+  },
+  "devDependencies": {
+    "@babel/core": "7.7.0",
+    "@types/node": "12.12.6",
+    "@types/react": "16.9.11",
+    "@types/styled-components": "4.1.21",
+    "babel-plugin-inline-react-svg": "1.1.0",
+    "babel-plugin-styled-components": "1.10.6",
+    "typescript": "3.7.2"
+  }
 }
