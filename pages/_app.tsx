@@ -1,37 +1,52 @@
+import { css, Global } from '@emotion/core';
+import { ThemeProvider } from 'emotion-theming';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { theme } from 'styled-tools';
-import { theme as themeJson } from '../lib/theme';
-
-const GlobalStyle = createGlobalStyle`
-  html {
-    box-sizing: border-box;
-    font-family: ${theme('fontFamilies.display')};
-    color: ${theme('colors.black')};
-    background: ${theme('colors.white')};
-  }
-
-  body {
-    margin: 0;
-  }
-
-  h1, h2, h3 {
-    font-family: ${theme('fontFamilies.title')};
-  }
-
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
-`;
+import { theme } from '../lib/theme';
 
 export default class GivtoApp extends App {
   render() {
     const { Component, pageProps } = this.props;
     return (
-      <ThemeProvider theme={themeJson}>
+      <ThemeProvider theme={theme}>
         <>
+          <Global
+            styles={css`
+              html {
+                box-sizing: border-box;
+              }
+
+              body {
+                margin: 0;
+                font-family: ${theme.fonts.body};
+              }
+
+              h1,
+              h2,
+              h3,
+              h4 {
+                font-family: ${theme.fonts.heading};
+              }
+
+              *,
+              *:before,
+              *:after {
+                box-sizing: inherit;
+              }
+
+              .sr-only {
+                border: 0;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+              }
+            `}
+          />
           <Head>
             <title>Givto - Secret Santa</title>
             <meta name="title" content="Givto - Secret Santa" />
@@ -82,7 +97,6 @@ export default class GivtoApp extends App {
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
           </Head>
-          <GlobalStyle />
           <Component {...pageProps} />
           <script
             type="application/ld+json"
