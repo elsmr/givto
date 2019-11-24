@@ -3,9 +3,9 @@ import { NextPage } from 'next';
 import Link from 'next/link';
 import React from 'react';
 import GivtoLogo from '../assets/givto-logo.svg';
-import { Box } from '../components/box';
-import { Button } from '../components/Button';
-import { Layout } from '../components/layout';
+import { Box } from '../lib/components/ui/box';
+import { Button } from '../lib/components/ui/button';
+import { Layout } from '../lib/components/ui/layout';
 
 const StyledLogo = styled(GivtoLogo)`
   transform: rotate(-15deg);
