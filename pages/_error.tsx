@@ -1,53 +1,47 @@
+import styled from '@emotion/styled';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import React from 'react';
-import styled from 'styled-components';
-import { theme } from 'styled-tools';
 import GivtoLogo from '../assets/givto-logo.svg';
+import { Box } from '../components/box';
 import { Button } from '../components/Button';
 import { Layout } from '../components/layout';
 
 const StyledLogo = styled(GivtoLogo)`
   transform: rotate(-15deg);
   width: 200px;
-  padding: ${theme('space.2')}px;
 `;
 
-const PageContent = styled.main`
-  padding: ${theme('space.2')}px;
+const PageContent = styled(Box)`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   min-height: 100vh;
-`;
-
-const Title = styled.h1`
-  margin: 0;
-  padding: ${theme('space.2')}px;
-`;
-
-const Description = styled.p`
-  margin: 0;
-  padding: ${theme('space.2')}px;
-`;
+`.withComponent('main');
 
 const ErrorContent: React.FC<{ statusCode: number }> = ({ statusCode }) => {
   switch (statusCode) {
     case 404:
       return (
         <>
-          <Title>Givto didn't find this page 😧</Title>
-          <Description>
+          <Box as="h1" p={2}>
+            Givto didn't find this page 😧
+          </Box>
+          <Box as="p" p={2}>
             You just hit a route that doesn&#39;t exist... the sadness.
-          </Description>
+          </Box>
         </>
       );
     default:
       return (
         <>
-          <Title>Givto encountered an unknown error ⚠️</Title>
-          <Description>Please try again later.</Description>
+          <Box as="h1" p={2}>
+            Givto encountered an unknown error ⚠️
+          </Box>
+          <Box as="p" p={2}>
+            Please try again later.
+          </Box>
         </>
       );
   }

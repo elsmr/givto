@@ -1,7 +1,4 @@
 {
-  "presets": ["next/babel"],
-  "plugins": [
-    ["inline-react-svg", { "svgo": false }],
-    ["styled-components", { "ssr": true }]
-  ]
+  "presets": ["next/babel", "@emotion/babel-preset-css-prop"],
+  "plugins": [["inline-react-svg", { "svgo": false }], "emotion"]
 }
