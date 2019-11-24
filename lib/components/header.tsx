@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import NextLink from 'next/link';
 import React from 'react';
-import GivtoLogo from '../assets/givto-logo.svg';
+import GivtoLogo from '../../assets/givto-logo.svg';
 import { Box, BoxProps } from './ui/box';
 import { Link } from './ui/link';
 
