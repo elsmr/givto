@@ -2,6 +2,7 @@ import { useMutation } from 'graphql-hooks';
 import unfetch from 'isomorphic-unfetch';
 import { useEffect } from 'react';
 import useForm from 'react-hook-form';
+import { AuthUtils } from '../auth/auth-service';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -45,6 +46,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
       }
 
       const body = await response.json();
+      AuthUtils.storeToken(body.token);
+      onLogin();
     } catch (e) {
       setError('logincode', 'validate');
     }
