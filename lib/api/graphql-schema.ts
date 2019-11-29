@@ -1,6 +1,7 @@
-import { gql } from 'apollo-server-micro';
+import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
+import { Auth } from './auth';
 import {
   MongoGroups,
   MongoInvites,
@@ -33,14 +34,20 @@ export interface Group {
   slug: string;
   name: string;
   users: string[];
+  creator: string;
   options: {};
+}
+
+export interface UserInput {
+  name: string;
+  email: string;
 }
 
 export interface GivtoContext {
   dataSources: GivtoDataSources;
   db: Db;
   mailer: Mailer;
-  token: string;
+  auth: Auth;
 }
 
 export interface GivtoDataSources {
@@ -49,6 +56,10 @@ export interface GivtoDataSources {
   groups: MongoGroups;
   loginCodes: MongoLoginCodes;
 }
+
+export type Mutation<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
+export type Query<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
+export type ResolverObject<TRoot> = IResolverObject<TRoot, GivtoContext, null>;
 
 export const typeDefs = gql`
   scalar Date
@@ -73,6 +84,7 @@ export const typeDefs = gql`
     slug: String!
     name: String!
     users: [User]!
+    creator: User
     options: GroupOptions!
   }
 
@@ -83,13 +95,20 @@ export const typeDefs = gql`
     groups: [Group]!
   }
 
+  input UserInput {
+    name: String!
+    email: String!
+  }
+
   type Query {
     getGroup(slug: String!): Group
     getLoginCode(code: String!): LoginCode
+    getCurrentUser: User
   }
 
   type Mutation {
-    createGroup(name: String!): Group
+    createGroup(creator: UserInput!, invitees: [UserInput]!): Group
+    setGroupName(name: String!): Group
     createLoginCode(email: String!): Boolean
   }
 `;

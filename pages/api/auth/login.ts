@@ -1,7 +1,7 @@
+import { User } from '@givto/api/graphql-schema';
 import { GraphQLClient } from 'graphql-request';
 import JWT from 'jsonwebtoken';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { User } from '../../../lib/api/graphql-schema';
 
 const client = new GraphQLClient(`${process.env.APP_HOST}/api/graphql`);
 
@@ -9,6 +9,7 @@ const getLoginCodeQuery = `query getLoginCode($loginCode: String!) {
     getLoginCode(code: $loginCode) {
       exp
       user {
+        id,
         email
       }
     }
@@ -33,6 +34,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).send({});
   }
 
+  console.log(body);
+
   if (isValidPayload(body)) {
     const { getLoginCode: loginCode }: LoginCodeResponse = await client.request(
       getLoginCodeQuery,
@@ -41,11 +44,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     );
     if (loginCode && loginCode.user && loginCode.exp > Date.now()) {
-      const token = JWT.sign({ role: 'user' }, process.env.JWT_SECRET_KEY, {
-        issuer: 'givto.app',
-        expiresIn: '1h',
-        subject: loginCode.user.email
-      });
+      const token = JWT.sign(
+        { role: 'user', email: loginCode.user.email },
+        process.env.JWT_SECRET_KEY,
+        {
+          issuer: 'givto.app',
+          expiresIn: '1h',
+          subject: loginCode.user.id
+        }
+      );
 
       // const refreshToken = await client.request(createRefreshToken);
       // res.setHeader(

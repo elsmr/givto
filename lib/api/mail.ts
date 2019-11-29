@@ -14,22 +14,39 @@ export interface MailerOptions {
 
 export interface SendMailOptions {
   subject: string;
-  text: string;
+  text?: string;
   from?: Contact;
   to: Contact;
+  variables?: Record<string, string>;
+  template?: string;
 }
 
 export class Mailer {
   constructor(private options: MailerOptions) {}
 
-  sendMail({ from, to, subject, text }: SendMailOptions): Promise<boolean> {
+  sendMail({
+    from,
+    to,
+    subject,
+    text,
+    variables,
+    template
+  }: SendMailOptions): Promise<boolean> {
     const headers = new Headers();
     const formData = new FormData();
     const { name, email } = from || this.options.from;
     formData.append('from', `${name} <${email}>`);
     formData.append('to', `${to.name} <${to.email}>`);
     formData.append('subject', subject);
-    formData.append('text', text);
+    if (text) {
+      formData.append('text', text);
+    } else if (template) {
+      formData.append('template', template);
+      if (variables) {
+        formData.append('h:X-Mailgun-Variables', JSON.stringify(variables));
+      }
+    }
+
     headers.set(
       'Authorization',
       `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
