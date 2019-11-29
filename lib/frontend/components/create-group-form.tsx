@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { ChangeEvent, useState } from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
-import { LoginModal } from './login-modal';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -134,17 +133,14 @@ export const CreateGroupForm: React.FC = () => {
     register,
     handleSubmit,
     errors,
-    getValues,
     formState: { isSubmitting }
   } = useForm<FormValues>();
+  const router = useRouter();
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
-  const [slugToConfirm, setSlugToConfirm] = useState('');
   const [createGroup] = useMutation<
     { createGroup: { slug: string } },
     FormValues
   >(CREATE_GROUP_MUTATION);
-  const router = useRouter();
-
   const onSubmit = async ({ creator, invitees }: FormValues) => {
     const result = await createGroup({
       variables: {
@@ -154,7 +150,7 @@ export const CreateGroupForm: React.FC = () => {
         )
       }
     });
-    setSlugToConfirm(result.data.createGroup.slug);
+    router.push(`/g/${result.data.createGroup.slug}?email=${creator.email}`);
   };
   const onInput = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
     if (
@@ -164,15 +160,6 @@ export const CreateGroupForm: React.FC = () => {
     ) {
       setInviteeAmount(inviteeAmount + 1);
     }
-  };
-
-  const onLogin = () => {
-    router.push(`/g/${slugToConfirm}`);
-    setSlugToConfirm('');
-  };
-
-  const onClose = () => {
-    setSlugToConfirm('');
   };
 
   return (
@@ -218,13 +205,6 @@ export const CreateGroupForm: React.FC = () => {
           <Button>Create</Button>
         </Box>
       </Form>
-      {slugToConfirm && (
-        <LoginModal
-          email={getValues({ nest: true }).creator.email}
-          onLogin={onLogin}
-          onClose={onClose}
-        ></LoginModal>
-      )}
     </>
   );
 };
