@@ -1,13 +1,26 @@
 import { css, Global } from '@emotion/core';
+import { AuthUtils } from '@givto/frontend/auth/auth-service';
+import { theme } from '@givto/frontend/theme';
 import { ThemeProvider } from 'emotion-theming';
+import { ClientContext, GraphQLClient } from 'graphql-hooks';
+import unfetch from 'isomorphic-unfetch';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import { theme } from '../lib/theme';
+
+const client = new GraphQLClient({
+  url: '/api/graphql',
+  fetch: unfetch.bind(undefined)
+});
 
 export default class GivtoApp extends App {
+  componentDidMount(): void {
+    client.setHeaders(AuthUtils.getAuthHeaders());
+  }
+
   render() {
     const { Component, pageProps } = this.props;
+
     return (
       <ThemeProvider theme={theme}>
         <>
@@ -22,11 +35,16 @@ export default class GivtoApp extends App {
                 font-family: ${theme.fonts.body};
               }
 
+              body.modal-open {
+                overflow: hidden;
+              }
+
               h1,
               h2,
               h3,
               h4 {
                 font-family: ${theme.fonts.heading};
+                margin: 0;
               }
 
               *,
@@ -44,6 +62,10 @@ export default class GivtoApp extends App {
                 padding: 0;
                 position: absolute;
                 width: 1px;
+              }
+
+              ::selection {
+                background-color: ${theme.colors.primaryMuted};
               }
             `}
           />
@@ -97,7 +119,11 @@ export default class GivtoApp extends App {
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
           </Head>
-          <Component {...pageProps} />
+          <ClientContext.Provider value={client}>
+            <div id="app-wrapper">
+              <Component {...pageProps} />
+            </div>
+          </ClientContext.Provider>
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{

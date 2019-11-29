@@ -17,11 +17,31 @@ export const theme = {
     heading: 1.125
   },
   colors: {
-    text: '#000',
+    gray: [
+      null,
+      '#f7fafc',
+      '#edf2f7',
+      '#e2e8f0',
+      '#cbd5e0',
+      '#a0aec0',
+      '#718096',
+      '#4a5568',
+      '#2d3748',
+      '#1a202c'
+    ],
+    text: '#2d3748',
     background: '#fff',
+    muted: '#e2e8f0',
+    success: '#9ae6b4',
+    info: '#63b3ed',
+    warning: '#faf089',
+    danger: '#FE7362',
+    light: '#f7fafc',
+    dark: '#2d3748',
+    textMuted: '#718096',
     primary: '#5A51FF',
-    secondary: '#FE7362',
-    muted: '#f6f6f6'
+    primaryMuted: '#837cff',
+    secondary: '#FE7362'
   },
   borderWidths: [1, 2, 4],
   transitionTiming: 'cubic-bezier(0.07, 0.82, 0.16, 1)',

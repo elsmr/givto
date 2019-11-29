@@ -1,7 +1,7 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
-import { Collection, Db, MongoClient, ObjectID } from 'mongodb';
+import { Collection, Db, MongoClient, MongoError, ObjectID } from 'mongodb';
 import uuid from 'uuid/v4';
-import { GivtoContext } from '../graphql-schema';
+import { GivtoContext, UserInput } from '../graphql-schema';
 
 interface MongoEntity {
   _id: ObjectID;
@@ -10,6 +10,7 @@ interface MongoEntity {
 export interface MongoGroup extends MongoEntity {
   slug: string;
   name: string;
+  creator: ObjectID;
   options: {};
   users: ObjectID[];
 }
@@ -78,25 +79,68 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
   findByEmail = (email: string): Promise<MongoUser | null> => {
     return this.collection.findOne({ email });
   };
+
+  findById = (id: string): Promise<MongoUser | null> => {
+    return this.collection.findOne({ _id: new ObjectID(id) });
+  };
+
+  createUsers = async (...users: UserInput[]): Promise<MongoUser[]> => {
+    try {
+      await this.collection.insertMany(
+        users.map(user => ({ ...user, groups: [] })),
+        { ordered: false }
+      );
+    } catch (error) {
+      if ((error as MongoError).code === 11000) {
+        // Some users already exist, no problem!
+      } else {
+        console.error(error);
+      }
+    }
+
+    const result = await this.collection.find({
+      email: { $in: users.map(user => user.email) }
+    });
+
+    return result.toArray();
+  };
+
+  addGroupToUsers = async (
+    userIds: ObjectID[],
+    groupId: ObjectID
+  ): Promise<boolean> => {
+    const result = await this.collection.updateMany(
+      { _id: { $in: userIds } },
+      { $push: { groups: groupId } }
+    );
+
+    return result.modifiedCount === userIds.length;
+  };
 }
 
 export class MongoGroups extends MongoDataSource<MongoGroup> {
   createGroup = async ({
-    name,
     slug,
-    users
+    users,
+    creator
   }: Pick<
     MongoGroup,
-    'name' | 'slug' | 'users'
+    'slug' | 'users' | 'creator'
   >): Promise<MongoGroup | null> => {
-    await this.collection.insert({
-      name,
+    await this.collection.insertOne({
+      name: '',
+      creator,
       slug,
-      users,
-      options: {}
+      options: {},
+      users
     });
 
     return this.findBySlug(slug);
+  };
+
+  findByIds = (ids: string[]): Promise<MongoGroup[]> => {
+    const objectIds = ids.map(id => new ObjectID(id));
+    return this.collection.find({ _id: { $in: objectIds } }).toArray();
   };
 
   findBySlug = (slug: string): Promise<MongoGroup | null> => {

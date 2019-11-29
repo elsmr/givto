@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
+import { CreateGroupForm } from '@givto/frontend/components/create-group-form';
+import { Header } from '@givto/frontend/components/header';
+import { BorderBox } from '@givto/frontend/components/ui/border-box';
+import { Box } from '@givto/frontend/components/ui/box';
+import { Button } from '@givto/frontend/components/ui/button';
+import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
+import { Link } from '@givto/frontend/components/ui/link';
 import React from 'react';
 import GivtoLogo from '../assets/givto-logo.svg';
-import { CreateGroupForm } from '../lib/components/create-group-form';
-import { Header } from '../lib/components/header';
-import { BorderBox } from '../lib/components/ui/border-box';
-import { Box } from '../lib/components/ui/box';
-import { Button } from '../lib/components/ui/button';
-import { Layout, LayoutWrapper } from '../lib/components/ui/layout';
-import { Link } from '../lib/components/ui/link';
 
 const StyledLogo = styled(GivtoLogo)`
   transform: rotate(-15deg);
@@ -29,7 +29,7 @@ export default () => {
       </LayoutWrapper>
 
       <LayoutWrapper flexGrow={1}>
-        <BorderBox as="main" p={4}>
+        <BorderBox as="main" p={4} marginBottom={5}>
           <CreateGroupForm />
         </BorderBox>
       </LayoutWrapper>
