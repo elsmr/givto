@@ -9,11 +9,13 @@ import { Button } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
-import { Loader } from '@givto/frontend/components/ui/loader';
+import { Link } from '@givto/frontend/components/ui/link';
+import { PageLoader } from '@givto/frontend/components/ui/loader';
 import { Popover } from '@givto/frontend/components/ui/popover';
 import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Edit2, X } from 'react-feather';
@@ -36,12 +38,6 @@ const SET_GROUP_NAME_MUTATION = `mutation setGroupName($slug: String!, $name: St
       name
   }
 }`;
-
-const PageLoader: React.FC = () => (
-  <Layout display="flex" alignItems="center" justifyContent="center">
-    <Loader type="box" />
-  </Layout>
-);
 
 const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -163,17 +159,22 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
           <Header
             title={<GroupTitle group={group} />}
             actions={
-              <Box
-                display="flex"
-                alignItems="center"
-                borderStyle="solid"
-                borderColor="black"
-                borderWidth={1}
-                p={2}
-              >
-                <Avatar name={user.name}></Avatar>
-                <Box px={2}>{user.name}</Box>
-              </Box>
+              <NextLink href="/profile">
+                <Link
+                  display="flex"
+                  alignItems="center"
+                  borderStyle="solid"
+                  borderColor="black"
+                  borderWidth={1}
+                  p={2}
+                  css={{ textDecoration: 'none' }}
+                >
+                  <Avatar name={user.name}></Avatar>
+                  <Box px={2} color="black">
+                    {user.name}
+                  </Box>
+                </Link>
+              </NextLink>
             }
           />
         </LayoutWrapper>
