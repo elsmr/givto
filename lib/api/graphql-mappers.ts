@@ -20,6 +20,6 @@ export const mapUser = (user: MongoUser): User => ({
 
 export const mapLoginCode = (loginCode: MongoLoginCode): LoginCode => ({
   code: loginCode.code,
-  email: loginCode.email,
+  userId: loginCode.userId.toHexString(),
   exp: new Date(loginCode.exp)
 });
