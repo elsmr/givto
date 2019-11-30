@@ -13,8 +13,8 @@ export interface Invite {
 
 export interface LoginCode {
   code: string;
-  email: string;
   exp: Date;
+  userId: string;
 }
 
 export interface User {
