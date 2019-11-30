@@ -15,7 +15,7 @@ export interface MailerOptions {
 export interface SendMailOptions {
   subject: string;
   text?: string;
-  from?: Contact;
+  from?: Partial<Contact>;
   to: Contact;
   variables?: Record<string, string>;
   template?: string;
@@ -34,7 +34,7 @@ export class Mailer {
   }: SendMailOptions): Promise<boolean> {
     const headers = new Headers();
     const formData = new FormData();
-    const { name, email } = from || this.options.from;
+    const { name, email } = { ...from, ...this.options.from };
     formData.append('from', `${name} <${email}>`);
     formData.append('to', `${to.name} <${to.email}>`);
     formData.append('subject', subject);

@@ -1,6 +1,5 @@
 import {
   MongoGroups,
-  MongoInvites,
   MongoLoginCodes,
   MongoUsers
 } from '@givto/api/data-sources/mongo';
@@ -13,6 +12,8 @@ import {
 import { contextFactory } from '@givto/api/graphql/context.factory';
 import { createGroup } from '@givto/api/graphql/mutations/create-group.mutation';
 import { createLoginCode } from '@givto/api/graphql/mutations/create-login-code.mutation';
+import { setGroupName } from '@givto/api/graphql/mutations/set-group-name.mutation';
+import { updateUser } from '@givto/api/graphql/mutations/update-user.mutation';
 import { getCurrentUser } from '@givto/api/graphql/queries/get-current-user.query';
 import { getGroup } from '@givto/api/graphql/queries/get-group.query';
 import { getLoginCode } from '@givto/api/graphql/queries/get-login-code.query';
@@ -32,6 +33,8 @@ const resolvers: IResolvers<any, GivtoContext> = {
   User: userResolver,
   LoginCode: loginCodeResolver,
   Mutation: {
+    updateUser,
+    setGroupName,
     createGroup,
     createLoginCode
   }
@@ -39,10 +42,9 @@ const resolvers: IResolvers<any, GivtoContext> = {
 
 const dataSources: () => GivtoDataSources = () => {
   return {
-    users: new MongoUsers('users'),
-    groups: new MongoGroups('groups'),
-    invites: new MongoInvites('invites'),
-    loginCodes: new MongoLoginCodes('loginCodes')
+    users: new MongoUsers(),
+    groups: new MongoGroups(),
+    loginCodes: new MongoLoginCodes()
   };
 };
 

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import css from '@styled-system/css';
 import React from 'react';
 import { Theme } from '../../theme';
 import { Box, BoxProps } from './box';
@@ -8,16 +9,27 @@ const ButtonForeground = styled(Box)`
   will-change: transform;
 `;
 
-export const ButtonReset = styled(Box)`
-  display: inline-block;
-  cursor: pointer;
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
-  text-align: left;
-  outline: none;
-  border: none;
-  background: transparent;
-`.withComponent('button') as React.FC<BoxProps>;
+export const ButtonReset: React.FC<BoxProps> = props => (
+  <Box
+    as="button"
+    bg="transparent"
+    border="none"
+    display="inline-block"
+    textAlign="left"
+    p={0}
+    m={0}
+    css={css({
+      cursor: 'pointer',
+      textDecoration: 'none',
+      WebkitTapHighlightColor: 'transparent',
+      outline: 'none',
+      '::-moz-focus-inner': {
+        border: 0
+      }
+    })}
+    {...props}
+  ></Box>
+);
 
 const PlainButton = styled(ButtonReset)`
   &:hover
@@ -27,10 +39,6 @@ const PlainButton = styled(ButtonReset)`
     &:focus
     ${ButtonForeground} {
     transform: translate(8px, 8px);
-  }
-
-  ::-moz-focus-inner {
-    border: 0;
   }
 
   &:focus ${ButtonForeground} {
@@ -48,8 +56,6 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
     return (
       <PlainButton
         as="button"
-        m={0}
-        p={0}
         paddingBottom={2}
         paddingRight={2}
         minWidth="200px"

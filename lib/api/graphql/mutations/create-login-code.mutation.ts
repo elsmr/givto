@@ -8,7 +8,7 @@ export const createLoginCode: Mutation<{ email: string }> = async (
   const user = await users.findByEmail(email);
 
   if (user) {
-    const loginCode = await loginCodes.create(user.email);
+    const loginCode = await loginCodes.create(user._id);
     mailer.sendMail({
       to: { name: user.name, email: user.email },
       subject: 'Your Temporary Givto Login Code',

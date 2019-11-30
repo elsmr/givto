@@ -1,5 +1,6 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { Collection, Db, MongoClient, MongoError, ObjectID } from 'mongodb';
+import ms from 'ms';
 import uuid from 'uuid/v4';
 import { GivtoContext, UserInput } from '../graphql-schema';
 
@@ -30,7 +31,13 @@ export interface MongoInvite extends MongoEntity {
 
 export interface MongoLoginCode extends MongoEntity {
   code: string;
-  email: string;
+  userId: ObjectID;
+  exp: number;
+}
+
+export interface MongoRefreshToken extends MongoEntity {
+  token: string;
+  userId: ObjectID;
   exp: number;
 }
 
@@ -65,23 +72,29 @@ export class MongoDataSource<T extends MongoEntity> extends DataSource<
     this.collectionName = collectionName;
   }
 
-  initialize({ context: { db } }: DataSourceConfig<GivtoContext>): void {
+  initialize({
+    context: { db }
+  }: Pick<DataSourceConfig<Pick<GivtoContext, 'db'>>, 'context'>): void {
     this.collection = db.collection(this.collectionName);
   }
+
+  findById = (id: string): Promise<T | null> => {
+    return this.collection.findOne({ _id: new ObjectID(id) as any });
+  };
+
+  findByIds = (ids: string[]): Promise<T[]> => {
+    const objectIds = ids.map(id => new ObjectID(id));
+    return this.collection.find({ _id: { $in: objectIds } } as any).toArray();
+  };
 }
 
 export class MongoUsers extends MongoDataSource<MongoUser> {
-  findByIds = (ids: string[]): Promise<MongoUser[]> => {
-    const objectIds = ids.map(id => new ObjectID(id));
-    return this.collection.find({ _id: { $in: objectIds } }).toArray();
-  };
+  constructor() {
+    super('users');
+  }
 
   findByEmail = (email: string): Promise<MongoUser | null> => {
     return this.collection.findOne({ email });
-  };
-
-  findById = (id: string): Promise<MongoUser | null> => {
-    return this.collection.findOne({ _id: new ObjectID(id) });
   };
 
   createUsers = async (...users: UserInput[]): Promise<MongoUser[]> => {
@@ -116,9 +129,24 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
 
     return result.modifiedCount === userIds.length;
   };
+
+  updateByEmail = async (
+    email: string,
+    update: Partial<MongoUser>
+  ): Promise<MongoUser | undefined> => {
+    const user = await this.collection.findOneAndUpdate(
+      { email },
+      { $set: update }
+    );
+    return user.value;
+  };
 }
 
 export class MongoGroups extends MongoDataSource<MongoGroup> {
+  constructor() {
+    super('groups');
+  }
+
   createGroup = async ({
     slug,
     users,
@@ -138,11 +166,6 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     return this.findBySlug(slug);
   };
 
-  findByIds = (ids: string[]): Promise<MongoGroup[]> => {
-    const objectIds = ids.map(id => new ObjectID(id));
-    return this.collection.find({ _id: { $in: objectIds } }).toArray();
-  };
-
   findBySlug = (slug: string): Promise<MongoGroup | null> => {
     return this.collection.findOne({ slug });
   };
@@ -150,42 +173,67 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   hasSlug = (slug: string): Promise<boolean> => {
     return this.findBySlug(slug).then(Boolean);
   };
-}
 
-export class MongoInvites extends MongoDataSource<MongoInvite> {
-  DAY_MS = 86400000;
-
-  create = async (inviteeId: string, groupId: string): Promise<string> => {
-    const code = uuid();
-    await this.collection.insertOne({
-      code,
-      invitee: inviteeId,
-      group: groupId,
-      exp: Date.now() + 7 * this.DAY_MS
-    });
-
-    return code;
-  };
-
-  findByCode = (code: string): Promise<MongoInvite | null> => {
-    return this.collection.findOne({ code });
+  updateBySlug = async (
+    slug: string,
+    name: string
+  ): Promise<MongoGroup | undefined> => {
+    const group = await this.collection.findOneAndUpdate(
+      { slug },
+      { $set: { name } }
+    );
+    return group.value;
   };
 }
 
 export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
-  MINUTE_MS = 60000;
+  constructor() {
+    super('loginCodes');
+  }
 
-  create = async (email: string): Promise<string> => {
+  create = async (id: ObjectID, isInvite = false): Promise<string> => {
     const code = uuid();
     await this.collection.insertOne({
       code,
-      email,
-      exp: Date.now() + 15 * this.MINUTE_MS
+      userId: id,
+      exp: Date.now() + ms(isInvite ? '3d' : '15m')
     });
     return code;
   };
 
+  deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
+    return this.collection
+      .deleteMany({ 'user.id': userId })
+      .then(result => Boolean(result.deletedCount && result.deletedCount > 0));
+  };
+
   findByCode = (code: string): Promise<MongoLoginCode | null> => {
     return this.collection.findOne({ code });
+  };
+}
+
+export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
+  constructor() {
+    super('refreshTokens');
+  }
+
+  create = async (userId: ObjectID): Promise<string> => {
+    const token = uuid();
+    await this.collection.insertOne({
+      token,
+      userId,
+      exp: Date.now() + ms('7d')
+    });
+    return token;
+  };
+
+  findByToken = (token: string): Promise<MongoRefreshToken | null> => {
+    return this.collection.findOne({ token });
+  };
+
+  deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
+    return this.collection
+      .deleteMany({ userId: userId })
+      .then(result => Boolean(result.deletedCount && result.deletedCount > 0));
   };
 }
