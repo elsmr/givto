@@ -2,12 +2,7 @@ import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
-import {
-  MongoGroups,
-  MongoInvites,
-  MongoLoginCodes,
-  MongoUsers
-} from './data-sources/mongo';
+import { MongoGroups, MongoLoginCodes, MongoUsers } from './data-sources/mongo';
 import { Mailer } from './mail';
 
 export interface Invite {
@@ -29,12 +24,28 @@ export interface User {
   groups: string[];
 }
 
+export interface EnrichedUser {
+  id: string;
+  email: string;
+  name: string;
+  groups: EnrichedGroup[];
+}
+
 export interface Group {
   id: string;
   slug: string;
   name: string;
   users: string[];
   creator: string;
+  options: {};
+}
+
+export interface EnrichedGroup {
+  id: string;
+  slug: string;
+  name: string;
+  users: EnrichedUser[];
+  creator: EnrichedUser;
   options: {};
 }
 
@@ -52,7 +63,6 @@ export interface GivtoContext {
 
 export interface GivtoDataSources {
   users: MongoUsers;
-  invites: MongoInvites;
   groups: MongoGroups;
   loginCodes: MongoLoginCodes;
 }
@@ -100,6 +110,11 @@ export const typeDefs = gql`
     email: String!
   }
 
+  input UserUpdate {
+    name: String
+    email: String
+  }
+
   type Query {
     getGroup(slug: String!): Group
     getLoginCode(code: String!): LoginCode
@@ -108,8 +123,9 @@ export const typeDefs = gql`
 
   type Mutation {
     createGroup(creator: UserInput!, invitees: [UserInput]!): Group
-    setGroupName(name: String!): Group
     createLoginCode(email: String!): Boolean
+    updateUser(email: String!, update: UserUpdate!): User
+    setGroupName(slug: String!, name: String!): Group
   }
 `;
 
