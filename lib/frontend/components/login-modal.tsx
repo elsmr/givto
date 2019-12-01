@@ -1,8 +1,7 @@
 import { useMutation } from 'graphql-hooks';
-import unfetch from 'isomorphic-unfetch';
 import { useEffect, useState } from 'react';
 import useForm from 'react-hook-form';
-import { AuthUtils } from '../auth/auth-service';
+import { AuthUtils } from '../auth/auth.util';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -14,7 +13,7 @@ const GET_LOGIN_CODE_MUTATION = `mutation createLoginCode($email: String!) {
  }`;
 
 interface LoginModalProps {
-  email: string;
+  email?: string;
   onLogin: () => void;
   onClose: () => void;
 }
@@ -36,18 +35,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, email }) => {
 
   const onSubmit = async (values: { logincode: string }) => {
     try {
-      const response = await unfetch('/api/auth/login', {
-        method: 'POST',
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ loginCode: values.logincode })
-      });
-
-      if (response.status !== 200) {
-        throw new Error();
-      }
-
-      const body = await response.json();
-      AuthUtils.storeToken(body.token);
+      await AuthUtils.login(values.logincode);
       onLogin();
     } catch (e) {
       setError('logincode', 'validate');
@@ -104,10 +92,9 @@ const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
   return (
     <Form onSubmit={handleSubmit(onFormSubmit)}>
       <Box marginBottom={3}>
-        <Box>Please input your email to access this group.</Box>
+        <Box>Please input your email</Box>
         <Box>
-          Givto will send you a temporary login code, if you are a member of
-          this group.
+          Givto will send you a temporary login code, no passwords required!
         </Box>
       </Box>
       <Box marginBottom={3}>
@@ -136,10 +123,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [email, setEmail] = useState(emailProp);
 
   return (
-    <Modal
-      title={email ? 'Confirm Email Address' : 'Login To Group'}
-      onClose={onClose}
-    >
+    <Modal title={email ? 'Confirm Email Address' : 'Login'} onClose={onClose}>
       {email ? (
         <LoginForm email={email} onLogin={onLogin} />
       ) : (

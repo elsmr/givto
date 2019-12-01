@@ -1,24 +1,22 @@
-import { EnrichedGroup, User } from '@givto/api/graphql-schema';
-import { AuthUtils } from '@givto/frontend/auth/auth-service';
+import { EnrichedGroup } from '@givto/api/graphql-schema';
+import { AuthContext, AuthUtils } from '@givto/frontend/auth/auth.util';
 import { Header } from '@givto/frontend/components/header';
 import { LoginModal } from '@givto/frontend/components/login-modal';
+import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
-import { Button } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
-import { Link } from '@givto/frontend/components/ui/link';
 import { PageLoader } from '@givto/frontend/components/ui/loader';
 import { Popover } from '@givto/frontend/components/ui/popover';
 import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
-import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Edit2, X } from 'react-feather';
+import { useContext, useEffect, useState } from 'react';
+import { Edit2, Save, X } from 'react-feather';
 import useForm from 'react-hook-form';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
@@ -63,10 +61,21 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
 
   return !isEditing ? (
     <Box display="flex" alignItems="center">
-      <Box as="h2" fontSize={5} marginRight={2}>
+      <Box
+        as="h2"
+        fontSize={5}
+        marginRight={2}
+        maxWidth="300px"
+        overflow="hidden"
+        css={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+      >
         {name}
       </Box>
-      <IconButton onClick={() => setIsEditing(true)}>
+      <IconButton
+        size="small"
+        flexShrink={0}
+        onClick={() => setIsEditing(true)}
+      >
         <Edit2 size={12} /> <Box marginLeft={1}>Edit</Box>
       </IconButton>
     </Box>
@@ -85,8 +94,12 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
           ref={register({ required: true })}
           marginRight={1}
         />
+        <IconButton size="small" type="submit" flexShrink={0} marginRight={1}>
+          <Save size={12} /> <Box marginLeft={1}>Save</Box>
+        </IconButton>
         {name && (
           <IconButton
+            size="small"
             type="button"
             bg="danger"
             color="black"
@@ -105,13 +118,8 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   slug,
   email
 }) => {
-  const {
-    data: userResult,
-    loading: userLoading,
-    refetch: refetchUser
-  } = useQuery<{
-    getCurrentUser: User;
-  }>(AuthUtils.AUTH_QUERY);
+  const router = useRouter();
+  const { user, isLoading: userLoading } = useContext(AuthContext);
   const {
     data: groupResult,
     loading: groupLoading,
@@ -121,10 +129,9 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }>(GET_GROUP_QUERY, {
     variables: { slug }
   });
-  const isLoading = userLoading || groupLoading;
 
-  if (isLoading) {
-    return <PageLoader />;
+  if (groupLoading) {
+    return <PageLoader key="loader" />;
   }
 
   if (!groupResult || !groupResult.getGroup) {
@@ -136,9 +143,8 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
 
         <LoginModal
           email={email}
-          onClose={() => {}}
+          onClose={() => router.push('/')}
           onLogin={() => {
-            refetchUser();
             refetchGroup();
           }}
         />
@@ -147,7 +153,6 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }
 
   const group = groupResult.getGroup;
-  const user = userResult.getCurrentUser;
 
   return (
     <Layout display="flex" flexDirection="column">
@@ -159,22 +164,11 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
           <Header
             title={<GroupTitle group={group} />}
             actions={
-              <NextLink href="/profile">
-                <Link
-                  display="flex"
-                  alignItems="center"
-                  borderStyle="solid"
-                  borderColor="black"
-                  borderWidth={1}
-                  p={2}
-                  css={{ textDecoration: 'none' }}
-                >
-                  <Avatar name={user.name}></Avatar>
-                  <Box px={2} color="black">
-                    {user.name}
-                  </Box>
-                </Link>
-              </NextLink>
+              <ProfileButton
+                user={user}
+                isLoading={userLoading}
+                onLogin={() => {}}
+              />
             }
           />
         </LayoutWrapper>
@@ -194,7 +188,7 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
             <Box as="h3" fontSize={4} marginRight={2}>
               Members
             </Box>
-            <Button>Invite</Button>
+            {/* <Button>Invite</Button> */}
           </Box>
           {group.users.map(user => (
             <Box key={user.id} display="flex" alignItems="center" py={2}>
@@ -219,10 +213,30 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
 };
 
 const GroupPage: NextPage = () => {
-  const { query } = useRouter();
+  const { query, push, asPath } = useRouter();
+  const [checkedInvite, setCheckedInvite] = useState(false);
 
-  if (!query.slug) {
-    return <PageLoader />;
+  useEffect(() => {
+    console.log('start');
+    const login = async () => {
+      if (query.invite) {
+        console.log(query.invite);
+        try {
+          const token = await AuthUtils.login(query.invite as string);
+          console.log('login success', token);
+          const cleanUrl = asPath.split('?')[0];
+          console.log(cleanUrl);
+          push(cleanUrl, cleanUrl, { shallow: true });
+        } catch (e) {}
+      }
+      console.log('passed');
+      setCheckedInvite(true);
+    };
+    login();
+  }, [query.invite]);
+
+  if (!query.slug || !checkedInvite) {
+    return <PageLoader key="loader" />;
   }
 
   return (

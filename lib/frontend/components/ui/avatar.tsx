@@ -20,6 +20,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size, ...props }) => {
       justifyContent="center"
       fontWeight="bold"
       fontSize={3}
+      css={{ userSelect: 'none' }}
       {...props}
     >
       {name[0]}

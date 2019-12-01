@@ -1,25 +1,70 @@
 import { css, Global } from '@emotion/core';
-import { AuthUtils } from '@givto/frontend/auth/auth-service';
+import { User } from '@givto/api/graphql-schema';
+import { fetch } from '@givto/frontend/api/api.util';
+import {
+  AuthContext,
+  AuthUtils,
+  IAuthContext,
+  initialAuthContext,
+  Token
+} from '@givto/frontend/auth/auth.util';
 import { theme } from '@givto/frontend/theme';
 import { ThemeProvider } from 'emotion-theming';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
-import unfetch from 'isomorphic-unfetch';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
 
 const client = new GraphQLClient({
   url: '/api/graphql',
-  fetch: unfetch.bind(undefined)
+  fetch
 });
 
-export default class GivtoApp extends App {
+export default class GivtoApp extends App<
+  {},
+  {},
+  { authContext: IAuthContext }
+> {
+  state = {
+    authContext: initialAuthContext
+  };
+
   componentDidMount(): void {
-    client.setHeaders(AuthUtils.getAuthHeaders());
+    console.log('initial token', this.state.authContext.token);
+    this.handleNewToken(
+      this.state.authContext.token,
+      Boolean(this.state.authContext.token)
+    );
+    AuthUtils.subscribe(this.handleNewToken);
   }
+
+  handleNewToken = async (token: Token | null, isLoading: boolean) => {
+    client.setHeaders(AuthUtils.getAuthHeaders(token));
+    this.setState(prevState => ({
+      ...prevState,
+      authContext: {
+        ...prevState.authContext,
+        token,
+        user: null,
+        isLoading
+      }
+    }));
+
+    if (token) {
+      const { data } = await client.request<{ getCurrentUser: User }>({
+        query: AuthUtils.AUTH_QUERY
+      });
+      const user = data?.getCurrentUser || null;
+      this.setState(prevState => ({
+        ...prevState,
+        authContext: { ...prevState.authContext, user, isLoading: false }
+      }));
+    }
+  };
 
   render() {
     const { Component, pageProps } = this.props;
+    const { authContext } = this.state;
 
     return (
       <ThemeProvider theme={theme}>
@@ -120,9 +165,11 @@ export default class GivtoApp extends App {
             <meta name="theme-color" content="#5A51FF"></meta>
           </Head>
           <ClientContext.Provider value={client}>
-            <div id="app-wrapper">
-              <Component {...pageProps} />
-            </div>
+            <AuthContext.Provider value={authContext}>
+              <div id="app-wrapper">
+                <Component {...pageProps} />
+              </div>
+            </AuthContext.Provider>
           </ClientContext.Provider>
           <script
             type="application/ld+json"

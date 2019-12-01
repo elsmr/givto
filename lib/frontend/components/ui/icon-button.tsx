@@ -2,7 +2,26 @@ import css from '@styled-system/css';
 import { BoxProps } from './box';
 import { ButtonReset } from './button';
 
-export const IconButton: React.FC<BoxProps> = ({ children, ...props }) => {
+interface IconButtonProps extends BoxProps {
+  size?: 'small' | 'medium';
+}
+
+const sizeToProps: Record<string, BoxProps> = {
+  small: {
+    p: 1,
+    fontSize: 1
+  },
+  medium: {
+    p: 2,
+    fontSize: 2
+  }
+};
+
+export const IconButton: React.FC<IconButtonProps> = ({
+  children,
+  size,
+  ...props
+}) => {
   return (
     <ButtonReset
       borderStyle="solid"
@@ -12,7 +31,7 @@ export const IconButton: React.FC<BoxProps> = ({ children, ...props }) => {
       color="white"
       display="flex"
       alignItems="center"
-      p={1}
+      {...sizeToProps[size as string]}
       css={css({
         '&:focus': {
           borderColor: 'secondary'
@@ -23,4 +42,8 @@ export const IconButton: React.FC<BoxProps> = ({ children, ...props }) => {
       {children}
     </ButtonReset>
   );
+};
+
+IconButton.defaultProps = {
+  size: 'medium'
 };

@@ -12,6 +12,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@babel/plugin-proposal-optional-chaining": "7.7.4",
     "@emotion/core": "10.0.22",
     "@emotion/styled": "10.0.23",
     "@styled-system/css": "5.0.23",
@@ -40,6 +41,7 @@
     "react-dom": "16.11.0",
     "react-feather": "2.0.3",
     "react-hook-form": "3.28.3",
+    "react-hotkeys-hook": "1.5.3",
     "react-spinners": "0.6.1",
     "react-tiny-popover": "4.0.0",
     "rebass": "4.0.7",

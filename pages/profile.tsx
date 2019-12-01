@@ -1,8 +1,10 @@
 import { EnrichedUser } from '@givto/api/graphql-schema';
+import { AuthContext, AuthUtils } from '@givto/frontend/auth/auth.util';
 import { Header } from '@givto/frontend/components/header';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
+import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
@@ -11,6 +13,8 @@ import { useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
 import useForm from 'react-hook-form';
 
 const EXPANDED_USER_QUERY = `query getCurrentUser {
@@ -19,6 +23,7 @@ const EXPANDED_USER_QUERY = `query getCurrentUser {
     name
     email,
     groups {
+      id
       name
       slug
       users {
@@ -33,14 +38,23 @@ const ProfilePage: NextPage = () => {
     getCurrentUser: EnrichedUser;
   }>(EXPANDED_USER_QUERY);
   const { register, handleSubmit } = useForm({ mode: 'onBlur' });
+  const router = useRouter();
+  const { token } = useContext(AuthContext);
 
-  const onSubmit = () => {};
+  const onSubmit = (val: any) => {
+    console.log(val);
+  };
 
   if (loading) {
     return <PageLoader />;
   }
 
-  const user = userResult.getCurrentUser;
+  const user = userResult?.getCurrentUser;
+
+  if (!user) {
+    router.push('/');
+    return null;
+  }
 
   return (
     <Layout display="flex" flexDirection="column">
@@ -49,12 +63,23 @@ const ProfilePage: NextPage = () => {
       </Head>
       <Box marginBottom={4}>
         <LayoutWrapper>
-          <Header />
+          <Header
+            actions={
+              <IconButton
+                onClick={async () => {
+                  await AuthUtils.logout(token);
+                  router.push('/');
+                }}
+              >
+                Logout
+              </IconButton>
+            }
+          />
         </LayoutWrapper>
       </Box>
       <LayoutWrapper marginBottom={4}>
         <Box display="flex" justifyContent="center">
-          <Avatar name={user.name} size={128} fontSize={8} />
+          <Avatar name={user.name} size={128} fontSize={8} borderWidth={4} />
         </Box>
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
           <Box display="block" as="label" htmlFor="name" marginBottom={2}>

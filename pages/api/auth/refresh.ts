@@ -4,6 +4,7 @@ import {
   MongoUsers
 } from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
+import ms from 'ms';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const getDataSources = async (): Promise<{
@@ -26,6 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).send({});
   }
 
+  console.log('cookies here!', { cookies });
   if (cookies.refresh_token) {
     const { refreshTokens, users } = await getDataSources();
     const refreshToken = await refreshTokens.findByToken(cookies.refresh_token);
@@ -37,12 +39,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      const exp = Date.now() + ms('1h');
       const token = JWT.sign(
         { role: 'user', email: user.email },
         process.env.JWT_SECRET_KEY,
         {
           issuer: 'givto.app',
-          expiresIn: '2h',
+          expiresIn: '1h',
           subject: user._id.toHexString()
         }
       );
@@ -51,10 +54,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const newRefreshToken = await refreshTokens.create(refreshToken.userId);
       res.setHeader(
         'Set-Cookie',
-        `refresh_token=${newRefreshToken};secure;HttpOnly`
+        `refresh_token=${newRefreshToken};HttpOnly${
+          process.env.NODE_ENV === 'development' ? '' : ';secure'
+        }`
       );
 
-      res.json({ token });
+      res.json({ token, exp });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
     }

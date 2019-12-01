@@ -1,10 +1,6 @@
-import {
-  getMongoDb,
-  MongoLoginCodes,
-  MongoRefreshTokens,
-  MongoUsers
-} from '@givto/api/data-sources/mongo';
+import { getMongoDb, MongoLoginCodes, MongoRefreshTokens, MongoUsers } from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
+import ms from 'ms';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 interface LoginPayload {
@@ -51,6 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      const exp = Date.now() + ms('1h');
       const token = JWT.sign(
         { role: 'user', email: user.email },
         process.env.JWT_SECRET_KEY,
@@ -69,10 +66,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const refreshToken = await refreshTokens.create(user._id);
       res.setHeader(
         'Set-Cookie',
-        `refresh_token=${refreshToken};secure;HttpOnly`
+        `refresh_token=${refreshToken};HttpOnly${process.env.NODE_ENV === 'development' ? '' : ';secure'}`
       );
 
-      res.json({ token });
+      res.json({ token, exp });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
     }
