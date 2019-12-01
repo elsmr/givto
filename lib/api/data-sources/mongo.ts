@@ -203,7 +203,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
 
   deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
     return this.collection
-      .deleteMany({ 'user.id': userId })
+      .deleteMany({ userId })
       .then(result => Boolean(result.deletedCount && result.deletedCount > 0));
   };
 

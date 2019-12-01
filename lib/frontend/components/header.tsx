@@ -18,12 +18,13 @@ export const Header: React.FC<HeaderProps> = ({ actions, title, ...props }) => (
     display="flex"
     justifyContent="space-between"
     alignItems="center"
+    minHeight="52px"
     as="header"
     {...props}
   >
     <Box display="flex" alignItems="center" marginRight={2}>
       <NextLink href="/">
-        <Link style={{ textDecoration: 'none' }}>
+        <Link flexShrink={0} style={{ textDecoration: 'none' }}>
           <Box as="h1" display="flex" alignItems="center">
             <StyledLogo />
             {!title && (

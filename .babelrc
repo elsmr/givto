@@ -1,4 +1,8 @@
 {
   "presets": ["next/babel", "@emotion/babel-preset-css-prop"],
-  "plugins": [["inline-react-svg", { "svgo": false }], "emotion"]
+  "plugins": [
+    ["inline-react-svg", { "svgo": false }],
+    "emotion",
+    "@babel/plugin-proposal-optional-chaining"
+  ]
 }

@@ -1,3 +1,4 @@
+import { AuthenticationError } from 'apollo-server-micro';
 import { mapUser } from '../../graphql-mappers';
 import { Query, User } from '../../graphql-schema';
 
@@ -9,7 +10,7 @@ export const getCurrentUser: Query<null> = async (
   const claims = auth.get();
 
   if (!claims) {
-    return null;
+    throw new AuthenticationError('No access to group');
   }
 
   const user = await users.findById(claims.sub);
