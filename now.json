@@ -1,14 +1,16 @@
 {
   "version": 2,
   "name": "givto",
-  "routes": {
-    "src": "^/service-worker.js$",
-    "dest": "/_next/static/service-worker.js",
-    "headers": {
-      "cache-control": "public, max-age=43200, immutable",
-      "Service-Worker-Allowed": "/"
+  "routes": [
+    {
+      "src": "^/service-worker.js$",
+      "dest": "/_next/static/service-worker.js",
+      "headers": {
+        "cache-control": "public, max-age=43200, immutable",
+        "Service-Worker-Allowed": "/"
+      }
     }
-  },
+  ],
   "env": {
     "MONGODB_URI": "@givto-mongodb-conn-str",
     "MONGODB_DB": "@mongodb-dbname",
