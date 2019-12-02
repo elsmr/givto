@@ -49,7 +49,18 @@ const FormError: React.FC<{
 }> = ({ errors }) => {
   const errorFields = Object.keys(errors);
   const hasError = errorFields.length > 0;
+  const hasDuplicateError = errorFields.some(
+    key => errors[key]?.type === 'duplicate'
+  );
   const hasCreatorError = errorFields.some(key => key.startsWith('creator'));
+
+  if (hasDuplicateError) {
+    return (
+      <Box color="secondary" paddingRight={2}>
+        Please provide unique email addresses
+      </Box>
+    );
+  }
 
   return (
     <Box color="secondary" paddingRight={2}>
@@ -135,7 +146,8 @@ export const CreateGroupForm: React.FC = () => {
     handleSubmit,
     errors,
     formState: { isSubmitting },
-    setValue
+    setValue,
+    setError
   } = useForm<FormValues>();
   const router = useRouter();
   const { user } = useContext(AuthContext);
@@ -145,6 +157,28 @@ export const CreateGroupForm: React.FC = () => {
     FormValues
   >(CREATE_GROUP_MUTATION);
   const onSubmit = async ({ creator, invitees }: FormValues) => {
+    const allUsers = [creator, ...invitees];
+    const emailUserMap = allUsers.reduce(
+      (acc, user) => ({ ...acc, [user.email]: (acc[user.email] || 0) + 1 }),
+      {} as Record<string, number>
+    );
+    const duplicateEmails = Object.keys(emailUserMap).filter(
+      email => emailUserMap[email] > 1
+    );
+
+    if (duplicateEmails.length > 0) {
+      const duplicateIndex = allUsers.findIndex(
+        user => user.email === duplicateEmails[0]
+      );
+      const fieldWithDuplicate =
+        duplicateIndex === 0
+          ? 'creator.email'
+          : `invitees[${duplicateIndex - 1}].email`;
+
+      setError(fieldWithDuplicate, 'duplicate');
+      return;
+    }
+
     const result = await createGroup({
       variables: {
         creator,

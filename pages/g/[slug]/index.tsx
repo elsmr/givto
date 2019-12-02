@@ -10,7 +10,7 @@ import { Button } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
-import { PageLoader } from '@givto/frontend/components/ui/loader';
+import { Loader, PageLoader } from '@givto/frontend/components/ui/loader';
 import { Popover } from '@givto/frontend/components/ui/popover';
 import { Wishlist } from '@givto/frontend/components/wishlist';
 import { WishlistForm } from '@givto/frontend/components/wishlist-form';
@@ -63,8 +63,9 @@ const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
         wishlist {
           title
           description
-        }
-      }
+        },
+      },
+      assignedAt
   }
 }`;
 
@@ -160,7 +161,10 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }>(GET_GROUP_QUERY, {
     variables: { slug }
   });
-  const [assignUsersMutation] = useMutation(START_ASSIGNMENT_MUTATION);
+  const [
+    assignUsersMutation,
+    { loading: assignmentLoading, data }
+  ] = useMutation(START_ASSIGNMENT_MUTATION);
 
   if (groupLoading) {
     return <PageLoader key="loader" />;
@@ -185,6 +189,8 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }
 
   const group = groupResult.getGroup;
+  const assignedAt = data?.assignUsersInGroup?.assignedAt ?? group.assignedAt;
+  const assignee = data?.assignUsersInGroup?.assignee ?? group.assignee;
 
   const startAssignment = () => {
     assignUsersMutation({ variables: { slug } });
@@ -249,9 +255,13 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
         <WishlistForm slug={slug} wishlist={group.wishlist} />
       </LayoutWrapper>
 
-      {!group.assignedAt && (
+      {!assignedAt && (
         <LayoutWrapper marginBottom={4} display="flex" justifyContent="center">
-          <Button onClick={startAssignment}>Start Secret Santa</Button>
+          {!assignmentLoading ? (
+            <Button onClick={startAssignment}>Start Secret Santa</Button>
+          ) : (
+            <Loader type="box" />
+          )}
         </LayoutWrapper>
       )}
 
@@ -269,11 +279,11 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
               marginBottom={3}
             >
               <Box as="h3" fontSize={4} marginRight={2}>
-                {group.assignee.user.name}'s Wishlist
+                {assignee.user.name}'s Wishlist
               </Box>
             </Box>
-            <Wishlist wishlist={group.assignee.wishlist} />
-            {group.assignee.wishlist.length === 0 && (
+            <Wishlist wishlist={assignee.wishlist} />
+            {assignee.wishlist.length === 0 && (
               <Box
                 minHeight="250px"
                 display="flex"
@@ -282,7 +292,7 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
                 justifyContent="center"
               >
                 <Box as="h4" fontWeight="normal" fontSize={3} marginBottom={2}>
-                  {group.assignee.user.name} has not entered a wishlist yet
+                  {assignee.user.name} has not entered a wishlist yet
                 </Box>
                 <Box>
                   Gently nudge him or her to add some items to their wishlist 😉

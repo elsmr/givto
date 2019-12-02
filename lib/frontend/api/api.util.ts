@@ -21,10 +21,11 @@ export const fetch = async (
   const json = await response.clone().json();
 
   if (
-    (authHeader && response.status === 401) ||
-    json?.errors?.some(
-      (error: any) => error?.extensions?.code === 'UNAUTHENTICATED'
-    )
+    authHeader &&
+    (response.status === 401 ||
+      json?.errors?.some(
+        (error: any) => error?.extensions?.code === 'UNAUTHENTICATED'
+      ))
   ) {
     if (!isRefreshing) {
       console.log('got a 401!, starting refresh');
