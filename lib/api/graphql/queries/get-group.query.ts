@@ -28,5 +28,5 @@ export const getGroup: Query<{ slug: string }> = async (
     throw new AuthenticationError('No access to group');
   }
 
-  return mapGroup(mongoGroup);
+  return mapGroup(mongoGroup, claims.sub);
 };

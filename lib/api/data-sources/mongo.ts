@@ -8,12 +8,21 @@ interface MongoEntity {
   _id: ObjectID;
 }
 
+export interface WishListItem {
+  title: string;
+  description: string;
+}
+
 export interface MongoGroup extends MongoEntity {
   slug: string;
   name: string;
   creator: ObjectID;
   options: {};
   users: ObjectID[];
+  createdAt: number;
+  assignedAt: number | null;
+  assignments: Record<string, string>;
+  wishlists: Record<string, WishListItem[]>;
 }
 
 export interface MongoUser extends MongoEntity {
@@ -160,7 +169,11 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       creator,
       slug,
       options: {},
-      users
+      users,
+      createdAt: Date.now(),
+      assignedAt: null,
+      assignments: {},
+      wishlists: {}
     });
 
     return this.findBySlug(slug);
@@ -176,11 +189,11 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
 
   updateBySlug = async (
     slug: string,
-    name: string
+    update: Partial<MongoGroup>
   ): Promise<MongoGroup | undefined> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
-      { $set: { name } }
+      { $set: update }
     );
     return group.value;
   };

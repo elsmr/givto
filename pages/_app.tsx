@@ -80,6 +80,10 @@ export default class GivtoApp extends App<
                 font-family: ${theme.fonts.body};
               }
 
+              textarea {
+                font-family: ${theme.fonts.body};
+              }
+
               body.modal-open {
                 overflow: hidden;
               }

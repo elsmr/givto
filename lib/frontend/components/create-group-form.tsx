@@ -1,8 +1,9 @@
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
+import { AuthContext } from '../auth/auth.util';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -133,9 +134,11 @@ export const CreateGroupForm: React.FC = () => {
     register,
     handleSubmit,
     errors,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
+    setValue
   } = useForm<FormValues>();
   const router = useRouter();
+  const { user } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
   const [createGroup] = useMutation<
     { createGroup: { slug: string } },
@@ -152,6 +155,7 @@ export const CreateGroupForm: React.FC = () => {
     });
     router.push(`/g/${result.data.createGroup.slug}?email=${creator.email}`);
   };
+
   const onInput = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
     if (
       event.target.value &&
@@ -161,6 +165,13 @@ export const CreateGroupForm: React.FC = () => {
       setInviteeAmount(inviteeAmount + 1);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      setValue('creator.name', user.name);
+      setValue('creator.email', user.email);
+    }
+  }, [user]);
 
   return (
     <>

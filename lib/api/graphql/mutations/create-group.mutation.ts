@@ -54,5 +54,5 @@ export const createGroup: Mutation<{
     });
   }
 
-  return mongoGroup ? mapGroup(mongoGroup) : null;
+  return mongoGroup ? mapGroup(mongoGroup, '') : null;
 };

@@ -6,11 +6,14 @@ import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
+import { Button } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { PageLoader } from '@givto/frontend/components/ui/loader';
 import { Popover } from '@givto/frontend/components/ui/popover';
+import { Wishlist } from '@givto/frontend/components/wishlist';
+import { WishlistForm } from '@givto/frontend/components/wishlist-form';
 import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -23,10 +26,24 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
         name,
         slug,
+        assignedAt,
         users {
             id,
             name,
             email
+        },
+        wishlist {
+          title
+          description
+        },
+        assignee {
+          user {
+            name
+          }
+          wishlist {
+            title
+            description
+          }
         }
     }
 }`;
@@ -34,6 +51,20 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
 const SET_GROUP_NAME_MUTATION = `mutation setGroupName($slug: String!, $name: String!) {
   setGroupName(slug: $slug, name: $name) {
       name
+  }
+}`;
+
+const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
+  assignUsersInGroup(slug: $slug) {
+      assignee {
+        user {
+          name
+        },
+        wishlist {
+          title
+          description
+        }
+      }
   }
 }`;
 
@@ -129,6 +160,7 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }>(GET_GROUP_QUERY, {
     variables: { slug }
   });
+  const [assignUsersMutation] = useMutation(START_ASSIGNMENT_MUTATION);
 
   if (groupLoading) {
     return <PageLoader key="loader" />;
@@ -153,6 +185,10 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
   }
 
   const group = groupResult.getGroup;
+
+  const startAssignment = () => {
+    assignUsersMutation({ variables: { slug } });
+  };
 
   return (
     <Layout display="flex" flexDirection="column">
@@ -208,32 +244,80 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
           ))}
         </BorderBox>
       </LayoutWrapper>
+
+      <LayoutWrapper marginBottom={4}>
+        <WishlistForm slug={slug} wishlist={group.wishlist} />
+      </LayoutWrapper>
+
+      {!group.assignedAt && (
+        <LayoutWrapper marginBottom={4} display="flex" justifyContent="center">
+          <Button onClick={startAssignment}>Start Secret Santa</Button>
+        </LayoutWrapper>
+      )}
+
+      {group.assignee && (
+        <LayoutWrapper marginBottom={4}>
+          <BorderBox p={3}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              borderBottomStyle="solid"
+              borderColor="black"
+              borderWidth={1}
+              paddingBottom={2}
+              marginBottom={3}
+            >
+              <Box as="h3" fontSize={4} marginRight={2}>
+                {group.assignee.user.name}'s Wishlist
+              </Box>
+            </Box>
+            <Wishlist wishlist={group.assignee.wishlist} />
+            {group.assignee.wishlist.length === 0 && (
+              <Box
+                minHeight="250px"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Box as="h4" fontWeight="normal" fontSize={3} marginBottom={2}>
+                  {group.assignee.user.name} has not entered a wishlist yet
+                </Box>
+                <Box>
+                  Gently nudge him or her to add some items to their wishlist 😉
+                </Box>
+              </Box>
+            )}
+          </BorderBox>
+        </LayoutWrapper>
+      )}
     </Layout>
   );
 };
 
 const GroupPage: NextPage = () => {
-  const { query, push, asPath } = useRouter();
+  const { query } = useRouter();
   const [checkedInvite, setCheckedInvite] = useState(false);
 
   useEffect(() => {
     console.log('start');
     const login = async () => {
-      if (query.invite) {
-        console.log(query.invite);
-        try {
-          const token = await AuthUtils.login(query.invite as string);
-          console.log('login success', token);
-          const cleanUrl = asPath.split('?')[0];
-          console.log(cleanUrl);
-          push(cleanUrl, cleanUrl, { shallow: true });
-        } catch (e) {}
+      if (query.slug) {
+        if (query.invite) {
+          console.log(query.invite);
+          try {
+            const token = await AuthUtils.login(query.invite as string);
+            console.log('login success', token);
+          } catch (e) {}
+        }
+        console.log('passed');
+
+        setCheckedInvite(true);
       }
-      console.log('passed');
-      setCheckedInvite(true);
     };
     login();
-  }, [query.invite]);
+  }, [query]);
 
   if (!query.slug || !checkedInvite) {
     return <PageLoader key="loader" />;

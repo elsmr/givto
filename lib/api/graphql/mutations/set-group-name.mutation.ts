@@ -25,11 +25,11 @@ export const setGroupName: Mutation<{
   ) {
     throw new AuthenticationError('No access to group');
   }
-  const updatedGroup = await groups.updateBySlug(slug, name);
+  const updatedGroup = await groups.updateBySlug(slug, { name });
 
   if (!updatedGroup) {
     return null;
   }
 
-  return updatedGroup ? mapGroup(updatedGroup) : null;
+  return updatedGroup ? mapGroup(updatedGroup, claims.sub) : null;
 };

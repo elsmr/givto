@@ -12,17 +12,19 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
     type="text"
     color="inherit"
     bg="transparent"
+    borderColor={props.borderColor || 'black'}
+    borderWidth={1}
+    borderStyle="solid"
     css={css({
       display: 'block',
       width: '100%',
       appearance: 'none',
       fontSize: 'inherit',
       lineHeight: 'inherit',
-      border: '2px solid',
       borderRadius: 'default',
-      borderColor: props.borderColor || 'black',
       boxShadow: 'none',
       outline: 'none',
+      resize: 'none',
       '&:focus': {
         borderColor: 'primary'
       },
