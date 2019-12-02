@@ -38,7 +38,7 @@ export const theme = {
     danger: '#FE7362',
     light: '#f7fafc',
     dark: '#2d3748',
-    textMuted: '#718096',
+    textMuted: '#66778A',
     primary: '#5A51FF',
     primaryMuted: '#837cff',
     secondary: '#FE7362'
