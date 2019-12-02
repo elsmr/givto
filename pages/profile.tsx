@@ -34,7 +34,7 @@ const EXPANDED_USER_QUERY = `query getCurrentUser {
   }
 }`;
 
-const UPDATE_USER_MUTATION = `mutation updateUser($email: String!, $update: UserUpdate) {
+const UPDATE_USER_MUTATION = `mutation updateUser($email: String!, $update: UserUpdate!) {
   updateUser(email: $email, update: $update) {
     name
   }
@@ -58,7 +58,9 @@ const ProfilePage: NextPage = () => {
   }, [user]);
 
   const onSubmit = (formValues: { name: string }) => {
-    updateUserMutation({ variables: { email: user.email, update: { name } } });
+    updateUserMutation({
+      variables: { email: user.email, update: { name: formValues.name } }
+    });
     setName(formValues.name);
   };
 

@@ -33,16 +33,16 @@ export const assignUsersInGroup: Mutation<{
   for (const user of usersInGroup) {
     const assignee = usersInGroupMap[assignments[user._id.toHexString()]];
 
-    // mailer.sendMail({
-    //   from: { name: 'Givto' },
-    //   to: { email: user.email, name: user.name },
-    //   subject: `You have to buy a gift for...`,
-    //   template: 'assigned',
-    //   variables: {
-    //     assignee: assignee.name,
-    //     link: `https://givto.app/g/${mongoGroup.slug}`
-    //   }
-    // });
+    mailer.sendMail({
+      from: { name: 'Givto' },
+      to: { email: user.email, name: user.name },
+      subject: `You have to buy a gift for...`,
+      template: 'assigned',
+      variables: {
+        assignee: assignee.name,
+        link: `https://givto.app/g/${mongoGroup.slug}`
+      }
+    });
   }
 
   console.log(updatedGroup);
