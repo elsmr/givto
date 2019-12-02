@@ -161,10 +161,18 @@ export default class GivtoApp extends App<
               href="/favicon-16x16.png"
             />
             <link rel="manifest" href="/givto.webmanifest" />
-            <link
-              href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=block"
+            <link rel="stylesheet" />
+
+            {/*
+            // @ts-ignore */ /* prettier-ignore */}
+            <link onload="this.media='all'"
               rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Lato:400,700&display=block"
+              media="print"
             />
+            <noscript>
+              <link rel="stylesheet" href="/path/to/my.css" />
+            </noscript>
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
           </Head>
