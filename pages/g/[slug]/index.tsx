@@ -265,7 +265,7 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
         </LayoutWrapper>
       )}
 
-      {group.assignee && (
+      {assignee && (
         <LayoutWrapper marginBottom={4}>
           <BorderBox p={3}>
             <Box
