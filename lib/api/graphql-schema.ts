@@ -2,7 +2,12 @@ import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
-import { MongoGroups, MongoLoginCodes, MongoUsers } from './data-sources/mongo';
+import {
+  MongoGroups,
+  MongoLoginCodes,
+  MongoUsers,
+  WishListItem
+} from './data-sources/mongo';
 import { Mailer } from './mail';
 
 export interface Invite {
@@ -24,12 +29,22 @@ export interface User {
   groups: string[];
 }
 
-export interface EnrichedUser {
+export type EnrichedUser = {
   id: string;
   email: string;
   name: string;
   groups: EnrichedGroup[];
+};
+
+export interface Assignee {
+  wishlist: WishListItem[];
+  user: string;
 }
+
+export type EnrichedAssignee = {
+  wishlist: WishListItem[];
+  user: User;
+};
 
 export interface Group {
   id: string;
@@ -38,16 +53,24 @@ export interface Group {
   users: string[];
   creator: string;
   options: {};
+  wishlist: WishListItem[];
+  assignedAt: Date | null;
+  createdAt: Date;
+  assignee: null | Assignee;
 }
 
-export interface EnrichedGroup {
+export type EnrichedGroup = {
   id: string;
   slug: string;
   name: string;
+  options: {};
   users: EnrichedUser[];
   creator: EnrichedUser;
-  options: {};
-}
+  wishlist: WishListItem[];
+  assignedAt: Date | null;
+  createdAt: Date;
+  assignee: null | EnrichedAssignee;
+};
 
 export interface UserInput {
   name: string;
@@ -74,11 +97,6 @@ export type ResolverObject<TRoot> = IResolverObject<TRoot, GivtoContext, null>;
 export const typeDefs = gql`
   scalar Date
 
-  type Invite {
-    user: User
-    group: Group
-  }
-
   type LoginCode {
     code: String
     user: User
@@ -89,13 +107,27 @@ export const typeDefs = gql`
     matchDate: Date
   }
 
+  type WishlistItem {
+    title: String!
+    description: String!
+  }
+
+  type Assignee {
+    user: User!
+    wishlist: [WishlistItem]!
+  }
+
   type Group {
     id: ID!
     slug: String!
     name: String!
     users: [User]!
-    creator: User
+    creator: User!
     options: GroupOptions!
+    assignee: Assignee
+    wishlist: [WishlistItem]!
+    assignedAt: Date
+    createdAt: Date!
   }
 
   type User {
@@ -121,11 +153,18 @@ export const typeDefs = gql`
     getCurrentUser: User
   }
 
+  input WishlistItemInput {
+    title: String!
+    description: String!
+  }
+
   type Mutation {
     createGroup(creator: UserInput!, invitees: [UserInput]!): Group
     createLoginCode(email: String!): Boolean
     updateUser(email: String!, update: UserUpdate!): User
     setGroupName(slug: String!, name: String!): Group
+    assignUsersInGroup(slug: String!): Group
+    setWishlist(slug: String!, wishlist: [WishlistItemInput]!): Group
   }
 `;
 
@@ -137,6 +176,7 @@ export const scalarResolvers = {
       return new Date(value);
     },
     serialize(value: Date) {
+      console.log({ value });
       return value.getTime();
     },
     parseLiteral(ast: ValueNode) {

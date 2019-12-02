@@ -12,7 +12,8 @@ const sizeToProps: Record<string, BoxProps> = {
     fontSize: 1
   },
   medium: {
-    p: 2,
+    py: 1,
+    px: 2,
     fontSize: 2
   }
 };

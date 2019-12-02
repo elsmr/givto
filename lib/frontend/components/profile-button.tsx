@@ -27,7 +27,6 @@ export const ProfileButton: React.FC<ProfileButtonProps> = ({
         flexShrink={0}
         display="flex"
         alignItems="center"
-        p={2}
         onClick={onLogin}
       >
         <LogIn size={16} />

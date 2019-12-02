@@ -10,9 +10,11 @@ import {
   typeDefs
 } from '@givto/api/graphql-schema';
 import { contextFactory } from '@givto/api/graphql/context.factory';
+import { assignUsersInGroup } from '@givto/api/graphql/mutations/assign-users-group.mutation';
 import { createGroup } from '@givto/api/graphql/mutations/create-group.mutation';
 import { createLoginCode } from '@givto/api/graphql/mutations/create-login-code.mutation';
 import { setGroupName } from '@givto/api/graphql/mutations/set-group-name.mutation';
+import { setWishlist } from '@givto/api/graphql/mutations/set-wishlist.mutation';
 import { updateUser } from '@givto/api/graphql/mutations/update-user.mutation';
 import { getCurrentUser } from '@givto/api/graphql/queries/get-current-user.query';
 import { getGroup } from '@givto/api/graphql/queries/get-group.query';
@@ -36,7 +38,9 @@ const resolvers: IResolvers<any, GivtoContext> = {
     updateUser,
     setGroupName,
     createGroup,
-    createLoginCode
+    createLoginCode,
+    assignUsersInGroup,
+    setWishlist
   }
 };
 
