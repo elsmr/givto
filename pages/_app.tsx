@@ -162,21 +162,9 @@ export default class GivtoApp extends App<
             />
             <link rel="manifest" href="/givto.webmanifest" />
             <link
-              rel="preload"
               href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=block"
-              as="style"
-              onLoad={event => {
-                const link = event.target as HTMLLinkElement;
-                link.onload = null;
-                link.rel = 'stylesheet';
-              }}
+              rel="stylesheet"
             />
-            <noscript>
-              <link
-                rel="stylesheet"
-                href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=block"
-              />
-            </noscript>
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
           </Head>
