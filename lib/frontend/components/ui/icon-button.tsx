@@ -32,6 +32,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       color="white"
       display="flex"
       alignItems="center"
+      flexShrink={0}
       {...sizeToProps[size as string]}
       css={css({
         '&:focus': {

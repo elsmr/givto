@@ -3,7 +3,6 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = withOffline({
   transformManifest: manifest => ['/'].concat(manifest),
-  generateInDevMode: true,
   workboxOpts: {
     swDest: 'static/service-worker.js',
     runtimeCaching: [

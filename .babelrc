@@ -3,6 +3,7 @@
   "plugins": [
     ["inline-react-svg", { "svgo": false }],
     "emotion",
-    "@babel/plugin-proposal-optional-chaining"
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-proposal-nullish-coalescing-operator"
   ]
 }

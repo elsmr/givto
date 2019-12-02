@@ -145,7 +145,8 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
   ): Promise<MongoUser | undefined> => {
     const user = await this.collection.findOneAndUpdate(
       { email },
-      { $set: update }
+      { $set: update },
+      { returnOriginal: false }
     );
     return user.value;
   };
@@ -193,7 +194,8 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   ): Promise<MongoGroup | undefined> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
-      { $set: update }
+      { $set: update },
+      { returnOriginal: false }
     );
     return group.value;
   };

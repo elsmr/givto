@@ -23,7 +23,7 @@ export const Avatar: React.FC<AvatarProps> = ({ name, size, ...props }) => {
       css={{ userSelect: 'none' }}
       {...props}
     >
-      {name[0]}
+      {name?.toUpperCase()[0] ?? '?'}
     </Box>
   );
 };
