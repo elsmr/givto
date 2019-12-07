@@ -5,7 +5,12 @@ export const createLoginCode: Mutation<{ email: string }> = async (
   { email },
   { dataSources: { users, loginCodes }, mailer }
 ): Promise<boolean> => {
-  const user = await users.findByEmail(email);
+  let user = await users.findByEmail(email);
+
+  if (!user) {
+    user = (await users.createUsers({ email, name: 'Anonymous' }))[0];
+  }
+  console.log(user);
 
   if (user) {
     const loginCode = await loginCodes.create(user._id);
