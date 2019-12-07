@@ -5,7 +5,6 @@ module.exports = withOffline({
   transformManifest: manifest => ['/'].concat(manifest),
   workboxOpts: {
     swDest: 'static/service-worker.js',
-    debug: false,
     runtimeCaching: [
       {
         urlPattern: /^https?.*/,
