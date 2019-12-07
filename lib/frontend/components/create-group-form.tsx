@@ -4,6 +4,7 @@ import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
 import { AuthContext } from '../auth/auth.util';
+import { LoginModal } from './login-modal';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -147,15 +148,36 @@ export const CreateGroupForm: React.FC = () => {
     errors,
     formState: { isSubmitting },
     setValue,
-    setError
+    setError,
+    getValues
   } = useForm<FormValues>();
   const router = useRouter();
   const { user } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
+  const [confirmEmail, setConfirmEmail] = useState('');
   const [createGroup] = useMutation<
     { createGroup: { slug: string } },
     FormValues
   >(CREATE_GROUP_MUTATION);
+
+  const submitGroup = async () => {
+    const { creator, invitees } = getValues({ nest: true });
+    const {
+      data: {
+        createGroup: { slug }
+      }
+    } = await createGroup({
+      variables: {
+        creator,
+        invitees: invitees.filter(
+          inv => emailRegex.test(inv.email) && inv.name.trim().length > 0
+        )
+      }
+    });
+    setConfirmEmail('');
+    router.push(`/g/${slug}`);
+  };
+
   const onSubmit = async ({ creator, invitees }: FormValues) => {
     const allUsers = [creator, ...invitees];
     const emailUserMap = allUsers.reduce(
@@ -178,16 +200,11 @@ export const CreateGroupForm: React.FC = () => {
       setError(fieldWithDuplicate, 'duplicate');
       return;
     }
-
-    const result = await createGroup({
-      variables: {
-        creator,
-        invitees: invitees.filter(
-          inv => emailRegex.test(inv.email) && inv.name.trim().length > 0
-        )
-      }
-    });
-    router.push(`/g/${result.data.createGroup.slug}?email=${creator.email}`);
+    if (user) {
+      submitGroup();
+    } else {
+      setConfirmEmail(creator.email);
+    }
   };
 
   const onInput = (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -214,7 +231,6 @@ export const CreateGroupForm: React.FC = () => {
         <ContactField
           id="creator"
           required
-          autoFocus
           namePlaceholder="Your Name"
           emailPlaceholder="Your Email Address"
           register={register}
@@ -242,14 +258,20 @@ export const CreateGroupForm: React.FC = () => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Box>
-            {isSubmitting && <Loader type="bar" />}
+          <Box marginRight={2}>
             <FormError errors={errors} />
           </Box>
 
-          <Button>Create</Button>
+          {isSubmitting ? <Loader type="bar" /> : <Button>Create</Button>}
         </Box>
       </Form>
+      {confirmEmail && (
+        <LoginModal
+          onLogin={submitGroup}
+          onClose={() => setConfirmEmail('')}
+          email={confirmEmail}
+        />
+      )}
     </>
   );
 };
