@@ -69,55 +69,6 @@ export default class GivtoApp extends App<
     return (
       <ThemeProvider theme={theme}>
         <>
-          <Global
-            styles={css`
-              html {
-                box-sizing: border-box;
-              }
-
-              body {
-                margin: 0;
-                font-family: ${theme.fonts.body};
-              }
-
-              textarea {
-                font-family: ${theme.fonts.body};
-              }
-
-              body.modal-open {
-                overflow: hidden;
-              }
-
-              h1,
-              h2,
-              h3,
-              h4 {
-                font-family: ${theme.fonts.heading};
-                margin: 0;
-              }
-
-              *,
-              *:before,
-              *:after {
-                box-sizing: inherit;
-              }
-
-              .sr-only {
-                border: 0;
-                clip: rect(0 0 0 0);
-                height: 1px;
-                margin: -1px;
-                overflow: hidden;
-                padding: 0;
-                position: absolute;
-                width: 1px;
-              }
-
-              ::selection {
-                background-color: ${theme.colors.primaryMuted};
-              }
-            `}
-          />
           <Head>
             <title>Givto - Secret Santa</title>
             <meta name="title" content="Givto - Secret Santa" />
@@ -161,21 +112,130 @@ export default class GivtoApp extends App<
               href="/favicon-16x16.png"
             />
             <link rel="manifest" href="/givto.webmanifest" />
-            <link rel="stylesheet" />
-
-            {/*
-            // @ts-ignore */ /* prettier-ignore */}
-            <link onload="this.media='all'"
-              rel="stylesheet"
-              href="https://fonts.googleapis.com/css?family=Lato:400,700&display=block"
-              media="print"
+            <link
+              rel="preload"
+              href="/fonts/lato-optimized.woff2"
+              as="font"
+              type="font/woff2"
             />
-            <noscript>
-              <link rel="stylesheet" href="/path/to/my.css" />
-            </noscript>
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+              (function() {
+                "use strict";
+                if( sessionStorage.fontsLoadedCriticalFoftPreloadFallback ) {
+                  document.documentElement.className += " fonts-loaded-2";
+                  return;
+                } else if( "fonts" in document ) {
+                  document.fonts.load("1em LatoSubset").then(function () {
+                    document.documentElement.className += " fonts-loaded-1";
+                    Promise.all([
+                      document.fonts.load("400 1em Lato"),
+                      document.fonts.load("700 1em Lato"),
+                      document.fonts.load("italic 1em Lato"),
+                      document.fonts.load("italic 700 1em Lato")
+                    ]).then(function () {
+                      document.documentElement.className += " fonts-loaded-2";
+                      // Optimization for Repeat Views
+                      sessionStorage.fontsLoadedCriticalFoftPreloadFallback = true;
+                    });
+                  });
+                } else {
+                  var ref = document.getElementsByTagName( "script" )[ 0 ];
+                  var script = document.createElement( "script" );
+                  script.src = "critical-foft-preload-fallback-optional.js";
+                  script.async = true;
+                  ref.parentNode.insertBefore( script, ref );
+                }
+              })();`
+              }}
+            />
           </Head>
+          <Global
+            styles={css`
+              @font-face {
+                font-family: LatoSubset;
+                src: url('fonts/lato-optimized.woff2') format('woff2'),
+                  url('fonts/lato-optimized.woff') format('woff');
+                unicode-range: U+65-90, U+97-122;
+              }
+              @font-face {
+                font-family: Lato;
+                src: url('fonts/lato-regular-webfont.woff2') format('woff2'),
+                  url('fonts/lato-regular-webfont.woff') format('woff');
+                font-display: swap;
+              }
+              @font-face {
+                font-family: Lato;
+                src: url('fonts/lato-bold-webfont.woff2') format('woff2'),
+                  url('fonts/lato-bold-webfont.woff') format('woff');
+                font-weight: 700;
+                font-display: swap;
+              }
+
+              html {
+                box-sizing: border-box;
+              }
+
+              body {
+                margin: 0;
+                font-family: ${theme.fonts.body};
+              }
+
+              textarea {
+                font-family: ${theme.fonts.body};
+              }
+
+              .fonts-loaded-1 h1,
+              .fonts-loaded-1 h2,
+              .fonts-loaded-1 h3,
+              .fonts-loaded-1 h4 {
+                font-family: LatoSubset;
+              }
+
+              .fonts-loaded-2 h1,
+              .fonts-loaded-2 h2,
+              .fonts-loaded-2 h3,
+              .fonts-loaded-2 h4 {
+                font-family: ${theme.fonts.heading};
+              }
+
+              body.modal-open {
+                overflow: hidden;
+              }
+
+              h1,
+              h2,
+              h3,
+              h4 {
+                margin: 0;
+              }
+
+              *,
+              *:before,
+              *:after {
+                box-sizing: inherit;
+              }
+
+              .sr-only {
+                border: 0;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+              }
+
+              ::selection {
+                background-color: ${theme.colors.primaryMuted};
+              }
+            `}
+          />
+
           <ClientContext.Provider value={client}>
             <AuthContext.Provider value={authContext}>
               <div id="app-wrapper">
@@ -194,6 +254,7 @@ export default class GivtoApp extends App<
                 "description": "Organize Secret Santa with your friends and family with ease.",
                 "genre": "family",
                 "browserRequirements": "Requires JavaScript. Requires HTML5",
+                "applicationCategory": "Productivity",
                 "softwareVersion": "0.0.1",
                 "softwareHelp": {
                   "@type": "CreativeWork",
