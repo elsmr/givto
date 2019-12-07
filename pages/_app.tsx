@@ -117,6 +117,7 @@ export default class GivtoApp extends App<
               href="/fonts/lato-optimized.woff2"
               as="font"
               type="font/woff2"
+              crossOrigin="anonymous"
             />
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
