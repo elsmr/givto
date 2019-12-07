@@ -183,6 +183,7 @@ export default class GivtoApp extends App<
               body {
                 margin: 0;
                 font-family: ${theme.fonts.body};
+                scroll-behavior: smooth;
               }
 
               textarea {
@@ -210,7 +211,8 @@ export default class GivtoApp extends App<
               h1,
               h2,
               h3,
-              h4 {
+              h4,
+              p {
                 margin: 0;
               }
 

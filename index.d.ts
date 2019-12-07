@@ -6,3 +6,7 @@ declare module '*.svg' {
 declare module '@styled-system/css' {
   export default (css: any) => any;
 }
+
+declare module 'tsconfig-paths-webpack-plugin' {
+  export default class {}
+}

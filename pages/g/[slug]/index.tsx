@@ -1,7 +1,6 @@
 import { EnrichedGroup } from '@givto/api/graphql-schema';
 import { AuthContext, AuthUtils } from '@givto/frontend/auth/auth.util';
 import { Header } from '@givto/frontend/components/header';
-import { LoginModal } from '@givto/frontend/components/login-modal';
 import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
@@ -146,11 +145,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
   );
 };
 
-const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
-  slug,
-  email
-}) => {
-  const router = useRouter();
+const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const { user, isLoading: userLoading } = useContext(AuthContext);
   const {
     data: groupResult,
@@ -176,14 +171,6 @@ const GroupPageContent: React.FC<{ slug: string; email: string }> = ({
         <LayoutWrapper>
           <Header />
         </LayoutWrapper>
-
-        <LoginModal
-          email={email}
-          onClose={() => router.push('/')}
-          onLogin={() => {
-            refetchGroup();
-          }}
-        />
       </Layout>
     );
   }
@@ -333,12 +320,7 @@ const GroupPage: NextPage = () => {
     return <PageLoader key="loader" />;
   }
 
-  return (
-    <GroupPageContent
-      slug={query.slug as string}
-      email={query.email as string}
-    />
-  );
+  return <GroupPageContent slug={query.slug as string} />;
 };
 
 export default GroupPage;
