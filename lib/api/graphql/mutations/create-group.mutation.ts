@@ -16,6 +16,7 @@ export const createGroup: Mutation<{
   const mongoCreator = mongoUsers.find(user => user.email === creator.email);
   const mongoInvitees = mongoUsers.filter(user => user.email !== creator.email);
   const mongoUserIds = mongoUsers.map(user => user._id);
+  console.log('created', mongoUsers.length, 'users');
 
   if (!mongoCreator) {
     return null;
@@ -40,19 +41,27 @@ export const createGroup: Mutation<{
     return null;
   }
 
+  const mailPromises: Promise<any>[] = [];
+
   for (const invitee of mongoInvitees) {
+    console.log('inviting', invitee.email);
     const inviteCode = await loginCodes.create(invitee._id, true);
-    mailer.sendMail({
-      from: { name: `${creator.name} via Givto` },
-      to: invitee,
-      subject: `You've been invited to a Secret Santa by ${creator.name}!`,
-      template: 'invite',
-      variables: {
-        creator: creator.name,
-        link: `https://givto.app/g/${mongoGroup.slug}?invite=${inviteCode}`
-      }
-    });
+    mailPromises.push(
+      mailer.sendMail({
+        from: { name: `${creator.name} via Givto` },
+        to: invitee,
+        subject: `You've been invited to a Secret Santa by ${creator.name}!`,
+        template: 'invite',
+        variables: {
+          creator: creator.name,
+          link: `https://givto.app/g/${mongoGroup.slug}?invite=${inviteCode}`
+        }
+      })
+    );
   }
+  console.log('waiting for emails...');
+  await Promise.all(mailPromises);
+  console.log('emails done');
 
   return mongoGroup ? mapGroup(mongoGroup, '') : null;
 };
