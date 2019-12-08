@@ -107,6 +107,7 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
   };
 
   createUsers = async (...users: UserInput[]): Promise<MongoUser[]> => {
+    console.log('creating users', users);
     try {
       await this.collection.insertMany(
         users.map(user => ({ ...user, groups: [] })),
