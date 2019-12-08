@@ -22,7 +22,7 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
       appearance: 'none',
       fontSize: 'inherit',
       lineHeight: 'inherit',
-      borderRadius: 'default',
+      borderRadius: 0,
       boxShadow: 'none',
       outline: 'none',
       resize: 'none',
