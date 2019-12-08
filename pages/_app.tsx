@@ -39,6 +39,7 @@ export default class GivtoApp extends App<
   }
 
   handleNewToken = async (token: Token | null, isLoading: boolean) => {
+    console.log('setting token context', token, isLoading);
     client.setHeaders(AuthUtils.getAuthHeaders(token));
     this.setState(prevState => ({
       ...prevState,
@@ -51,10 +52,12 @@ export default class GivtoApp extends App<
     }));
 
     if (token) {
+      console.log('getting user by token', token);
       const { data } = await client.request<{ getCurrentUser: User }>({
         query: AuthUtils.AUTH_QUERY
       });
       const user = data?.getCurrentUser || null;
+      console.log('set user in context', user);
       this.setState(prevState => ({
         ...prevState,
         authContext: { ...prevState.authContext, user, isLoading: false }
