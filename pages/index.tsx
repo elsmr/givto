@@ -10,20 +10,13 @@ import { Button } from '@givto/frontend/components/ui/button';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
 import React, { useContext, useRef, useState } from 'react';
+import AssignIllustration from '../assets/assign.svg';
 import GivtoLogo from '../assets/givto-logo.svg';
+import InviteIllustration from '../assets/invite.svg';
 
 const StyledLogo = styled(GivtoLogo)`
   transform: rotate(-15deg);
   width: 72px;
-`;
-
-const Columns = styled(Box)`
-  @media (min-width: 500px) {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 1rem;
-    grid-template-columns: repeat(3, 1fr);
-  }
 `;
 
 const Footer = styled(Box)`
@@ -36,11 +29,12 @@ const Footer = styled(Box)`
 export default () => {
   const { user, isLoading } = useContext(AuthContext);
   const [isLoginVisible, setIsLoginVisible] = useState(false);
-  const createGroupRef = useRef<HTMLElement>(null);
+  const createGroupRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Layout display="flex" flexDirection="column" justifyItems="stretch">
-      <LayoutWrapper marginBottom={4}>
+      <LayoutWrapper marginBottom={5}>
         <Header
           actions={
             <ProfileButton
@@ -52,53 +46,107 @@ export default () => {
         />
       </LayoutWrapper>
 
-      <LayoutWrapper as="main" flexGrow={1}>
-        <Box
-          height="40vh"
-          minHeight="400px"
-          marginBottom={5}
-          display="flex"
-          alignItems="center"
-        >
-          <Box>
-            <Box
-              as="p"
-              fontSize={[5, 6]}
-              fontFamily="heading"
-              fontWeight="bold"
-              lineHeight="body"
-              marginBottom={4}
-              maxWidth="80%"
-            >
-              Organize Secret Santa with your friends and family with ease.
+      <Box as="main" flexGrow={1}>
+        <LayoutWrapper marginBottom={5}>
+          <Box
+            height="40vh"
+            minHeight="400px"
+            display="flex"
+            alignItems="center"
+          >
+            <Box>
+              <Box
+                as="p"
+                fontSize={[5, 6]}
+                fontFamily="heading"
+                fontWeight="bold"
+                lineHeight="body"
+                marginBottom={4}
+                maxWidth="80%"
+              >
+                Organize Secret Santa with your friends and family with ease.
+              </Box>
+              <Button
+                onClick={() => {
+                  inputRef.current?.focus();
+                  createGroupRef.current?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                  });
+                }}
+              >
+                Get Started
+              </Button>
             </Box>
-            <Button
-              onClick={() => {
-                createGroupRef.current?.scrollIntoView({
-                  behavior: 'smooth',
-                  block: 'center',
-                  inline: 'center'
-                });
-              }}
-            >
-              Get Started
-            </Button>
           </Box>
+        </LayoutWrapper>
+
+        <Box
+          bg="primary"
+          marginBottom={6}
+          py={5}
+          borderTopStyle="solid"
+          borderBottomStyle="solid"
+          borderColor="black"
+          borderWidth={1}
+          color="white"
+        >
+          <LayoutWrapper>
+            <Box
+              display="flex"
+              flexWrap="wrap"
+              alignItems="center"
+              marginBottom={5}
+            >
+              <Box
+                paddingRight={[4, 5]}
+                flexBasis={['100%', '50%']}
+                order={[2, 1]}
+              >
+                <InviteIllustration style={{ width: '100%' }} />
+              </Box>
+
+              <Box flexBasis={['100%', '50%']} order={[1, 2]}>
+                <Box as="h3" fontSize={5} marginBottom={3}>
+                  Invite your friends
+                </Box>
+
+                <Box as="p" lineHeight="body" fontSize={3}>
+                  Invite all your friends and family via email. They will all be
+                  able to enter their wishlists in private.
+                </Box>
+              </Box>
+            </Box>
+            <Box display="flex" flexWrap="wrap" alignItems="center">
+              <Box paddingRight={[4, 5]} flexBasis={['100%', '50%']}>
+                <Box as="h3" fontSize={5} marginBottom={3}>
+                  Randomly assign gift givers
+                </Box>
+
+                <Box as="p" lineHeight="body" fontSize={3}>
+                  With the press of a button Givto will randomly assign everyone
+                  someone to give a gift. The identity of the gift giver remains
+                  a secret.
+                </Box>
+              </Box>
+
+              <Box flexBasis={['100%', '50%']}>
+                <AssignIllustration style={{ width: '100%' }} />
+              </Box>
+            </Box>
+          </LayoutWrapper>
         </Box>
 
-        {/* <Columns height="40vh" marginBottom={5}>
-          <Box border="1px solid black">Column 1</Box>
-          <Box border="1px solid black">Column 2</Box>
-          <Box border="1px solid black">Column 3</Box>
-        </Columns> */}
-
-        <BorderBox p={4} marginBottom={5}>
-          <Box ref={createGroupRef} as="h2" marginBottom={3} fontSize={5}>
-            Create your Group
-          </Box>
-          <CreateGroupForm />
-        </BorderBox>
-      </LayoutWrapper>
+        <LayoutWrapper marginBottom={6}>
+          <BorderBox p={4}>
+            <Box as="h2" marginBottom={3} fontSize={5}>
+              Create your Group
+            </Box>
+            <CreateGroupForm ref={createGroupRef} inputRef={inputRef} />
+          </BorderBox>
+        </LayoutWrapper>
+      </Box>
 
       <Footer bg="primary">
         <LayoutWrapper

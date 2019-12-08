@@ -2,7 +2,7 @@ import { Box, BoxProps } from './box';
 
 export const LayoutWrapper: React.FC<BoxProps> = props => (
   <Box
-    maxWidth="1200px"
+    maxWidth="960px"
     minWidth="320px"
     p={3}
     mx="auto"

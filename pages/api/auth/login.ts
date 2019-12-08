@@ -1,4 +1,9 @@
-import { getMongoDb, MongoLoginCodes, MongoRefreshTokens, MongoUsers } from '@givto/api/data-sources/mongo';
+import {
+  getMongoDb,
+  MongoLoginCodes,
+  MongoRefreshTokens,
+  MongoUsers
+} from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
 import ms from 'ms';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -66,7 +71,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const refreshToken = await refreshTokens.create(user._id);
       res.setHeader(
         'Set-Cookie',
-        `refresh_token=${refreshToken};HttpOnly${process.env.NODE_ENV === 'development' ? '' : ';secure'}`
+        `refresh_token=${refreshToken};HttpOnly${
+          process.env.NODE_ENV === 'development' ? '' : ';secure'
+        }`
       );
 
       res.json({ token, exp });

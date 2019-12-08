@@ -1,6 +1,12 @@
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  RefObject,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
 import { AuthContext } from '../auth/auth.util';
@@ -83,6 +89,7 @@ interface ContactFieldProps {
   autoFocus?: boolean;
   required?: boolean;
   errors: Errors;
+  inputRef?: RefObject<HTMLInputElement>;
 }
 
 const ContactField: React.FC<ContactFieldProps> = ({
@@ -93,7 +100,8 @@ const ContactField: React.FC<ContactFieldProps> = ({
   onInput,
   autoFocus,
   required,
-  errors
+  errors,
+  inputRef
 }) => {
   return (
     <Box display="flex" flexDirection={['column', 'row']} marginBottom={3}>
@@ -106,7 +114,12 @@ const ContactField: React.FC<ContactFieldProps> = ({
         borderColor={errors[`${id}.name`] ? 'danger' : 'black'}
         placeholder={namePlaceholder}
         autoFocus={autoFocus}
-        ref={register({ required })}
+        ref={(element: HTMLInputElement) => {
+          register(element, { required });
+          if (inputRef) {
+            (inputRef as any).current = element;
+          }
+        }}
         onInput={onInput}
       />
       <Input
@@ -141,7 +154,12 @@ const PlaceholderContactField: React.FC = () => {
   );
 };
 
-export const CreateGroupForm: React.FC = () => {
+export const CreateGroupForm = React.forwardRef<
+  HTMLFormElement,
+  {
+    inputRef?: RefObject<HTMLInputElement>;
+  }
+>(({ inputRef }, ref) => {
   const {
     register,
     handleSubmit,
@@ -154,8 +172,8 @@ export const CreateGroupForm: React.FC = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
-  const [confirmEmail, setConfirmEmail] = useState('');
-  const [createGroup] = useMutation<
+  const [confirmCreator, setConfirmCreator] = useState<Contact | null>(null);
+  const [createGroup, { loading }] = useMutation<
     { createGroup: { slug: string } },
     FormValues
   >(CREATE_GROUP_MUTATION);
@@ -174,7 +192,7 @@ export const CreateGroupForm: React.FC = () => {
         )
       }
     });
-    setConfirmEmail('');
+    setConfirmCreator(null);
     router.push(`/g/${slug}`);
   };
 
@@ -203,7 +221,7 @@ export const CreateGroupForm: React.FC = () => {
     if (user) {
       submitGroup();
     } else {
-      setConfirmEmail(creator.email);
+      setConfirmCreator(creator);
     }
   };
 
@@ -226,7 +244,7 @@ export const CreateGroupForm: React.FC = () => {
 
   return (
     <>
-      <Form onSubmit={handleSubmit(onSubmit)}>
+      <Form ref={ref} onSubmit={handleSubmit(onSubmit)}>
         <FormSectionTitle>What's your name?</FormSectionTitle>
         <ContactField
           id="creator"
@@ -235,6 +253,7 @@ export const CreateGroupForm: React.FC = () => {
           emailPlaceholder="Your Email Address"
           register={register}
           errors={errors}
+          inputRef={inputRef}
         />
         <FormSectionTitle>Invite your friends</FormSectionTitle>
         {new Array(inviteeAmount).fill(null).map((_, index) => (
@@ -262,16 +281,22 @@ export const CreateGroupForm: React.FC = () => {
             <FormError errors={errors} />
           </Box>
 
-          {isSubmitting ? <Loader type="bar" /> : <Button>Create</Button>}
+          {isSubmitting || loading ? (
+            <Loader type="bar" />
+          ) : (
+            <Button>Create</Button>
+          )}
         </Box>
       </Form>
-      {confirmEmail && (
+      {confirmCreator && (
         <LoginModal
           onLogin={submitGroup}
-          onClose={() => setConfirmEmail('')}
-          email={confirmEmail}
+          onClose={() => setConfirmCreator(null)}
+          email={confirmCreator.email}
+          name={confirmCreator.name}
+          isLoading={loading}
         />
       )}
     </>
   );
-};
+});

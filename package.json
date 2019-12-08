@@ -32,6 +32,8 @@
     "mjml": "4.5.1",
     "mongodb": "3.3.5",
     "ms": "2.1.2",
+    "nanoid": "2.1.7",
+    "nanoid-dictionary": "2.0.0",
     "next": "9.1.4",
     "next-offline": "4.0.6",
     "node-fetch": "2.6.0",
@@ -46,8 +48,7 @@
     "rebass": "4.0.7",
     "smoothscroll-polyfill": "0.4.4",
     "styled-system": "5.1.2",
-    "unfetch": "4.1.0",
-    "uuid": "3.3.3"
+    "unfetch": "4.1.0"
   },
   "browser": {
     "graphql-hooks-ssr": false
@@ -58,13 +59,13 @@
     "@emotion/babel-preset-css-prop": "10.0.23",
     "@types/jsonwebtoken": "8.3.5",
     "@types/ms": "0.7.31",
+    "@types/nanoid": "2.1.0",
     "@types/node": "12.12.14",
     "@types/node-fetch": "2.5.4",
     "@types/react": "16.9.13",
     "@types/react-dom": "16.9.4",
     "@types/smoothscroll-polyfill": "0.3.1",
     "@types/styled-system": "5.1.4",
-    "@types/uuid": "3.4.6",
     "babel-plugin-emotion": "10.0.23",
     "babel-plugin-inline-react-svg": "1.1.0",
     "tsconfig-paths-webpack-plugin": "3.2.0",

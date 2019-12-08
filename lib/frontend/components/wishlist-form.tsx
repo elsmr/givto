@@ -68,12 +68,6 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
         <Box as="h3" fontSize={4} marginRight={2}>
           Your Wishlist
         </Box>
-        {!isAdding && (
-          <IconButton onClick={() => setIsAdding(true)}>
-            <Plus />
-            <Box px={2}>Add</Box>
-          </IconButton>
-        )}
       </Box>
       <Box>
         <Box maxHeight="400px" overflowY="auto">
@@ -87,13 +81,29 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
         {wishlist.length === 0 && !isAdding && (
           <Box
             display="flex"
+            flexDirection="column"
             minHeight="200px"
             alignItems="center"
             justifyContent="center"
           >
-            <Box fontSize={3} as="p">
+            <Box fontSize={3} as="p" marginBottom={3}>
               Your wishlist is empty 😧
             </Box>
+            {!isAdding && (
+              <IconButton onClick={() => setIsAdding(true)}>
+                <Plus />
+                <Box px={2}>Add</Box>
+              </IconButton>
+            )}
+          </Box>
+        )}
+
+        {!isAdding && wishlist.length !== 0 && (
+          <Box display="flex" justifyContent="center">
+            <IconButton onClick={() => setIsAdding(true)}>
+              <Plus />
+              <Box px={2}>Add</Box>
+            </IconButton>
           </Box>
         )}
 
