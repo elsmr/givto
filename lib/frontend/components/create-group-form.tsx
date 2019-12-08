@@ -180,6 +180,8 @@ export const CreateGroupForm = React.forwardRef<
 
   const submitGroup = async () => {
     const { creator, invitees } = getValues({ nest: true });
+    router.prefetch('/g/any');
+
     const {
       data: {
         createGroup: { slug }
@@ -192,8 +194,8 @@ export const CreateGroupForm = React.forwardRef<
         )
       }
     });
-    setConfirmCreator(null);
     router.push(`/g/${slug}`);
+    setConfirmCreator(null);
   };
 
   const onSubmit = async ({ creator, invitees }: FormValues) => {
@@ -281,11 +283,7 @@ export const CreateGroupForm = React.forwardRef<
             <FormError errors={errors} />
           </Box>
 
-          {isSubmitting || loading ? (
-            <Loader type="bar" />
-          ) : (
-            <Button>Create</Button>
-          )}
+          {isSubmitting ? <Loader type="bar" /> : <Button>Create</Button>}
         </Box>
       </Form>
       {confirmCreator && (
