@@ -30,22 +30,26 @@ export const assignUsersInGroup: Mutation<{
     {} as Record<string, MongoUser>
   );
 
+  const mailPromises: Promise<any>[] = [];
   for (const user of usersInGroup) {
     const assignee = usersInGroupMap[assignments[user._id.toHexString()]];
 
-    mailer.sendMail({
-      from: { name: 'Givto' },
-      to: { email: user.email, name: user.name },
-      subject: `You have to buy a gift for...`,
-      template: 'assigned',
-      variables: {
-        assignee: assignee.name,
-        link: `https://givto.app/g/${mongoGroup.slug}`
-      }
-    });
+    mailPromises.push(
+      mailer.sendMail({
+        from: { name: 'Givto' },
+        to: { email: user.email, name: user.name },
+        subject: `You have to buy a gift for...`,
+        template: 'assigned',
+        variables: {
+          assignee: assignee.name,
+          link: `https://givto.app/g/${mongoGroup.slug}`
+        }
+      })
+    );
   }
 
   console.log(updatedGroup);
+  await Promise.all(mailPromises);
 
   return updatedGroup ? mapGroup(updatedGroup, claims.sub) : null;
 };
