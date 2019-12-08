@@ -31,7 +31,7 @@ export class Mailer {
     text,
     variables,
     template
-  }: SendMailOptions): Promise<boolean> {
+  }: SendMailOptions): Promise<any> {
     const headers = new Headers();
     const formData = new FormData();
     const { name, email } = { ...from, ...this.options.from };
@@ -55,9 +55,6 @@ export class Mailer {
       headers,
       method: 'POST',
       body: formData
-    })
-      .then(res => res.json())
-      .then(console.log)
-      .then(Boolean);
+    }).then(res => res.json());
   }
 }

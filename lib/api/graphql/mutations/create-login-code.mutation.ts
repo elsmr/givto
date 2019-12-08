@@ -21,7 +21,7 @@ export const createLoginCode: Mutation<{
   if (user) {
     const loginCode = await loginCodes.create(user._id);
     console.log('Sending email', loginCode, email);
-    mailer.sendMail({
+    const result = await mailer.sendMail({
       to: { name: user.name, email: user.email },
       subject: 'Your Temporary Givto Login Code',
       template: 'login-code',
@@ -29,6 +29,8 @@ export const createLoginCode: Mutation<{
         loginCode
       }
     });
+
+    console.log(result);
   }
 
   return true;
