@@ -1,5 +1,5 @@
 import { MongoUser } from '@givto/api/data-sources/mongo';
-import { assignSecretSantas } from '@givto/api/secret-santa.util';
+import { assignSecretSantas } from '@givto/api/util/secret-santa.util';
 import { AuthenticationError } from 'apollo-server-micro';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation } from '../../graphql-schema';

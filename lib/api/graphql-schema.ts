@@ -2,12 +2,7 @@ import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
-import {
-  MongoGroups,
-  MongoLoginCodes,
-  MongoUsers,
-  WishListItem
-} from './data-sources/mongo';
+import { MongoGroups, MongoLoginCodes, MongoUsers, WishListItem } from './data-sources/mongo';
 import { Mailer } from './mail';
 
 export interface Invite {
@@ -160,7 +155,7 @@ export const typeDefs = gql`
 
   type Mutation {
     createGroup(creator: UserInput!, invitees: [UserInput]!): Group
-    createLoginCode(email: String!): Boolean
+    createLoginCode(email: String!, name: String): Boolean
     updateUser(email: String!, update: UserUpdate!): User
     setGroupName(slug: String!, name: String!): Group
     assignUsersInGroup(slug: String!): Group

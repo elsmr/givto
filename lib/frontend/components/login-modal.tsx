@@ -6,32 +6,49 @@ import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Link } from './ui/link';
+import { Loader } from './ui/loader';
 import { Modal } from './ui/modal';
 
-const GET_LOGIN_CODE_MUTATION = `mutation createLoginCode($email: String!) {
-    createLoginCode(email: $email)
+const GET_LOGIN_CODE_MUTATION = `mutation createLoginCode($email: String!, $name: String) {
+    createLoginCode(email: $email, name: $name)
  }`;
 
 interface LoginModalProps {
+  name?: string;
   email?: string;
+  isLoading?: boolean;
   onLogin: () => void;
   onClose: () => void;
 }
 
 interface LoginFormProps {
+  name?: string;
   email: string;
+  isLoading?: boolean;
   onLogin: () => void;
 }
 
 const Form = Box.withComponent('form');
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin, email }) => {
-  const { handleSubmit, register, setError, errors } = useForm<{
+const LoginForm: React.FC<LoginFormProps> = ({
+  onLogin,
+  email,
+  name,
+  isLoading
+}) => {
+  const {
+    handleSubmit,
+    register,
+    setError,
+    errors,
+    formState: { isSubmitting }
+  } = useForm<{
     logincode: string;
   }>();
-  const [createLoginCode] = useMutation<boolean, { email: string }>(
-    GET_LOGIN_CODE_MUTATION
-  );
+  const [createLoginCode, { loading }] = useMutation<
+    boolean,
+    { email: string; name: string }
+  >(GET_LOGIN_CODE_MUTATION);
 
   const onSubmit = async (values: { logincode: string }) => {
     try {
@@ -42,7 +59,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, email }) => {
     }
   };
   const sendEmail = () => {
-    createLoginCode({ variables: { email } });
+    createLoginCode({ variables: { email, name: name || '' } });
   };
 
   useEffect(sendEmail, []);
@@ -72,7 +89,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, email }) => {
         </Box>
       </Box>
       <Box display="flex" justifyContent="flex-end">
-        <Button>Confirm</Button>
+        {isSubmitting || loading || isLoading ? (
+          <Box py={2}>
+            <Loader type="bar" />
+          </Box>
+        ) : (
+          <Button>Confirm</Button>
+        )}
       </Box>
     </Form>
   );
@@ -118,14 +141,21 @@ const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
 export const LoginModal: React.FC<LoginModalProps> = ({
   onLogin,
   email: emailProp,
-  onClose
+  name,
+  onClose,
+  isLoading
 }) => {
   const [email, setEmail] = useState(emailProp);
 
   return (
     <Modal title={email ? 'Confirm Email Address' : 'Login'} onClose={onClose}>
       {email ? (
-        <LoginForm email={email} onLogin={onLogin} />
+        <LoginForm
+          isLoading={isLoading}
+          name={name}
+          email={email}
+          onLogin={onLogin}
+        />
       ) : (
         <EmailForm onSubmit={setEmail} />
       )}

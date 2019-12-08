@@ -147,11 +147,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
 
 const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const { user, isLoading: userLoading } = useContext(AuthContext);
-  const {
-    data: groupResult,
-    loading: groupLoading,
-    refetch: refetchGroup
-  } = useQuery<{
+  const { data: groupResult, loading: groupLoading } = useQuery<{
     getGroup: EnrichedGroup;
   }>(GET_GROUP_QUERY, {
     variables: { slug }
@@ -295,13 +291,14 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
 
 const GroupPage: NextPage = () => {
   const { query } = useRouter();
+  const { token } = useContext(AuthContext);
   const [checkedInvite, setCheckedInvite] = useState(false);
 
   useEffect(() => {
     console.log('start');
     const login = async () => {
       if (query.slug) {
-        if (query.invite) {
+        if (query.invite && !token) {
           console.log(query.invite);
           try {
             const token = await AuthUtils.login(query.invite as string);

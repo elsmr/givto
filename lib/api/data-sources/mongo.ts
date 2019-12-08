@@ -1,8 +1,8 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { Collection, Db, MongoClient, MongoError, ObjectID } from 'mongodb';
 import ms from 'ms';
-import uuid from 'uuid/v4';
 import { GivtoContext, UserInput } from '../graphql-schema';
+import { randomString } from '../util/random-string.util';
 
 interface MongoEntity {
   _id: ObjectID;
@@ -207,7 +207,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
   }
 
   create = async (id: ObjectID, isInvite = false): Promise<string> => {
-    const code = uuid();
+    const code = randomString(isInvite ? 21 : 11);
     await this.collection.insertOne({
       code,
       userId: id,
@@ -233,7 +233,7 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
   }
 
   create = async (userId: ObjectID): Promise<string> => {
-    const token = uuid();
+    const token = randomString();
     await this.collection.insertOne({
       token,
       userId,

@@ -8,6 +8,7 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
   <Box
     ref={ref}
     as="input"
+    m={0}
     p={2}
     type="text"
     color="inherit"

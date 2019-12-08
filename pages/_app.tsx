@@ -158,20 +158,20 @@ export default class GivtoApp extends App<
             styles={css`
               @font-face {
                 font-family: LatoSubset;
-                src: url('fonts/lato-optimized.woff2') format('woff2'),
-                  url('fonts/lato-optimized.woff') format('woff');
+                src: url('/fonts/lato-optimized.woff2') format('woff2'),
+                  url('/fonts/lato-optimized.woff') format('woff');
                 unicode-range: U+65-90, U+97-122;
               }
               @font-face {
                 font-family: Lato;
-                src: url('fonts/lato-regular-webfont.woff2') format('woff2'),
-                  url('fonts/lato-regular-webfont.woff') format('woff');
+                src: url('/fonts/lato-regular-webfont.woff2') format('woff2'),
+                  url('/fonts/lato-regular-webfont.woff') format('woff');
                 font-display: swap;
               }
               @font-face {
                 font-family: Lato;
-                src: url('fonts/lato-bold-webfont.woff2') format('woff2'),
-                  url('fonts/lato-bold-webfont.woff') format('woff');
+                src: url('/fonts/lato-bold-webfont.woff2') format('woff2'),
+                  url('/fonts/lato-bold-webfont.woff') format('woff');
                 font-weight: 700;
                 font-display: swap;
               }

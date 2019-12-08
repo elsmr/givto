@@ -1,16 +1,18 @@
 import { Mutation } from '../../graphql-schema';
 
-export const createLoginCode: Mutation<{ email: string }> = async (
+export const createLoginCode: Mutation<{
+  email: string;
+  name?: string;
+}> = async (
   _,
-  { email },
+  { email, name },
   { dataSources: { users, loginCodes }, mailer }
 ): Promise<boolean> => {
   let user = await users.findByEmail(email);
 
   if (!user) {
-    user = (await users.createUsers({ email, name: 'Anonymous' }))[0];
+    user = (await users.createUsers({ email, name: name || 'Anonymous' }))[0];
   }
-  console.log(user);
 
   if (user) {
     const loginCode = await loginCodes.create(user._id);
