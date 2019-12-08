@@ -1,6 +1,6 @@
 import { User } from '@givto/api/graphql-schema';
 import NextLink from 'next/link';
-import { LogIn } from 'react-feather';
+import { ArrowRight } from 'react-feather';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
@@ -29,7 +29,7 @@ export const ProfileButton: React.FC<ProfileButtonProps> = ({
         alignItems="center"
         onClick={onLogin}
       >
-        <LogIn size={16} />
+        <ArrowRight size={16} />
         <Box fontSize={2} px={2}>
           Login
         </Box>
