@@ -10,12 +10,17 @@ export const createLoginCode: Mutation<{
 ): Promise<boolean> => {
   let user = await users.findByEmail(email);
 
+  console.log('Initial user', user);
+
   if (!user) {
+    console.log('no user found for', email);
     user = (await users.createUsers({ email, name: name || 'Anonymous' }))[0];
+    console.log('created user', user);
   }
 
   if (user) {
     const loginCode = await loginCodes.create(user._id);
+    console.log('Sending email', loginCode, email);
     mailer.sendMail({
       to: { name: user.name, email: user.email },
       subject: 'Your Temporary Givto Login Code',
