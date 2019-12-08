@@ -173,15 +173,15 @@ export const CreateGroupForm = React.forwardRef<
   const { user } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
   const [confirmCreator, setConfirmCreator] = useState<Contact | null>(null);
-  const [createGroup, { loading }] = useMutation<
+  const [createGroup] = useMutation<
     { createGroup: { slug: string } },
     FormValues
   >(CREATE_GROUP_MUTATION);
+  const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
 
   const submitGroup = async () => {
+    setIsSubmittingGroup(true);
     const { creator, invitees } = getValues({ nest: true });
-    router.prefetch('/g/any');
-
     const {
       data: {
         createGroup: { slug }
@@ -194,7 +194,8 @@ export const CreateGroupForm = React.forwardRef<
         )
       }
     });
-    router.push(`/g/${slug}`);
+    await router.push(`/g/${slug}`);
+    setIsSubmittingGroup(false);
     setConfirmCreator(null);
   };
 
@@ -292,7 +293,7 @@ export const CreateGroupForm = React.forwardRef<
           onClose={() => setConfirmCreator(null)}
           email={confirmCreator.email}
           name={confirmCreator.name}
-          isLoading={loading}
+          isLoading={isSubmittingGroup}
         />
       )}
     </>
