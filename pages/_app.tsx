@@ -11,7 +11,6 @@ import {
 import { theme } from '@givto/frontend/theme';
 import { ThemeProvider } from 'emotion-theming';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
-import { unregister } from 'next-offline/runtime';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
@@ -31,7 +30,6 @@ export default class GivtoApp extends App<
   };
 
   componentDidMount(): void {
-    unregister();
     console.log('initial token', this.state.authContext.token);
     this.handleNewToken(
       this.state.authContext.token,
