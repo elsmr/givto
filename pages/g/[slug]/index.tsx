@@ -1,5 +1,5 @@
 import { EnrichedGroup, UserInput } from '@givto/api/graphql-schema';
-import { AuthContext, AuthUtils } from '@givto/frontend/auth/auth.util';
+import { AuthContext, AuthUtils, Token } from '@givto/frontend/auth/auth.util';
 import { ErrorPage } from '@givto/frontend/components/error';
 import { Header } from '@givto/frontend/components/header';
 import { InviteModal } from '@givto/frontend/components/invite-modal';
@@ -20,7 +20,7 @@ import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import useForm from 'react-hook-form';
 
@@ -199,11 +199,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
                     <Settings /> <Box px={2}>Settings</Box>
                   </IconButton>
                 </NextLink> */}
-                <ProfileButton
-                  user={user}
-                  isLoading={userLoading}
-                  onLogin={() => {}}
-                />
+                <ProfileButton />
               </Box>
             }
           />
@@ -258,28 +254,6 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
         <WishlistForm slug={slug} wishlist={group.wishlist} />
       </LayoutWrapper>
 
-      {!assignedAt && isCreator && (
-        <LayoutWrapper
-          marginBottom={4}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-        >
-          {!assignmentLoading ? (
-            <>
-              <Button onClick={startAssignment} marginBottom={3}>
-                Start Secret Santa
-              </Button>
-              <Box color="textMuted" fontSize={1}>
-                This action will assign gift givers and notify everyone by email
-              </Box>
-            </>
-          ) : (
-            <Loader type="box" />
-          )}
-        </LayoutWrapper>
-      )}
-
       {assignee && (
         <LayoutWrapper marginBottom={4}>
           <BorderBox p={3}>
@@ -317,6 +291,29 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
           </BorderBox>
         </LayoutWrapper>
       )}
+
+      {isCreator && (
+        <LayoutWrapper
+          marginBottom={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
+          {!assignmentLoading ? (
+            <>
+              <Button onClick={startAssignment} marginBottom={3}>
+                {assignedAt ? 'Restart' : 'Start'} Secret Santa
+              </Button>
+              <Box color="textMuted" fontSize={1}>
+                This action will assign gift givers and notify everyone by email
+              </Box>
+            </>
+          ) : (
+            <Loader type="box" />
+          )}
+        </LayoutWrapper>
+      )}
+
       {showInviteModal && (
         <InviteModal
           slug={group.slug}
@@ -332,31 +329,33 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
 };
 
 const GroupPage: NextPage = () => {
-  const { query } = useRouter();
-  const { token } = useContext(AuthContext);
+  const { query, push, asPath } = useRouter();
+  const { isInitialized, token } = useContext(AuthContext);
   const [checkedInvite, setCheckedInvite] = useState(false);
+  const tokenRef = useRef<Token | null>(null);
 
   useEffect(() => {
-    console.log('start');
     const login = async () => {
       if (query.slug) {
         if (query.invite && !token) {
-          console.log(query.invite);
           try {
-            const token = await AuthUtils.login(query.invite as string);
-            console.log('login success', token);
+            tokenRef.current = await AuthUtils.login(query.invite as string);
           } catch (e) {}
         }
-        console.log('passed');
-
         setCheckedInvite(true);
       }
     };
     login();
   }, [query]);
 
-  if (!query.slug || !checkedInvite) {
+  if (!query.slug || !checkedInvite || !isInitialized) {
     return <PageLoader key="loader" />;
+  }
+
+  console.log(isInitialized, token, tokenRef);
+
+  if (!token && !tokenRef.current) {
+    push(`/login?redirect=${asPath}`);
   }
 
   return <GroupPageContent slug={query.slug as string} />;

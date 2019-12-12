@@ -1,39 +1,31 @@
-import { User } from '@givto/api/graphql-schema';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useContext } from 'react';
 import { ArrowRight } from 'react-feather';
+import { AuthContext } from '../auth/auth.util';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
 import { Link } from './ui/link';
 
-interface ProfileButtonProps {
-  user: User | null;
-  isLoading: boolean;
-  onLogin: () => void;
-}
+export const ProfileButton: React.FC = () => {
+  const { asPath } = useRouter();
+  const { user, isLoading, isInitialized } = useContext(AuthContext);
 
-export const ProfileButton: React.FC<ProfileButtonProps> = ({
-  isLoading,
-  user,
-  onLogin
-}) => {
-  if (isLoading) {
+  if (isLoading || !isInitialized) {
     return null;
   }
 
   if (!user) {
     return (
-      <IconButton
-        flexShrink={0}
-        display="flex"
-        alignItems="center"
-        onClick={onLogin}
-      >
-        <ArrowRight size={16} />
-        <Box fontSize={2} px={2}>
-          Login
-        </Box>
-      </IconButton>
+      <NextLink href={`/login?redirect=${asPath}`} passHref>
+        <IconButton as="a" flexShrink={0} display="flex" alignItems="center">
+          <ArrowRight size={16} />
+          <Box fontSize={2} px={2}>
+            Sign In
+          </Box>
+        </IconButton>
+      </NextLink>
     );
   }
 

@@ -11,13 +11,14 @@ export interface Token {
 
 export interface IAuthContext {
   isLoading: boolean;
+  isInitialized: boolean;
   token: Token | null;
   user: User | null;
 }
 
-type TokenSubscriber = (token: Token | null, isLoading: boolean) => void;
+type AuthSubscriber = (token: Token | null) => void;
 
-const tokenSubscribers: TokenSubscriber[] = [];
+const tokenSubscribers: AuthSubscriber[] = [];
 
 const tokenCall = async (
   url: string,
@@ -25,7 +26,7 @@ const tokenCall = async (
 ): Promise<Token> => {
   AuthUtils.clearToken();
   for (const subscriber of tokenSubscribers) {
-    subscriber(null, true);
+    subscriber(null);
   }
   const response = await unfetch(url, { method: 'POST', ...options });
 
@@ -35,8 +36,9 @@ const tokenCall = async (
 
   const token = await response.json();
   AuthUtils.storeToken(token);
+
   for (const subscriber of tokenSubscribers) {
-    subscriber(token, false);
+    subscriber(token);
   }
   return token;
 };
@@ -46,10 +48,8 @@ export const AuthUtils = {
     localStorage.setItem(LS_AUTH_KEY, JSON.stringify(token));
   },
   getToken: (): Token | null => {
-    console.log('get token');
     try {
       const tokenString = localStorage.getItem(LS_AUTH_KEY);
-      console.log('LS', tokenString);
       return JSON.parse(tokenString as string);
     } catch (e) {
       return null;
@@ -77,21 +77,22 @@ export const AuthUtils = {
   logout: async (token: Token | null): Promise<void> => {
     AuthUtils.clearToken();
     for (const subscriber of tokenSubscribers) {
-      subscriber(null, false);
+      subscriber(null);
     }
     await unfetch('/api/auth/logout', {
       method: 'POST',
       ...AuthUtils.getAuthHeaders(token)
     });
   },
-  subscribe(subscriber: TokenSubscriber): void {
+  subscribe(subscriber: AuthSubscriber): void {
     tokenSubscribers.push(subscriber);
   }
 };
 
 export const initialAuthContext: IAuthContext = {
-  isLoading: true,
-  token: AuthUtils.getToken(),
+  isLoading: false,
+  isInitialized: false,
+  token: null,
   user: null
 };
 

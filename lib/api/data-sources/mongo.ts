@@ -253,14 +253,15 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     super('refreshTokens');
   }
 
-  create = async (userId: ObjectID): Promise<string> => {
+  create = async (userId: ObjectID): Promise<MongoRefreshToken> => {
     const token = randomString();
-    await this.collection.insertOne({
+    const tokenObj = {
       token,
       userId,
       exp: Date.now() + ms('7d')
-    });
-    return token;
+    };
+    const result = await this.collection.insertOne(tokenObj);
+    return { ...tokenObj, _id: result.insertedId };
   };
 
   findByToken = (token: string): Promise<MongoRefreshToken | null> => {

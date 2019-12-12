@@ -31,6 +31,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (cookies.refresh_token) {
     const { refreshTokens, users } = await getDataSources();
     const refreshToken = await refreshTokens.findByToken(cookies.refresh_token);
+    console.log(refreshToken);
 
     if (refreshToken && refreshToken.exp > Date.now()) {
       const user = await users.findById(refreshToken.userId.toHexString());
@@ -54,7 +55,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const newRefreshToken = await refreshTokens.create(refreshToken.userId);
       res.setHeader(
         'Set-Cookie',
-        `refresh_token=${newRefreshToken};HttpOnly${
+        `refresh_token=${newRefreshToken.token};Expires=${new Date(
+          newRefreshToken.exp
+        ).toUTCString()};HttpOnly${
           process.env.NODE_ENV === 'development' ? '' : ';secure'
         }`
       );
