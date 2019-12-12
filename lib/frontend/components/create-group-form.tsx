@@ -1,3 +1,4 @@
+import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
 import React, {
@@ -179,6 +180,14 @@ export const CreateGroupForm = React.forwardRef<
   >(CREATE_GROUP_MUTATION);
   const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
 
+  useEventListener('beforeunload', event => {
+    const hasEnteredInvitee = getValues({ nest: true }).invitees[0].name;
+    if (hasEnteredInvitee) {
+      event.preventDefault();
+      ((event as unknown) as Event).returnValue = true;
+    }
+  });
+
   const submitGroup = async () => {
     setIsSubmittingGroup(true);
     const { creator, invitees } = getValues({ nest: true });
@@ -218,7 +227,7 @@ export const CreateGroupForm = React.forwardRef<
           ? 'creator.email'
           : `invitees[${duplicateIndex - 1}].email`;
 
-      setError(fieldWithDuplicate, 'duplicate');
+      setError(fieldWithDuplicate as 'creator', 'duplicate');
       return;
     }
     if (user) {
@@ -240,8 +249,8 @@ export const CreateGroupForm = React.forwardRef<
 
   useEffect(() => {
     if (user) {
-      setValue('creator.name', user.name);
-      setValue('creator.email', user.email);
+      setValue('creator.name' as any, user.name);
+      setValue('creator.email' as any, user.email);
     }
   }, [user]);
 
