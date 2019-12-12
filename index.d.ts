@@ -14,3 +14,8 @@ declare module 'tsconfig-paths-webpack-plugin' {
 declare module 'nanoid-dictionary/nolookalikes' {
   export default any;
 }
+
+declare module 'next-offline/runtime' {
+  export const register: Function;
+  export const unregister: Function;
+}

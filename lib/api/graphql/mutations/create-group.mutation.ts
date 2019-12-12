@@ -1,3 +1,4 @@
+import { sendInviteEmails } from '@givto/api/util/mail';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation, UserInput } from '../../graphql-schema';
 import { generateSlug } from '../../url-generator';
@@ -41,27 +42,13 @@ export const createGroup: Mutation<{
     return null;
   }
 
-  const mailPromises: Promise<any>[] = [];
-
-  for (const invitee of mongoInvitees) {
-    console.log('inviting', invitee.email);
-    const inviteCode = await loginCodes.create(invitee._id, true);
-    mailPromises.push(
-      mailer.sendMail({
-        from: { name: `${creator.name} via Givto` },
-        to: invitee,
-        subject: `You've been invited to a Secret Santa by ${creator.name}!`,
-        template: 'invite',
-        variables: {
-          creator: creator.name,
-          link: `https://givto.app/g/${mongoGroup.slug}?invite=${inviteCode}`
-        }
-      })
-    );
-  }
-  console.log('waiting for emails...');
-  await Promise.all(mailPromises);
-  console.log('emails done');
+  await sendInviteEmails(
+    mongoGroup.slug,
+    mongoInvitees,
+    creator,
+    mailer,
+    loginCodes
+  );
 
   return mongoGroup ? mapGroup(mongoGroup, '') : null;
 };

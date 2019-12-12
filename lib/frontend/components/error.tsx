@@ -54,7 +54,7 @@ export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => (
     <PageContent>
       <StyledLogo />
       <ErrorContent statusCode={statusCode} />
-      <Link href="/">
+      <Link passHref href="/">
         <Button as="a">Go Home</Button>
       </Link>
     </PageContent>

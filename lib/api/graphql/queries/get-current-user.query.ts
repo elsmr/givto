@@ -10,7 +10,7 @@ export const getCurrentUser: Query<null> = async (
   const claims = auth.get();
 
   if (!claims) {
-    throw new AuthenticationError('No access to group');
+    throw new AuthenticationError('Unauthenticated');
   }
 
   const user = await users.findById(claims.sub);

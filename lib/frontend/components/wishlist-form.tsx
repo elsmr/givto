@@ -8,6 +8,7 @@ import { BorderBox } from './ui/border-box';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
 import { Input } from './ui/input';
+import { InputLabel } from './ui/labeled-input';
 import { Wishlist } from './wishlist';
 
 const SET_WISHLIST_MUTATION = `mutation setWishlist($slug: String!, $wishlist: [WishlistItemInput]!) {
@@ -118,54 +119,14 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
           >
             <Avatar name={`${wishlist.length + 1}`} marginRight={3} />
             <Box as="form" flexGrow={1} onSubmit={handleSubmit(onSubmit)}>
-              <Box
-                as="label"
-                marginBottom={3}
-                display="flex"
-                flexDirection="column"
-                alignItems="flex-start"
-              >
-                <Box
-                  as="span"
-                  bg="primary"
-                  color="white"
-                  py={1}
-                  px={2}
-                  borderColor="black"
-                  borderStyle="solid"
-                  borderWidth={1}
-                  fontSize={1}
-                  borderBottom="none"
-                >
-                  Title
-                </Box>
+              <InputLabel label="Title" marginBottom={3}>
                 <Input
                   name="title"
                   placeholder="What gift do you want?"
                   ref={register({ required: true })}
                 />
-              </Box>
-              <Box
-                as="label"
-                marginBottom={3}
-                display="flex"
-                flexDirection="column"
-                alignItems="flex-start"
-              >
-                <Box
-                  as="span"
-                  bg="primary"
-                  color="white"
-                  py={1}
-                  px={2}
-                  borderColor="black"
-                  borderStyle="solid"
-                  borderWidth={1}
-                  fontSize={1}
-                  borderBottom="none"
-                >
-                  Description
-                </Box>
+              </InputLabel>
+              <InputLabel label="Description" marginBottom={3} isOptional>
                 <Input
                   name="description"
                   placeholder="Describe your gift! include hints, links etc."
@@ -173,7 +134,7 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
                   noresize
                   ref={register}
                 />
-              </Box>
+              </InputLabel>
               <Box display="flex" justifyContent="flex-end">
                 <IconButton marginRight={2} type="submit">
                   <Save size={16} /> <Box px={2}>Save</Box>

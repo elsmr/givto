@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({ actions, title, ...props }) => (
     {...props}
   >
     <Box display="flex" alignItems="center" marginRight={2}>
-      <NextLink href="/">
+      <NextLink passHref href="/">
         <Link flexShrink={0} style={{ textDecoration: 'none' }}>
           <Box as="h1" display="flex" alignItems="center">
             <StyledLogo />
