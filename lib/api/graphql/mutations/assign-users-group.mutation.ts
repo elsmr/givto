@@ -9,7 +9,7 @@ export const assignUsersInGroup: Mutation<{
 }> = async (
   _,
   { slug },
-  { dataSources: { groups, users }, mailer, auth }
+  { dataSources: { groups, users, loginCodes }, mailer, auth }
 ): Promise<Group | null> => {
   const mongoGroup = await groups.findBySlug(slug);
   const claims = auth.get();
@@ -36,6 +36,7 @@ export const assignUsersInGroup: Mutation<{
   const mailPromises: Promise<any>[] = [];
   for (const user of usersInGroup) {
     const assignee = usersInGroupMap[assignments[user._id.toHexString()]];
+    const inviteCode = await loginCodes.create(user._id, true);
 
     mailPromises.push(
       mailer.sendMail({
@@ -45,7 +46,7 @@ export const assignUsersInGroup: Mutation<{
         template: 'assigned',
         variables: {
           assignee: assignee.name,
-          link: `https://givto.app/g/${mongoGroup.slug}`
+          link: `https://givto.app/g/${mongoGroup.slug}?invite=${inviteCode}`
         }
       })
     );

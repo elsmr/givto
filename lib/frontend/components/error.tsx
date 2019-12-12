@@ -31,7 +31,7 @@ export const ErrorContent: React.FC<{ statusCode: number }> = ({
             Givto didn't find this page 😧
           </Box>
           <Box as="p" p={2}>
-            You just hit a route that doesn&#39;t exist... the sadness.
+            Either this page doesn't exist, or you are not logged in.
           </Box>
         </>
       );
@@ -55,7 +55,9 @@ export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => (
       <StyledLogo />
       <ErrorContent statusCode={statusCode} />
       <Link passHref href="/">
-        <Button as="a">Go Home</Button>
+        <Button as="a" marginTop={2}>
+          Go Home
+        </Button>
       </Link>
     </PageContent>
   </Layout>

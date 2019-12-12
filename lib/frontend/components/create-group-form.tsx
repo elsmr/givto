@@ -1,13 +1,7 @@
 import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
-import React, {
-  ChangeEvent,
-  RefObject,
-  useContext,
-  useEffect,
-  useState
-} from 'react';
+import React, { ChangeEvent, RefObject, useContext, useEffect, useState } from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
 import { AuthContext } from '../auth/auth.util';
