@@ -1,7 +1,13 @@
 import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
-import React, { ChangeEvent, RefObject, useContext, useEffect, useState } from 'react';
+import React, {
+  ChangeEvent,
+  RefObject,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
 import { AuthContext } from '../auth/auth.util';
@@ -159,7 +165,7 @@ export const CreateGroupForm = React.forwardRef<
     register,
     handleSubmit,
     errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isSubmitted },
     setValue,
     setError,
     getValues
@@ -176,7 +182,7 @@ export const CreateGroupForm = React.forwardRef<
 
   useEventListener('beforeunload', event => {
     const hasEnteredInvitee = getValues({ nest: true }).invitees[0].name;
-    if (hasEnteredInvitee) {
+    if (hasEnteredInvitee && !isSubmitted) {
       event.preventDefault();
       ((event as unknown) as Event).returnValue = true;
     }

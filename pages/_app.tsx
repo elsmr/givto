@@ -30,37 +30,41 @@ export default class GivtoApp extends App<
   };
 
   componentDidMount(): void {
-    console.log('initial token', this.state.authContext.token);
-    this.handleNewToken(
-      this.state.authContext.token,
-      Boolean(this.state.authContext.token)
-    );
+    this.handleNewToken(AuthUtils.getToken());
     AuthUtils.subscribe(this.handleNewToken);
   }
 
-  handleNewToken = async (token: Token | null, isLoading: boolean) => {
-    console.log('setting token context', token, isLoading);
+  handleNewToken = async (token: Token | null) => {
     client.setHeaders(AuthUtils.getAuthHeaders(token));
-    this.setState(prevState => ({
-      ...prevState,
-      authContext: {
-        ...prevState.authContext,
-        token,
-        user: null,
-        isLoading
-      }
-    }));
 
     if (token) {
-      console.log('getting user by token', token);
+      this.setState(prevState => ({
+        ...prevState,
+        authContext: { ...prevState.authContext, isLoading: true }
+      }));
       const { data } = await client.request<{ getCurrentUser: User }>({
         query: AuthUtils.AUTH_QUERY
       });
       const user = data?.getCurrentUser || null;
-      console.log('set user in context', user);
       this.setState(prevState => ({
         ...prevState,
-        authContext: { ...prevState.authContext, user, isLoading: false }
+        authContext: {
+          ...prevState.authContext,
+          token,
+          user,
+          isLoading: false,
+          isInitialized: true
+        }
+      }));
+    } else {
+      this.setState(prevState => ({
+        ...prevState,
+        authContext: {
+          token,
+          isLoading: false,
+          user: null,
+          isInitialized: true
+        }
       }));
     }
   };

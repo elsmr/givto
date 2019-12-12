@@ -30,7 +30,7 @@ interface LoginFormProps {
 
 const Form = Box.withComponent('form');
 
-const LoginForm: React.FC<LoginFormProps> = ({
+export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   email,
   name,
@@ -67,8 +67,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Box marginBottom={3}>
-        <Box>We sent an email to "{email}" with a secret login code</Box>
-        <Box>Please enter it here</Box>
+        <Box>An email was sent to "{email}" with a secret sign in code</Box>
       </Box>
       <Box marginBottom={3}>
         <Input
@@ -90,18 +89,18 @@ const LoginForm: React.FC<LoginFormProps> = ({
       </Box>
       <Box display="flex" justifyContent="flex-end">
         {isSubmitting || loading || isLoading ? (
-          <Box py={2}>
+          <Box display="flex" alignItems="center" minHeight="44px">
             <Loader type="bar" />
           </Box>
         ) : (
-          <Button>Confirm</Button>
+          <Button>Sign In</Button>
         )}
       </Box>
     </Form>
   );
 };
 
-const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
+export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
   onSubmit
 }) => {
   const { handleSubmit, register } = useForm<{
@@ -115,10 +114,7 @@ const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
   return (
     <Form onSubmit={handleSubmit(onFormSubmit)}>
       <Box marginBottom={3}>
-        <Box>Please input your email</Box>
-        <Box>
-          Givto will send you a temporary login code, no passwords required!
-        </Box>
+        <Box>Sign in to Givto using your email address</Box>
       </Box>
       <Box marginBottom={3}>
         <Input
@@ -132,7 +128,7 @@ const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
         />
       </Box>
       <Box display="flex" justifyContent="flex-end">
-        <Button>Send Email</Button>
+        <Button>Sign In</Button>
       </Box>
     </Form>
   );
@@ -148,7 +144,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   const [email, setEmail] = useState(emailProp);
 
   return (
-    <Modal title={email ? 'Confirm Email Address' : 'Login'} onClose={onClose}>
+    <Modal title="Sign In" onClose={onClose}>
       {email ? (
         <LoginForm
           isLoading={isLoading}

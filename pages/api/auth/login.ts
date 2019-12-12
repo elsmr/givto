@@ -69,9 +69,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       ]);
 
       const refreshToken = await refreshTokens.create(user._id);
+      console.log(refreshToken);
       res.setHeader(
         'Set-Cookie',
-        `refresh_token=${refreshToken};HttpOnly${
+        `refresh_token=${refreshToken.token};Expires=${new Date(
+          refreshToken.exp
+        ).toUTCString()};HttpOnly${
           process.env.NODE_ENV === 'development' ? '' : ';secure'
         }`
       );

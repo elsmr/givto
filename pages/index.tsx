@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { CreateGroupForm } from '@givto/frontend/components/create-group-form';
 import { Header } from '@givto/frontend/components/header';
 import { LoginModal } from '@givto/frontend/components/login-modal';
@@ -9,7 +8,7 @@ import { Box } from '@givto/frontend/components/ui/box';
 import { Button } from '@givto/frontend/components/ui/button';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import AssignIllustration from '../assets/assign.svg';
 import GivtoLogo from '../assets/givto-logo.svg';
 import InviteIllustration from '../assets/invite.svg';
@@ -27,7 +26,6 @@ const Footer = styled(Box)`
 `.withComponent('footer');
 
 export default () => {
-  const { user, isLoading } = useContext(AuthContext);
   const [isLoginVisible, setIsLoginVisible] = useState(false);
   const createGroupRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,15 +33,7 @@ export default () => {
   return (
     <Layout display="flex" flexDirection="column" justifyItems="stretch">
       <LayoutWrapper marginBottom={5}>
-        <Header
-          actions={
-            <ProfileButton
-              user={user}
-              isLoading={isLoading}
-              onLogin={() => setIsLoginVisible(true)}
-            />
-          }
-        />
+        <Header actions={<ProfileButton />} />
       </LayoutWrapper>
 
       <Box as="main" flexGrow={1}>

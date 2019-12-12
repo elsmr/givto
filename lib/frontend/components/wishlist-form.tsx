@@ -38,7 +38,6 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
   const [setWishlistMutation] = useMutation(SET_WISHLIST_MUTATION);
 
   const onSubmit = (newItem: WishListItem) => {
-    console.log(newItem);
     const newWishlist = [...wishlist, newItem];
     setWishlist(newWishlist);
     setWishlistMutation({ variables: { slug, wishlist: newWishlist } });
