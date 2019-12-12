@@ -5,6 +5,7 @@ import { Header } from '@givto/frontend/components/header';
 import { InviteModal } from '@givto/frontend/components/invite-modal';
 import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
+import { Badge } from '@givto/frontend/components/ui/badge';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { Button } from '@givto/frontend/components/ui/button';
@@ -28,7 +29,8 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
         name,
         slug,
         creator {
-          id
+          id,
+          email
         },
         assignedAt,
         users {
@@ -228,18 +230,23 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
               </IconButton>
             )}
           </Box>
-          {[...group.users, ...invitedUsers].map(user => (
-            <Box key={user.email} display="flex" alignItems="center" py={2}>
+          {[...group.users, ...invitedUsers].map(member => (
+            <Box key={member.email} display="flex" alignItems="center" py={2}>
               <Avatar
-                name={user.name}
+                name={member.name}
                 marginRight={2}
                 size={36}
                 fontSize={4}
               ></Avatar>
               <Box>
-                <Box>{user.name} </Box>
+                <Box display="flex" alignItems="center">
+                  <Box>{member.name}</Box>
+                  {member.email === group.creator.email && (
+                    <Badge mx={1}>🎅 Owner</Badge>
+                  )}
+                </Box>
                 <Box color="textMuted" fontSize={1}>
-                  {user.email}
+                  {member.email}
                 </Box>
               </Box>
             </Box>
