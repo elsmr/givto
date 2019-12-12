@@ -239,6 +239,10 @@ export default class GivtoApp extends App<
               ::selection {
                 background-color: ${theme.colors.primaryMuted};
               }
+
+              a {
+                color: ${theme.colors.primary};
+              }
             `}
           />
 
