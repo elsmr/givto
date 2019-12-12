@@ -42,7 +42,14 @@ export const Wishlist: React.FC<WishlistProps> = ({
           </Box>
           {item.description && (
             <Box marginLeft="48px" marginTop={2}>
-              <Box>{item.description}</Box>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: item.description.replace(
+                    /(https?:\/\/[^\s]+)/g,
+                    url => `<a href="${url}">${url}</a>`
+                  )
+                }}
+              />
             </Box>
           )}
         </Box>
