@@ -8,7 +8,13 @@ interface MongoEntity {
   _id: ObjectID;
 }
 
+export interface WishListItemInput {
+  title: string;
+  description: string;
+}
+
 export interface WishListItem {
+  id: string;
   title: string;
   description: string;
 }
@@ -23,6 +29,7 @@ export interface MongoGroup extends MongoEntity {
   assignedAt: number | null;
   assignments: Record<string, string>;
   wishlists: Record<string, WishListItem[]>;
+  assignExceptions: Record<string, string[]>;
 }
 
 export interface MongoUser extends MongoEntity {
@@ -175,7 +182,8 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       createdAt: Date.now(),
       assignedAt: null,
       assignments: {},
-      wishlists: {}
+      wishlists: {},
+      assignExceptions: {}
     });
 
     return this.findBySlug(slug);
@@ -196,6 +204,18 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $set: update },
+      { returnOriginal: false }
+    );
+    return group.value;
+  };
+
+  addUsersToGroup = async (
+    slug: string,
+    userIds: ObjectID[]
+  ): Promise<MongoGroup | undefined> => {
+    const group = await this.collection.findOneAndUpdate(
+      { slug },
+      { $push: { users: { $each: userIds } } },
       { returnOriginal: false }
     );
     return group.value;

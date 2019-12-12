@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { X } from 'react-feather';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { BorderBox } from './border-box';
 import { Box } from './box';
+import { ButtonReset } from './button';
 
 export interface ModalProps {
   title: string;
@@ -12,6 +15,8 @@ export const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => {
   if (!process.browser) {
     return null;
   }
+
+  useHotkeys('esc', onClose);
 
   useEffect(() => {
     document.body.classList.add('modal-open');
@@ -58,9 +63,19 @@ export const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => {
         px={4}
         py={3}
         minWidth="320px"
+        width="50vw"
+        maxWidth="560px"
       >
-        <Box as="h2" marginBottom={3}>
-          {title}
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          marginBottom={3}
+        >
+          <Box as="h2">{title}</Box>
+          <ButtonReset p={1} onClick={onClose}>
+            <X />
+          </ButtonReset>
         </Box>
         <Box>{children}</Box>
       </BorderBox>

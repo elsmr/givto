@@ -9,26 +9,29 @@ const ButtonForeground = styled(Box)`
   will-change: transform;
 `;
 
-export const ButtonReset: React.FC<BoxProps> = props => (
-  <Box
-    as="button"
-    bg="transparent"
-    border="none"
-    display="inline-block"
-    textAlign="left"
-    p={0}
-    m={0}
-    css={css({
-      cursor: 'pointer',
-      textDecoration: 'none',
-      WebkitTapHighlightColor: 'transparent',
-      outline: 'none',
-      '::-moz-focus-inner': {
-        border: 0
-      }
-    })}
-    {...props}
-  ></Box>
+export const ButtonReset: React.FC<BoxProps> = React.forwardRef(
+  (props, ref) => (
+    <Box
+      as="button"
+      bg="transparent"
+      border="none"
+      display="inline-block"
+      textAlign="left"
+      p={0}
+      m={0}
+      css={css({
+        cursor: 'pointer',
+        textDecoration: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        outline: 'none',
+        '::-moz-focus-inner': {
+          border: 0
+        }
+      })}
+      ref={ref}
+      {...props}
+    ></Box>
+  )
 );
 
 const PlainButton = styled(ButtonReset)`

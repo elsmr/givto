@@ -38,7 +38,7 @@ export const ProfileButton: React.FC<ProfileButtonProps> = ({
   }
 
   return (
-    <NextLink href="/profile">
+    <NextLink passHref href="/profile">
       <Link
         display="flex"
         alignItems="center"

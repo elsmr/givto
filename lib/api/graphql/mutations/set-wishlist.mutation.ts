@@ -1,11 +1,12 @@
 import { AuthenticationError } from 'apollo-server-micro';
-import { WishListItem } from '../../data-sources/mongo';
+import nanoid from 'nanoid';
+import { WishListItemInput } from '../../data-sources/mongo';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation } from '../../graphql-schema';
 
 export const setWishlist: Mutation<{
   slug: string;
-  wishlist: WishListItem[];
+  wishlist: WishListItemInput[];
 }> = async (
   _,
   { slug, wishlist },
@@ -18,7 +19,7 @@ export const setWishlist: Mutation<{
   }
 
   const mongoGroup = await groups.updateBySlug(slug, {
-    [`wishlists.${claims.sub}`]: wishlist
+    [`wishlists.${claims.sub}`]: wishlist.map(w => ({ ...w, id: nanoid() }))
   });
 
   if (!mongoGroup) {

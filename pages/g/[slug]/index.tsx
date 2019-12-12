@@ -1,6 +1,8 @@
-import { EnrichedGroup } from '@givto/api/graphql-schema';
+import { EnrichedGroup, UserInput } from '@givto/api/graphql-schema';
 import { AuthContext, AuthUtils } from '@givto/frontend/auth/auth.util';
+import { ErrorPage } from '@givto/frontend/components/error';
 import { Header } from '@givto/frontend/components/header';
+import { InviteModal } from '@givto/frontend/components/invite-modal';
 import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
@@ -18,13 +20,16 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
-import { Edit2, Save, X } from 'react-feather';
+import { Edit2, Plus, Save, X } from 'react-feather';
 import useForm from 'react-hook-form';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
         name,
         slug,
+        creator {
+          id
+        },
         assignedAt,
         users {
             id,
@@ -156,24 +161,21 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
     assignUsersMutation,
     { loading: assignmentLoading, data }
   ] = useMutation(START_ASSIGNMENT_MUTATION);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
 
   if (groupLoading) {
     return <PageLoader key="loader" />;
   }
 
   if (!groupResult || !groupResult.getGroup) {
-    return (
-      <Layout>
-        <LayoutWrapper>
-          <Header />
-        </LayoutWrapper>
-      </Layout>
-    );
+    return <ErrorPage statusCode={404} />;
   }
 
   const group = groupResult.getGroup;
   const assignedAt = data?.assignUsersInGroup?.assignedAt ?? group.assignedAt;
   const assignee = data?.assignUsersInGroup?.assignee ?? group.assignee;
+  const isCreator = group.creator.id === user?.id;
 
   const startAssignment = () => {
     assignUsersMutation({ variables: { slug } });
@@ -189,11 +191,18 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
           <Header
             title={<GroupTitle group={group} />}
             actions={
-              <ProfileButton
-                user={user}
-                isLoading={userLoading}
-                onLogin={() => {}}
-              />
+              <Box>
+                {/* <NextLink passHref href={`/g/${slug}/settings`}>
+                  <IconButton as="a">
+                    <Settings /> <Box px={2}>Settings</Box>
+                  </IconButton>
+                </NextLink> */}
+                <ProfileButton
+                  user={user}
+                  isLoading={userLoading}
+                  onLogin={() => {}}
+                />
+              </Box>
             }
           />
         </LayoutWrapper>
@@ -213,10 +222,14 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
             <Box as="h3" fontSize={4} marginRight={2}>
               Members
             </Box>
-            {/* <Button>Invite</Button> */}
+            {!assignedAt && (
+              <IconButton onClick={() => setShowInviteModal(true)}>
+                <Plus /> <Box px={2}>Invite</Box>
+              </IconButton>
+            )}
           </Box>
-          {group.users.map(user => (
-            <Box key={user.id} display="flex" alignItems="center" py={2}>
+          {[...group.users, ...invitedUsers].map(user => (
+            <Box key={user.email} display="flex" alignItems="center" py={2}>
               <Avatar
                 name={user.name}
                 marginRight={2}
@@ -238,10 +251,22 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
         <WishlistForm slug={slug} wishlist={group.wishlist} />
       </LayoutWrapper>
 
-      {!assignedAt && (
-        <LayoutWrapper marginBottom={4} display="flex" justifyContent="center">
+      {!assignedAt && isCreator && (
+        <LayoutWrapper
+          marginBottom={4}
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
           {!assignmentLoading ? (
-            <Button onClick={startAssignment}>Start Secret Santa</Button>
+            <>
+              <Button onClick={startAssignment} marginBottom={3}>
+                Start Secret Santa
+              </Button>
+              <Box color="textMuted" fontSize={1}>
+                This action will assign gift givers and notify everyone by email
+              </Box>
+            </>
           ) : (
             <Loader type="box" />
           )}
@@ -284,6 +309,16 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
             )}
           </BorderBox>
         </LayoutWrapper>
+      )}
+      {showInviteModal && (
+        <InviteModal
+          slug={group.slug}
+          onClose={() => setShowInviteModal(false)}
+          onInvite={invitedUser => {
+            setInvitedUsers(state => [...state, invitedUser]);
+            setShowInviteModal(false);
+          }}
+        ></InviteModal>
       )}
     </Layout>
   );

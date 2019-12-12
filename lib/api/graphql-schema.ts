@@ -2,7 +2,12 @@ import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
-import { MongoGroups, MongoLoginCodes, MongoUsers, WishListItem } from './data-sources/mongo';
+import {
+  MongoGroups,
+  MongoLoginCodes,
+  MongoUsers,
+  WishListItem
+} from './data-sources/mongo';
 import { Mailer } from './mail';
 
 export interface Invite {
@@ -153,6 +158,11 @@ export const typeDefs = gql`
     description: String!
   }
 
+  input AssignmentException {
+    subject: String!
+    object: String!
+  }
+
   type Mutation {
     createGroup(creator: UserInput!, invitees: [UserInput]!): Group
     createLoginCode(email: String!, name: String): Boolean
@@ -160,6 +170,12 @@ export const typeDefs = gql`
     setGroupName(slug: String!, name: String!): Group
     assignUsersInGroup(slug: String!): Group
     setWishlist(slug: String!, wishlist: [WishlistItemInput]!): Group
+    addWishlistItem(slug: String!, item: WishlistItemInput!): Group
+    addAssignmentException(
+      slug: String!
+      exception: AssignmentException!
+    ): Group
+    addUsersToGroup(slug: String!, invitees: [UserInput]!): Group
   }
 `;
 

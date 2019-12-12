@@ -12,6 +12,10 @@ export const groupResolver: ResolverObject<Group> = {
     const mongoUsers = await users.findByIds(group.users);
     return mongoUsers.map(mapUser);
   },
+  async creator(group, _, { dataSources: { users } }): Promise<User | null> {
+    const mongoUser = await users.findById(group.creator);
+    return mongoUser ? mapUser(mongoUser) : null;
+  },
   async assignee(
     group,
     _,

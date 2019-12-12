@@ -17,9 +17,12 @@ export const assignUsersInGroup: Mutation<{
   if (!mongoGroup || !claims) {
     throw new AuthenticationError('Unauthorized');
   }
+  if (mongoGroup.creator.toHexString() !== claims.sub) {
+    throw new AuthenticationError('Unauthorized');
+  }
 
   const userIds = mongoGroup.users.map(userId => userId.toHexString());
-  const assignments = assignSecretSantas(userIds);
+  const assignments = assignSecretSantas(userIds, mongoGroup.assignExceptions);
   const updatedGroup = await groups.updateBySlug(slug, {
     assignments,
     assignedAt: Date.now()
