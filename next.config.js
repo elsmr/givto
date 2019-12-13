@@ -1,7 +1,6 @@
 const withOffline = require('next-offline');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 module.exports = withOffline({
-  transformManifest: manifest => ['/'].concat(manifest),
   workboxOpts: {
     swDest: 'static/service-worker.js'
   },
