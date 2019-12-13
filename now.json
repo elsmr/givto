@@ -11,6 +11,12 @@
       }
     }
   ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "cache-control", "value": "no-cache, max-age=0" }]
+    }
+  ],
   "env": {
     "MONGODB_URI": "@givto-mongodb-conn-str",
     "MONGODB_DB": "@mongodb-dbname",
