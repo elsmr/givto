@@ -1,20 +1,22 @@
 {
   "version": 2,
   "name": "givto",
-  "routes": [
-    {
-      "src": "^/service-worker.js$",
-      "dest": "/_next/static/service-worker.js",
-      "headers": {
-        "cache-control": "no-cache, max-age=0",
-        "Service-Worker-Allowed": "/"
-      }
-    }
-  ],
   "headers": [
     {
+      "source": "^/service-worker.js$",
+      "headers": [
+        {
+          "key": "cache-control",
+          "value": "no-cache, no-store, max-age=0"
+        },
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    },
+    {
       "source": "/(.*)",
-      "headers": [{ "key": "cache-control", "value": "no-cache, max-age=0" }]
+      "headers": [
+        { "key": "cache-control", "value": "no-cache, no-store, max-age=0" }
+      ]
     }
   ],
   "env": {
