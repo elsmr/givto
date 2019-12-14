@@ -45,7 +45,9 @@ export const LoginPage: NextPage = () => {
               name={name}
               email={email}
               onLogin={() => {
-                push((query.redirect as string) || '/');
+                push((query.redirect as string) || '/').then(() =>
+                  window.scrollTo(0, 0)
+                );
               }}
             />
           ) : (
