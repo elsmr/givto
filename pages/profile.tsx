@@ -27,9 +27,7 @@ const EXPANDED_USER_QUERY = `query getCurrentUser {
       id
       name
       slug
-      users {
-        name
-      }
+      userCount
     }
   }
 }`;
@@ -199,7 +197,7 @@ const ProfilePage: NextPage = () => {
                 <Box>
                   <Box>{group.name || 'Anonymous group'}</Box>
                   <Box color="textMuted" fontSize={1}>
-                    {group.users.length} members
+                    {group.userCount} members
                   </Box>
                 </Box>
               </Link>
