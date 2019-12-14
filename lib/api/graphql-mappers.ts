@@ -16,7 +16,8 @@ export const mapGroup = (group: MongoGroup, userId?: string): Group => {
       : null,
     wishlist: (userId && group.wishlists[userId]) || [],
     assignedAt: group.assignedAt ? new Date(group.assignedAt) : null,
-    createdAt: new Date(group.createdAt)
+    createdAt: new Date(group.createdAt),
+    userCount: group.users.length
   };
 };
 

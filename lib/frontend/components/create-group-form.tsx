@@ -293,7 +293,11 @@ export const CreateGroupForm = React.forwardRef<
             <FormError errors={errors} />
           </Box>
 
-          {isSubmitting ? <Loader type="bar" /> : <Button>Create</Button>}
+          {isSubmittingGroup && !confirmCreator ? (
+            <Loader type="bar" />
+          ) : (
+            <Button>Create</Button>
+          )}
         </Box>
       </Form>
       {confirmCreator && (

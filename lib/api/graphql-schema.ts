@@ -57,6 +57,7 @@ export interface Group {
   assignedAt: Date | null;
   createdAt: Date;
   assignee: null | Assignee;
+  userCount: number;
 }
 
 export type EnrichedGroup = {
@@ -70,6 +71,7 @@ export type EnrichedGroup = {
   assignedAt: Date | null;
   createdAt: Date;
   assignee: null | EnrichedAssignee;
+  userCount: number;
 };
 
 export interface UserInput {
@@ -128,6 +130,7 @@ export const typeDefs = gql`
     wishlist: [WishlistItem]!
     assignedAt: Date
     createdAt: Date!
+    userCount: Int!
   }
 
   type User {
