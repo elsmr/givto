@@ -25,9 +25,6 @@ const tokenCall = async (
   options: RequestInit = {}
 ): Promise<Token> => {
   AuthUtils.clearToken();
-  for (const subscriber of tokenSubscribers) {
-    subscriber(null);
-  }
   const response = await unfetch(url, { method: 'POST', ...options });
 
   if (response.status !== 200) {
