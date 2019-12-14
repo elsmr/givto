@@ -30,6 +30,13 @@ export default class GivtoApp extends App<
   };
 
   componentDidMount(): void {
+    if (navigator.serviceWorker) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
     this.handleNewToken(AuthUtils.getToken());
     AuthUtils.subscribe(this.handleNewToken);
   }
