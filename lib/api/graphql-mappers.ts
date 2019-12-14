@@ -3,7 +3,7 @@ import { Group, LoginCode, User } from './graphql-schema';
 import { ObjectIDMapper } from './util';
 
 export const mapGroup = (group: MongoGroup, userId?: string): Group => {
-  const assignee = userId ? group.assignments[userId] : null;
+  const assignee = userId ? group.assignments?.[userId] : null;
   return {
     id: group._id.toHexString(),
     name: group.name,
@@ -14,7 +14,7 @@ export const mapGroup = (group: MongoGroup, userId?: string): Group => {
     assignee: assignee
       ? { user: assignee, wishlist: group.wishlists[assignee] || [] }
       : null,
-    wishlist: (userId && group.wishlists[userId]) || [],
+    wishlist: (userId && group.wishlists?.[userId]) || [],
     assignedAt: group.assignedAt ? new Date(group.assignedAt) : null,
     createdAt: new Date(group.createdAt),
     userCount: group.users.length

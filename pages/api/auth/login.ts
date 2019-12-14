@@ -63,11 +63,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      await Promise.all([
-        loginCodes.deleteAllByUser(user._id),
-        refreshTokens.deleteAllByUser(user._id)
-      ]);
-
       const refreshToken = await refreshTokens.create(user._id);
       console.log(refreshToken);
       res.setHeader(
