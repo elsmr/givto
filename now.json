@@ -3,16 +3,6 @@
   "name": "givto",
   "headers": [
     {
-      "source": "^/service-worker.js$",
-      "headers": [
-        {
-          "key": "cache-control",
-          "value": "no-cache, no-store, max-age=0"
-        },
-        { "key": "Service-Worker-Allowed", "value": "/" }
-      ]
-    },
-    {
       "source": "/(.*)",
       "headers": [
         { "key": "cache-control", "value": "no-cache, no-store, max-age=0" }

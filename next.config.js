@@ -1,9 +1,6 @@
-const withOffline = require('next-offline');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-module.exports = withOffline({
-  workboxOpts: {
-    swDest: 'static/service-worker.js'
-  },
+
+module.exports = {
   webpack: config => {
     if (config.resolve.plugins) {
       config.resolve.plugins.push(new TsconfigPathsPlugin());
@@ -28,4 +25,4 @@ module.exports = withOffline({
     return config;
   },
   target: 'serverless'
-});
+};
