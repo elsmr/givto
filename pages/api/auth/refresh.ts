@@ -51,7 +51,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       );
 
-      await refreshTokens.deleteAllByUser(refreshToken.userId);
       const newRefreshToken = await refreshTokens.create(refreshToken.userId);
       res.setHeader(
         'Set-Cookie',
