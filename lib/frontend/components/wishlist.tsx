@@ -1,5 +1,5 @@
 import { WishListItem } from '@givto/api/data-sources/mongo';
-import { Trash } from 'react-feather';
+import { Trash2 as Trash } from 'react-feather';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
@@ -34,7 +34,12 @@ export const Wishlist: React.FC<WishlistProps> = ({
               {item.title}
             </Box>
             {isEditable && onDelete && (
-              <IconButton size="small" onClick={() => onDelete(index)}>
+              <IconButton
+                bg="danger"
+                color="black"
+                size="small"
+                onClick={() => onDelete(index)}
+              >
                 <Trash size={12} />
                 <Box marginLeft={1}>Delete</Box>
               </IconButton>

@@ -191,9 +191,13 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
       <Box marginBottom={4}>
         <LayoutWrapper>
           <Header
-            title={<GroupTitle group={group} />}
+            title={
+              <Box display={['none', 'block']}>
+                <GroupTitle group={group} />
+              </Box>
+            }
             actions={
-              <Box>
+              <Box flexShrink={0}>
                 {/* <NextLink passHref href={`/g/${slug}/settings`}>
                   <IconButton as="a">
                     <Settings /> <Box px={2}>Settings</Box>
@@ -203,6 +207,9 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
               </Box>
             }
           />
+          <Box marginTop={3} display={['block', 'none']}>
+            <GroupTitle group={group} />
+          </Box>
         </LayoutWrapper>
       </Box>
       <LayoutWrapper marginBottom={4}>
