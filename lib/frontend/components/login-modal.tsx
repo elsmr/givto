@@ -1,30 +1,22 @@
+import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { ReactElement, useEffect, useState } from 'react';
 import useForm from 'react-hook-form';
-import { AuthUtils } from '../auth/auth.util';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Link } from './ui/link';
-import { Loader } from './ui/loader';
-import { Modal } from './ui/modal';
 
-const GET_LOGIN_CODE_MUTATION = `mutation createLoginCode($email: String!, $name: String) {
-    createLoginCode(email: $email, name: $name)
+export const GET_LOGIN_CODE_MUTATION = `mutation createLoginCode($email: String!, $name: String, $redirectUrl: String) {
+    createLoginCode(email: $email, name: $name, redirectUrl: $redirectUrl)
  }`;
-
-interface LoginModalProps {
-  name?: string;
-  email?: string;
-  isLoading?: boolean;
-  onLogin: () => void;
-  onClose: () => void;
-}
 
 interface LoginFormProps {
   name?: string;
   email: string;
   isLoading?: boolean;
+  infoMessage?: ReactElement;
+  successMessage?: ReactElement;
   onLogin: () => void;
 }
 
@@ -34,69 +26,63 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   onLogin,
   email,
   name,
-  isLoading
+  infoMessage,
+  successMessage
 }) => {
-  const {
-    handleSubmit,
-    register,
-    setError,
-    errors,
-    formState: { isSubmitting }
-  } = useForm<{
-    logincode: string;
-  }>();
-  const [createLoginCode, { loading }] = useMutation<
+  const [createLoginCode] = useMutation<
     boolean,
-    { email: string; name: string }
+    { email: string; name: string; redirectUrl: string }
   >(GET_LOGIN_CODE_MUTATION);
+  const { query } = useRouter();
+  const [isDone, setIsDone] = useState(false);
 
-  const onSubmit = async (values: { logincode: string }) => {
-    try {
-      await AuthUtils.login(values.logincode);
-      onLogin();
-    } catch (e) {
-      setError('logincode', 'validate');
-    }
-  };
   const sendEmail = () => {
-    createLoginCode({ variables: { email, name: name || '' } });
+    createLoginCode({
+      variables: {
+        email,
+        name: name || '',
+        redirectUrl: (query.redirect as string) || '/'
+      }
+    });
   };
 
   useEffect(sendEmail, []);
 
+  useEventListener('storage', event => {
+    const storageEvent = (event as any) as StorageEvent;
+    if (storageEvent.key === 'givto-access-token' && storageEvent.newValue) {
+      setIsDone(true);
+      onLogin();
+    }
+  });
+
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <Box marginBottom={3}>
-        <Box>An email was sent to "{email}" with a secret sign in code</Box>
-      </Box>
-      <Box marginBottom={3}>
-        <Input
-          aria-label="Login Code"
-          name="logincode"
-          placeholder="Secret Login Code"
-          required
-          ref={register({ required: true })}
-          marginBottom={2}
-        />
-        <Box display="flex" justifyContent="space-between">
-          <Link as="span" style={{ cursor: 'pointer' }} onClick={sendEmail}>
-            Retry
-          </Link>
-          {Object.keys(errors).length > 0 && (
-            <Box color="danger">Incorrect login code, please try again</Box>
-          )}
+    <Box my={3} lineHeight="body">
+      {isDone ? (
+        <Box>
+          {successMessage ||
+            'Successfully logged in, you can safely close this tab!'}
         </Box>
-      </Box>
-      <Box display="flex" justifyContent="flex-end">
-        {isSubmitting || loading || isLoading ? (
-          <Box display="flex" alignItems="center" minHeight="44px">
-            <Loader type="bar" />
+      ) : (
+        <>
+          <Box color="textMuted">
+            We sent an email to you at{' '}
+            <Box as="span" color="black">
+              {email}
+            </Box>
+            .{' '}
+            {infoMessage ||
+              'There you will find a magic link that will sign you in to Givto.'}
           </Box>
-        ) : (
-          <Button>Sign In</Button>
-        )}
-      </Box>
-    </Form>
+
+          {email.endsWith('@gmail.com') && (
+            <Button marginTop={3} as="a" href="https://mail.google.com">
+              Open Gmail
+            </Button>
+          )}
+        </>
+      )}
+    </Box>
   );
 };
 
@@ -131,30 +117,5 @@ export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
         <Button>Sign In</Button>
       </Box>
     </Form>
-  );
-};
-
-export const LoginModal: React.FC<LoginModalProps> = ({
-  onLogin,
-  email: emailProp,
-  name,
-  onClose,
-  isLoading
-}) => {
-  const [email, setEmail] = useState(emailProp);
-
-  return (
-    <Modal title="Sign In" onClose={onClose}>
-      {email ? (
-        <LoginForm
-          isLoading={isLoading}
-          name={name}
-          email={email}
-          onLogin={onLogin}
-        />
-      ) : (
-        <EmailForm onSubmit={setEmail} />
-      )}
-    </Modal>
   );
 };

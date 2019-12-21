@@ -10,5 +10,6 @@ namespace NodeJS {
     MAILGUN_API_BASE: string;
     JWT_SECRET_KEY: string;
     APP_HOST: string;
+    SENTRY_DSN: string;
   }
 }

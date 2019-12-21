@@ -28,14 +28,11 @@ export const fetch = async (
       ))
   ) {
     if (!isRefreshing) {
-      console.log('got a 401!, starting refresh');
       isRefreshing = true;
       refreshPromise = AuthUtils.refresh();
     }
-    console.log('waiting for refresh...');
     const response = await refreshPromise;
     isRefreshing = false;
-    console.log('refresh done', response);
     if (response?.token) {
       requestHeaders.set('Authorization', `Bearer ${response.token}`);
       return await unfetch(input, { ...requestInit, headers: requestHeaders });

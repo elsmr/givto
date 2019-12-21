@@ -40,7 +40,7 @@ export const theme = {
     dark: '#2d3748',
     textMuted: '#66778A',
     primary: '#5A51FF',
-    primaryMuted: '#837cff',
+    primaryMuted: '#bdb9ff',
     secondary: '#FE7362'
   },
   borderWidths: [1, 2, 4],

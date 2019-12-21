@@ -10,10 +10,15 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 interface LoginPayload {
   loginCode: string;
+  email: string;
 }
 
 const isValidPayload = (body: object): body is LoginPayload => {
-  return body && typeof (body as any).loginCode === 'string';
+  return (
+    body &&
+    typeof (body as any).loginCode === 'string' &&
+    typeof (body as any).email === 'string'
+  );
 };
 
 const getDataSources = async (): Promise<{
@@ -47,7 +52,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const userId = loginCode.userId.toHexString();
       const user = await users.findById(userId);
 
-      if (!user) {
+      if (!user || user.email !== body.email) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
       }
@@ -74,7 +79,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }`
       );
 
-      res.json({ token, exp });
+      res.json({ token, exp, redirectUrl: loginCode.redirectUrl });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
     }

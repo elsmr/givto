@@ -25,7 +25,14 @@ import { getLoginCode } from '@givto/api/graphql/queries/get-login-code.query';
 import { groupResolver } from '@givto/api/graphql/resolvers/group.resolver';
 import { loginCodeResolver } from '@givto/api/graphql/resolvers/login-code.resolver';
 import { userResolver } from '@givto/api/graphql/resolvers/user.resolver';
+import * as Sentry from '@sentry/node';
 import { ApolloServer, IResolvers } from 'apollo-server-micro';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  enabled: process.env.NODE_ENV !== 'development'
+});
 
 const resolvers: IResolvers<any, GivtoContext> = {
   ...scalarResolvers,
@@ -64,7 +71,11 @@ const apolloServer = new ApolloServer({
   dataSources: dataSources as any,
   tracing: process.env.NODE_ENV === 'development',
   introspection: process.env.NODE_ENV === 'development',
-  context: contextFactory
+  context: contextFactory,
+  formatError: error => {
+    Sentry.captureException(error);
+    return error;
+  }
 });
 
 export const config = {
