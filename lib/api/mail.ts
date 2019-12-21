@@ -42,6 +42,7 @@ export class Mailer {
       formData.append('text', text);
     } else if (template) {
       formData.append('template', template);
+      formData.append('t:version', 'initial');
       if (variables) {
         formData.append('h:X-Mailgun-Variables', JSON.stringify(variables));
       }
