@@ -14,6 +14,7 @@
     "MONGODB_DB": "@mongodb-dbname",
     "MAILGUN_API_KEY": "@mailgun-api-key",
     "MAILGUN_API_BASE": "@mailgun-api-base",
-    "JWT_SECRET_KEY": "@jwt-secret-key"
+    "JWT_SECRET_KEY": "@jwt-secret-key",
+    "SENTRY_DSN": "@sentry-dsn"
   }
 }

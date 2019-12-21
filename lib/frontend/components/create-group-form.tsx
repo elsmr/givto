@@ -11,7 +11,7 @@ import React, {
 import useForm from 'react-hook-form';
 import { FieldError } from 'react-hook-form/dist/types';
 import { AuthContext } from '../auth/auth.util';
-import { LoginModal } from './login-modal';
+import { ConfirmEmailModal } from './confirm-email-modal';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -165,7 +165,7 @@ export const CreateGroupForm = React.forwardRef<
     register,
     handleSubmit,
     errors,
-    formState: { isSubmitting, isSubmitted },
+    formState: { isSubmitted },
     setValue,
     setError,
     getValues
@@ -301,12 +301,11 @@ export const CreateGroupForm = React.forwardRef<
         </Box>
       </Form>
       {confirmCreator && (
-        <LoginModal
-          onLogin={submitGroup}
+        <ConfirmEmailModal
+          onConfirm={submitGroup}
           onClose={() => setConfirmCreator(null)}
           email={confirmCreator.email}
           name={confirmCreator.name}
-          isLoading={isSubmittingGroup}
         />
       )}
     </>

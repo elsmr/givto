@@ -1,11 +1,13 @@
+import qs from 'querystring';
 import { Mutation } from '../../graphql-schema';
 
 export const createLoginCode: Mutation<{
   email: string;
-  name?: string;
+  name: string;
+  redirectUrl?: string;
 }> = async (
   _,
-  { email, name },
+  { email, name, redirectUrl },
   { dataSources: { users, loginCodes }, mailer }
 ): Promise<boolean> => {
   let user = await users.findByEmail(email);
@@ -19,16 +21,27 @@ export const createLoginCode: Mutation<{
   }
 
   if (user) {
-    const loginCode = await loginCodes.create(user._id);
+    const loginCode = await loginCodes.create(user._id, redirectUrl);
+    const params = qs.encode({ email, code: loginCode });
     console.log('Sending email', loginCode, email);
-    const result = await mailer.sendMail({
-      to: { name: user.name, email: user.email },
-      subject: 'Your Temporary Givto Login Code',
-      template: 'login-code',
-      variables: {
-        loginCode
-      }
-    });
+    const result = redirectUrl
+      ? await mailer.sendMail({
+          to: { name: user.name, email: user.email },
+          subject: 'Sign in to Givto',
+          template: 'login-code',
+          variables: {
+            email,
+            link: `https://givto.app/go?${params}`
+          }
+        })
+      : await mailer.sendMail({
+          to: { name: user.name, email: user.email },
+          subject: 'Confirm your email address on Givto',
+          template: 'confirm-email',
+          variables: {
+            code: loginCode
+          }
+        });
 
     console.log(result);
   }

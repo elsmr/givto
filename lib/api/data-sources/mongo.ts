@@ -49,6 +49,7 @@ export interface MongoLoginCode extends MongoEntity {
   code: string;
   userId: ObjectID;
   exp: number;
+  redirectUrl: string | null;
 }
 
 export interface MongoRefreshToken extends MongoEntity {
@@ -227,12 +228,17 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
     super('loginCodes');
   }
 
-  create = async (id: ObjectID, isInvite = false): Promise<string> => {
-    const code = randomString(isInvite ? 21 : 11);
+  create = async (
+    id: ObjectID,
+    redirectUrl: string = '',
+    isInvite = false
+  ): Promise<string> => {
+    const code = randomString(isInvite ? 21 : 8);
     await this.collection.insertOne({
       code,
       userId: id,
-      exp: Date.now() + ms(isInvite ? '3d' : '15m')
+      exp: Date.now() + ms(isInvite ? '3d' : '15m'),
+      redirectUrl
     });
     return code;
   };

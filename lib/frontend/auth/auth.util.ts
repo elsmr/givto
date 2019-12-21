@@ -7,6 +7,7 @@ const LS_AUTH_KEY = 'givto-access-token';
 export interface Token {
   token: string;
   exp: number;
+  redirectUrl?: string;
 }
 
 export interface IAuthContext {
@@ -65,10 +66,10 @@ export const AuthUtils = {
       email
     }
   }`,
-  login: async (loginCode: string): Promise<Token> =>
+  login: async (email: string, loginCode: string): Promise<Token> =>
     tokenCall('/api/auth/login', {
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ loginCode })
+      body: JSON.stringify({ email, loginCode })
     }),
   refresh: async (): Promise<Token> => tokenCall('/api/auth/refresh'),
   logout: async (token: Token | null): Promise<void> => {

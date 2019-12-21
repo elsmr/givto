@@ -9,6 +9,7 @@ import {
   Token
 } from '@givto/frontend/auth/auth.util';
 import { theme } from '@givto/frontend/theme';
+import * as Sentry from '@sentry/browser';
 import { ThemeProvider } from 'emotion-theming';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import App from 'next/app';
@@ -18,6 +19,12 @@ import React from 'react';
 const client = new GraphQLClient({
   url: '/api/graphql',
   fetch
+});
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  enabled: process.env.NODE_ENV !== 'development'
 });
 
 export default class GivtoApp extends App<

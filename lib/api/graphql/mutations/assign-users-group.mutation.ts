@@ -1,6 +1,7 @@
 import { MongoUser } from '@givto/api/data-sources/mongo';
 import { assignSecretSantas } from '@givto/api/util/secret-santa.util';
 import { AuthenticationError } from 'apollo-server-micro';
+import qs from 'querystring';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation } from '../../graphql-schema';
 
@@ -36,7 +37,12 @@ export const assignUsersInGroup: Mutation<{
   const mailPromises: Promise<any>[] = [];
   for (const user of usersInGroup) {
     const assignee = usersInGroupMap[assignments[user._id.toHexString()]];
-    const inviteCode = await loginCodes.create(user._id, true);
+    const inviteCode = await loginCodes.create(
+      user._id,
+      `/g/${mongoGroup.slug}`,
+      true
+    );
+    const params = qs.encode({ email: user.email, code: inviteCode });
 
     mailPromises.push(
       mailer.sendMail({
@@ -46,7 +52,7 @@ export const assignUsersInGroup: Mutation<{
         template: 'assigned',
         variables: {
           assignee: assignee.name,
-          link: `https://givto.app/g/${mongoGroup.slug}?invite=${inviteCode}`
+          link: `https://givto.app/go?${params}`
         }
       })
     );

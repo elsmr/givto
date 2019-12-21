@@ -1,3 +1,4 @@
+import qs from 'querystring';
 import { MongoLoginCodes, MongoUser } from '../data-sources/mongo';
 import { UserInput } from '../graphql-schema';
 import { Mailer } from '../mail';
@@ -12,7 +13,8 @@ export const sendInviteEmails = async (
   const mailPromises: Promise<any>[] = [];
 
   for (const user of users) {
-    const inviteCode = await loginCodes.create(user._id, true);
+    const inviteCode = await loginCodes.create(user._id, `/g/${slug}`, true);
+    const params = qs.encode({ email: user.email, code: inviteCode });
     mailPromises.push(
       mailer.sendMail({
         from: { name: `${creator.name} via Givto` },
@@ -21,7 +23,7 @@ export const sendInviteEmails = async (
         template: 'invite',
         variables: {
           creator: creator.name,
-          link: `https://givto.app/g/${slug}?invite=${inviteCode}`
+          link: `https://givto.app/go?${params}`
         }
       })
     );

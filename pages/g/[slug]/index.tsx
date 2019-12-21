@@ -1,5 +1,5 @@
 import { EnrichedGroup, UserInput } from '@givto/api/graphql-schema';
-import { AuthContext, AuthUtils, Token } from '@givto/frontend/auth/auth.util';
+import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { ErrorPage } from '@givto/frontend/components/error';
 import { Header } from '@givto/frontend/components/header';
 import { InviteModal } from '@givto/frontend/components/invite-modal';
@@ -20,7 +20,7 @@ import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import useForm from 'react-hook-form';
 
@@ -103,7 +103,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
         as="h2"
         fontSize={5}
         marginRight={2}
-        maxWidth="300px"
+        maxWidth="100%"
         overflow="hidden"
         css={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
       >
@@ -331,30 +331,12 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
 const GroupPage: NextPage = () => {
   const { query, push, asPath } = useRouter();
   const { isInitialized, token } = useContext(AuthContext);
-  const [checkedInvite, setCheckedInvite] = useState(false);
-  const tokenRef = useRef<Token | null>(null);
 
-  useEffect(() => {
-    const login = async () => {
-      if (query.slug) {
-        if (query.invite && !token) {
-          try {
-            tokenRef.current = await AuthUtils.login(query.invite as string);
-          } catch (e) {}
-        }
-        setCheckedInvite(true);
-      }
-    };
-    login();
-  }, [query]);
-
-  if (!query.slug || !checkedInvite || !isInitialized) {
+  if (!query.slug || !isInitialized) {
     return <PageLoader key="loader" />;
   }
 
-  console.log(isInitialized, token, tokenRef);
-
-  if (!token && !tokenRef.current) {
+  if (!token) {
     push(`/login?redirect=${asPath}`);
   }
 

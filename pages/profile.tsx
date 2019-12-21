@@ -67,7 +67,7 @@ const ProfilePage: NextPage = () => {
   }
 
   if (!user) {
-    router.push('/');
+    router.push({ pathname: '/login', query: { redirect: '/profile' } });
     return null;
   }
 

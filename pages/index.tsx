@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
 import { CreateGroupForm } from '@givto/frontend/components/create-group-form';
 import { Header } from '@givto/frontend/components/header';
-import { LoginModal } from '@givto/frontend/components/login-modal';
 import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { Button } from '@givto/frontend/components/ui/button';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import AssignIllustration from '../assets/assign.svg';
 import GivtoLogo from '../assets/givto-logo.svg';
 import InviteIllustration from '../assets/invite.svg';
@@ -26,7 +25,6 @@ const Footer = styled(Box)`
 `.withComponent('footer');
 
 export default () => {
-  const [isLoginVisible, setIsLoginVisible] = useState(false);
   const createGroupRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -58,7 +56,7 @@ export default () => {
               </Box>
               <Button
                 onClick={() => {
-                  inputRef.current?.focus();
+                  setTimeout(() => inputRef.current?.focus(), 200);
                   createGroupRef.current?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'center',
@@ -90,6 +88,7 @@ export default () => {
               marginBottom={5}
             >
               <Box
+                p={[4, 1]}
                 paddingRight={[4, 5]}
                 flexBasis={['100%', '50%']}
                 order={[2, 1]}
@@ -103,8 +102,8 @@ export default () => {
                 </Box>
 
                 <Box as="p" lineHeight="body" fontSize={3}>
-                  Invite all your friends and family via email. They will all be
-                  able to enter their wishlists in private.
+                  Invite all your friends and family by email. They will be able
+                  to enter their wishlists in private.
                 </Box>
               </Box>
             </Box>
@@ -115,14 +114,13 @@ export default () => {
                 </Box>
 
                 <Box as="p" lineHeight="body" fontSize={3}>
-                  With the press of a button Givto will randomly assign everyone
-                  someone to give a gift. The identity of the gift giver remains
-                  a secret.
+                  With just one click Givto assigns a Secret Santa to everyone.
+                  The identity of the Secret Santas remains secret.
                 </Box>
               </Box>
 
-              <Box flexBasis={['100%', '50%']}>
-                <AssignIllustration style={{ width: '100%' }} />
+              <Box p={[4, 1]} flexBasis={['100%', '50%']}>
+                <AssignIllustration style={{ width: '100% ' }} />
               </Box>
             </Box>
           </LayoutWrapper>
@@ -164,15 +162,6 @@ export default () => {
           </Button>
         </LayoutWrapper>
       </Footer>
-
-      {isLoginVisible && (
-        <LoginModal
-          onClose={() => setIsLoginVisible(false)}
-          onLogin={() => {
-            setIsLoginVisible(false);
-          }}
-        />
-      )}
     </Layout>
   );
 };

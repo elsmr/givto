@@ -168,7 +168,12 @@ export const typeDefs = gql`
 
   type Mutation {
     createGroup(creator: UserInput!, invitees: [UserInput]!): Group
-    createLoginCode(email: String!, name: String): Boolean
+    createLoginCode(
+      email: String!
+      name: String
+      redirectUrl: String
+      code: String
+    ): Boolean
     updateUser(email: String!, update: UserUpdate!): User
     setGroupName(slug: String!, name: String!): Group
     assignUsersInGroup(slug: String!): Group
