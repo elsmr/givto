@@ -50,7 +50,8 @@
     "rebass": "4.0.7",
     "smoothscroll-polyfill": "0.4.4",
     "styled-system": "5.1.4",
-    "unfetch": "4.1.0"
+    "unfetch": "4.1.0",
+    "use-media": "1.4.0"
   },
   "browser": {
     "graphql-hooks-ssr": false

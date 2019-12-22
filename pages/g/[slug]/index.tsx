@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import useForm from 'react-hook-form';
+import useMedia from 'use-media';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
@@ -164,6 +165,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
     { loading: assignmentLoading, data }
   ] = useMutation(START_ASSIGNMENT_MUTATION);
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const isWide = useMedia({ minWidth: '560px' });
   const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
 
   if (groupLoading) {
@@ -191,11 +193,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
       <Box marginBottom={4}>
         <LayoutWrapper>
           <Header
-            title={
-              <Box display={['none', 'block']}>
-                <GroupTitle group={group} />
-              </Box>
-            }
+            title={isWide ? <GroupTitle group={group} /> : undefined}
             actions={
               <Box flexShrink={0}>
                 {/* <NextLink passHref href={`/g/${slug}/settings`}>
@@ -207,9 +205,11 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
               </Box>
             }
           />
-          <Box marginTop={3} display={['block', 'none']}>
-            <GroupTitle group={group} />
-          </Box>
+          {!isWide && (
+            <Box marginTop={3}>
+              <GroupTitle group={group} />
+            </Box>
+          )}
         </LayoutWrapper>
       </Box>
       <LayoutWrapper marginBottom={4}>
