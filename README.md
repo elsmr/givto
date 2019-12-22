@@ -1,3 +1,3 @@
-# givto
+# Givto
 
-givto: secret santa app
+Givto: Secret Santa app
