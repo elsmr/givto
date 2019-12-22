@@ -5,3 +5,11 @@
 # Givto
 
 > Givto: Secret Santa app 🎅🎁
+
+## Features
+
+- Random Secret Santa assignment
+- Passwordless authentication
+- Invitations by email
+- Private wishlists
+- Secret Santa assignment exclusions (coming soon)
