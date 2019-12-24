@@ -13,7 +13,7 @@ import GivtoLogo from '../assets/givto-logo.svg';
 export const LoginPage: NextPage = () => {
   const { query, push } = useRouter();
   const [email, setEmail] = useState(query.email as string);
-  const { token } = useContext(AuthContext);
+  const { isInitialized, user } = useContext(AuthContext);
   const transitions = useTransition(email, null, {
     from: {
       opacity: 0,
@@ -24,7 +24,7 @@ export const LoginPage: NextPage = () => {
     initial: null
   });
 
-  if (token) {
+  if (isInitialized && user) {
     push('/profile');
   }
 

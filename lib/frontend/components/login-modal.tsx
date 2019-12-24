@@ -74,12 +74,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             {infoMessage ||
               'There you will find a magic link that will sign you in to Givto.'}
           </Box>
-
-          {email.endsWith('@gmail.com') && (
-            <Button marginTop={3} as="a" href="https://mail.google.com">
-              Open Gmail
-            </Button>
-          )}
         </>
       )}
     </Box>
