@@ -1,4 +1,3 @@
-import { css, Global } from '@emotion/core';
 import { User } from '@givto/api/graphql-schema';
 import { fetch } from '@givto/frontend/api/api.util';
 import {
@@ -135,66 +134,28 @@ export default class GivtoApp extends App<
             <link rel="manifest" href="/givto.webmanifest" />
             <link
               rel="preload"
-              href="/fonts/lato-optimized.woff2"
+              href="/fonts/lato-regular-webfont.woff2"
               as="font"
               type="font/woff2"
               crossOrigin="anonymous"
             />
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
-            <script
+            <style
+              key="global-styles"
               dangerouslySetInnerHTML={{
-                __html: `
-              (function() {
-                "use strict";
-                if( sessionStorage.fontsLoadedCriticalFoftPreloadFallback ) {
-                  document.documentElement.className += " fonts-loaded-2";
-                  return;
-                } else if( "fonts" in document ) {
-                  document.fonts.load("1em LatoSubset").then(function () {
-                    document.documentElement.className += " fonts-loaded-1";
-                    Promise.all([
-                      document.fonts.load("400 1em Lato"),
-                      document.fonts.load("700 1em Lato"),
-                      document.fonts.load("italic 1em Lato"),
-                      document.fonts.load("italic 700 1em Lato")
-                    ]).then(function () {
-                      document.documentElement.className += " fonts-loaded-2";
-                      // Optimization for Repeat Views
-                      sessionStorage.fontsLoadedCriticalFoftPreloadFallback = true;
-                    });
-                  });
-                } else {
-                  var ref = document.getElementsByTagName( "script" )[ 0 ];
-                  var script = document.createElement( "script" );
-                  script.src = "critical-foft-preload-fallback-optional.js";
-                  script.async = true;
-                  ref.parentNode.insertBefore( script, ref );
-                }
-              })();`
-              }}
-            />
-          </Head>
-          <Global
-            styles={css`
-              @font-face {
-                font-family: LatoSubset;
-                src: url('/fonts/lato-optimized.woff2') format('woff2'),
-                  url('/fonts/lato-optimized.woff') format('woff');
-                unicode-range: U+65-90, U+97-122;
-              }
-              @font-face {
+                __html: `@font-face {
                 font-family: Lato;
                 src: url('/fonts/lato-regular-webfont.woff2') format('woff2'),
                   url('/fonts/lato-regular-webfont.woff') format('woff');
-                font-display: swap;
+                font-display: block;
               }
               @font-face {
                 font-family: Lato;
                 src: url('/fonts/lato-bold-webfont.woff2') format('woff2'),
                   url('/fonts/lato-bold-webfont.woff') format('woff');
                 font-weight: 700;
-                font-display: swap;
+                font-display: block;
               }
 
               html {
@@ -211,17 +172,10 @@ export default class GivtoApp extends App<
                 font-family: ${theme.fonts.body};
               }
 
-              .fonts-loaded-1 h1,
-              .fonts-loaded-1 h2,
-              .fonts-loaded-1 h3,
-              .fonts-loaded-1 h4 {
-                font-family: LatoSubset;
-              }
-
-              .fonts-loaded-2 h1,
-              .fonts-loaded-2 h2,
-              .fonts-loaded-2 h3,
-              .fonts-loaded-2 h4 {
+              h1,
+              h2,
+              h3,
+              h4 {
                 font-family: ${theme.fonts.heading};
               }
 
@@ -260,9 +214,10 @@ export default class GivtoApp extends App<
 
               a {
                 color: ${theme.colors.primary};
-              }
-            `}
-          />
+              }`
+              }}
+            ></style>
+          </Head>
 
           <ClientContext.Provider value={client}>
             <AuthContext.Provider value={authContext}>

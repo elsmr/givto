@@ -76,7 +76,10 @@ const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
   }
 }`;
 
-const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
+const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
+  group,
+  multiline
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(group.name);
   const { handleSubmit, register } = useForm();
@@ -104,9 +107,16 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
         as="h2"
         fontSize={5}
         marginRight={2}
-        maxWidth="100%"
-        overflow="hidden"
-        css={{ textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        css={
+          multiline
+            ? {}
+            : {
+                overflow: 'hidden',
+                maxWidth: '100%',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }
+        }
       >
         {name}
       </Box>
@@ -154,7 +164,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup }> = ({ group }) => {
 };
 
 const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
-  const { user, isLoading: userLoading } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { data: groupResult, loading: groupLoading } = useQuery<{
     getGroup: EnrichedGroup;
   }>(GET_GROUP_QUERY, {
@@ -207,7 +217,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
           />
           {!isWide && (
             <Box marginTop={3}>
-              <GroupTitle group={group} />
+              <GroupTitle multiline group={group} />
             </Box>
           )}
         </LayoutWrapper>
@@ -337,13 +347,13 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
 
 const GroupPage: NextPage = () => {
   const { query, push, asPath } = useRouter();
-  const { isInitialized, token } = useContext(AuthContext);
+  const { isInitialized, user } = useContext(AuthContext);
 
   if (!query.slug || !isInitialized) {
     return <PageLoader key="loader" />;
   }
 
-  if (!token) {
+  if (!user) {
     push(`/login?redirect=${asPath}`);
   }
 
