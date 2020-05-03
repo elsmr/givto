@@ -1,6 +1,6 @@
 import { useMutation } from 'graphql-hooks';
 import { useEffect } from 'react';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { AuthUtils } from '../auth/auth.util';
 import { GET_LOGIN_CODE_MUTATION } from './login-modal';
 import { Box } from './ui/box';
@@ -22,14 +22,14 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
   onConfirm,
   email,
   name,
-  onClose
+  onClose,
 }) => {
   const {
     handleSubmit,
     register,
     setError,
     errors,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
   } = useForm<{
     logincode: string;
   }>();
@@ -42,8 +42,8 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
     createLoginCode({
       variables: {
         email,
-        name: name || ''
-      }
+        name: name || '',
+      },
     });
   };
 

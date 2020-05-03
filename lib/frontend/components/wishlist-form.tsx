@@ -2,7 +2,7 @@ import { WishListItem } from '@givto/api/data-sources/mongo';
 import { useMutation } from 'graphql-hooks';
 import { useState } from 'react';
 import { Plus, Save, X } from 'react-feather';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Avatar } from './ui/avatar';
 import { BorderBox } from './ui/border-box';
 import { Box } from './ui/box';
@@ -30,7 +30,7 @@ interface WishListFormProps {
 
 export const WishlistForm: React.FC<WishListFormProps> = ({
   slug,
-  wishlist: wishlistProp
+  wishlist: wishlistProp,
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [wishlist, setWishlist] = useState(wishlistProp);
@@ -47,7 +47,7 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
   const deleteItem = (index: number) => {
     const newWishlist = [
       ...wishlist.slice(0, index),
-      ...wishlist.slice(index + 1)
+      ...wishlist.slice(index + 1),
     ];
     setWishlist(newWishlist);
     setWishlistMutation({ variables: { slug, wishlist: newWishlist } });
