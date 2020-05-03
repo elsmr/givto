@@ -2,7 +2,7 @@ import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useState } from 'react';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -27,7 +27,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   email,
   name,
   infoMessage,
-  successMessage
+  successMessage,
 }) => {
   const [createLoginCode] = useMutation<
     boolean,
@@ -41,14 +41,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({
       variables: {
         email,
         name: name || '',
-        redirectUrl: (query.redirect as string) || '/'
-      }
+        redirectUrl: (query.redirect as string) || '/',
+      },
     });
   };
 
   useEffect(sendEmail, []);
 
-  useEventListener('storage', event => {
+  useEventListener('storage', (event) => {
     const storageEvent = (event as any) as StorageEvent;
     if (storageEvent.key === 'givto-access-token' && storageEvent.newValue) {
       setIsDone(true);
@@ -81,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 };
 
 export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
-  onSubmit
+  onSubmit,
 }) => {
   const { handleSubmit, register } = useForm<{
     email: string;

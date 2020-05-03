@@ -16,7 +16,7 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Save } from 'react-feather';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 const EXPANDED_USER_QUERY = `query getCurrentUser {
   getCurrentUser {
@@ -43,7 +43,7 @@ const ProfilePage: NextPage = () => {
     getCurrentUser: EnrichedUser;
   }>(EXPANDED_USER_QUERY);
   const { register, handleSubmit } = useForm<{ name: string }>({
-    mode: 'onBlur'
+    mode: 'onBlur',
   });
   const router = useRouter();
   const { token } = useContext(AuthContext);
@@ -57,7 +57,7 @@ const ProfilePage: NextPage = () => {
 
   const onSubmit = (formValues: { name: string }) => {
     updateUserMutation({
-      variables: { email: user.email, update: { name: formValues.name } }
+      variables: { email: user.email, update: { name: formValues.name } },
     });
     setName(formValues.name);
   };
@@ -179,7 +179,7 @@ const ProfilePage: NextPage = () => {
               Groups
             </Box>
           </Box>
-          {user.groups.map(group => (
+          {user.groups.map((group) => (
             <NextLink key={group.id} href={`/g/${group.slug}`}>
               <Link
                 display="flex"

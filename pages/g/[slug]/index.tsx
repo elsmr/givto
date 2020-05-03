@@ -22,7 +22,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import useMedia from 'use-media';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
@@ -78,7 +78,7 @@ const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
 
 const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
   group,
-  multiline
+  multiline,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(group.name);
@@ -89,7 +89,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
 
   const onSubmit = (values: Record<string, string>) => {
     setGroupName({
-      variables: { name: values['group-name'], slug: group.slug }
+      variables: { name: values['group-name'], slug: group.slug },
     });
     setName(values['group-name']);
     setIsEditing(false);
@@ -114,7 +114,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
                 overflow: 'hidden',
                 maxWidth: '100%',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
               }
         }
       >
@@ -168,11 +168,11 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const { data: groupResult, loading: groupLoading } = useQuery<{
     getGroup: EnrichedGroup;
   }>(GET_GROUP_QUERY, {
-    variables: { slug }
+    variables: { slug },
   });
   const [
     assignUsersMutation,
-    { loading: assignmentLoading, data }
+    { loading: assignmentLoading, data },
   ] = useMutation(START_ASSIGNMENT_MUTATION);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const isWide = useMedia({ minWidth: '560px' });
@@ -243,7 +243,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
               </IconButton>
             )}
           </Box>
-          {[...group.users, ...invitedUsers].map(member => (
+          {[...group.users, ...invitedUsers].map((member) => (
             <Box key={member.email} display="flex" alignItems="center" py={2}>
               <Avatar
                 name={member.name}
@@ -335,8 +335,8 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
         <InviteModal
           slug={group.slug}
           onClose={() => setShowInviteModal(false)}
-          onInvite={invitedUser => {
-            setInvitedUsers(state => [...state, invitedUser]);
+          onInvite={(invitedUser) => {
+            setInvitedUsers((state) => [...state, invitedUser]);
             setShowInviteModal(false);
           }}
         ></InviteModal>

@@ -6,10 +6,9 @@ import React, {
   RefObject,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
-import useForm from 'react-hook-form';
-import { FieldError } from 'react-hook-form/dist/types';
+import { FieldError, NestDataObject, useForm } from 'react-hook-form';
 import { AuthContext } from '../auth/auth.util';
 import { ConfirmEmailModal } from './confirm-email-modal';
 import { Box } from './ui/box';
@@ -40,7 +39,7 @@ interface FormValues {
   invitees: Contact[];
 }
 
-type Errors = Partial<Record<string, FieldError>>;
+type Errors = NestDataObject<FormValues, FieldError>;
 
 const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
@@ -55,12 +54,11 @@ const FormSectionTitle: React.FC = ({ children }) => {
 const FormError: React.FC<{
   errors: Errors;
 }> = ({ errors }) => {
-  const errorFields = Object.keys(errors);
-  const hasError = errorFields.length > 0;
-  const hasDuplicateError = errorFields.some(
-    key => errors[key]?.type === 'duplicate'
-  );
-  const hasCreatorError = errorFields.some(key => key.startsWith('creator'));
+  console.log(errors.invitees);
+  const hasDuplicateError =
+    errors?.creator?.email?.type === 'duplicate' ||
+    errors?.invitees?.some((error) => error.email?.type === 'duplicate');
+  const hasCreatorError = errors.creator?.email || errors.creator?.name;
 
   if (hasDuplicateError) {
     return (
@@ -70,49 +68,49 @@ const FormError: React.FC<{
     );
   }
 
-  return (
+  if (hasCreatorError) {
     <Box color="secondary" paddingRight={2}>
-      {hasError
-        ? hasCreatorError
-          ? 'Please input your name and email'
-          : 'Please provide a name and email for at least 2 friends'
-        : ''}
-    </Box>
-  );
+      {hasCreatorError
+        ? 'Please input your name and email'
+        : 'Please provide a name and email for at least 2 friends'}
+    </Box>;
+  }
+
+  return <Box color="secondary" paddingRight={2}></Box>;
 };
 
 interface ContactFieldProps {
-  id: string;
+  field: string;
   namePlaceholder: string;
   emailPlaceholder: string;
   register: Function;
   onInput?: (event: ChangeEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   required?: boolean;
-  errors: Errors;
+  error?: NestDataObject<Contact, FieldError>;
   inputRef?: RefObject<HTMLInputElement>;
 }
 
 const ContactField: React.FC<ContactFieldProps> = ({
-  id,
+  field,
   emailPlaceholder,
   namePlaceholder,
   register,
   onInput,
   autoFocus,
   required,
-  errors,
-  inputRef
+  error,
+  inputRef,
 }) => {
   return (
     <Box display="flex" flexDirection={['column', 'row']} marginBottom={3}>
       <Input
-        name={`${id}.name`}
+        name={`${field}.name`}
         flex={1}
         aria-label="Name"
         marginRight={[0, 2]}
         marginBottom={[2, 0]}
-        borderColor={errors[`${id}.name`] ? 'danger' : 'black'}
+        borderColor={error?.name ? 'danger' : 'black'}
         placeholder={namePlaceholder}
         autoFocus={autoFocus}
         ref={(element: HTMLInputElement) => {
@@ -124,15 +122,15 @@ const ContactField: React.FC<ContactFieldProps> = ({
         onInput={onInput}
       />
       <Input
-        name={`${id}.email`}
+        name={`${field}.email`}
         type="email"
         aria-label="Email"
-        borderColor={errors[`${id}.email`] ? 'danger' : 'black'}
+        borderColor={error?.email ? 'danger' : 'black'}
         flex={4}
         placeholder={emailPlaceholder}
         ref={register({
           required,
-          pattern: emailRegex
+          pattern: emailRegex,
         })}
       />
     </Box>
@@ -168,7 +166,7 @@ export const CreateGroupForm = React.forwardRef<
     formState: { isSubmitted },
     setValue,
     setError,
-    getValues
+    getValues,
   } = useForm<FormValues>();
   const router = useRouter();
   const { user } = useContext(AuthContext);
@@ -180,7 +178,7 @@ export const CreateGroupForm = React.forwardRef<
   >(CREATE_GROUP_MUTATION);
   const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
 
-  useEventListener('beforeunload', event => {
+  useEventListener('beforeunload', (event) => {
     const hasEnteredInvitee = getValues({ nest: true }).invitees[0].name;
     if (hasEnteredInvitee && !isSubmitted) {
       event.preventDefault();
@@ -193,15 +191,15 @@ export const CreateGroupForm = React.forwardRef<
     const { creator, invitees } = getValues({ nest: true });
     const {
       data: {
-        createGroup: { slug }
-      }
+        createGroup: { slug },
+      },
     } = await createGroup({
       variables: {
         creator,
         invitees: invitees.filter(
-          inv => emailRegex.test(inv.email) && inv.name.trim().length > 0
-        )
-      }
+          (inv) => emailRegex.test(inv.email) && inv.name.trim().length > 0
+        ),
+      },
     });
     await router.push(`/g/${slug}`);
     setIsSubmittingGroup(false);
@@ -215,12 +213,12 @@ export const CreateGroupForm = React.forwardRef<
       {} as Record<string, number>
     );
     const duplicateEmails = Object.keys(emailUserMap).filter(
-      email => emailUserMap[email] > 1
+      (email) => emailUserMap[email] > 1
     );
 
     if (duplicateEmails.length > 0) {
       const duplicateIndex = allUsers.findIndex(
-        user => user.email === duplicateEmails[0]
+        (user) => user.email === duplicateEmails[0]
       );
       const fieldWithDuplicate =
         duplicateIndex === 0
@@ -259,25 +257,25 @@ export const CreateGroupForm = React.forwardRef<
       <Form ref={ref} onSubmit={handleSubmit(onSubmit)}>
         <FormSectionTitle>What's your name?</FormSectionTitle>
         <ContactField
-          id="creator"
+          field="creator"
+          error={errors.creator}
           required
           namePlaceholder="Your Name"
           emailPlaceholder="Your Email Address"
           register={register}
-          errors={errors}
           inputRef={inputRef}
         />
         <FormSectionTitle>Invite your friends</FormSectionTitle>
         {new Array(inviteeAmount).fill(null).map((_, index) => (
           <ContactField
             key={index}
-            id={`invitees[${index}]`}
+            field={`invitees[${index}]`}
+            error={errors.invitees?.[index]}
             required={index < 2}
             namePlaceholder="Your Friend's Name"
             emailPlaceholder="Your Friend's Email Address"
             register={register}
             onInput={onInput(index)}
-            errors={errors}
           />
         ))}
         {inviteeAmount === INITIAL_INVITEE_AMOUNT && (

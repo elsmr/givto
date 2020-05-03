@@ -1,6 +1,6 @@
 import { UserInput } from '@givto/api/graphql-schema';
 import { useMutation } from 'graphql-hooks';
-import useForm from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -25,12 +25,12 @@ const Form = Box.withComponent('form');
 export const InviteModal: React.FC<InviteModalProps> = ({
   onInvite,
   onClose,
-  slug
+  slug,
 }) => {
   const {
     handleSubmit,
     register,
-    formState: { isSubmitting }
+    formState: { isSubmitting },
   } = useForm<{
     name: string;
     email: string;
