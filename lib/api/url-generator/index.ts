@@ -1,8 +1,4 @@
-import { adjectives, animals } from './data';
-
-const getRandomItem = <T>(array: Array<T>): T => {
-  return array[Math.floor(Math.random() * array.length)];
-};
+import { randomString } from '../util/random-string.util';
 
 export const generateSlug = async (
   slugExists: (slug: string) => Promise<boolean>
@@ -10,9 +6,7 @@ export const generateSlug = async (
   let isUnique = false;
   let slug = '';
   while (!isUnique) {
-    slug = `${getRandomItem(adjectives)}-${getRandomItem(
-      adjectives
-    )}-${getRandomItem(animals)}`;
+    slug = randomString(8);
     isUnique = !(await slugExists(slug));
 
     if (!isUnique) {
