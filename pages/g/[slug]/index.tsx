@@ -8,11 +8,12 @@ import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { Badge } from '@givto/frontend/components/ui/badge';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
-import { Button } from '@givto/frontend/components/ui/button';
+import { Button, ButtonReset } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Loader, PageLoader } from '@givto/frontend/components/ui/loader';
+import { Modal } from '@givto/frontend/components/ui/modal';
 import { Popover } from '@givto/frontend/components/ui/popover';
 import { Wishlist } from '@givto/frontend/components/wishlist';
 import { WishlistForm } from '@givto/frontend/components/wishlist-form';
@@ -23,7 +24,6 @@ import { useRouter } from 'next/router';
 import { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
-import useMedia from 'use-media';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
@@ -178,7 +178,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
     { loading: assignmentLoading, data },
   ] = useMutation(START_ASSIGNMENT_MUTATION);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const isWide = useMedia({ minWidth: '560px' });
+  const [showMembersModal, setShowMembersModal] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
 
   if (groupLoading) {
@@ -193,6 +193,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const assignedAt = data?.assignUsersInGroup?.assignedAt ?? group.assignedAt;
   const assignee = data?.assignUsersInGroup?.assignee ?? group.assignee;
   const isCreator = group.creator.id === user?.id;
+  const allUsers = [...group.users, ...invitedUsers];
 
   const startAssignment = () => {
     assignUsersMutation({ variables: { slug } });
@@ -203,10 +204,9 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
       <Head>
         <title>Givto - {group.name || 'Unnamed Group'}</title>
       </Head>
-      <Box marginBottom={4}>
+      <Box marginBottom={3} borderBottom="solid 2px black">
         <LayoutWrapper>
           <Header
-            title={isWide ? <GroupTitle group={group} /> : undefined}
             actions={
               <Box flexShrink={0}>
                 {/* <NextLink passHref href={`/g/${slug}/settings`}>
@@ -218,56 +218,50 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
               </Box>
             }
           />
-          {!isWide && (
-            <Box marginTop={3}>
-              <GroupTitle multiline group={group} />
-            </Box>
-          )}
         </LayoutWrapper>
       </Box>
       <LayoutWrapper marginBottom={4}>
-        <BorderBox p={3}>
+        <Box
+          display="flex"
+          flexDirection={['column', 'column', 'row']}
+          justifyContent="space-between"
+          alignItems={['flex-start', 'flex-start', 'center']}
+        >
+          <GroupTitle multiline group={group} />
+
           <Box
             display="flex"
             alignItems="center"
-            justifyContent="space-between"
-            borderBottomStyle="solid"
-            borderColor="black"
-            borderWidth={1}
-            paddingBottom={2}
-            marginBottom={3}
+            flexShrink={0}
+            marginTop={[2, 2, 0]}
           >
-            <Box as="h3" fontSize={4} marginRight={2}>
-              Members
-            </Box>
+            <ButtonReset
+              display="flex"
+              marginRight={2}
+              onClick={() => setShowMembersModal(true)}
+            >
+              {allUsers.slice(0, 4).map((member, index) => (
+                <Avatar
+                  key={member.email}
+                  name={member.name}
+                  marginLeft={index ? `-${12}px` : 0}
+                />
+              ))}
+              {allUsers.length > 4 && (
+                <Avatar
+                  prefix="+"
+                  marginLeft={`-${12}px`}
+                  name={(allUsers.length - 4).toString()}
+                />
+              )}
+            </ButtonReset>
             {!assignedAt && (
-              <IconButton onClick={() => setShowInviteModal(true)}>
-                <Plus /> <Box px={2}>Invite</Box>
+              <IconButton size="small" onClick={() => setShowInviteModal(true)}>
+                <Plus size={12} /> <Box marginLeft={1}>Invite</Box>
               </IconButton>
             )}
           </Box>
-          {[...group.users, ...invitedUsers].map((member) => (
-            <Box key={member.email} display="flex" alignItems="center" py={2}>
-              <Avatar
-                name={member.name}
-                marginRight={2}
-                size={36}
-                fontSize={4}
-              ></Avatar>
-              <Box>
-                <Box display="flex" alignItems="center">
-                  <Box>{member.name}</Box>
-                  {member.email === group.creator.email && (
-                    <Badge mx={1}>🎅 Owner</Badge>
-                  )}
-                </Box>
-                <Box color="textMuted" fontSize={1}>
-                  {member.email}
-                </Box>
-              </Box>
-            </Box>
-          ))}
-        </BorderBox>
+        </Box>
       </LayoutWrapper>
 
       <LayoutWrapper marginBottom={4}>
@@ -343,6 +337,27 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
             setShowInviteModal(false);
           }}
         ></InviteModal>
+      )}
+
+      {showMembersModal && (
+        <Modal title="Members" onClose={() => setShowMembersModal(false)}>
+          {allUsers.map((member) => (
+            <Box key={member.email} display="flex" alignItems="center" py={2}>
+              <Avatar name={member.name} marginRight={2}></Avatar>
+              <Box>
+                <Box display="flex" alignItems="center">
+                  <Box>{member.name}</Box>
+                  {member.email === group.creator.email && (
+                    <Badge mx={1}>🎅 Owner</Badge>
+                  )}
+                </Box>
+                <Box color="textMuted" fontSize={1}>
+                  {member.email}
+                </Box>
+              </Box>
+            </Box>
+          ))}
+        </Modal>
       )}
     </Layout>
   );
