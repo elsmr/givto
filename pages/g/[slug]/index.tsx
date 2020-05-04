@@ -40,6 +40,7 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
             email
         },
         wishlist {
+          id
           title
           description
         },
@@ -48,6 +49,7 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
             name
           }
           wishlist {
+            id
             title
             description
           }
@@ -68,6 +70,7 @@ const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
           name
         },
         wishlist {
+          id
           title
           description
         },

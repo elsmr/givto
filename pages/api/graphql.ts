@@ -1,13 +1,13 @@
 import {
   MongoGroups,
   MongoLoginCodes,
-  MongoUsers
+  MongoUsers,
 } from '@givto/api/data-sources/mongo';
 import {
   GivtoContext,
   GivtoDataSources,
   scalarResolvers,
-  typeDefs
+  typeDefs,
 } from '@givto/api/graphql-schema';
 import { contextFactory } from '@givto/api/graphql/context.factory';
 import { addAssignmentException } from '@givto/api/graphql/mutations/add-assignment-exception.mutation';
@@ -16,8 +16,10 @@ import { addWishlistItem } from '@givto/api/graphql/mutations/add-wishlist-item.
 import { assignUsersInGroup } from '@givto/api/graphql/mutations/assign-users-group.mutation';
 import { createGroup } from '@givto/api/graphql/mutations/create-group.mutation';
 import { createLoginCode } from '@givto/api/graphql/mutations/create-login-code.mutation';
+import { deleteWishlistItem } from '@givto/api/graphql/mutations/delete-wishlist-item.mutation';
+import { editWishlistItem } from '@givto/api/graphql/mutations/edit-wishlist-item.mutation';
+import { reorderWishlistItem } from '@givto/api/graphql/mutations/reorder-wishlist-item.mutation';
 import { setGroupName } from '@givto/api/graphql/mutations/set-group-name.mutation';
-import { setWishlist } from '@givto/api/graphql/mutations/set-wishlist.mutation';
 import { updateUser } from '@givto/api/graphql/mutations/update-user.mutation';
 import { getCurrentUser } from '@givto/api/graphql/queries/get-current-user.query';
 import { getGroup } from '@givto/api/graphql/queries/get-group.query';
@@ -31,7 +33,7 @@ import { ApolloServer, IResolvers } from 'apollo-server-micro';
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  enabled: process.env.NODE_ENV !== 'development'
+  enabled: process.env.NODE_ENV !== 'development',
 });
 
 const resolvers: IResolvers<any, GivtoContext> = {
@@ -39,7 +41,7 @@ const resolvers: IResolvers<any, GivtoContext> = {
   Query: {
     getCurrentUser,
     getGroup,
-    getLoginCode
+    getLoginCode,
   },
   Group: groupResolver,
   User: userResolver,
@@ -50,18 +52,20 @@ const resolvers: IResolvers<any, GivtoContext> = {
     createGroup,
     createLoginCode,
     assignUsersInGroup,
-    setWishlist,
-    addAssignmentException,
     addWishlistItem,
-    addUsersToGroup
-  }
+    editWishlistItem,
+    deleteWishlistItem,
+    reorderWishlistItem,
+    addAssignmentException,
+    addUsersToGroup,
+  },
 };
 
 const dataSources: () => GivtoDataSources = () => {
   return {
     users: new MongoUsers(),
     groups: new MongoGroups(),
-    loginCodes: new MongoLoginCodes()
+    loginCodes: new MongoLoginCodes(),
   };
 };
 
@@ -72,16 +76,16 @@ const apolloServer = new ApolloServer({
   tracing: process.env.NODE_ENV === 'development',
   introspection: process.env.NODE_ENV === 'development',
   context: contextFactory,
-  formatError: error => {
+  formatError: (error) => {
     Sentry.captureException(error);
     return error;
-  }
+  },
 });
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 };
 
 export default apolloServer.createHandler({ path: '/api/graphql' });

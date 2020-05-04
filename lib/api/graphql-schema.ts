@@ -6,7 +6,7 @@ import {
   MongoGroups,
   MongoLoginCodes,
   MongoUsers,
-  WishListItem
+  WishListItem,
 } from './data-sources/mongo';
 import { Mailer } from './mail';
 
@@ -110,6 +110,7 @@ export const typeDefs = gql`
   }
 
   type WishlistItem {
+    id: String!
     title: String!
     description: String!
   }
@@ -157,8 +158,9 @@ export const typeDefs = gql`
   }
 
   input WishlistItemInput {
-    title: String!
-    description: String!
+    id: String
+    title: String
+    description: String
   }
 
   input AssignmentException {
@@ -177,8 +179,21 @@ export const typeDefs = gql`
     updateUser(email: String!, update: UserUpdate!): User
     setGroupName(slug: String!, name: String!): Group
     assignUsersInGroup(slug: String!): Group
-    setWishlist(slug: String!, wishlist: [WishlistItemInput]!): Group
-    addWishlistItem(slug: String!, item: WishlistItemInput!): Group
+    deleteWishlistItem(slug: String!, wishlistItemId: String!): [WishlistItem]
+    addWishlistItem(
+      slug: String!
+      wishlistItem: WishlistItemInput!
+    ): [WishlistItem]
+    editWishlistItem(
+      slug: String!
+      wishlistItemId: String!
+      update: WishlistItemInput!
+    ): [WishlistItem]
+    reorderWishlistItem(
+      slug: String!
+      wishlistItemId: String!
+      destinationIndex: Int!
+    ): [WishlistItem]
     addAssignmentException(
       slug: String!
       exception: AssignmentException!
@@ -203,6 +218,6 @@ export const scalarResolvers = {
         return new Date(ast.value);
       }
       return null;
-    }
-  })
+    },
+  }),
 };
