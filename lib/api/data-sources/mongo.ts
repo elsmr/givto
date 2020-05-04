@@ -1,6 +1,7 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import { Collection, Db, MongoClient, MongoError, ObjectID } from 'mongodb';
 import ms from 'ms';
+import { nanoid } from 'nanoid';
 import { GivtoContext, UserInput } from '../graphql-schema';
 import { randomString } from '../util/random-string.util';
 
@@ -69,7 +70,7 @@ export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
   if (!connectionPromise) {
     connectionPromise = new MongoClient(uri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     }).connect();
   }
 
@@ -90,7 +91,7 @@ export class MongoDataSource<T extends MongoEntity> extends DataSource<
   }
 
   initialize({
-    context: { db }
+    context: { db },
   }: Pick<DataSourceConfig<Pick<GivtoContext, 'db'>>, 'context'>): void {
     this.collection = db.collection(this.collectionName);
   }
@@ -100,7 +101,7 @@ export class MongoDataSource<T extends MongoEntity> extends DataSource<
   };
 
   findByIds = (ids: string[]): Promise<T[]> => {
-    const objectIds = ids.map(id => new ObjectID(id));
+    const objectIds = ids.map((id) => new ObjectID(id));
     return this.collection.find({ _id: { $in: objectIds } } as any).toArray();
   };
 }
@@ -118,7 +119,7 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
     console.log('creating users', users);
     try {
       await this.collection.insertMany(
-        users.map(user => ({ ...user, groups: [] })),
+        users.map((user) => ({ ...user, groups: [] })),
         { ordered: false }
       );
     } catch (error) {
@@ -130,7 +131,7 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
     }
 
     const result = await this.collection.find({
-      email: { $in: users.map(user => user.email) }
+      email: { $in: users.map((user) => user.email) },
     });
 
     return result.toArray();
@@ -169,7 +170,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   createGroup = async ({
     slug,
     users,
-    creator
+    creator,
   }: Pick<
     MongoGroup,
     'slug' | 'users' | 'creator'
@@ -184,7 +185,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       assignedAt: null,
       assignments: {},
       wishlists: {},
-      assignExceptions: {}
+      assignExceptions: {},
     });
 
     return this.findBySlug(slug);
@@ -208,6 +209,80 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { returnOriginal: false }
     );
     return group.value;
+  };
+
+  addWishlistItem = async (
+    slug: string,
+    userId: string,
+    item: WishListItemInput
+  ): Promise<WishListItem[] | undefined> => {
+    const group = await this.collection.findOneAndUpdate(
+      { slug },
+      { $push: { [`wishlists.${userId}`]: { ...item, id: nanoid() } } },
+      { returnOriginal: false }
+    );
+    return group.value?.wishlists?.[userId];
+  };
+
+  deleteWishlistItem = async (
+    slug: string,
+    userId: string,
+    itemId: string
+  ): Promise<WishListItem[] | undefined> => {
+    const group = await this.collection.findOneAndUpdate(
+      { slug },
+      { $pull: { [`wishlists.${userId}`]: { id: itemId } } }
+    );
+    return group.value?.wishlists?.[userId];
+  };
+
+  editWishlistItem = async (
+    slug: string,
+    userId: string,
+    itemId: string,
+    update: Partial<WishListItem>
+  ): Promise<WishListItem[] | undefined> => {
+    const group = await this.collection.findOne(
+      { slug },
+      { projection: { [`wishlists.${userId}`]: 1 } }
+    );
+    const wishlist = group?.wishlists?.[userId]!;
+    const srcItem = wishlist.find((item) => item.id === itemId)!;
+    const newItem = { ...srcItem, ...update };
+    await this.collection.findOneAndUpdate(
+      { slug },
+      {
+        $set: {
+          [`wishlists.${userId}`]: wishlist.map((item) =>
+            item.id === itemId ? newItem : item
+          ),
+        },
+      }
+    );
+    return wishlist;
+  };
+
+  reorderWishlistItem = async (
+    slug: string,
+    userId: string,
+    itemId: string,
+    destinationIndex: number
+  ): Promise<WishListItem[] | undefined> => {
+    const group = await this.collection.findOne(
+      { slug },
+      { projection: { [`wishlists.${userId}`]: 1 } }
+    );
+    const wishlist = group?.wishlists?.[userId];
+    const srcIndex = wishlist?.findIndex((item) => item.id === itemId)!;
+    const [srcItem] = wishlist?.splice(srcIndex, 1)!;
+    wishlist?.splice(destinationIndex, 0, srcItem);
+    await this.collection.findOneAndUpdate(
+      { slug },
+      { $set: { [`wishlists.${userId}`]: wishlist } },
+      { returnOriginal: false }
+    );
+
+    return wishlist;
   };
 
   addUsersToGroup = async (
@@ -238,7 +313,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
       code,
       userId: id,
       exp: Date.now() + ms(isInvite ? '3d' : '15m'),
-      redirectUrl
+      redirectUrl,
     });
     return code;
   };
@@ -246,7 +321,9 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
   deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
     return this.collection
       .deleteMany({ userId })
-      .then(result => Boolean(result.deletedCount && result.deletedCount > 0));
+      .then((result) =>
+        Boolean(result.deletedCount && result.deletedCount > 0)
+      );
   };
 
   findByCode = (code: string): Promise<MongoLoginCode | null> => {
@@ -264,7 +341,7 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     const tokenObj = {
       token,
       userId,
-      exp: Date.now() + ms('7d')
+      exp: Date.now() + ms('7d'),
     };
     const result = await this.collection.insertOne(tokenObj);
     return { ...tokenObj, _id: result.insertedId };
@@ -277,6 +354,8 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
   deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
     return this.collection
       .deleteMany({ userId: userId })
-      .then(result => Boolean(result.deletedCount && result.deletedCount > 0));
+      .then((result) =>
+        Boolean(result.deletedCount && result.deletedCount > 0)
+      );
   };
 }

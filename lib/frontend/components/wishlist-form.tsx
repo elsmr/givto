@@ -11,15 +11,49 @@ import { Input } from './ui/input';
 import { InputLabel } from './ui/labeled-input';
 import { Wishlist } from './wishlist';
 
-const SET_WISHLIST_MUTATION = `mutation setWishlist($slug: String!, $wishlist: [WishlistItemInput]!) {
-    setWishlist(
+const ADD_WISHLISTITEM_MUTATION = `mutation addWishlistItem($slug: String!, $wishlistItem: WishlistItemInput!) {
+    addWishlistItem(
         slug: $slug
-      wishlist: $wishlist
+        wishlistItem: $wishlistItem
     ) {
-      wishlist {
-          title
-          description
-      }
+        id
+        title
+        description
+    }
+  }`;
+
+const DELETE_WISHLISTITEM_MUTATION = `mutation deleteWishlistItem($slug: String!, $wishlistItemId: String!) {
+    deleteWishlistItem(
+        slug: $slug
+        wishlistItemId: $wishlistItemId
+    ) {
+        id
+        title
+        description
+    }
+  }`;
+
+const REORDER_WISHLISTITEM_MUTATION = `mutation reorderWishlistItem($slug: String!, $wishlistItemId: String!, $destinationIndex: Int!) {
+    reorderWishlistItem(
+        slug: $slug
+        wishlistItemId: $wishlistItemId
+        destinationIndex: $destinationIndex
+    ) {
+        id
+        title
+        description
+    }
+  }`;
+
+const EDIT_WISHLISTITEM_MUTATION = `mutation editWishlistItem($slug: String!, $wishlistItemId: String!, $update: WishlistItemInput!) {
+    editWishlistItem(
+        slug: $slug
+        wishlistItemId: $wishlistItemId
+        update: $update
+    ) {
+        id
+        title
+        description
     }
   }`;
 
@@ -34,23 +68,55 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
 }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [wishlist, setWishlist] = useState(wishlistProp);
-  const { handleSubmit, register } = useForm<WishListItem>();
-  const [setWishlistMutation] = useMutation(SET_WISHLIST_MUTATION);
+  const [addWishlistItemMutation] = useMutation(ADD_WISHLISTITEM_MUTATION);
+  const [deleteWishlistItemMutation] = useMutation(
+    DELETE_WISHLISTITEM_MUTATION
+  );
+  const [reorderWishlistMutation] = useMutation(REORDER_WISHLISTITEM_MUTATION);
+  const [editWishlistMutation] = useMutation(EDIT_WISHLISTITEM_MUTATION);
 
-  const onSubmit = (newItem: WishListItem) => {
-    const newWishlist = [...wishlist, newItem];
-    setWishlist(newWishlist);
-    setWishlistMutation({ variables: { slug, wishlist: newWishlist } });
+  const onSubmit = async (newItem: WishListItem) => {
+    const { data } = await addWishlistItemMutation({
+      variables: { slug, wishlistItem: newItem },
+    });
+    setWishlist(data.addWishlistItem);
     setIsAdding(false);
   };
 
-  const deleteItem = (index: number) => {
-    const newWishlist = [
-      ...wishlist.slice(0, index),
-      ...wishlist.slice(index + 1),
-    ];
+  const deleteItem = (id: string) => {
+    const newWishlist = wishlist.filter((item) => item.id !== id);
     setWishlist(newWishlist);
-    setWishlistMutation({ variables: { slug, wishlist: newWishlist } });
+    deleteWishlistItemMutation({
+      variables: { slug, wishlistItemId: id },
+    });
+  };
+
+  const editItem = (id: string, update: Partial<WishListItem>) => {
+    const newWishlist = wishlist.map((item) =>
+      item.id === id ? { ...item, ...update } : item
+    );
+    setWishlist(newWishlist);
+    editWishlistMutation({
+      variables: { slug, wishlistItemId: id, update },
+    });
+  };
+
+  const reorderItem = ({
+    id,
+    destinationIndex,
+  }: {
+    id: string;
+    destinationIndex: number;
+  }): void => {
+    const newWishlist = [...wishlist];
+    const srcIndex = newWishlist.findIndex((item) => item.id === id);
+    const [srcItem] = newWishlist.splice(srcIndex, 1);
+    newWishlist.splice(destinationIndex, 0, srcItem);
+
+    setWishlist(newWishlist);
+    reorderWishlistMutation({
+      variables: { slug, wishlistItemId: id, destinationIndex },
+    });
   };
 
   return (
@@ -75,6 +141,8 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
             wishlist={wishlist}
             isEditable={true}
             onDelete={deleteItem}
+            onReorder={reorderItem}
+            onEditSubmit={editItem}
           />
         </Box>
 
@@ -108,49 +176,68 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
         )}
 
         {isAdding && (
-          <Box
-            display="flex"
-            marginBottom={3}
-            borderStyle="solid"
-            borderColor="black"
-            borderWidth={1}
-            p={2}
-          >
-            <Avatar name={`${wishlist.length + 1}`} marginRight={3} />
-            <Box as="form" flexGrow={1} onSubmit={handleSubmit(onSubmit)}>
-              <InputLabel label="Title" marginBottom={3}>
-                <Input
-                  name="title"
-                  placeholder="What gift do you want?"
-                  ref={register({ required: true })}
-                />
-              </InputLabel>
-              <InputLabel label="Description" marginBottom={3} isOptional>
-                <Input
-                  name="description"
-                  placeholder="Describe your gift! include hints, links etc."
-                  as="textarea"
-                  noresize
-                  ref={register}
-                />
-              </InputLabel>
-              <Box display="flex" justifyContent="flex-end">
-                <IconButton marginRight={2} type="submit">
-                  <Save size={16} /> <Box px={2}>Save</Box>
-                </IconButton>
-                <IconButton
-                  color="black"
-                  bg="secondary"
-                  type="button"
-                  onClick={() => setIsAdding(false)}
-                >
-                  <X size={16} /> <Box px={2}>Cancel</Box>
-                </IconButton>
-              </Box>
-            </Box>
-          </Box>
+          <WishlistItemForm
+            index={wishlist.length + 1}
+            onCancel={() => setIsAdding(false)}
+            onSubmit={onSubmit}
+          />
         )}
       </Box>
     </BorderBox>
+  );
+};
+
+export const WishlistItemForm: React.FC<{
+  onSubmit: (item: WishListItem) => void;
+  onCancel: () => void;
+  index: number;
+  init?: WishListItem;
+}> = ({ onSubmit, onCancel, index, init }) => {
+  const { handleSubmit, register } = useForm<WishListItem>({
+    defaultValues: init,
+  });
+
+  return (
+    <Box
+      display="flex"
+      marginBottom={3}
+      borderStyle="solid"
+      borderColor=""
+      borderWidth={1}
+      p={2}
+    >
+      <Avatar name={`${index}`} marginRight={3} />
+      <Box as="form" flexGrow={1} onSubmit={handleSubmit(onSubmit)}>
+        <InputLabel label="Title" marginBottom={3}>
+          <Input
+            name="title"
+            placeholder="What gift do you want?"
+            ref={register({ required: true })}
+          />
+        </InputLabel>
+        <InputLabel label="Description" marginBottom={3} isOptional>
+          <Input
+            name="description"
+            placeholder="Describe your gift! include hints, links etc."
+            as="textarea"
+            noresize
+            ref={register}
+          />
+        </InputLabel>
+        <Box display="flex" justifyContent="flex-end">
+          <IconButton marginRight={2} type="submit">
+            <Save size={16} /> <Box px={2}>Save</Box>
+          </IconButton>
+          <IconButton
+            color="black"
+            bg="secondary"
+            type="button"
+            onClick={onCancel}
+          >
+            <X size={16} /> <Box px={2}>Cancel</Box>
+          </IconButton>
+        </Box>
+      </Box>
+    </Box>
   );
 };

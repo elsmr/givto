@@ -1,11 +1,26 @@
-import { WishListItemInput } from '../../data-sources/mongo';
+import { WishListItem, WishListItemInput } from '@givto/api/data-sources/mongo';
+import { AuthenticationError } from 'apollo-server-micro';
 import { Mutation } from '../../graphql-schema';
 
 export const addWishlistItem: Mutation<{
   slug: string;
-  item: WishListItemInput;
+  wishlistItem: WishListItemInput;
 }> = async (
   _,
-  { slug, item },
+  { slug, wishlistItem },
   { dataSources: { groups }, auth }
-): Promise<void> => {};
+): Promise<WishListItem[]> => {
+  const claims = auth.get();
+
+  if (!claims) {
+    throw new AuthenticationError('Unauthorized');
+  }
+
+  const wishlist = await groups.addWishlistItem(slug, claims.sub, wishlistItem);
+
+  if (!wishlist) {
+    throw new AuthenticationError('Unauthorized');
+  }
+
+  return wishlist;
+};
