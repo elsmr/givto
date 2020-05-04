@@ -192,7 +192,6 @@ const ProfilePage: NextPage = () => {
                   name={group.name || 'A'}
                   marginRight={2}
                   size={36}
-                  fontSize={4}
                 ></Avatar>
                 <Box>
                   <Box>{group.name || 'Anonymous group'}</Box>

@@ -25,8 +25,8 @@ export const ButtonReset: React.FC<BoxProps> = React.forwardRef(
         WebkitTapHighlightColor: 'transparent',
         outline: 'none',
         '::-moz-focus-inner': {
-          border: 0
-        }
+          border: 0,
+        },
       })}
       ref={ref}
       {...props}
@@ -45,7 +45,7 @@ const PlainButton = styled(ButtonReset)`
   }
 
   &:focus ${ButtonForeground} {
-    outline: 2px solid ${props => (props.theme as Theme).colors.secondary};
+    outline: 2px solid ${(props) => (props.theme as Theme).colors.secondary};
   }
 `;
 

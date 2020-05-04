@@ -11,7 +11,7 @@ interface PopoverProps {
 export const Popover: React.FC<PopoverProps> = ({
   children,
   content,
-  isOpen
+  isOpen,
 }) => {
   const theme = useTheme<Theme>();
   return (
