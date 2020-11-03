@@ -24,7 +24,7 @@ const Footer = styled(Box)`
   border-bottom-style: none;
 `.withComponent('footer');
 
-export default () => {
+ const HomePage = () => {
   const createGroupRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -165,3 +165,5 @@ export default () => {
     </Layout>
   );
 };
+
+export default HomePage;

@@ -22,11 +22,11 @@ export const assignUsersInGroup: Mutation<{
     throw new AuthenticationError('Unauthorized');
   }
 
-  const userIds = mongoGroup.users.map(userId => userId.toHexString());
+  const userIds = mongoGroup.users.map((userId) => userId.toHexString());
   const assignments = assignSecretSantas(userIds, mongoGroup.assignExceptions);
   const updatedGroup = await groups.updateBySlug(slug, {
     assignments,
-    assignedAt: Date.now()
+    assignedAt: Date.now(),
   });
   const usersInGroup = await users.findByIds(userIds);
   const usersInGroupMap = usersInGroup.reduce(
@@ -52,13 +52,12 @@ export const assignUsersInGroup: Mutation<{
         template: 'assigned',
         variables: {
           assignee: assignee.name,
-          link: `https://givto.app/go?${params}`
-        }
+          link: `https://givto.app/go?${params}`,
+        },
       })
     );
   }
 
-  console.log(updatedGroup);
   await Promise.all(mailPromises);
 
   return updatedGroup ? mapGroup(updatedGroup, claims.sub) : null;

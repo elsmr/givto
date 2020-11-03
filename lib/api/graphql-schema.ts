@@ -1,4 +1,5 @@
-import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
+import { IResolvers } from '@graphql-tools/utils';
+import { gql, IFieldResolver } from 'apollo-server-micro';
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
@@ -94,7 +95,7 @@ export interface GivtoDataSources {
 
 export type Mutation<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
 export type Query<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
-export type ResolverObject<TRoot> = IResolverObject<TRoot, GivtoContext, null>;
+export type ResolverObject<TRoot> = IResolvers<TRoot, GivtoContext, null>;
 
 export const typeDefs = gql`
   scalar Date
@@ -210,7 +211,6 @@ export const scalarResolvers = {
       return new Date(value);
     },
     serialize(value: Date) {
-      console.log({ value });
       return value.getTime();
     },
     parseLiteral(ast: ValueNode) {
