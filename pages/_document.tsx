@@ -1,4 +1,5 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
+import React from 'react';
 
 class GivtoDocument extends Document {
   render() {

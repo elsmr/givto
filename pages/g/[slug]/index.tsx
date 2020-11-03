@@ -21,7 +21,7 @@ import { useMutation, useQuery } from 'graphql-hooks';
 import { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 

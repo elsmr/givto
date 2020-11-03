@@ -14,7 +14,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Save } from 'react-feather';
 import { useForm } from 'react-hook-form';
 
