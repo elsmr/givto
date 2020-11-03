@@ -54,7 +54,7 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
       await AuthUtils.login(email, values.logincode);
       onConfirm();
     } catch (e) {
-      setError('logincode', 'validate');
+      setError('logincode', { type: 'validate' });
     }
   };
 

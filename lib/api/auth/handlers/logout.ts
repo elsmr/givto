@@ -13,7 +13,10 @@ const getDataSources = async (): Promise<{
   return { refreshTokens };
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export const logoutHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const { headers, method } = req;
 
   if (method !== 'POST') {

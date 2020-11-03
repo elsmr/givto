@@ -4,7 +4,6 @@ import {
   MongoUsers,
 } from '@givto/api/data-sources/mongo';
 import {
-  GivtoContext,
   GivtoDataSources,
   scalarResolvers,
   typeDefs,
@@ -28,7 +27,7 @@ import { groupResolver } from '@givto/api/graphql/resolvers/group.resolver';
 import { loginCodeResolver } from '@givto/api/graphql/resolvers/login-code.resolver';
 import { userResolver } from '@givto/api/graphql/resolvers/user.resolver';
 import * as Sentry from '@sentry/node';
-import { ApolloServer, IResolvers } from 'apollo-server-micro';
+import { ApolloServer } from 'apollo-server-micro';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -36,7 +35,7 @@ Sentry.init({
   enabled: process.env.NODE_ENV !== 'development',
 });
 
-const resolvers: IResolvers<any, GivtoContext> = {
+const resolvers = {
   ...scalarResolvers,
   Query: {
     getCurrentUser,

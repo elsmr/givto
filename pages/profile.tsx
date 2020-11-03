@@ -52,12 +52,12 @@ const ProfilePage: NextPage = () => {
   const user = userResult?.getCurrentUser;
 
   useEffect(() => {
-    setName(user?.name);
+    setName(user?.name || 'Unknown');
   }, [user]);
 
   const onSubmit = (formValues: { name: string }) => {
     updateUserMutation({
-      variables: { email: user.email, update: { name: formValues.name } },
+      variables: { email: user?.email, update: { name: formValues.name } },
     });
     setName(formValues.name);
   };

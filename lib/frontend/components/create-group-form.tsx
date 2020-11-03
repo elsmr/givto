@@ -6,9 +6,9 @@ import React, {
   RefObject,
   useContext,
   useEffect,
-  useState,
+  useState
 } from 'react';
-import { FieldError, NestDataObject, useForm } from 'react-hook-form';
+import { DeepMap, FieldError, useForm } from 'react-hook-form';
 import { AuthContext } from '../auth/auth.util';
 import { ConfirmEmailModal } from './confirm-email-modal';
 import { Box } from './ui/box';
@@ -39,8 +39,6 @@ interface FormValues {
   invitees: Contact[];
 }
 
-type Errors = NestDataObject<FormValues, FieldError>;
-
 const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const FormSectionTitle: React.FC = ({ children }) => {
@@ -52,12 +50,12 @@ const FormSectionTitle: React.FC = ({ children }) => {
 };
 
 const FormError: React.FC<{
-  errors: Errors;
+  errors: DeepMap<FormValues, FieldError>;
 }> = ({ errors }) => {
   console.log(errors.invitees);
   const hasDuplicateError =
-    errors?.creator?.email?.type === 'duplicate' ||
-    errors?.invitees?.some((error) => error.email?.type === 'duplicate');
+    errors?.creator?.email?.message === 'duplicate' ||
+    errors?.invitees?.some((error) => error?.email?.message === 'duplicate');
   const hasCreatorError = errors.creator?.email || errors.creator?.name;
 
   if (hasDuplicateError) {
@@ -87,7 +85,7 @@ interface ContactFieldProps {
   onInput?: (event: ChangeEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   required?: boolean;
-  error?: NestDataObject<Contact, FieldError>;
+  error?: DeepMap<Contact, FieldError>;
   inputRef?: RefObject<HTMLInputElement>;
 }
 
@@ -179,7 +177,7 @@ export const CreateGroupForm = React.forwardRef<
   const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
 
   useEventListener('beforeunload', (event) => {
-    const hasEnteredInvitee = getValues({ nest: true }).invitees[0].name;
+    const hasEnteredInvitee = getValues().invitees[0].name;
     if (hasEnteredInvitee && !isSubmitted) {
       event.preventDefault();
       ((event as unknown) as Event).returnValue = true;
@@ -188,11 +186,9 @@ export const CreateGroupForm = React.forwardRef<
 
   const submitGroup = async () => {
     setIsSubmittingGroup(true);
-    const { creator, invitees } = getValues({ nest: true });
+    const { creator, invitees } = getValues();
     const {
-      data: {
-        createGroup: { slug },
-      },
+      data
     } = await createGroup({
       variables: {
         creator,
@@ -201,9 +197,11 @@ export const CreateGroupForm = React.forwardRef<
         ),
       },
     });
-    await router.push(`/g/${slug}`);
-    setIsSubmittingGroup(false);
-    setConfirmCreator(null);
+    if (data) {
+      await router.push(`/g/${data.createGroup.slug}`);
+      setIsSubmittingGroup(false);
+      setConfirmCreator(null);
+    }
   };
 
   const onSubmit = async ({ creator, invitees }: FormValues) => {
@@ -225,7 +223,7 @@ export const CreateGroupForm = React.forwardRef<
           ? 'creator.email'
           : `invitees[${duplicateIndex - 1}].email`;
 
-      setError(fieldWithDuplicate as 'creator', 'duplicate');
+      setError(fieldWithDuplicate, {type: 'validate', message: 'duplicate'});
       return;
     }
     if (user) {

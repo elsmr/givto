@@ -2,7 +2,7 @@ import {
   getMongoDb,
   MongoLoginCodes,
   MongoRefreshTokens,
-  MongoUsers
+  MongoUsers,
 } from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
 import ms from 'ms';
@@ -37,7 +37,10 @@ const getDataSources = async (): Promise<{
   return { loginCodes, refreshTokens, users };
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export const loginHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const { body, method } = req;
 
   if (method !== 'POST') {
@@ -64,7 +67,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         {
           issuer: 'givto.app',
           expiresIn: '1h',
-          subject: userId
+          subject: userId,
         }
       );
 

@@ -67,31 +67,31 @@ export const AuthUtils = {
     }
   }`,
   login: async (email: string, loginCode: string): Promise<Token> =>
-    tokenCall('/api/auth/login', {
+    tokenCall('/api/auth?action=login', {
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ email, loginCode })
+      body: JSON.stringify({ email, loginCode }),
     }),
-  refresh: async (): Promise<Token> => tokenCall('/api/auth/refresh'),
+  refresh: async (): Promise<Token> => tokenCall('/api/auth?action=refresh'),
   logout: async (token: Token | null): Promise<void> => {
     AuthUtils.clearToken();
     for (const subscriber of tokenSubscribers) {
       subscriber(null);
     }
-    await unfetch('/api/auth/logout', {
+    await unfetch('/api/auth?action=logout', {
       method: 'POST',
-      ...AuthUtils.getAuthHeaders(token)
+      ...AuthUtils.getAuthHeaders(token),
     });
   },
   subscribe(subscriber: AuthSubscriber): void {
     tokenSubscribers.push(subscriber);
-  }
+  },
 };
 
 export const initialAuthContext: IAuthContext = {
   isLoading: false,
   isInitialized: false,
   token: null,
-  user: null
+  user: null,
 };
 
 export const AuthContext = createContext(initialAuthContext);

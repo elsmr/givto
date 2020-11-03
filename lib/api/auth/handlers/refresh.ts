@@ -1,7 +1,7 @@
 import {
   getMongoDb,
   MongoRefreshTokens,
-  MongoUsers
+  MongoUsers,
 } from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
 import ms from 'ms';
@@ -20,7 +20,10 @@ const getDataSources = async (): Promise<{
   return { refreshTokens, users };
 };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export const refreshTokenHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const { cookies, method } = req;
 
   if (method !== 'POST') {
@@ -47,7 +50,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         {
           issuer: 'givto.app',
           expiresIn: '1h',
-          subject: user._id.toHexString()
+          subject: user._id.toHexString(),
         }
       );
 
