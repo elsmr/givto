@@ -52,7 +52,6 @@ const FormSectionTitle: React.FC = ({ children }) => {
 const FormError: React.FC<{
   errors: DeepMap<FormValues, FieldError>;
 }> = ({ errors }) => {
-  console.log(errors.invitees);
   const hasDuplicateError =
     errors?.creator?.email?.message === 'duplicate' ||
     errors?.invitees?.some((error) => error?.email?.message === 'duplicate');

@@ -341,7 +341,7 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     const tokenObj = {
       token,
       userId,
-      exp: Date.now() + ms('7d'),
+      exp: Date.now() + ms('30d'),
     };
     const result = await this.collection.insertOne(tokenObj);
     return { ...tokenObj, _id: result.insertedId };

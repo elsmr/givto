@@ -149,13 +149,13 @@ const Footer = styled(Box)`
           </Box>
           <Box color="white" marginBottom={3}>
             by{' '}
-            <Link color="white" href="https://twitter.com/eliasmeir">
-              @eliasmeir
+            <Link color="white" href="https://twitter.com/elsmr_">
+              @elsmr_
             </Link>
           </Box>
           <Button
             as="a"
-            href="https://github.com/eliasmeire/givto"
+            href="https://github.com/elsmr/givto"
             variant="secondary"
           >
             View Source
