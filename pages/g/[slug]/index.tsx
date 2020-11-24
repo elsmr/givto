@@ -204,22 +204,18 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
       <Head>
         <title>Givto - {group.name || 'Unnamed Group'}</title>
       </Head>
-      <Box marginBottom={3} borderBottom="solid 2px black">
-        <LayoutWrapper>
-          <Header
-            actions={
-              <Box flexShrink={0}>
-                {/* <NextLink passHref href={`/g/${slug}/settings`}>
+      <Header
+        actions={
+          <Box flexShrink={0}>
+            {/* <NextLink passHref href={`/g/${slug}/settings`}>
                   <IconButton as="a">
                     <Settings /> <Box px={2}>Settings</Box>
                   </IconButton>
                 </NextLink> */}
-                <ProfileButton />
-              </Box>
-            }
-          />
-        </LayoutWrapper>
-      </Box>
+            <ProfileButton />
+          </Box>
+        }
+      />
       <LayoutWrapper marginBottom={4}>
         <Box
           display="flex"

@@ -38,7 +38,8 @@ export const ProfileButton: React.FC = () => {
         borderColor="black"
         borderWidth={1}
         flexShrink={0}
-        p={2}
+        p={1}
+        bg="white"
         css={{ textDecoration: 'none' }}
       >
         <Avatar name={user.name}></Avatar>

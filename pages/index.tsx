@@ -8,6 +8,7 @@ import { Button } from '@givto/frontend/components/ui/button';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
 import React, { useRef } from 'react';
+import { GitHub } from 'react-feather';
 import AssignIllustration from '../assets/assign.svg';
 import GivtoLogo from '../assets/givto-logo.svg';
 import InviteIllustration from '../assets/invite.svg';
@@ -24,15 +25,14 @@ const Footer = styled(Box)`
   border-bottom-style: none;
 `.withComponent('footer');
 
- const HomePage = () => {
-  const createGroupRef = useRef<HTMLFormElement>(null);
+const HomePage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
     <Layout display="flex" flexDirection="column" justifyItems="stretch">
-      <LayoutWrapper marginBottom={5}>
-        <Header actions={<ProfileButton />} />
-      </LayoutWrapper>
+      <Box marginBottom={5}>
+        <Header bg="white" actions={<ProfileButton />} />
+      </Box>
 
       <Box as="main" flexGrow={1}>
         <LayoutWrapper marginBottom={5}>
@@ -55,13 +55,10 @@ const Footer = styled(Box)`
                 Organize Secret Santa with your friends and family with ease.
               </Box>
               <Button
+                as="a"
+                href="#create-group"
                 onClick={() => {
-                  setTimeout(() => inputRef.current?.focus(), 200);
-                  createGroupRef.current?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'center'
-                  });
+                  setTimeout(() => inputRef.current?.focus(), 1000);
                 }}
               >
                 Get Started
@@ -131,7 +128,7 @@ const Footer = styled(Box)`
             <Box as="h2" marginBottom={3} fontSize={5}>
               Create your Group
             </Box>
-            <CreateGroupForm ref={createGroupRef} inputRef={inputRef} />
+            <CreateGroupForm inputRef={inputRef} />
           </BorderBox>
         </LayoutWrapper>
       </Box>
@@ -149,17 +146,18 @@ const Footer = styled(Box)`
           </Box>
           <Box color="white" marginBottom={3}>
             by{' '}
-            <Link color="white" href="https://twitter.com/elsmr_">
-              @elsmr_
+            <Link color="white" href="https://elsmr.dev">
+              elsmr
             </Link>
           </Box>
-          <Button
-            as="a"
-            href="https://github.com/elsmr/givto"
-            variant="secondary"
-          >
-            View Source
-          </Button>
+          <Link color="white" href="https://github.com/elsmr/givto">
+            <Box display="flex" alignItems="center">
+              <Box marginRight={1}>
+                <GitHub size={16} />
+              </Box>{' '}
+              View Source
+            </Box>
+          </Link>
         </LayoutWrapper>
       </Footer>
     </Layout>

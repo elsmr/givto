@@ -15,7 +15,7 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-import { Save } from 'react-feather';
+import { Plus, Save } from 'react-feather';
 import { useForm } from 'react-hook-form';
 
 const EXPANDED_USER_QUERY = `query getCurrentUser {
@@ -77,20 +77,20 @@ const ProfilePage: NextPage = () => {
         <title>Givto - {name}</title>
       </Head>
       <Box marginBottom={4}>
-        <LayoutWrapper>
-          <Header
-            actions={
-              <IconButton
-                onClick={async () => {
-                  await AuthUtils.logout(token);
-                  router.push('/');
-                }}
-              >
-                Logout
-              </IconButton>
-            }
-          />
-        </LayoutWrapper>
+        <Header
+          actions={
+            <IconButton
+              bg="white"
+              color="text"
+              onClick={async () => {
+                await AuthUtils.logout(token);
+                router.push('/');
+              }}
+            >
+              Logout
+            </IconButton>
+          }
+        />
       </Box>
       <LayoutWrapper marginBottom={4}>
         <Box display="flex" justifyContent="center" marginBottom={3}>
@@ -178,6 +178,11 @@ const ProfilePage: NextPage = () => {
             <Box as="h3" fontSize={4} marginRight={2}>
               Groups
             </Box>
+            <NextLink href="/#create-group">
+              <IconButton as="a">
+                <Plus size={16} /> <Box px={2}>Add</Box>
+              </IconButton>
+            </NextLink>
           </Box>
           {user.groups.map((group) => (
             <NextLink key={group.id} href={`/g/${group.slug}`}>

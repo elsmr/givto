@@ -6,7 +6,7 @@ import React, {
   RefObject,
   useContext,
   useEffect,
-  useState
+  useState,
 } from 'react';
 import { DeepMap, FieldError, useForm } from 'react-hook-form';
 import { AuthContext } from '../auth/auth.util';
@@ -155,7 +155,7 @@ export const CreateGroupForm = React.forwardRef<
   {
     inputRef?: RefObject<HTMLInputElement>;
   }
->(({ inputRef }, ref) => {
+>(({ inputRef }) => {
   const {
     register,
     handleSubmit,
@@ -186,9 +186,7 @@ export const CreateGroupForm = React.forwardRef<
   const submitGroup = async () => {
     setIsSubmittingGroup(true);
     const { creator, invitees } = getValues();
-    const {
-      data
-    } = await createGroup({
+    const { data } = await createGroup({
       variables: {
         creator,
         invitees: invitees.filter(
@@ -222,7 +220,7 @@ export const CreateGroupForm = React.forwardRef<
           ? 'creator.email'
           : `invitees[${duplicateIndex - 1}].email`;
 
-      setError(fieldWithDuplicate, {type: 'validate', message: 'duplicate'});
+      setError(fieldWithDuplicate, { type: 'validate', message: 'duplicate' });
       return;
     }
     if (user) {
@@ -251,7 +249,7 @@ export const CreateGroupForm = React.forwardRef<
 
   return (
     <>
-      <Form ref={ref} onSubmit={handleSubmit(onSubmit)}>
+      <Form id="create-group" onSubmit={handleSubmit(onSubmit)}>
         <FormSectionTitle>What's your name?</FormSectionTitle>
         <ContactField
           field="creator"

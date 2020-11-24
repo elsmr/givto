@@ -20,6 +20,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       backgroundColor="primary"
       borderRadius="50% "
       color="secondary"
+      lineHeight={0}
       width={`${size}px`}
       height={`${size}px`}
       display="flex"

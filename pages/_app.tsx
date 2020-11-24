@@ -5,7 +5,7 @@ import {
   AuthUtils,
   IAuthContext,
   initialAuthContext,
-  Token
+  Token,
 } from '@givto/frontend/auth/auth.util';
 import { theme } from '@givto/frontend/theme';
 import * as Sentry from '@sentry/browser';
@@ -17,13 +17,13 @@ import React from 'react';
 
 const client = new GraphQLClient({
   url: '/api/graphql',
-  fetch
+  fetch,
 });
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  enabled: process.env.NODE_ENV !== 'development'
+  enabled: process.env.NODE_ENV !== 'development',
 });
 
 export default class GivtoApp extends App<
@@ -32,12 +32,12 @@ export default class GivtoApp extends App<
   { authContext: IAuthContext }
 > {
   state = {
-    authContext: initialAuthContext
+    authContext: initialAuthContext,
   };
 
   componentDidMount(): void {
     if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
         for (let registration of registrations) {
           registration.unregister();
         }
@@ -51,33 +51,33 @@ export default class GivtoApp extends App<
     client.setHeaders(AuthUtils.getAuthHeaders(token));
 
     if (token) {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         ...prevState,
-        authContext: { ...prevState.authContext, isLoading: true }
+        authContext: { ...prevState.authContext, isLoading: true },
       }));
       const { data } = await client.request<{ getCurrentUser: User }>({
-        query: AuthUtils.AUTH_QUERY
+        query: AuthUtils.AUTH_QUERY,
       });
       const user = data?.getCurrentUser || null;
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         ...prevState,
         authContext: {
           ...prevState.authContext,
           token,
           user,
           isLoading: false,
-          isInitialized: true
-        }
+          isInitialized: true,
+        },
       }));
     } else {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         ...prevState,
         authContext: {
           token,
           isLoading: false,
           user: null,
-          isInitialized: true
-        }
+          isInitialized: true,
+        },
       }));
     }
   };
@@ -160,6 +160,7 @@ export default class GivtoApp extends App<
 
               html {
                 box-sizing: border-box;
+                scroll-behavior: smooth;
               }
 
               body {
@@ -214,7 +215,7 @@ export default class GivtoApp extends App<
 
               a {
                 color: ${theme.colors.primary};
-              }`
+              }`,
               }}
             ></style>
           </Head>
@@ -244,7 +245,7 @@ export default class GivtoApp extends App<
                   "url": "https://meire.dev"
                 },
                 "operatingSystem": "All"
-            }`
+            }`,
             }}
           />
         </>
