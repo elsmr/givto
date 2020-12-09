@@ -150,12 +150,9 @@ const PlaceholderContactField: React.FC = () => {
   );
 };
 
-export const CreateGroupForm = React.forwardRef<
-  HTMLFormElement,
-  {
-    inputRef?: RefObject<HTMLInputElement>;
-  }
->(({ inputRef }) => {
+export const CreateGroupForm: React.FunctionComponent<{
+  inputRef?: RefObject<HTMLInputElement>;
+}> = ({ inputRef }) => {
   const {
     register,
     handleSubmit,
@@ -303,4 +300,4 @@ export const CreateGroupForm = React.forwardRef<
       )}
     </>
   );
-});
+};
