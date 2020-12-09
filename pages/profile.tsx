@@ -52,7 +52,9 @@ const ProfilePage: NextPage = () => {
   const user = userResult?.getCurrentUser;
 
   useEffect(() => {
-    setName(user?.name || 'Unknown');
+    if (user?.name) {
+      setName(user?.name);
+    }
   }, [user]);
 
   const onSubmit = (formValues: { name: string }) => {

@@ -17,6 +17,7 @@ export const Popover: React.FC<PopoverProps> = ({
   return (
     <TinyPopover
       isOpen={isOpen}
+      positions={['bottom']}
       content={({ position, childRect, popoverRect }) => (
         <ArrowContainer
           position={position}

@@ -79,9 +79,9 @@ export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
   return db;
 };
 
-export class MongoDataSource<T extends MongoEntity> extends DataSource<
-  GivtoContext
-> {
+export class MongoDataSource<
+  T extends MongoEntity
+> extends DataSource<GivtoContext> {
   protected collection!: Collection<T>;
   private collectionName: string;
 
@@ -171,9 +171,10 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     slug,
     users,
     creator,
+    assignments,
   }: Pick<
     MongoGroup,
-    'slug' | 'users' | 'creator'
+    'slug' | 'users' | 'creator' | 'assignments'
   >): Promise<MongoGroup | null> => {
     await this.collection.insertOne({
       name: '',
@@ -183,7 +184,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       users,
       createdAt: Date.now(),
       assignedAt: null,
-      assignments: {},
+      assignments,
       wishlists: {},
       assignExceptions: {},
     });

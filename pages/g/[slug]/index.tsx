@@ -2,17 +2,16 @@ import { EnrichedGroup, UserInput } from '@givto/api/graphql-schema';
 import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { ErrorPage } from '@givto/frontend/components/error';
 import { Header } from '@givto/frontend/components/header';
-import { InviteModal } from '@givto/frontend/components/invite-modal';
 import { ProfileButton } from '@givto/frontend/components/profile-button';
 import { Avatar } from '@givto/frontend/components/ui/avatar';
 import { Badge } from '@givto/frontend/components/ui/badge';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
-import { Button, ButtonReset } from '@givto/frontend/components/ui/button';
+import { ButtonReset } from '@givto/frontend/components/ui/button';
 import { IconButton } from '@givto/frontend/components/ui/icon-button';
 import { Input } from '@givto/frontend/components/ui/input';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
-import { Loader, PageLoader } from '@givto/frontend/components/ui/loader';
+import { PageLoader } from '@givto/frontend/components/ui/loader';
 import { Modal } from '@givto/frontend/components/ui/modal';
 import { Popover } from '@givto/frontend/components/ui/popover';
 import { Wishlist } from '@givto/frontend/components/wishlist';
@@ -60,22 +59,6 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
 const SET_GROUP_NAME_MUTATION = `mutation setGroupName($slug: String!, $name: String!) {
   setGroupName(slug: $slug, name: $name) {
       name
-  }
-}`;
-
-const START_ASSIGNMENT_MUTATION = `mutation assignUsersInGroup($slug: String!) {
-  assignUsersInGroup(slug: $slug) {
-      assignee {
-        user {
-          name
-        },
-        wishlist {
-          id
-          title
-          description
-        },
-      },
-      assignedAt
   }
 }`;
 
@@ -173,10 +156,6 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   }>(GET_GROUP_QUERY, {
     variables: { slug },
   });
-  const [
-    assignUsersMutation,
-    { loading: assignmentLoading, data },
-  ] = useMutation(START_ASSIGNMENT_MUTATION);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
@@ -190,14 +169,10 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   }
 
   const group = groupResult.getGroup;
-  const assignedAt = data?.assignUsersInGroup?.assignedAt ?? group.assignedAt;
-  const assignee = data?.assignUsersInGroup?.assignee ?? group.assignee;
+  const assignedAt = group.assignedAt;
+  const assignee = group.assignee;
   const isCreator = group.creator.id === user?.id;
   const allUsers = [...group.users, ...invitedUsers];
-
-  const startAssignment = () => {
-    assignUsersMutation({ variables: { slug } });
-  };
 
   return (
     <Layout display="flex" flexDirection="column">
@@ -300,39 +275,6 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
             )}
           </BorderBox>
         </LayoutWrapper>
-      )}
-
-      {isCreator && (
-        <LayoutWrapper
-          marginBottom={4}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-        >
-          {!assignmentLoading ? (
-            <>
-              <Button onClick={startAssignment} marginBottom={3}>
-                {assignedAt ? 'Restart' : 'Start'} Secret Santa
-              </Button>
-              <Box color="textMuted" fontSize={1}>
-                This action will assign gift givers and notify everyone by email
-              </Box>
-            </>
-          ) : (
-            <Loader type="box" />
-          )}
-        </LayoutWrapper>
-      )}
-
-      {showInviteModal && (
-        <InviteModal
-          slug={group.slug}
-          onClose={() => setShowInviteModal(false)}
-          onInvite={(invitedUser) => {
-            setInvitedUsers((state) => [...state, invitedUser]);
-            setShowInviteModal(false);
-          }}
-        ></InviteModal>
       )}
 
       {showMembersModal && (

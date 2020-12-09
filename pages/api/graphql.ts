@@ -12,7 +12,6 @@ import { contextFactory } from '@givto/api/graphql/context.factory';
 import { addAssignmentException } from '@givto/api/graphql/mutations/add-assignment-exception.mutation';
 import { addUsersToGroup } from '@givto/api/graphql/mutations/add-users-group.mutation';
 import { addWishlistItem } from '@givto/api/graphql/mutations/add-wishlist-item.mutation';
-import { assignUsersInGroup } from '@givto/api/graphql/mutations/assign-users-group.mutation';
 import { createGroup } from '@givto/api/graphql/mutations/create-group.mutation';
 import { createLoginCode } from '@givto/api/graphql/mutations/create-login-code.mutation';
 import { deleteWishlistItem } from '@givto/api/graphql/mutations/delete-wishlist-item.mutation';
@@ -50,7 +49,6 @@ const resolvers = {
     setGroupName,
     createGroup,
     createLoginCode,
-    assignUsersInGroup,
     addWishlistItem,
     editWishlistItem,
     deleteWishlistItem,
