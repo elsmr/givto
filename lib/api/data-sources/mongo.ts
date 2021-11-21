@@ -102,7 +102,10 @@ export class MongoDataSource<
 
   findByIds = (ids: string[]): Promise<T[]> => {
     const objectIds = ids.map((id) => new ObjectID(id));
-    return this.collection.find({ _id: { $in: objectIds } } as any).toArray();
+    return this.collection
+      .find({ _id: { $in: objectIds } } as any)
+      .sort({ createdAt: -1 })
+      .toArray();
   };
 }
 
@@ -183,7 +186,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       options: {},
       users,
       createdAt: Date.now(),
-      assignedAt: null,
+      assignedAt: Date.now(),
       assignments,
       wishlists: {},
       assignExceptions: {},

@@ -178,7 +178,6 @@ export const typeDefs = gql`
     ): Boolean
     updateUser(email: String!, update: UserUpdate!): User
     setGroupName(slug: String!, name: String!): Group
-    assignUsersInGroup(slug: String!): Group
     deleteWishlistItem(slug: String!, wishlistItemId: String!): [WishlistItem]
     addWishlistItem(
       slug: String!

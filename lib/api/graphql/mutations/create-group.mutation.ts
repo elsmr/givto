@@ -14,18 +14,21 @@ export const createGroup: Mutation<{
   { dataSources: { groups, users, loginCodes }, mailer }
 ): Promise<Group | null> => {
   const allUsers = [creator, ...invitees];
-  const slug = await generateSlug(groups.hasSlug);
-  const mongoUsers = await users.createUsers(...allUsers);
+  const [slug, mongoUsers] = await Promise.all([
+    generateSlug(groups.hasSlug),
+    users.createUsers(...allUsers),
+  ]);
+  console.log('created', mongoUsers.length, 'users');
   const mongoCreator = mongoUsers.find((user) => user.email === creator.email);
   const mongoUserIds = mongoUsers.map((user) => user._id);
   const userIds = mongoUserIds.map((id) => id.toHexString());
-  const assignments = assignSecretSantas(userIds, {});
-  console.log('created', mongoUsers.length, 'users');
 
   if (!mongoCreator) {
     return null;
   }
 
+  const assignments = assignSecretSantas(userIds, {});
+  console.log('assigned');
   const mongoGroup = await groups.createGroup({
     slug,
     creator: mongoCreator._id,
@@ -37,46 +40,41 @@ export const createGroup: Mutation<{
     return null;
   }
 
-  await users.addGroupToUsers(mongoUserIds, mongoGroup._id);
-
-  const updatedGroup = await groups.updateBySlug(slug, {
-    assignments,
-    assignedAt: Date.now(),
-  });
-  const usersInGroup = await users.findByIds(userIds);
-  const usersInGroupMap = usersInGroup.reduce(
+  const usersInGroupMap = mongoUsers.reduce(
     (acc, user) => ({ ...acc, [user._id.toHexString()]: user }),
     {} as Record<string, MongoUser>
   );
 
-  const mailPromises: Promise<any>[] = [];
-  for (const user of usersInGroup) {
+  const invites = mongoUsers.map((user) => {
     const assignee = usersInGroupMap[assignments[user._id.toHexString()]];
-    const inviteCode = await loginCodes.create(
-      user._id,
-      `/g/${mongoGroup.slug}`,
-      true
-    );
-    const params = qs.encode({ email: user.email, code: inviteCode });
+    return loginCodes
+      .create(user._id, `/g/${mongoGroup.slug}`, true)
+      .then((inviteCode) =>
+        mailer.sendMail({
+          from: { name: `${creator.name} via Givto` },
+          to: { email: user.email, name: user.name },
+          subject: `${creator.name} invited you to a Secret Santa`,
+          template: 'assigned',
+          variables: {
+            creator: creator.name,
+            assignee: assignee.name,
+            link: `https://givto.app/go?${qs.encode({
+              email: user.email,
+              code: inviteCode,
+            })}`,
+          },
+        })
+      );
+  });
 
-    mailPromises.push(
-      mailer.sendMail({
-        from: { name: `${creator.name} via Givto` },
-        to: { email: user.email, name: user.name },
-        subject: `${creator.name} invited you to a Secret Santa`,
-        template: 'assigned',
-        variables: {
-          creator: creator.name,
-          assignee: assignee.name,
-          link: `https://givto.app/go?${params}`,
-        },
-      })
-    );
-  }
+  await Promise.all([
+    users.addGroupToUsers(mongoUserIds, mongoGroup._id),
+    ...invites,
+  ]);
 
-  await Promise.all(mailPromises);
+  console.log('invited');
 
-  return updatedGroup
-    ? mapGroup(updatedGroup, mongoCreator._id.toHexString())
+  return mongoGroup
+    ? mapGroup(mongoGroup, mongoCreator._id.toHexString())
     : null;
 };

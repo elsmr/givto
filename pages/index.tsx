@@ -107,7 +107,7 @@ const HomePage = () => {
             <Box display="flex" flexWrap="wrap" alignItems="center">
               <Box paddingRight={[4, 5]} flexBasis={['100%', '50%']}>
                 <Box as="h3" fontSize={5} marginBottom={3}>
-                  Randomly assign gift givers
+                  Randomly assign gifts
                 </Box>
 
                 <Box as="p" lineHeight="body" fontSize={3}>
