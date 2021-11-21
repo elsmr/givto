@@ -11,7 +11,10 @@ const getDataSources = async (): Promise<{
   users: MongoUsers;
   refreshTokens: MongoRefreshTokens;
 }> => {
-  const db = await getMongoDb(process.env.MONGODB_URI, process.env.MONGODB_DB);
+  const db = await getMongoDb(
+    process.env.MONGODB_URI as string,
+    process.env.MONGODB_DB as string
+  );
   const refreshTokens = new MongoRefreshTokens();
   const users = new MongoUsers();
   users.initialize({ context: { db } });
@@ -30,7 +33,6 @@ export const refreshTokenHandler = async (
     return res.status(405).send({});
   }
 
-  console.log('cookies here!', { cookies });
   if (cookies.refresh_token) {
     const { refreshTokens, users } = await getDataSources();
     const refreshToken = await refreshTokens.findByToken(cookies.refresh_token);
@@ -43,13 +45,13 @@ export const refreshTokenHandler = async (
         return;
       }
 
-      const exp = Date.now() + ms('1h');
+      const exp = Date.now() + ms('1d');
       const token = JWT.sign(
         { role: 'user', email: user.email },
-        process.env.JWT_SECRET_KEY,
+        process.env.JWT_SECRET_KEY as string,
         {
           issuer: 'givto.app',
-          expiresIn: '1h',
+          expiresIn: '1d',
           subject: user._id.toHexString(),
         }
       );
@@ -64,7 +66,7 @@ export const refreshTokenHandler = async (
         }`
       );
 
-      res.json({ token, exp });
+      res.status(200).json({ token, exp });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
     }

@@ -17,11 +17,11 @@ export const LoginPage: NextPage = () => {
   const transitions = useTransition(email, null, {
     from: {
       opacity: 0,
-      transform: 'translate3d(60%,0,0)'
+      transform: 'translate3d(60%,0,0)',
     },
     enter: { opacity: 1, transform: 'translate3d(0%,0,0)' },
     leave: { opacity: 0, transform: 'translate3d(-60%,0,0)' },
-    initial: null
+    initial: null,
   });
 
   if (isInitialized && user) {
@@ -67,7 +67,7 @@ export const LoginPage: NextPage = () => {
             css={{
               position: 'relative',
               overflow: 'hidden',
-              minHeight: '200px'
+              minHeight: '200px',
             }}
           >
             <Box as="h2" marginBottom={3}>
@@ -79,7 +79,7 @@ export const LoginPage: NextPage = () => {
                 style={{ position: 'absolute', left: 0, right: 0, ...props }}
               >
                 {item ? (
-                  <LoginForm name={name} email={email} onLogin={() => {}} />
+                  <LoginForm email={email} onLogin={() => {}} />
                 ) : (
                   <EmailForm onSubmit={setEmail} />
                 )}

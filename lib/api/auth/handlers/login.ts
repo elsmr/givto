@@ -26,7 +26,10 @@ const getDataSources = async (): Promise<{
   refreshTokens: MongoRefreshTokens;
   users: MongoUsers;
 }> => {
-  const db = await getMongoDb(process.env.MONGODB_URI, process.env.MONGODB_DB);
+  const db = await getMongoDb(
+    process.env.MONGODB_URI as string,
+    process.env.MONGODB_DB as string
+  );
   const loginCodes = new MongoLoginCodes();
   const refreshTokens = new MongoRefreshTokens();
   const users = new MongoUsers();
@@ -60,13 +63,13 @@ export const loginHandler = async (
         return;
       }
 
-      const exp = Date.now() + ms('1h');
+      const exp = Date.now() + ms('1d');
       const token = JWT.sign(
         { role: 'user', email: user.email },
-        process.env.JWT_SECRET_KEY,
+        process.env.JWT_SECRET_KEY as string,
         {
           issuer: 'givto.app',
-          expiresIn: '1h',
+          expiresIn: '1d',
           subject: userId,
         }
       );

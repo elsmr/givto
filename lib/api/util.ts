@@ -1,6 +1,6 @@
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 export const ObjectIDMapper = {
-  toString: (objectId: ObjectID) => objectId.toHexString(),
-  fromString: (objectId: string) => new ObjectID(objectId)
+  toString: (objectId: ObjectId) => objectId.toHexString(),
+  fromString: (objectId: string) => new ObjectId(objectId),
 };

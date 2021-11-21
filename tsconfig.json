@@ -5,7 +5,11 @@
     "baseUrl": ".",
     "strict": true,
     "esModuleInterop": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,10 +19,21 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "paths": {
-      "@givto/frontend/*": ["lib/frontend/*"],
-      "@givto/api/*": ["lib/api/*"]
-    }
+      "@givto/frontend/*": [
+        "lib/frontend/*"
+      ],
+      "@givto/api/*": [
+        "lib/api/*"
+      ]
+    },
+    "incremental": true
   },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

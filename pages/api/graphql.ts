@@ -27,6 +27,7 @@ import { loginCodeResolver } from '@givto/api/graphql/resolvers/login-code.resol
 import { userResolver } from '@givto/api/graphql/resolvers/user.resolver';
 import * as Sentry from '@sentry/node';
 import { ApolloServer } from 'apollo-server-micro';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -66,12 +67,14 @@ const dataSources: () => GivtoDataSources = () => {
   };
 };
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
   dataSources: dataSources as any,
-  tracing: process.env.NODE_ENV === 'development',
-  introspection: process.env.NODE_ENV === 'development',
+  debug: isDev,
+  introspection: isDev,
   context: contextFactory,
   formatError: (error) => {
     Sentry.captureException(error);
@@ -79,10 +82,20 @@ const apolloServer = new ApolloServer({
   },
 });
 
+const startServer = apolloServer.start();
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  await startServer;
+  await apolloServer.createHandler({
+    path: '/api/graphql',
+  })(req, res);
+}
+
 export const config = {
   api: {
     bodyParser: false,
   },
 };
-
-export default apolloServer.createHandler({ path: '/api/graphql' });

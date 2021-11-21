@@ -14,6 +14,7 @@ import { ClientContext, GraphQLClient } from 'graphql-hooks';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import smoothscroll from 'smoothscroll-polyfill';
 
 const client = new GraphQLClient({
   url: '/api/graphql',
@@ -36,12 +37,8 @@ export default class GivtoApp extends App<
   };
 
   componentDidMount(): void {
-    if (navigator.serviceWorker) {
-      navigator.serviceWorker.getRegistrations().then(function (registrations) {
-        for (let registration of registrations) {
-          registration.unregister();
-        }
-      });
+    if (typeof window !== 'undefined') {
+      smoothscroll.polyfill();
     }
     this.handleNewToken(AuthUtils.getToken());
     AuthUtils.subscribe(this.handleNewToken);

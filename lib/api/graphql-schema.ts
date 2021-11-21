@@ -1,5 +1,10 @@
-import { gql, IFieldResolver, IResolverObject } from 'apollo-server-micro';
-import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
+import { gql } from 'apollo-server-micro';
+import {
+  GraphQLFieldResolver,
+  GraphQLScalarType,
+  Kind,
+  ValueNode,
+} from 'graphql';
 import { Db } from 'mongodb';
 import { Auth } from './auth';
 import {
@@ -20,6 +25,13 @@ export interface LoginCode {
   code: string;
   exp: Date;
   userId: string;
+}
+
+export interface EnrichedLoginCode {
+  code: string;
+  exp: Date;
+  userId: string;
+  user: User;
 }
 
 export interface User {
@@ -92,9 +104,11 @@ export interface GivtoDataSources {
   loginCodes: MongoLoginCodes;
 }
 
-export type Mutation<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
-export type Query<TArgs> = IFieldResolver<null, GivtoContext, TArgs>;
-export type ResolverObject<TRoot> = IResolverObject<TRoot, GivtoContext>;
+export type Mutation<TArgs> = GraphQLFieldResolver<null, GivtoContext, TArgs>;
+export type Query<TArgs> = GraphQLFieldResolver<null, GivtoContext, TArgs>;
+export type ResolverObject<TRoot> = Partial<
+  Record<keyof TRoot, GraphQLFieldResolver<TRoot, GivtoContext, null>>
+>;
 
 export const typeDefs = gql`
   scalar Date
@@ -202,14 +216,14 @@ export const typeDefs = gql`
 `;
 
 export const scalarResolvers = {
-  Date: new GraphQLScalarType({
+  Date: new GraphQLScalarType<Date | null, number>({
     name: 'Date',
     description: 'Date scalar type',
-    parseValue(value: string) {
-      return new Date(value);
+    parseValue(value) {
+      return new Date(value as string);
     },
-    serialize(value: Date) {
-      return value.getTime();
+    serialize(value: unknown): number {
+      return (value as Date).getTime();
     },
     parseLiteral(ast: ValueNode) {
       if (ast.kind === Kind.INT) {

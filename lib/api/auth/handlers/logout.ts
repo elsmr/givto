@@ -6,7 +6,10 @@ import { NextApiRequest, NextApiResponse } from 'next';
 const getDataSources = async (): Promise<{
   refreshTokens: MongoRefreshTokens;
 }> => {
-  const db = await getMongoDb(process.env.MONGODB_URI, process.env.MONGODB_DB);
+  const db = await getMongoDb(
+    process.env.MONGODB_URI as string,
+    process.env.MONGODB_DB as string
+  );
   const refreshTokens = new MongoRefreshTokens();
   refreshTokens.initialize({ context: { db } });
 
@@ -30,7 +33,10 @@ export const logoutHandler = async (
     const { refreshTokens } = await getDataSources();
     try {
       console.log('verifying');
-      const claims = JWT.verify(token, process.env.JWT_SECRET_KEY) as {
+      const claims = JWT.verify(
+        token,
+        process.env.JWT_SECRET_KEY as string
+      ) as {
         sub: string;
       };
       refreshTokens.deleteAllByUser(new ObjectID(claims.sub));

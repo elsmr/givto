@@ -43,7 +43,7 @@ export class Auth {
     try {
       this.claims = JWT.verify(
         this.token,
-        process.env.JWT_SECRET_KEY
+        process.env.JWT_SECRET_KEY as string
       ) as AuthClaims;
     } catch (err) {
       this.claims = null;

@@ -1,12 +1,19 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource';
-import { Collection, Db, MongoClient, MongoError, ObjectID } from 'mongodb';
+import {
+  Collection,
+  Db,
+  MongoClient,
+  MongoError,
+  ObjectId,
+  WithId,
+} from 'mongodb';
 import ms from 'ms';
 import { nanoid } from 'nanoid';
 import { GivtoContext, UserInput } from '../graphql-schema';
 import { randomString } from '../util/random-string.util';
 
 interface MongoEntity {
-  _id: ObjectID;
+  _id: ObjectId;
 }
 
 export interface WishListItemInput {
@@ -23,9 +30,9 @@ export interface WishListItem {
 export interface MongoGroup extends MongoEntity {
   slug: string;
   name: string;
-  creator: ObjectID;
+  creator: ObjectId;
   options: {};
-  users: ObjectID[];
+  users: ObjectId[];
   createdAt: number;
   assignedAt: number | null;
   assignments: Record<string, string>;
@@ -36,7 +43,7 @@ export interface MongoGroup extends MongoEntity {
 export interface MongoUser extends MongoEntity {
   name: string;
   email: string;
-  groups: ObjectID[];
+  groups: ObjectId[];
 }
 
 export interface MongoInvite extends MongoEntity {
@@ -48,14 +55,14 @@ export interface MongoInvite extends MongoEntity {
 
 export interface MongoLoginCode extends MongoEntity {
   code: string;
-  userId: ObjectID;
+  userId: ObjectId;
   exp: number;
   redirectUrl: string | null;
 }
 
 export interface MongoRefreshToken extends MongoEntity {
   token: string;
-  userId: ObjectID;
+  userId: ObjectId;
   exp: number;
 }
 
@@ -68,10 +75,7 @@ export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
   }
 
   if (!connectionPromise) {
-    connectionPromise = new MongoClient(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }).connect();
+    connectionPromise = new MongoClient(uri).connect();
   }
 
   const client = await connectionPromise;
@@ -96,12 +100,12 @@ export class MongoDataSource<
     this.collection = db.collection(this.collectionName);
   }
 
-  findById = (id: string): Promise<T | null> => {
-    return this.collection.findOne({ _id: new ObjectID(id) as any });
+  findById = (id: string): Promise<WithId<T> | null> => {
+    return this.collection.findOne({ _id: new ObjectId(id) as any });
   };
 
-  findByIds = (ids: string[]): Promise<T[]> => {
-    const objectIds = ids.map((id) => new ObjectID(id));
+  findByIds = (ids: string[]): Promise<WithId<T>[]> => {
+    const objectIds = ids.map((id) => new ObjectId(id));
     return this.collection
       .find({ _id: { $in: objectIds } } as any)
       .sort({ createdAt: -1 })
@@ -141,8 +145,8 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
   };
 
   addGroupToUsers = async (
-    userIds: ObjectID[],
-    groupId: ObjectID
+    userIds: ObjectId[],
+    groupId: ObjectId
   ): Promise<boolean> => {
     const result = await this.collection.updateMany(
       { _id: { $in: userIds } },
@@ -155,11 +159,11 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
   updateByEmail = async (
     email: string,
     update: Partial<MongoUser>
-  ): Promise<MongoUser | undefined> => {
+  ): Promise<MongoUser | null> => {
     const user = await this.collection.findOneAndUpdate(
       { email },
       { $set: update },
-      { returnOriginal: false }
+      { returnDocument: 'after' }
     );
     return user.value;
   };
@@ -206,11 +210,11 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   updateBySlug = async (
     slug: string,
     update: Partial<MongoGroup>
-  ): Promise<MongoGroup | undefined> => {
+  ): Promise<MongoGroup | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $set: update },
-      { returnOriginal: false }
+      { returnDocument: 'after' }
     );
     return group.value;
   };
@@ -219,25 +223,25 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     slug: string,
     userId: string,
     item: WishListItemInput
-  ): Promise<WishListItem[] | undefined> => {
+  ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $push: { [`wishlists.${userId}`]: { ...item, id: nanoid() } } },
-      { returnOriginal: false }
+      { returnDocument: 'after' }
     );
-    return group.value?.wishlists?.[userId];
+    return group.value?.wishlists?.[userId] ?? null;
   };
 
   deleteWishlistItem = async (
     slug: string,
     userId: string,
     itemId: string
-  ): Promise<WishListItem[] | undefined> => {
+  ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $pull: { [`wishlists.${userId}`]: { id: itemId } } }
     );
-    return group.value?.wishlists?.[userId];
+    return group.value?.wishlists?.[userId] ?? null;
   };
 
   editWishlistItem = async (
@@ -245,7 +249,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     userId: string,
     itemId: string,
     update: Partial<WishListItem>
-  ): Promise<WishListItem[] | undefined> => {
+  ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOne(
       { slug },
       { projection: { [`wishlists.${userId}`]: 1 } }
@@ -271,7 +275,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     userId: string,
     itemId: string,
     destinationIndex: number
-  ): Promise<WishListItem[] | undefined> => {
+  ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOne(
       { slug },
       { projection: { [`wishlists.${userId}`]: 1 } }
@@ -283,20 +287,20 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     await this.collection.findOneAndUpdate(
       { slug },
       { $set: { [`wishlists.${userId}`]: wishlist } },
-      { returnOriginal: false }
+      { returnDocument: 'after' }
     );
 
-    return wishlist;
+    return wishlist ?? null;
   };
 
   addUsersToGroup = async (
     slug: string,
-    userIds: ObjectID[]
-  ): Promise<MongoGroup | undefined> => {
+    userIds: ObjectId[]
+  ): Promise<MongoGroup | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $push: { users: { $each: userIds } } },
-      { returnOriginal: false }
+      { returnDocument: 'after' }
     );
     return group.value;
   };
@@ -308,7 +312,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
   }
 
   create = async (
-    id: ObjectID,
+    id: ObjectId,
     redirectUrl: string = '',
     isInvite = false
   ): Promise<string> => {
@@ -322,7 +326,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
     return code;
   };
 
-  deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
+  deleteAllByUser = (userId: ObjectId): Promise<boolean> => {
     return this.collection
       .deleteMany({ userId })
       .then((result) =>
@@ -340,7 +344,7 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     super('refreshTokens');
   }
 
-  create = async (userId: ObjectID): Promise<MongoRefreshToken> => {
+  create = async (userId: ObjectId): Promise<MongoRefreshToken> => {
     const token = randomString();
     const tokenObj = {
       token,
@@ -355,7 +359,7 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     return this.collection.findOne({ token });
   };
 
-  deleteAllByUser = (userId: ObjectID): Promise<boolean> => {
+  deleteAllByUser = (userId: ObjectId): Promise<boolean> => {
     return this.collection
       .deleteMany({ userId: userId })
       .then((result) =>
