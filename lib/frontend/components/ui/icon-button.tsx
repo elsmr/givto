@@ -9,33 +9,32 @@ interface IconButtonProps extends BoxProps {
 
 const sizeToProps: Record<string, BoxProps> = {
   small: {
-    p: 1,
-    fontSize: 1
+    py: 2,
+    px: 3,
+    fontSize: 1,
   },
   medium: {
-    py: 1,
-    px: 2,
-    fontSize: 2
-  }
+    py: 2,
+    px: 3,
+    fontSize: 2,
+  },
 };
 
 export const IconButton: React.FC<IconButtonProps> = React.forwardRef(
   ({ children, size, ...props }, ref) => {
     return (
       <ButtonReset
-        borderStyle="solid"
-        borderWidth={1}
-        borderColor="black"
         bg="primary"
         color="white"
         display="flex"
+        borderRadius={4}
         alignItems="center"
         flexShrink={0}
         {...sizeToProps[size as string]}
         css={css({
           '&:focus': {
-            borderColor: 'secondary'
-          }
+            outline: 'primary',
+          },
         })}
         {...props}
       >
@@ -46,5 +45,5 @@ export const IconButton: React.FC<IconButtonProps> = React.forwardRef(
 );
 
 IconButton.defaultProps = {
-  size: 'medium'
+  size: 'medium',
 };

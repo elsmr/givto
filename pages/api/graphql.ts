@@ -9,7 +9,6 @@ import {
   typeDefs,
 } from '@givto/api/graphql-schema';
 import { contextFactory } from '@givto/api/graphql/context.factory';
-import { addAssignmentException } from '@givto/api/graphql/mutations/add-assignment-exception.mutation';
 import { addUsersToGroup } from '@givto/api/graphql/mutations/add-users-group.mutation';
 import { addWishlistItem } from '@givto/api/graphql/mutations/add-wishlist-item.mutation';
 import { createGroup } from '@givto/api/graphql/mutations/create-group.mutation';
@@ -54,7 +53,6 @@ const resolvers = {
     editWishlistItem,
     deleteWishlistItem,
     reorderWishlistItem,
-    addAssignmentException,
     addUsersToGroup,
   },
 };

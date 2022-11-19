@@ -69,17 +69,21 @@ export const Wishlist: React.FC<WishlistProps> = ({
                       display="flex"
                       flexDirection="column"
                       marginBottom={3}
-                      borderStyle="solid"
-                      borderColor="black"
-                      bg="white"
+                      bg="muted"
+                      borderRadius={8}
                       borderWidth={1}
-                      p={2}
+                      p={3}
+                      pb={item.description ? 4 : 3}
                       {...draggableProps}
                       {...dragHandleProps}
                       ref={innerRef}
                     >
                       <Box display="flex" alignItems="center">
-                        <Avatar name={`${index + 1}`} marginRight={3} />
+                        <Avatar
+                          name={`${index + 1}`}
+                          marginRight={3}
+                          flexShrink={0}
+                        />
                         <Box
                           as="h4"
                           fontSize={3}
@@ -89,7 +93,7 @@ export const Wishlist: React.FC<WishlistProps> = ({
                           {item.title}
                         </Box>
                         {isEditable && onDelete && (
-                          <Box display="flex">
+                          <Box display="flex" minWidth="auto">
                             {!editingId && (
                               <IconButton
                                 bg="primary"
@@ -98,8 +102,7 @@ export const Wishlist: React.FC<WishlistProps> = ({
                                 marginRight={1}
                                 onClick={() => setEditingId(item.id)}
                               >
-                                <Edit2 size={12} />
-                                <Box marginLeft={1}>Edit</Box>
+                                <Edit2 size={16} />
                               </IconButton>
                             )}
                             <IconButton
@@ -108,20 +111,21 @@ export const Wishlist: React.FC<WishlistProps> = ({
                               size="small"
                               onClick={() => onDelete(item.id)}
                             >
-                              <Trash size={12} />
-                              <Box marginLeft={1}>Delete</Box>
+                              <Trash size={16} />
                             </IconButton>
                           </Box>
                         )}
                       </Box>
                       {item.description && (
-                        <Box marginLeft="48px" marginTop={2}>
+                        <Box marginTop={2} lineHeight="body">
                           <div
                             dangerouslySetInnerHTML={{
-                              __html: item.description.replace(
-                                /(https?:\/\/[^\s]+)/g,
-                                (url) => `<a href="${url}">${url}</a>`
-                              ),
+                              __html: item.description
+                                .replace(/\n/g, '<br />')
+                                .replace(
+                                  /(https?:\/\/[^\s]+)/g,
+                                  (url) => `<a href="${url}">${url}</a>`
+                                ),
                             }}
                           />
                         </Box>

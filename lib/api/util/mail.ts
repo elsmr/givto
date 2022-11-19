@@ -1,3 +1,4 @@
+import { WithId } from 'mongodb';
 import qs from 'querystring';
 import { MongoLoginCodes, MongoUser } from '../data-sources/mongo';
 import { UserInput } from '../graphql-schema';
@@ -5,7 +6,7 @@ import { Mailer } from '../mail';
 
 export const sendInviteEmails = async (
   slug: string,
-  users: MongoUser[],
+  users: WithId<MongoUser>[],
   creator: UserInput,
   mailer: Mailer,
   loginCodes: MongoLoginCodes
@@ -23,8 +24,8 @@ export const sendInviteEmails = async (
         template: 'invite',
         variables: {
           creator: creator.name,
-          link: `https://givto.app/go?${params}`
-        }
+          link: `https://givto.app/go?${params}`,
+        },
       })
     );
   }

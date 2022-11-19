@@ -1,24 +1,27 @@
 import qs from 'querystring';
 import { MongoUser } from '../../data-sources/mongo';
 import { mapGroup } from '../../graphql-mappers';
-import { Group, Mutation, UserInput } from '../../graphql-schema';
+import {
+  Group,
+  GroupSettingsInput,
+  Mutation,
+  UserInput,
+} from '../../graphql-schema';
 import { generateSlug } from '../../url-generator';
 import { assignSecretSantas } from '../../util/secret-santa.util';
 
 export const createGroup: Mutation<{
   creator: UserInput;
   invitees: UserInput[];
+  settings?: GroupSettingsInput;
 }> = async (
   _,
-  { creator, invitees },
+  { creator, invitees, settings },
   { dataSources: { groups, users, loginCodes }, mailer }
 ): Promise<Group | null> => {
   const allUsers = [creator, ...invitees];
-  const [slug, mongoUsers] = await Promise.all([
-    generateSlug(groups.hasSlug),
-    users.createUsers(...allUsers),
-  ]);
-  console.log('created', mongoUsers.length, 'users');
+  const slug = settings?.slug ?? (await generateSlug(groups.hasSlug));
+  const mongoUsers = await users.createUsers(...allUsers);
   const mongoCreator = mongoUsers.find((user) => user.email === creator.email);
   const mongoUserIds = mongoUsers.map((user) => user._id);
   const userIds = mongoUserIds.map((id) => id.toHexString());
@@ -28,12 +31,14 @@ export const createGroup: Mutation<{
   }
 
   const assignments = assignSecretSantas(userIds, {});
-  console.log('assigned');
   const mongoGroup = await groups.createGroup({
     slug,
     creator: mongoCreator._id,
     users: mongoUserIds,
     assignments,
+    assignExceptions: Object.fromEntries(
+      settings?.assignExceptions?.map(({ from, to }) => [from, to]) ?? []
+    ),
   });
 
   if (!mongoGroup) {
@@ -71,8 +76,6 @@ export const createGroup: Mutation<{
     users.addGroupToUsers(mongoUserIds, mongoGroup._id),
     ...invites,
   ]);
-
-  console.log('invited');
 
   return mongoGroup
     ? mapGroup(mongoGroup, mongoCreator._id.toHexString())

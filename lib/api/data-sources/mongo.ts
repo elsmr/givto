@@ -6,15 +6,12 @@ import {
   MongoError,
   ObjectId,
   WithId,
+  Document,
 } from 'mongodb';
 import ms from 'ms';
 import { nanoid } from 'nanoid';
 import { GivtoContext, UserInput } from '../graphql-schema';
 import { randomString } from '../util/random-string.util';
-
-interface MongoEntity {
-  _id: ObjectId;
-}
 
 export interface WishListItemInput {
   title: string;
@@ -27,7 +24,7 @@ export interface WishListItem {
   description: string;
 }
 
-export interface MongoGroup extends MongoEntity {
+export interface MongoGroup {
   slug: string;
   name: string;
   creator: ObjectId;
@@ -40,27 +37,27 @@ export interface MongoGroup extends MongoEntity {
   assignExceptions: Record<string, string[]>;
 }
 
-export interface MongoUser extends MongoEntity {
+export interface MongoUser {
   name: string;
   email: string;
   groups: ObjectId[];
 }
 
-export interface MongoInvite extends MongoEntity {
+export interface MongoInvite {
   code: string;
   invitee: string;
   group: string;
   exp: number;
 }
 
-export interface MongoLoginCode extends MongoEntity {
+export interface MongoLoginCode {
   code: string;
   userId: ObjectId;
   exp: number;
   redirectUrl: string | null;
 }
 
-export interface MongoRefreshToken extends MongoEntity {
+export interface MongoRefreshToken {
   token: string;
   userId: ObjectId;
   exp: number;
@@ -84,7 +81,7 @@ export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
 };
 
 export class MongoDataSource<
-  T extends MongoEntity
+  T extends Document
 > extends DataSource<GivtoContext> {
   protected collection!: Collection<T>;
   private collectionName: string;
@@ -97,11 +94,11 @@ export class MongoDataSource<
   initialize({
     context: { db },
   }: Pick<DataSourceConfig<Pick<GivtoContext, 'db'>>, 'context'>): void {
-    this.collection = db.collection(this.collectionName);
+    this.collection = db.collection<T>(this.collectionName);
   }
 
   findById = (id: string): Promise<WithId<T> | null> => {
-    return this.collection.findOne({ _id: new ObjectId(id) as any });
+    return this.collection.findOne({ _id: new ObjectId(id) } as any);
   };
 
   findByIds = (ids: string[]): Promise<WithId<T>[]> => {
@@ -118,11 +115,11 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
     super('users');
   }
 
-  findByEmail = (email: string): Promise<MongoUser | null> => {
+  findByEmail = (email: string) => {
     return this.collection.findOne({ email });
   };
 
-  createUsers = async (...users: UserInput[]): Promise<MongoUser[]> => {
+  createUsers = async (...users: UserInput[]) => {
     console.log('creating users', users);
     try {
       await this.collection.insertMany(
@@ -156,10 +153,7 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
     return result.modifiedCount === userIds.length;
   };
 
-  updateByEmail = async (
-    email: string,
-    update: Partial<MongoUser>
-  ): Promise<MongoUser | null> => {
+  updateByEmail = async (email: string, update: Partial<MongoUser>) => {
     const user = await this.collection.findOneAndUpdate(
       { email },
       { $set: update },
@@ -181,8 +175,8 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     assignments,
   }: Pick<
     MongoGroup,
-    'slug' | 'users' | 'creator' | 'assignments'
-  >): Promise<MongoGroup | null> => {
+    'slug' | 'users' | 'creator' | 'assignments' | 'assignExceptions'
+  >) => {
     await this.collection.insertOne({
       name: '',
       creator,
@@ -199,7 +193,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     return this.findBySlug(slug);
   };
 
-  findBySlug = (slug: string): Promise<MongoGroup | null> => {
+  findBySlug = (slug: string) => {
     return this.collection.findOne({ slug });
   };
 
@@ -207,10 +201,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     return this.findBySlug(slug).then(Boolean);
   };
 
-  updateBySlug = async (
-    slug: string,
-    update: Partial<MongoGroup>
-  ): Promise<MongoGroup | null> => {
+  updateBySlug = async (slug: string, update: Partial<MongoGroup>) => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $set: update },
@@ -254,16 +245,17 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { slug },
       { projection: { [`wishlists.${userId}`]: 1 } }
     );
-    const wishlist = group?.wishlists?.[userId]!;
+    const wishlist = group?.wishlists?.[userId] ?? [];
     const srcItem = wishlist.find((item) => item.id === itemId)!;
-    const newItem = { ...srcItem, ...update };
+    const newItem: WishListItem = { ...srcItem, ...update };
+    const newWishlist = wishlist.map((item) =>
+      item.id === itemId ? newItem : item
+    );
     await this.collection.findOneAndUpdate(
       { slug },
       {
         $set: {
-          [`wishlists.${userId}`]: wishlist.map((item) =>
-            item.id === itemId ? newItem : item
-          ),
+          [`wishlists.${userId}` as 'wishlists.id']: newWishlist,
         },
       }
     );
@@ -286,7 +278,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     wishlist?.splice(destinationIndex, 0, srcItem);
     await this.collection.findOneAndUpdate(
       { slug },
-      { $set: { [`wishlists.${userId}`]: wishlist } },
+      { $set: { [`wishlists.${userId}` as 'wishlists.id']: wishlist } },
       { returnDocument: 'after' }
     );
 
@@ -320,7 +312,7 @@ export class MongoLoginCodes extends MongoDataSource<MongoLoginCode> {
     await this.collection.insertOne({
       code,
       userId: id,
-      exp: Date.now() + ms(isInvite ? '3d' : '15m'),
+      exp: Date.now() + ms(isInvite ? '3d' : '1h'),
       redirectUrl,
     });
     return code;
@@ -344,12 +336,12 @@ export class MongoRefreshTokens extends MongoDataSource<MongoRefreshToken> {
     super('refreshTokens');
   }
 
-  create = async (userId: ObjectId): Promise<MongoRefreshToken> => {
+  create = async (userId: ObjectId): Promise<WithId<MongoRefreshToken>> => {
     const token = randomString();
     const tokenObj = {
       token,
       userId,
-      exp: Date.now() + ms('30d'),
+      exp: Date.now() + ms('60d'),
     };
     const result = await this.collection.insertOne(tokenObj);
     return { ...tokenObj, _id: result.insertedId };

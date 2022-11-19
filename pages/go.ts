@@ -17,6 +17,7 @@ export const LoginLandingPage: NextPage = () => {
 
           push(redirectUrl || '/');
         } catch (e) {
+          console.log(e);
           push('/');
         }
       }

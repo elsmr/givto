@@ -100,12 +100,10 @@ export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
         <Input
           type="email"
           aria-label="Email"
-          name="email"
+          {...register('email', { required: true })}
           placeholder="Your Email"
           required
-          ref={register({ required: true })}
-          marginBottom={2}
-        />
+          marginBottom={2} />
       </Box>
       <Box display="flex" justifyContent="flex-end">
         <Button>Sign In</Button>

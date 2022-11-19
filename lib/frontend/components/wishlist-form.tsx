@@ -120,70 +120,52 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
   };
 
   return (
-    <BorderBox p={3}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        borderBottomStyle="solid"
-        borderColor="black"
-        borderWidth={1}
-        paddingBottom={2}
-        marginBottom={3}
-      >
-        <Box as="h3" fontSize={4} marginRight={2}>
-          Your Wishlist
-        </Box>
-      </Box>
-      <Box>
-        <Box maxHeight="400px" overflowY="auto">
-          <Wishlist
-            wishlist={wishlist}
-            isEditable={true}
-            onDelete={deleteItem}
-            onReorder={reorderItem}
-            onEditSubmit={editItem}
-          />
-        </Box>
+    <Box>
+      <Wishlist
+        wishlist={wishlist}
+        isEditable={true}
+        onDelete={deleteItem}
+        onReorder={reorderItem}
+        onEditSubmit={editItem}
+      />
 
-        {wishlist.length === 0 && !isAdding && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            minHeight="200px"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Box fontSize={3} as="p" marginBottom={3}>
-              Your wishlist is empty 😧
-            </Box>
-            {!isAdding && (
-              <IconButton onClick={() => setIsAdding(true)}>
-                <Plus />
-                <Box px={2}>Add</Box>
-              </IconButton>
-            )}
+      {wishlist.length === 0 && !isAdding && (
+        <Box
+          display="flex"
+          flexDirection="column"
+          minHeight="200px"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Box fontSize={3} as="p" marginBottom={3}>
+            Your wishlist is empty 😧
           </Box>
-        )}
-
-        {!isAdding && wishlist.length !== 0 && (
-          <Box display="flex" justifyContent="center">
+          {!isAdding && (
             <IconButton onClick={() => setIsAdding(true)}>
               <Plus />
               <Box px={2}>Add</Box>
             </IconButton>
-          </Box>
-        )}
+          )}
+        </Box>
+      )}
 
-        {isAdding && (
-          <WishlistItemForm
-            index={wishlist.length + 1}
-            onCancel={() => setIsAdding(false)}
-            onSubmit={onSubmit}
-          />
-        )}
-      </Box>
-    </BorderBox>
+      {!isAdding && wishlist.length !== 0 && (
+        <Box display="flex" justifyContent="center">
+          <IconButton onClick={() => setIsAdding(true)}>
+            <Plus />
+            <Box px={2}>Add</Box>
+          </IconButton>
+        </Box>
+      )}
+
+      {isAdding && (
+        <WishlistItemForm
+          index={wishlist.length + 1}
+          onCancel={() => setIsAdding(false)}
+          onSubmit={onSubmit}
+        />
+      )}
+    </Box>
   );
 };
 
@@ -210,18 +192,17 @@ export const WishlistItemForm: React.FC<{
       <Box as="form" flexGrow={1} onSubmit={handleSubmit(onSubmit)}>
         <InputLabel label="Title" marginBottom={3}>
           <Input
-            name="title"
+            {...register('title', { required: true })}
             placeholder="What gift do you want?"
-            ref={register({ required: true })}
           />
         </InputLabel>
         <InputLabel label="Description" marginBottom={3} isOptional>
           <Input
-            name="description"
+            {...register('description')}
             placeholder="Describe your gift! include hints, links etc."
             as="textarea"
             noresize
-            ref={register}
+            rows={4}
           />
         </InputLabel>
         <Box display="flex" justifyContent="flex-end">

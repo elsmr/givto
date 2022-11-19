@@ -23,6 +23,7 @@ import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { Tabs } from '@givto/frontend/components/ui/tabs';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
@@ -45,7 +46,9 @@ const GET_GROUP_QUERY = `query getGroup($slug: String!) {
         },
         assignee {
           user {
+            id
             name
+            email
           }
           wishlist {
             id
@@ -61,6 +64,11 @@ const SET_GROUP_NAME_MUTATION = `mutation setGroupName($slug: String!, $name: St
       name
   }
 }`;
+
+interface Tab {
+  id: 'my_wishlist' | 'assignee_wishlist';
+  title: string;
+}
 
 const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
   group,
@@ -123,10 +131,9 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
         onSubmit={handleSubmit(onSubmit)}
       >
         <Input
-          name="group-name"
+          {...register('group-name', { required: true })}
           placeholder="Group Name"
           defaultValue={name}
-          ref={register({ required: true })}
           marginRight={1}
         />
         <IconButton size="small" type="submit" flexShrink={0} marginRight={1}>
@@ -158,6 +165,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   });
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showMembersModal, setShowMembersModal] = useState(false);
+  const [selectedTab, setSelectedTab] = useState<Tab['id']>('my_wishlist');
   const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
 
   if (groupLoading) {
@@ -171,8 +179,15 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const group = groupResult.getGroup;
   const assignedAt = group.assignedAt;
   const assignee = group.assignee;
-  const isCreator = group.creator.id === user?.id;
   const allUsers = [...group.users, ...invitedUsers];
+
+  const tabs: Tab[] = [{ id: 'my_wishlist', title: 'My Wishlist' }];
+  if (assignee) {
+    tabs.push({
+      id: 'assignee_wishlist',
+      title: `${assignee.user.name}'s Wishlist`,
+    });
+  }
 
   return (
     <Layout display="flex" flexDirection="column">
@@ -180,6 +195,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
         <title>Givto - {group.name || 'Unnamed Group'}</title>
       </Head>
       <Header
+        hideTitle
         actions={
           <Box flexShrink={0}>
             {/* <NextLink passHref href={`/g/${slug}/settings`}>
@@ -191,7 +207,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
           </Box>
         }
       />
-      <LayoutWrapper marginBottom={4}>
+      <LayoutWrapper>
         <Box
           display="flex"
           flexDirection={['column', 'column', 'row']}
@@ -236,46 +252,48 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
       </LayoutWrapper>
 
       <LayoutWrapper marginBottom={4}>
-        <WishlistForm slug={slug} wishlist={group.wishlist} />
-      </LayoutWrapper>
-
-      {assignee && (
-        <LayoutWrapper marginBottom={4}>
-          <BorderBox p={3}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              borderBottomStyle="solid"
-              borderColor="black"
-              borderWidth={1}
-              paddingBottom={2}
-              marginBottom={3}
-            >
-              <Box as="h3" fontSize={4} marginRight={2}>
-                {assignee.user.name}'s Wishlist
-              </Box>
+        <BorderBox p={3}>
+          <Box mb={3}>
+            <Tabs
+              tabs={tabs}
+              selectedTab={selectedTab}
+              onChange={(selectedTab) =>
+                setSelectedTab(selectedTab as Tab['id'])
+              }
+            />
+          </Box>
+          {selectedTab === 'my_wishlist' && (
+            <WishlistForm slug={slug} wishlist={group.wishlist} />
+          )}
+          {selectedTab === 'assignee_wishlist' && assignee && (
+            <Box>
+              <Wishlist wishlist={assignee.wishlist} />
+              {assignee.wishlist.length === 0 && (
+                <Box
+                  minHeight="250px"
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Box
+                    as="h4"
+                    fontWeight="normal"
+                    fontSize={3}
+                    marginBottom={2}
+                  >
+                    {assignee.user.name} has not entered a wishlist yet
+                  </Box>
+                  <Box>
+                    Gently nudge him or her to add some items to their wishlist
+                    😉
+                  </Box>
+                </Box>
+              )}
             </Box>
-            <Wishlist wishlist={assignee.wishlist} />
-            {assignee.wishlist.length === 0 && (
-              <Box
-                minHeight="250px"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Box as="h4" fontWeight="normal" fontSize={3} marginBottom={2}>
-                  {assignee.user.name} has not entered a wishlist yet
-                </Box>
-                <Box>
-                  Gently nudge him or her to add some items to their wishlist 😉
-                </Box>
-              </Box>
-            )}
-          </BorderBox>
-        </LayoutWrapper>
-      )}
+          )}
+        </BorderBox>
+      </LayoutWrapper>
 
       {showMembersModal && (
         <Modal title="Members" onClose={() => setShowMembersModal(false)}>
@@ -287,6 +305,11 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
                   <Box>{member.name}</Box>
                   {member.email === group.creator.email && (
                     <Badge mx={1}>🎅 Owner</Badge>
+                  )}
+
+                  {member.email === user?.email && <Badge mx={1}>👋 You</Badge>}
+                  {member.email === assignee?.user.email && (
+                    <Badge mx={1}>🎁</Badge>
                   )}
                 </Box>
                 <Box color="textMuted" fontSize={1}>

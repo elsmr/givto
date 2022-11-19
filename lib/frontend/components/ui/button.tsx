@@ -41,7 +41,7 @@ const PlainButton = styled(ButtonReset)`
     ${ButtonForeground},
     &:focus
     ${ButtonForeground} {
-    transform: translate(8px, 8px);
+    transform: translate(4px, 4px);
   }
 
   &:focus ${ButtonForeground} {
@@ -59,26 +59,25 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
     return (
       <PlainButton
         as="button"
-        paddingBottom={2}
-        paddingRight={2}
-        minWidth="200px"
+        paddingBottom={1}
+        paddingRight={1}
         position="relative"
         ref={ref}
         {...props}
       >
         <Box
           position="absolute"
-          top={2}
-          left={2}
+          top={1}
+          left={1}
           borderWidth={1}
           borderStyle="solid"
           borderColor="black"
-          width="calc(100% - 8px)"
-          height="calc(100% - 8px)"
+          width="calc(100% - 4px)"
+          height="calc(100% - 4px)"
           bg="secondary"
         />
         <ButtonForeground
-          px={2}
+          px={3}
           py={1}
           width="100%"
           fontSize={3}

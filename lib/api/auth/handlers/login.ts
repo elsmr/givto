@@ -54,9 +54,17 @@ export const loginHandler = async (
     const { loginCodes, refreshTokens, users } = await getDataSources();
     const loginCode = await loginCodes.findByCode(body.loginCode);
 
+    console.log(loginCode);
+
+    if (loginCode) {
+      console.log(loginCode.exp, Date.now(), loginCode.exp > Date.now());
+    }
+
     if (loginCode && loginCode.exp > Date.now()) {
       const userId = loginCode.userId.toHexString();
+      console.log(userId);
       const user = await users.findById(userId);
+      console.log(user);
 
       if (!user || user.email !== body.email) {
         res.status(401).json({ error: 'Unauthorized' });
@@ -69,7 +77,7 @@ export const loginHandler = async (
         process.env.JWT_SECRET_KEY as string,
         {
           issuer: 'givto.app',
-          expiresIn: '1d',
+          expiresIn: '7d',
           subject: userId,
         }
       );
@@ -85,7 +93,7 @@ export const loginHandler = async (
         }`
       );
 
-      res.json({ token, exp, redirectUrl: loginCode.redirectUrl });
+      res.status(200).json({ token, exp, redirectUrl: loginCode.redirectUrl });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
     }

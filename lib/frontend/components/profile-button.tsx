@@ -18,7 +18,7 @@ export const ProfileButton: React.FC = () => {
 
   if (!user) {
     return (
-      <NextLink href={`/login?redirect=${asPath}`} passHref>
+      <NextLink href={`/login?redirect=${asPath}`} passHref legacyBehavior>
         <IconButton as="a" flexShrink={0} display="flex" alignItems="center">
           <ArrowRight size={16} />
           <Box fontSize={2} px={2}>
@@ -30,7 +30,7 @@ export const ProfileButton: React.FC = () => {
   }
 
   return (
-    <NextLink passHref href="/profile">
+    <NextLink passHref legacyBehavior href="/profile">
       <Link
         display="flex"
         alignItems="center"

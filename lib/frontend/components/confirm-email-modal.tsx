@@ -28,8 +28,7 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
     handleSubmit,
     register,
     setError,
-    errors,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<{
     logincode: string;
   }>();
@@ -73,10 +72,9 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
         <Box marginBottom={3}>
           <Input
             aria-label="Secret Sign In Code"
-            name="logincode"
+            {...register('logincode', { required: true })}
             placeholder="Secret Sign In Code"
             required
-            ref={register({ required: true })}
             marginBottom={2}
           />
           <Box display="flex">

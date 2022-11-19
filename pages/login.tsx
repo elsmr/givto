@@ -1,29 +1,18 @@
-import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { EmailForm, LoginForm } from '@givto/frontend/components/login-modal';
 import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
+import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { Layout } from '@givto/frontend/components/ui/layout';
 import { NextPage } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react';
-import { animated, useTransition } from 'react-spring';
 import GivtoLogo from '../assets/givto-logo.svg';
 
 export const LoginPage: NextPage = () => {
   const { query, push } = useRouter();
   const [email, setEmail] = useState(query.email as string);
   const { isInitialized, user } = useContext(AuthContext);
-  const transitions = useTransition(email, null, {
-    from: {
-      opacity: 0,
-      transform: 'translate3d(60%,0,0)',
-    },
-    enter: { opacity: 1, transform: 'translate3d(0%,0,0)' },
-    leave: { opacity: 0, transform: 'translate3d(-60%,0,0)' },
-    initial: null,
-  });
-
   if (isInitialized && user) {
     push('/profile');
   }
@@ -42,7 +31,7 @@ export const LoginPage: NextPage = () => {
         justifyContent="center"
         paddingBottom={6}
       >
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref legacyBehavior>
           <Box as="a" css={{ textDecoration: 'none' }}>
             <Box
               width="72px"
@@ -70,21 +59,16 @@ export const LoginPage: NextPage = () => {
               minHeight: '200px',
             }}
           >
-            <Box as="h2" marginBottom={3}>
+            <Box as="h2" mb={3}>
               Sign In
             </Box>
-            {transitions.map(({ item, props, key }) => (
-              <animated.div
-                key={key}
-                style={{ position: 'absolute', left: 0, right: 0, ...props }}
-              >
-                {item ? (
-                  <LoginForm email={email} onLogin={() => {}} />
-                ) : (
-                  <EmailForm onSubmit={setEmail} />
-                )}
-              </animated.div>
-            ))}
+            <Box>
+              {email ? (
+                <LoginForm email={email} onLogin={() => {}} />
+              ) : (
+                <EmailForm onSubmit={setEmail} />
+              )}
+            </Box>
           </Box>
         </BorderBox>
       </Box>

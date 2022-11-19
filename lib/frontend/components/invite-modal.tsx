@@ -52,23 +52,19 @@ export const InviteModal: React.FC<InviteModalProps> = ({
         <Box marginBottom={3}>
           <InputLabel label="Name">
             <Input
-              name="name"
+              {...register('name', { required: true })}
               placeholder="Your Friend's Name"
               required
-              ref={register({ required: true })}
-              marginBottom={2}
-            />
+              marginBottom={2} />
           </InputLabel>
 
           <InputLabel label="Email Address">
             <Input
               type="email"
-              name="email"
+              {...register('email', { required: true })}
               placeholder="Your Friend's Email Address"
               required
-              ref={register({ required: true })}
-              marginBottom={2}
-            />
+              marginBottom={2} />
           </InputLabel>
         </Box>
         <Box display="flex" justifyContent="flex-end">

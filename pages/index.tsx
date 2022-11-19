@@ -26,8 +26,6 @@ const Footer = styled(Box)`
 `.withComponent('footer');
 
 const HomePage = () => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
   return (
     <Layout display="flex" flexDirection="column" justifyItems="stretch">
       <Box marginBottom={5}>
@@ -36,47 +34,15 @@ const HomePage = () => {
 
       <Box as="main" flexGrow={1}>
         <LayoutWrapper marginBottom={5}>
-          <Box
-            height="40vh"
-            minHeight="400px"
-            display="flex"
-            alignItems="center"
-          >
-            <Box>
-              <Box
-                as="p"
-                fontSize={[5, 6]}
-                fontFamily="heading"
-                fontWeight="bold"
-                lineHeight="body"
-                marginBottom={4}
-                maxWidth="80%"
-              >
-                Organize Secret Santa with your friends and family with ease.
-              </Box>
-              <Button
-                as="a"
-                href="#create-group"
-                onClick={() => {
-                  setTimeout(() => inputRef.current?.focus(), 1000);
-                }}
-              >
-                Get Started
-              </Button>
+          <BorderBox p={4}>
+            <Box as="h2" marginBottom={4} fontSize={5}>
+              Organize your Secret Santa
             </Box>
-          </Box>
+            <CreateGroupForm />
+          </BorderBox>
         </LayoutWrapper>
 
-        <Box
-          bg="primary"
-          marginBottom={6}
-          py={5}
-          borderTopStyle="solid"
-          borderBottomStyle="solid"
-          borderColor="black"
-          borderWidth={1}
-          color="white"
-        >
+        <Box marginBottom={6} py={5}>
           <LayoutWrapper>
             <Box
               display="flex"
@@ -122,15 +88,6 @@ const HomePage = () => {
             </Box>
           </LayoutWrapper>
         </Box>
-
-        <LayoutWrapper marginBottom={6}>
-          <BorderBox p={4}>
-            <Box as="h2" marginBottom={3} fontSize={5}>
-              Create your Group
-            </Box>
-            <CreateGroupForm inputRef={inputRef} />
-          </BorderBox>
-        </LayoutWrapper>
       </Box>
 
       <Footer bg="primary">

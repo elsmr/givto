@@ -9,10 +9,11 @@ import { ButtonReset } from './button';
 export interface ModalProps {
   title: string;
   onClose: () => void;
+  children?: React.ReactNode;
 }
 
 export const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => {
-  if (!process.browser) {
+  if (!typeof window) {
     return null;
   }
 

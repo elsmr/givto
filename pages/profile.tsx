@@ -17,6 +17,7 @@ import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Plus, Save } from 'react-feather';
 import { useForm } from 'react-hook-form';
+import { InputLabel } from '../lib/frontend/components/ui/labeled-input';
 
 const EXPANDED_USER_QUERY = `query getCurrentUser {
   getCurrentUser {
@@ -82,8 +83,6 @@ const ProfilePage: NextPage = () => {
         <Header
           actions={
             <IconButton
-              bg="white"
-              color="text"
               onClick={async () => {
                 await AuthUtils.logout(token);
                 router.push('/');
@@ -99,32 +98,11 @@ const ProfilePage: NextPage = () => {
           <Avatar name={name} size={128} fontSize={8} borderWidth={4} />
         </Box>
         <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-          <Box
-            as="label"
-            marginBottom={3}
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-start"
-          >
-            <Box
-              as="span"
-              bg="primary"
-              color="white"
-              py={1}
-              px={2}
-              borderColor="black"
-              borderStyle="solid"
-              borderWidth={1}
-              fontSize={1}
-              borderBottom="none"
-            >
-              Name
-            </Box>
-            <Box display="flex" width="100%">
+          <InputLabel mb={3} label="Name">
+            <Box display="flex" width="100%" alignItems="center">
               <Input
                 flexGrow={1}
-                name="name"
-                ref={register({ required: true })}
+                {...register('name', { required: true })}
                 placeholder="Your Name"
                 defaultValue={name}
                 marginRight={2}
@@ -133,36 +111,16 @@ const ProfilePage: NextPage = () => {
                 <Save size={16} /> <Box px={2}>Save</Box>
               </IconButton>
             </Box>
-          </Box>
+          </InputLabel>
         </Box>
-        <Box
-          as="label"
-          marginBottom={3}
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-        >
-          <Box
-            as="span"
-            bg="primary"
-            color="white"
-            py={1}
-            px={2}
-            borderColor="black"
-            borderStyle="solid"
-            borderWidth={1}
-            fontSize={1}
-            borderBottom="none"
-          >
-            Email (read-only)
-          </Box>
+        <InputLabel label="Email (read-only)">
           <Input
             name="email"
             readOnly
             placeholder="Your Email"
             defaultValue={user.email}
           />
-        </Box>
+        </InputLabel>
       </LayoutWrapper>
 
       <LayoutWrapper>
@@ -178,16 +136,21 @@ const ProfilePage: NextPage = () => {
             marginBottom={3}
           >
             <Box as="h3" fontSize={4} marginRight={2}>
-              Groups
+              Secret Santas
             </Box>
-            <NextLink href="/#create-group">
+            <NextLink href="/" passHref legacyBehavior>
               <IconButton as="a">
                 <Plus size={16} /> <Box px={2}>Add</Box>
               </IconButton>
             </NextLink>
           </Box>
           {user.groups.map((group) => (
-            <NextLink key={group.id} href={`/g/${group.slug}`}>
+            <NextLink
+              key={group.id}
+              href={`/g/${group.slug}`}
+              passHref
+              legacyBehavior
+            >
               <Link
                 display="flex"
                 alignItems="center"

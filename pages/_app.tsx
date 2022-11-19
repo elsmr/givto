@@ -1,3 +1,4 @@
+import { css, Global } from '@emotion/core';
 import { User } from '@givto/api/graphql-schema';
 import { fetch } from '@givto/frontend/api/api.util';
 import {
@@ -86,6 +87,70 @@ export default class GivtoApp extends App<
     return (
       <ThemeProvider theme={theme}>
         <>
+          <Global
+            styles={css`
+              html {
+                box-sizing: border-box;
+                scroll-behavior: smooth;
+              }
+
+              body {
+                margin: 0;
+                font-family: ${theme.fonts.body};
+                scroll-behavior: smooth;
+                color: ${theme.colors.textMuted};
+              }
+
+              textarea {
+                font-family: ${theme.fonts.body};
+              }
+
+              h1,
+              h2,
+              h3,
+              h4 {
+                font-family: ${theme.fonts.heading};
+                color: ${theme.colors.text};
+              }
+
+              body.modal-open {
+                overflow: hidden;
+              }
+
+              h1,
+              h2,
+              h3,
+              h4,
+              p {
+                margin: 0;
+              }
+
+              *,
+              *:before,
+              *:after {
+                box-sizing: inherit;
+              }
+
+              .sr-only {
+                border: 0;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+              }
+
+              ::selection {
+                background-color: ${theme.colors.primaryMuted};
+              }
+
+              a {
+                color: ${theme.colors.primary};
+              }
+            `}
+          />
           <Head>
             <title>Givto - Secret Santa</title>
             <meta name="title" content="Givto - Secret Santa" />
@@ -129,92 +194,8 @@ export default class GivtoApp extends App<
               href="/favicon-16x16.png"
             />
             <link rel="manifest" href="/givto.webmanifest" />
-            <link
-              rel="preload"
-              href="/fonts/lato-regular-webfont.woff2"
-              as="font"
-              type="font/woff2"
-              crossOrigin="anonymous"
-            />
             <meta name="msapplication-TileColor" content="#603cba" />
             <meta name="theme-color" content="#5A51FF"></meta>
-            <style
-              key="global-styles"
-              dangerouslySetInnerHTML={{
-                __html: `@font-face {
-                font-family: Lato;
-                src: url('/fonts/lato-regular-webfont.woff2') format('woff2'),
-                  url('/fonts/lato-regular-webfont.woff') format('woff');
-                font-display: block;
-              }
-              @font-face {
-                font-family: Lato;
-                src: url('/fonts/lato-bold-webfont.woff2') format('woff2'),
-                  url('/fonts/lato-bold-webfont.woff') format('woff');
-                font-weight: 700;
-                font-display: block;
-              }
-
-              html {
-                box-sizing: border-box;
-                scroll-behavior: smooth;
-              }
-
-              body {
-                margin: 0;
-                font-family: ${theme.fonts.body};
-                scroll-behavior: smooth;
-              }
-
-              textarea {
-                font-family: ${theme.fonts.body};
-              }
-
-              h1,
-              h2,
-              h3,
-              h4 {
-                font-family: ${theme.fonts.heading};
-              }
-
-              body.modal-open {
-                overflow: hidden;
-              }
-
-              h1,
-              h2,
-              h3,
-              h4,
-              p {
-                margin: 0;
-              }
-
-              *,
-              *:before,
-              *:after {
-                box-sizing: inherit;
-              }
-
-              .sr-only {
-                border: 0;
-                clip: rect(0 0 0 0);
-                height: 1px;
-                margin: -1px;
-                overflow: hidden;
-                padding: 0;
-                position: absolute;
-                width: 1px;
-              }
-
-              ::selection {
-                background-color: ${theme.colors.primaryMuted};
-              }
-
-              a {
-                color: ${theme.colors.primary};
-              }`,
-              }}
-            ></style>
           </Head>
 
           <ClientContext.Provider value={client}>

@@ -8,7 +8,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { DeepMap, FieldError, useForm } from 'react-hook-form';
+import { useForm, FieldErrors, FieldErrorsImpl } from 'react-hook-form';
 import { AuthContext } from '../auth/auth.util';
 import { ConfirmEmailModal } from './confirm-email-modal';
 import { Box } from './ui/box';
@@ -39,22 +39,15 @@ interface FormValues {
   invitees: Contact[];
 }
 
-const emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-const FormSectionTitle: React.FC = ({ children }) => {
-  return (
-    <Box py={2} as="h2">
-      {children}
-    </Box>
-  );
-};
+const emailRegex =
+  /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const FormError: React.FC<{
-  errors: DeepMap<FormValues, FieldError>;
+  errors: FieldErrors<FormValues>;
 }> = ({ errors }) => {
   const hasDuplicateError =
-    errors?.creator?.email?.message === 'duplicate' ||
-    errors?.invitees?.some((error) => error?.email?.message === 'duplicate');
+    errors.creator?.email?.message === 'duplicate' ||
+    errors.invitees?.some?.((error) => error?.email?.message === 'duplicate');
   const hasCreatorError = errors.creator?.email || errors.creator?.name;
 
   if (hasDuplicateError) {
@@ -84,7 +77,7 @@ interface ContactFieldProps {
   onInput?: (event: ChangeEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   required?: boolean;
-  error?: DeepMap<Contact, FieldError>;
+  error?: FieldErrorsImpl<FormValues>['creator'];
   inputRef?: RefObject<HTMLInputElement>;
 }
 
@@ -102,30 +95,24 @@ const ContactField: React.FC<ContactFieldProps> = ({
   return (
     <Box display="flex" flexDirection={['column', 'row']} marginBottom={3}>
       <Input
-        name={`${field}.name`}
         flex={1}
         aria-label="Name"
         marginRight={[0, 2]}
         marginBottom={[2, 0]}
-        borderColor={error?.name ? 'danger' : 'black'}
+        borderColor={error?.name && 'danger'}
         placeholder={namePlaceholder}
         autoFocus={autoFocus}
-        ref={(element: HTMLInputElement) => {
-          register(element, { required });
-          if (inputRef) {
-            (inputRef as any).current = element;
-          }
-        }}
+        ref={inputRef}
+        {...register(`${field}.name`, { required })}
         onInput={onInput}
       />
       <Input
-        name={`${field}.email`}
         type="email"
         aria-label="Email"
-        borderColor={error?.email ? 'danger' : 'black'}
+        borderColor={error?.email && 'danger'}
         flex={4}
         placeholder={emailPlaceholder}
-        ref={register({
+        {...register(`${field}.email`, {
           required,
           pattern: emailRegex,
         })}
@@ -144,6 +131,7 @@ const PlaceholderContactField: React.FC = () => {
       borderColor="muted"
       borderStyle="dashed"
       borderWidth={1}
+      borderRadius={8}
     >
       Tip! More fields will appear as you add more friends
     </Box>
@@ -156,14 +144,13 @@ export const CreateGroupForm: React.FunctionComponent<{
   const {
     register,
     handleSubmit,
-    errors,
-    formState: { isSubmitted },
+    formState: { isSubmitted, errors },
     setValue,
     setError,
     getValues,
   } = useForm<FormValues>();
   const router = useRouter();
-  const { user } = useContext(AuthContext);
+  const { user, isInitialized } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
   const [confirmCreator, setConfirmCreator] = useState<Contact | null>(null);
   const [createGroup] = useMutation<
@@ -176,7 +163,7 @@ export const CreateGroupForm: React.FunctionComponent<{
     const hasEnteredInvitee = getValues().invitees[0].name;
     if (hasEnteredInvitee && !isSubmitted) {
       event.preventDefault();
-      ((event as unknown) as Event).returnValue = true;
+      event.returnValue = true;
     }
   });
 
@@ -212,10 +199,10 @@ export const CreateGroupForm: React.FunctionComponent<{
       const duplicateIndex = allUsers.findIndex(
         (user) => user.email === duplicateEmails[0]
       );
-      const fieldWithDuplicate =
+      const fieldWithDuplicate: 'creator.email' | `invitees.${number}.email` =
         duplicateIndex === 0
           ? 'creator.email'
-          : `invitees[${duplicateIndex - 1}].email`;
+          : `invitees.${duplicateIndex - 1}.email`;
 
       setError(fieldWithDuplicate, { type: 'validate', message: 'duplicate' });
       return;
@@ -247,17 +234,19 @@ export const CreateGroupForm: React.FunctionComponent<{
   return (
     <>
       <Form id="create-group" onSubmit={handleSubmit(onSubmit)}>
-        <FormSectionTitle>What's your name?</FormSectionTitle>
-        <ContactField
-          field="creator"
-          error={errors.creator}
-          required
-          namePlaceholder="Your Name"
-          emailPlaceholder="Your Email Address"
-          register={register}
-          inputRef={inputRef}
-        />
-        <FormSectionTitle>Invite your friends</FormSectionTitle>
+        {!user && (
+          <Box mb={4}>
+            <ContactField
+              field="creator"
+              error={errors.creator}
+              required
+              namePlaceholder="Your Name"
+              emailPlaceholder="Your Email Address"
+              register={register}
+              inputRef={inputRef}
+            />
+          </Box>
+        )}
         {new Array(inviteeAmount).fill(null).map((_, index) => (
           <ContactField
             key={index}
@@ -274,7 +263,7 @@ export const CreateGroupForm: React.FunctionComponent<{
           <PlaceholderContactField />
         )}
         <Box
-          marginTop={4}
+          marginTop={2}
           display="flex"
           justifyContent="space-between"
           alignItems="center"

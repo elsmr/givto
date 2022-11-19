@@ -22,7 +22,7 @@ export const ConfirmEmailConfirmPage: NextPage = () => {
         justifyContent="center"
         paddingBottom={6}
       >
-        <NextLink href="/" passHref>
+        <NextLink href="/" passHref legacyBehavior>
           <Box as="a" css={{ textDecoration: 'none' }}>
             <Box
               width="72px"
@@ -45,7 +45,7 @@ export const ConfirmEmailConfirmPage: NextPage = () => {
           p={4}
         >
           <Box>Successfully confirmed your email address.</Box>
-          <NextLink href="/profile" passHref>
+          <NextLink href="/profile" passHref legacyBehavior>
             <Button as="a">View Profile</Button>
           </NextLink>
         </BorderBox>

@@ -12,32 +12,32 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
     p={2}
     type="text"
     color="inherit"
-    bg="transparent"
-    borderColor={props.borderColor || 'black'}
-    borderWidth={1}
+    bg="muted"
+    borderColor="muted"
     borderStyle="solid"
+    borderWidth={1}
+    borderRadius={4}
     css={css({
       display: 'block',
       width: '100%',
       appearance: 'none',
       fontSize: 'inherit',
       lineHeight: 'inherit',
-      borderRadius: 0,
       boxShadow: 'none',
       outline: 'none',
       resize: 'none',
       '&:focus': {
-        borderColor: 'primary'
+        borderColor: 'primary',
       },
       '::placeholder': {
         textOverflow: 'ellipsis',
-        color: 'textMuted'
-      }
+        color: 'textMuted',
+      },
     })}
     {...props}
   />
 ));
 
 Input.defaultProps = {
-  hasSubmitted: true
+  hasSubmitted: true,
 };

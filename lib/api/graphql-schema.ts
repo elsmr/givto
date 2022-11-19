@@ -91,6 +91,16 @@ export interface UserInput {
   email: string;
 }
 
+export interface GroupSettingsInput {
+  slug: string;
+  assignExceptions: AssignExceptionInput[];
+}
+
+export interface AssignExceptionInput {
+  from: string;
+  to: string[];
+}
+
 export interface GivtoContext {
   dataSources: GivtoDataSources;
   db: Db;
@@ -160,6 +170,16 @@ export const typeDefs = gql`
     email: String!
   }
 
+  input AssignException {
+    from: String!
+    to: [String]!
+  }
+
+  input GroupSettingsInput {
+    slug: String
+    assignExceptions: [AssignException]
+  }
+
   input UserUpdate {
     name: String
     email: String
@@ -177,13 +197,12 @@ export const typeDefs = gql`
     description: String
   }
 
-  input AssignmentException {
-    subject: String!
-    object: String!
-  }
-
   type Mutation {
-    createGroup(creator: UserInput!, invitees: [UserInput]!): Group
+    createGroup(
+      creator: UserInput!
+      invitees: [UserInput]!
+      settings: GroupSettingsInput
+    ): Group
     createLoginCode(
       email: String!
       name: String
@@ -207,10 +226,6 @@ export const typeDefs = gql`
       wishlistItemId: String!
       destinationIndex: Int!
     ): [WishlistItem]
-    addAssignmentException(
-      slug: String!
-      exception: AssignmentException!
-    ): Group
     addUsersToGroup(slug: String!, invitees: [UserInput]!): Group
   }
 `;

@@ -21,7 +21,7 @@ const PageContent = styled(Box)`
 `.withComponent('main');
 
 export const ErrorContent: React.FC<{ statusCode: number }> = ({
-  statusCode
+  statusCode,
 }) => {
   switch (statusCode) {
     case 404:
@@ -54,7 +54,7 @@ export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => (
     <PageContent>
       <StyledLogo />
       <ErrorContent statusCode={statusCode} />
-      <Link passHref href="/">
+      <Link passHref legacyBehavior href="/">
         <Button as="a" marginTop={2}>
           Go Home
         </Button>

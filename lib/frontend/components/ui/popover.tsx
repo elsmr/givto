@@ -6,6 +6,7 @@ import { Box } from './box';
 interface PopoverProps {
   content: JSX.Element;
   isOpen: boolean;
+  children?: React.ReactNode;
 }
 
 export const Popover: React.FC<PopoverProps> = ({

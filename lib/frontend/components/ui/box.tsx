@@ -13,7 +13,7 @@ import {
   space,
   SpaceProps,
   typography,
-  TypographyProps
+  TypographyProps,
 } from 'styled-system';
 import { Theme } from '../../theme';
 
@@ -27,7 +27,7 @@ export type BoxProps = BordersProps &
 
 export const Box = styled.div(
   {
-    minWidth: 0
+    minWidth: 0,
   },
   space,
   color,
