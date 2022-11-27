@@ -1,0 +1,116 @@
+{
+  "home": {
+    "tagline": "Organize your Secret Santa",
+    "invite-friends": {
+      "title": "Invite your friends",
+      "description": "Invite all your friends and family by email. They will be able to enter their wishlists in private."
+    },
+    "assign": {
+      "title": "Randomly assign gifts",
+      "description": "With just one click Givto assigns a Secret Santa to everyone. The identity of the Secret Santas remains secret."
+    }
+  },
+  "confirm-email": {
+    "success": "Successfully confirmed your email address.",
+    "view-profile": "View Profile",
+    "modal": {}
+  },
+  "error-page": {
+    "go-home": "Go Home",
+    "not-found": {
+      "title": "Givto didn't find this page 😧",
+      "description": "Either this page doesn't exist, or you are not logged in."
+    },
+    "fallback": {
+      "title": "Givto encountered an unknown error ⚠️",
+      "description": "Please try again later."
+    }
+  },
+  "group-page": {
+    "my-wishlist": "My Wishlist",
+    "assignee-wishlist": "{name}'s Wishlist",
+    "fallback-group-name": "Unnamed Secret Santa",
+    "no-wishlist": "{name} has not entered a wishlist yet",
+    "no-wishlist-hint": "Gently nudge him or her to add some items to their wishlist 😉",
+    "owner": "Owner",
+    "you": "You",
+    "members": "Members",
+    "edit": "Edit",
+    "group-name-hint": "Give your Secret Santa a name ✨"
+  },
+  "profile-page": {
+    "name": "Name",
+    "name-placeholder": "Your Name",
+    "email": "Email (read-only)",
+    "email-placeholder": "Your Email",
+    "groups": "Secret Santas",
+    "add-group": "Nieuw",
+    "save": "Save",
+    "logout": "Logout",
+    "members": "{count} members"
+  },
+  "login": {
+    "sign-in": "Sign In",
+    "hint": "Sign in to Givto using your email address",
+    "email-sent": "We sent an email to you at",
+    "email-sent-hint": "The email contains a magic link that will sign you in to Givto.",
+    "success": "Successfully logged in, you can safely close this tab!",
+    "email-label": "Email",
+    "email-placeholder": "Your Email"
+  },
+  "confirm-email-modal": {
+    "email-sent": "Almost there! We sent an email to you at",
+    "email-sent-hint": "The email contrains a secret code so you can confirm your email.",
+    "code-label": "Secret Code",
+    "error": "Incorrect sign in code, please try again",
+    "create": "Create Secret Santa"
+  },
+  "create-group": {
+    "name": "Name",
+    "email": "Email address",
+    "invite-name": "Name",
+    "invite-email": "Email address",
+    "show-advanced": "Show advanced options",
+    "hide-advanced": "Hide advanced options",
+    "create": "Start Secret Santa",
+    "and": "and",
+    "advanced-title": "Advanced options",
+    "group-name": "Name",
+    "group-name-placeholder": "{name}'s Secret Santa",
+    "exclusions": {
+      "title": "Exclusions",
+      "add": "Add",
+      "description": "Exclude combinations from the Secret Santa. You can make maximum {max, plural, =1 {1 exclusion} other {# exclusions} } for a Secret Santa with {count} people.",
+      "unavailable": "Exclude combinations from the Secret Santa. Exlusions are only available for Secret Santa's with 4 or more participants."
+    },
+    "language": {
+      "title": "Language"
+    },
+    "validation": {
+      "duplicate": "Please provide unique email addresses",
+      "creator": "Please input your name and email",
+      "invitee": "Please provide a name and email for at least 2 friends"
+    },
+    "language_by_email": "Custom",
+    "more_invitees_hint": "Tip! More fields will appear as you add more friends",
+    "lang": "{locale, select, nl {Nederlands} en {English} other {English}}"
+  },
+  "wishlist": {
+    "empty": "Your wishlist is empty 😧",
+    "add": "Add",
+    "title": "Title",
+    "title-placeholder": "What gift do you want?",
+    "description": "Description",
+    "description-placeholder": "Describe your gift! include hints, links etc.",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "input": {
+    "optional": "optional"
+  },
+  "footer": {
+    "view-source": "View Source",
+    "by": "by",
+    "lang": "{locale, select, nl {Nederlands} en {English} other {English}}"
+  }
+}

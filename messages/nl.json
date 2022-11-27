@@ -1,0 +1,116 @@
+{
+  "home": {
+    "tagline": "Organiseer jouw Secret Santa",
+    "invite-friends": {
+      "title": "Nodig vrienden uit",
+      "description": "Nodig al je vrienden en familie uit via email. Ze kunnen dan hun wishlist invullen in het geheim."
+    },
+    "assign": {
+      "title": "Verdeel cadeaus",
+      "description": "Met 1 klik krijgt elke deelnemer een Secret Santa toegewezen. De identiteit van de Secret Santas blijft geheim."
+    }
+  },
+  "confirm-email": {
+    "success": "Je emailadres is succesvol bevestigd.",
+    "view-profile": "Profiel",
+    "modal": {}
+  },
+  "error-page": {
+    "go-home": "Home",
+    "not-found": {
+      "title": "Givto heeft deze pagina nie gevonden 😧",
+      "description": "Ofwel bestaat deze pagina niet, of je moet ingelogd zijn."
+    },
+    "fallback": {
+      "title": "Er heeft zich een probleem voorgedaan ⚠️",
+      "description": "Probeer het later nog eens."
+    }
+  },
+  "profile-page": {
+    "name": "Naam",
+    "name-placeholder": "Je naam",
+    "email": "Emailadres (read-only)",
+    "email-placeholder": "Je Emailadres",
+    "groups": "Secret Santas",
+    "add-group": "Nieuw",
+    "save": "Save",
+    "logout": "Logout",
+    "members": "{count} deelnemers"
+  },
+  "group-page": {
+    "my-wishlist": "Mijn Wishlist",
+    "assignee-wishlist": "{name}'s Wishlist",
+    "fallback-group-name": "Secret Santa zonder naam",
+    "no-wishlist": "{name} heeft nog geen wishlist gemaakt",
+    "no-wishlist-hint": "Herinner hem of haar om zijn wishlist aan te vullen 😉",
+    "owner": "Eigenaar",
+    "you": "Jij",
+    "members": "Deelnemers",
+    "edit": "Wijzig",
+    "group-name-hint": "Geef je Secret Santa een naam ✨"
+  },
+  "login": {
+    "sign-in": "Login",
+    "hint": "Log in op Givto met je emailadres",
+    "email-sent": "We hebben je een email gestuurd.",
+    "email-sent-hint": "In de email vind je een link die je zal inloggen op Givto.",
+    "success": "Succesvol ingelogd, je mag deze tab nu sluiten!",
+    "email-label": "Emailadres",
+    "email-placeholder": "Emailadres"
+  },
+  "confirm-email-modal": {
+    "email-sent": "Bijna klaar! We hebben een email gestuurd naar",
+    "email-sent-hint": "De email bevat een geheime code om je email te bevestigen.",
+    "code-label": "Geheime Code",
+    "error": "Foute code, probeer opnieuw",
+    "create": "Start Secret Santa"
+  },
+  "create-group": {
+    "name": "Je Naam",
+    "email": "Je Emailadres",
+    "invite-name": "Naam",
+    "invite-email": "Emailadres",
+    "show-advanced": "Toon geavanceerde instellingen",
+    "hide-advanced": "Verberg geavanceerde instellingen",
+    "create": "Start Secret Santa",
+    "and": "en",
+    "advanced-title": "Geavanceerde instellingen",
+    "group-name": "Naam",
+    "group-name-placeholder": "{name}'s Secret Santa",
+    "exclusions": {
+      "title": "Uitzonderingen",
+      "add": "Nieuwe uitzondering",
+      "description": "Voorkom combinaties in de Secret Santa. Je kan maximaal {max, plural, =1 {1 uitzondering} other {# uitzonderingen} } maken voor een Secret Santa met {count} leden.",
+      "unavailable": "Voorkom combinaties in de Secret Santa. Uitzonderingen zijn enkel beschikbaar voor Secret Santas met 4 of meer leden."
+    },
+    "language": {
+      "title": "Taalinstellingen"
+    },
+    "language_by_email": "Pas aan per persoon",
+    "validation": {
+      "duplicate": "Zorg ervoor dat alle emailadressen uniek zijn",
+      "creator": "Geef je emailadres en naam in",
+      "invitee": "Geef een emailadres en naam in voor minstens 2 vrienden"
+    },
+    "more_invitees_hint": "Tip! Er komen automatisch extra velden bij.",
+    "lang": "{locale, select, nl {Nederlands} en {English} other {English}}"
+  },
+  "wishlist": {
+    "empty": "Je wishlist is leeg 😧",
+    "add": "Nieuw",
+    "title": "Titel",
+    "title-placeholder": "Wat voor cadeau wil je?",
+    "description": "Beschrijving",
+    "description-placeholder": "Geef meer info over je cadeau! voeg links en andere hints toe.",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "input": {
+    "optional": "optioneel"
+  },
+  "footer": {
+    "view-source": "View Source",
+    "by": "by",
+    "lang": "{locale, select, nl {Nederlands} en {English} other {English}}"
+  }
+}
