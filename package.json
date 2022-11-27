@@ -44,6 +44,7 @@
     "react-spring": "9.5.5",
     "react-tiny-popover": "^7.2.0",
     "styled-system": "5.1.5",
+    "typescript-cookie": "1.0.4",
     "use-media": "1.4.0"
   },
   "devDependencies": {
