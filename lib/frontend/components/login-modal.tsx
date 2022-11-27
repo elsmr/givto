@@ -1,5 +1,6 @@
 import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -34,6 +35,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
     { email: string; name: string; redirectUrl: string }
   >(GET_LOGIN_CODE_MUTATION);
   const { query } = useRouter();
+  const t = useTranslations('login');
   const [isDone, setIsDone] = useState(false);
 
   const sendEmail = () => {
@@ -49,7 +51,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   useEffect(sendEmail, []);
 
   useEventListener('storage', (event) => {
-    const storageEvent = (event as any) as StorageEvent;
+    const storageEvent = event as any as StorageEvent;
     if (storageEvent.key === 'givto-access-token' && storageEvent.newValue) {
       setIsDone(true);
       onLogin();
@@ -59,20 +61,15 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   return (
     <Box my={3} lineHeight="body">
       {isDone ? (
-        <Box>
-          {successMessage ||
-            'Successfully logged in, you can safely close this tab!'}
-        </Box>
+        <Box>{successMessage || t('success')}</Box>
       ) : (
         <>
           <Box color="textMuted">
-            We sent an email to you at{' '}
+            {t('email-sent')}{' '}
             <Box as="span" color="black">
               {email}
             </Box>
-            .{' '}
-            {infoMessage ||
-              'There you will find a magic link that will sign you in to Givto.'}
+            . {infoMessage || t('email-sent-hint')}
           </Box>
         </>
       )}
@@ -83,6 +80,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
   onSubmit,
 }) => {
+  const t = useTranslations('login');
   const { handleSubmit, register } = useForm<{
     email: string;
   }>();
@@ -94,19 +92,20 @@ export const EmailForm: React.FC<{ onSubmit: (email: string) => void }> = ({
   return (
     <Form onSubmit={handleSubmit(onFormSubmit)}>
       <Box marginBottom={3}>
-        <Box>Sign in to Givto using your email address</Box>
+        <Box>{t('hint')}</Box>
       </Box>
       <Box marginBottom={3}>
         <Input
-          type="email"
-          aria-label="Email"
+          type={t('email-label')}
+          aria-label={t('email-label')}
           {...register('email', { required: true })}
-          placeholder="Your Email"
+          placeholder={t('email-placeholder')}
           required
-          marginBottom={2} />
+          marginBottom={2}
+        />
       </Box>
       <Box display="flex" justifyContent="flex-end">
-        <Button>Sign In</Button>
+        <Button>{t('sign-in')}</Button>
       </Box>
     </Form>
   );

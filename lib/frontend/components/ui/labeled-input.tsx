@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { Box, BoxProps } from './box';
 
@@ -13,6 +14,7 @@ export const InputLabel: React.FC<LabeledInputProps> = ({
   children,
   ...props
 }) => {
+  const t = useTranslations('input');
   return (
     <Box
       as="label"
@@ -35,7 +37,7 @@ export const InputLabel: React.FC<LabeledInputProps> = ({
         fontSize={1}
         borderBottom="none"
       >
-        {label} {isOptional && ' (optional)'}
+        {label} {isOptional && ` (${t('optional')})`}
       </Box>
       {children}
     </Box>

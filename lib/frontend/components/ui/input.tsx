@@ -13,7 +13,6 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
     type="text"
     color="inherit"
     bg="muted"
-    borderColor="muted"
     borderStyle="solid"
     borderWidth={1}
     borderRadius={4}
@@ -26,6 +25,7 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
       boxShadow: 'none',
       outline: 'none',
       resize: 'none',
+      borderColor: 'muted',
       '&:focus': {
         borderColor: 'primary',
       },

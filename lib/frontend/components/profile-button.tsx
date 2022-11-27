@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
@@ -11,6 +12,7 @@ import { Link } from './ui/link';
 export const ProfileButton: React.FC = () => {
   const { asPath } = useRouter();
   const { user, isLoading, isInitialized } = useContext(AuthContext);
+  const t = useTranslations('login');
 
   if (isLoading || !isInitialized) {
     return null;
@@ -22,7 +24,7 @@ export const ProfileButton: React.FC = () => {
         <IconButton as="a" flexShrink={0} display="flex" alignItems="center">
           <ArrowRight size={16} />
           <Box fontSize={2} px={2}>
-            Sign In
+            {t('sign-in')}
           </Box>
         </IconButton>
       </NextLink>

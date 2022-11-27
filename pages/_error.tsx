@@ -1,18 +1,21 @@
 import { ErrorPage } from '@givto/frontend/components/error';
-import { NextPage } from 'next';
+import { NextPage, NextPageContext } from 'next';
 import React from 'react';
 
 export const NextErrorPage: NextPage<{ statusCode: number }> = ({
-  statusCode
+  statusCode,
 }) => <ErrorPage statusCode={statusCode} />;
 
-NextErrorPage.getInitialProps = async ({ res, err }) => {
+NextErrorPage.getInitialProps = async ({ res, err, locale }) => {
   const statusCode = res
     ? res.statusCode
     : err
     ? (err.statusCode as number)
     : 404;
-  return { statusCode };
+  return {
+    statusCode,
+    // messages: (await import(`../messages/${locale}.json`)).default,
+  };
 };
 
 export default NextErrorPage;

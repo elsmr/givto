@@ -1,12 +1,12 @@
 const isValidAssignment = (
   assignment: Record<string, string>,
-  exceptions: Record<string, string[]>
+  exclusions: Record<string, string[]>
 ) => {
   const hasSelfAssignment = Object.entries(assignment).some(
     ([key, value]) => key === value
   );
   const hasException = Object.keys(assignment).some(
-    id => exceptions[id] && exceptions[id].includes(assignment[id])
+    (id) => exclusions[id] && exclusions[id].includes(assignment[id])
   );
 
   return !hasSelfAssignment && !hasException;
@@ -14,9 +14,19 @@ const isValidAssignment = (
 
 export const assignSecretSantas = (
   ids: string[],
-  exceptions: Record<string, string[]> = {}
+  exclusions: { from: string; to: string }[] = []
 ): Record<string, string> => {
   let assignments: Record<string, string> = {};
+  const exclusionsById = exclusions.reduce(
+    (acc, exclusion) => ({
+      ...acc,
+      [exclusion.from]: [...(acc[exclusion.from] ?? []), exclusion.to],
+      [exclusion.to]: [...(acc[exclusion.to] ?? []), exclusion.from],
+    }),
+    {} as Record<string, string[]>
+  );
+
+  console.log(exclusionsById);
 
   do {
     let userIdsToAssign = [...ids];
@@ -29,7 +39,7 @@ export const assignSecretSantas = (
       userIdsToPick.splice(randomIndex, 1);
       assignments[userId] = assignedUserId;
     }
-  } while (!isValidAssignment(assignments, exceptions));
+  } while (!isValidAssignment(assignments, exclusionsById));
 
   return assignments;
 };

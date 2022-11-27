@@ -1,4 +1,5 @@
 import { useMutation } from 'graphql-hooks';
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { AuthUtils } from '../auth/auth.util';
@@ -32,6 +33,7 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
   } = useForm<{
     logincode: string;
   }>();
+  const t = useTranslations('confirm-email-modal');
   const [createLoginCode, { loading }] = useMutation<
     boolean,
     { email: string; name: string }
@@ -62,24 +64,24 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Box marginBottom={3}>
           <Box color="textMuted">
-            Almost there! We sent an email to you at{' '}
+            {t('email-sent')}{' '}
             <Box as="span" color="black">
               {email}
             </Box>
-            . There you will find a secret code so you can confirm your email.
+            . {t('email-sent-hint')}
           </Box>
         </Box>
         <Box marginBottom={3}>
           <Input
-            aria-label="Secret Sign In Code"
+            aria-label={t('code-label')}
             {...register('logincode', { required: true })}
-            placeholder="Secret Sign In Code"
+            placeholder={t('code-label')}
             required
             marginBottom={2}
           />
           <Box display="flex">
             {Object.keys(errors).length > 0 && (
-              <Box color="danger">Incorrect sign in code, please try again</Box>
+              <Box color="danger">{t('error')}</Box>
             )}
           </Box>
         </Box>
@@ -89,7 +91,7 @@ export const ConfirmEmailModal: React.FC<ConfirmEmailModalProps> = ({
               <Loader type="bar" />
             </Box>
           ) : (
-            <Button>Create Group</Button>
+            <Button>{t('create')}</Button>
           )}
         </Box>
       </Form>

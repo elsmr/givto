@@ -1,6 +1,7 @@
 import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 import React, {
   ChangeEvent,
   RefObject,
@@ -12,18 +13,27 @@ import { useForm, FieldErrors, FieldErrorsImpl } from 'react-hook-form';
 import { AuthContext } from '../auth/auth.util';
 import { ConfirmEmailModal } from './confirm-email-modal';
 import { Box } from './ui/box';
-import { Button } from './ui/button';
+import { Button, ButtonReset } from './ui/button';
 import { Input } from './ui/input';
 import { Loader } from './ui/loader';
+import { Link } from './ui/link';
+import css from '@styled-system/css';
+import { IconButton } from './ui/icon-button';
+import { Plus, Trash } from 'react-feather';
+import { useTranslations } from 'next-intl';
+import { Select } from './ui/select';
+import { GroupSettingsInput, UserInput } from '../../api/graphql-schema';
 
 const Form = Box.withComponent('form');
 const INITIAL_INVITEE_AMOUNT = 2;
 const MAX_INVITEE_AMOUNT = 50;
+const MIN_INVITEE_AMOUNT_EXCEPTIONS = 4;
 
-const CREATE_GROUP_MUTATION = `mutation CreateGroup($creator: UserInput!, $invitees: [UserInput]!) {
+const CREATE_GROUP_MUTATION = `mutation CreateGroup($creator: UserInput!, $invitees: [UserInput]!, $settings: GroupSettingsInput) {
   createGroup(
     creator: $creator
     invitees: $invitees
+    settings: $settings
   ) {
     slug
   }
@@ -37,6 +47,13 @@ interface Contact {
 interface FormValues {
   creator: Contact;
   invitees: Contact[];
+  locale: string;
+  name: string;
+  localeByEmail?: { locale: string }[];
+  exclusions: {
+    from: string;
+    to: string;
+  }[];
 }
 
 const emailRegex =
@@ -45,6 +62,7 @@ const emailRegex =
 const FormError: React.FC<{
   errors: FieldErrors<FormValues>;
 }> = ({ errors }) => {
+  const t = useTranslations('create-group');
   const hasDuplicateError =
     errors.creator?.email?.message === 'duplicate' ||
     errors.invitees?.some?.((error) => error?.email?.message === 'duplicate');
@@ -53,16 +71,14 @@ const FormError: React.FC<{
   if (hasDuplicateError) {
     return (
       <Box color="secondary" paddingRight={2}>
-        Please provide unique email addresses
+        {t('validation.duplicate')}
       </Box>
     );
   }
 
   if (hasCreatorError) {
     <Box color="secondary" paddingRight={2}>
-      {hasCreatorError
-        ? 'Please input your name and email'
-        : 'Please provide a name and email for at least 2 friends'}
+      {hasCreatorError ? t('validation.creator') : t('validation.invitee')}
     </Box>;
   }
 
@@ -122,6 +138,7 @@ const ContactField: React.FC<ContactFieldProps> = ({
 };
 
 const PlaceholderContactField: React.FC = () => {
+  const t = useTranslations('create-group');
   return (
     <Box
       display="flex"
@@ -133,7 +150,7 @@ const PlaceholderContactField: React.FC = () => {
       borderWidth={1}
       borderRadius={8}
     >
-      Tip! More fields will appear as you add more friends
+      {t('more_invitees_hint')}
     </Box>
   );
 };
@@ -148,16 +165,33 @@ export const CreateGroupForm: React.FunctionComponent<{
     setValue,
     setError,
     getValues,
+    watch,
   } = useForm<FormValues>();
   const router = useRouter();
-  const { user, isInitialized } = useContext(AuthContext);
+  const { locale, locales = [] } = router;
+  const { user } = useContext(AuthContext);
   const [inviteeAmount, setInviteeAmount] = useState(INITIAL_INVITEE_AMOUNT);
   const [confirmCreator, setConfirmCreator] = useState<Contact | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [exclusionAmount, setExclusionAmount] = useState(0);
+  const [localeByEmailEnabled, setLocaleByEmailEnabled] = useState(false);
   const [createGroup] = useMutation<
     { createGroup: { slug: string } },
-    FormValues
+    {
+      creator: UserInput;
+      invitees: UserInput[];
+      settings?: GroupSettingsInput;
+    }
   >(CREATE_GROUP_MUTATION);
   const [isSubmittingGroup, setIsSubmittingGroup] = useState(false);
+  const invitees = watch('invitees') ?? [];
+  const creator = watch('creator');
+  const exclusions = watch('exclusions') ?? [];
+  const t = useTranslations('create-group');
+  const participants = [creator, ...invitees].filter(
+    (participant) =>
+      participant && participant.name.trim() && participant.email.trim()
+  );
 
   useEventListener('beforeunload', (event) => {
     const hasEnteredInvitee = getValues().invitees[0].name;
@@ -169,13 +203,24 @@ export const CreateGroupForm: React.FunctionComponent<{
 
   const submitGroup = async () => {
     setIsSubmittingGroup(true);
-    const { creator, invitees } = getValues();
+    const { creator, invitees, exclusions, locale, localeByEmail, name } =
+      getValues();
     const { data } = await createGroup({
       variables: {
         creator,
         invitees: invitees.filter(
           (inv) => emailRegex.test(inv.email) && inv.name.trim().length > 0
         ),
+        settings: {
+          name,
+          exclusions,
+          locale,
+          locales:
+            localeByEmail?.map(({ locale }, i) => ({
+              locale,
+              email: participants[i].email,
+            })) ?? [],
+        },
       },
     });
     if (data) {
@@ -226,8 +271,8 @@ export const CreateGroupForm: React.FunctionComponent<{
 
   useEffect(() => {
     if (user) {
-      setValue('creator.name' as any, user.name);
-      setValue('creator.email' as any, user.email);
+      setValue('creator.name', user.name);
+      setValue('creator.email', user.email);
     }
   }, [user]);
 
@@ -240,8 +285,8 @@ export const CreateGroupForm: React.FunctionComponent<{
               field="creator"
               error={errors.creator}
               required
-              namePlaceholder="Your Name"
-              emailPlaceholder="Your Email Address"
+              namePlaceholder={t('name')}
+              emailPlaceholder={t('email')}
               register={register}
               inputRef={inputRef}
             />
@@ -253,8 +298,8 @@ export const CreateGroupForm: React.FunctionComponent<{
             field={`invitees[${index}]`}
             error={errors.invitees?.[index]}
             required={index < 2}
-            namePlaceholder="Your Friend's Name"
-            emailPlaceholder="Your Friend's Email Address"
+            namePlaceholder={t('invite-name')}
+            emailPlaceholder={t('invite-email')}
             register={register}
             onInput={onInput(index)}
           />
@@ -262,6 +307,167 @@ export const CreateGroupForm: React.FunctionComponent<{
         {inviteeAmount === INITIAL_INVITEE_AMOUNT && (
           <PlaceholderContactField />
         )}
+
+        {showAdvanced && (
+          <Box my={4}>
+            <Box as="h3" mb={2}>
+              {t('advanced-title')}
+            </Box>
+            <Box my={3}>
+              <Box display="flex" alignItems="center" as="label">
+                <Box as="span" mr={2}>
+                  {t('group-name')}
+                </Box>
+                <Input
+                  {...register('name')}
+                  placeholder={t('group-name-placeholder', {
+                    name: creator.name,
+                  })}
+                />
+              </Box>
+            </Box>
+            <Box my={3}>
+              <Box as="h4" my={2}>
+                {t('exclusions.title')}
+              </Box>
+              {participants.length >= MIN_INVITEE_AMOUNT_EXCEPTIONS ? (
+                <Box>
+                  <Box as="p" mt={2} mb={3}>
+                    {t('exclusions.description', {
+                      count: participants.length,
+                      max: participants.length - 3,
+                    })}
+                  </Box>
+                  {new Array(exclusionAmount).fill(null).map((_, index) => (
+                    <Box key={index} display="flex" alignItems="center" my={2}>
+                      <Select {...register(`exclusions.${index}.from`)}>
+                        {participants.map((participant, i) => (
+                          <option
+                            key={participant.email}
+                            value={participant.email}
+                          >
+                            {participant.name} ({participant.email})
+                          </option>
+                        ))}
+                      </Select>
+
+                      <Box mx={3}>{t('and')}</Box>
+
+                      <Select {...register(`exclusions.${index}.to`)}>
+                        {participants
+                          .filter(
+                            (participant) =>
+                              exclusions[index]?.from !== participant.email
+                          )
+                          .map((participant) => (
+                            <option
+                              key={participant.email}
+                              value={participant.email}
+                            >
+                              {participant.name} ({participant.email})
+                            </option>
+                          ))}
+                      </Select>
+
+                      {index === exclusionAmount - 1 && (
+                        <Box ml={3}>
+                          <IconButton
+                            bg="danger"
+                            color="black"
+                            size="small"
+                            onClick={() => {
+                              setValue(`exclusions`, exclusions.slice(0, -1));
+                              setExclusionAmount((prev) => prev - 1);
+                            }}
+                          >
+                            <Trash size={16} />
+                          </IconButton>
+                        </Box>
+                      )}
+                    </Box>
+                  ))}
+                  {exclusionAmount < participants.length - 3 && (
+                    <IconButton
+                      flexShrink={0}
+                      display="flex"
+                      type="button"
+                      mt={2}
+                      alignItems="center"
+                      onClick={() => {
+                        setExclusionAmount((prev) => prev + 1);
+                      }}
+                    >
+                      <Plus size={16} />
+                      <Box fontSize={2} px={2}>
+                        {t('exclusions.add')}
+                      </Box>
+                    </IconButton>
+                  )}
+                </Box>
+              ) : (
+                <Box as="p">{t('exclusions.unavailable')}</Box>
+              )}
+            </Box>
+            <Box my={3}>
+              <Box as="h4" mt={4} mb={2}>
+                {t('language.title')}
+              </Box>
+              {invitees.length > 0 && (
+                <Box display="block" my={2} as="label">
+                  <Box
+                    as="input"
+                    type="checkbox"
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                      const { checked } = event.target;
+                      if (!checked) {
+                        setValue('localeByEmail', []);
+                      }
+                      setLocaleByEmailEnabled(checked);
+                    }}
+                  ></Box>
+                  {t('language_by_email')}
+                </Box>
+              )}
+              {!localeByEmailEnabled ? (
+                <Box display="flex" alignItems="center">
+                  <Select defaultValue={locale} {...register('locale')}>
+                    {locales.map((l) => (
+                      <option key={l} value={l}>
+                        {t('lang', { locale: l })}
+                      </option>
+                    ))}
+                  </Select>
+                </Box>
+              ) : (
+                participants.map((participant, index) => (
+                  <Box
+                    key={participant.email}
+                    my={2}
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      {participant.name} ({participant.email}){' '}
+                    </Box>
+                    <Select
+                      ml={3}
+                      defaultValue={locale}
+                      {...register(`localeByEmail.${index}.locale`)}
+                    >
+                      {locales.map((l) => (
+                        <option key={l} value={l}>
+                          {t('lang', { locale: l })}
+                        </option>
+                      ))}
+                    </Select>
+                  </Box>
+                ))
+              )}
+            </Box>
+          </Box>
+        )}
+
+        <FormError errors={errors} />
         <Box
           marginTop={2}
           display="flex"
@@ -269,13 +475,26 @@ export const CreateGroupForm: React.FunctionComponent<{
           alignItems="center"
         >
           <Box marginRight={2}>
-            <FormError errors={errors} />
+            <ButtonReset
+              color="textMuted"
+              type="button"
+              fontSize={1}
+              css={css({
+                textDecoration: 'underline',
+                '&:hover, &:focus': {
+                  color: 'primary',
+                },
+              })}
+              onClick={() => setShowAdvanced((prev) => !prev)}
+            >
+              {showAdvanced ? t('hide-advanced') : t('show-advanced')}
+            </ButtonReset>
           </Box>
 
           {isSubmittingGroup && !confirmCreator ? (
             <Loader type="bar" />
           ) : (
-            <Button>Create</Button>
+            <Button>{t('create')}</Button>
           )}
         </Box>
       </Form>

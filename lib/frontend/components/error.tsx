@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import React from 'react';
 import GivtoLogo from '../../../assets/givto-logo.svg';
+import { Footer } from './footer';
 import { Box } from './ui/box';
 import { Button } from './ui/button';
 import { Layout } from './ui/layout';
@@ -23,15 +25,16 @@ const PageContent = styled(Box)`
 export const ErrorContent: React.FC<{ statusCode: number }> = ({
   statusCode,
 }) => {
+  const t = useTranslations('error-page');
   switch (statusCode) {
     case 404:
       return (
         <>
           <Box as="h1" p={2}>
-            Givto didn't find this page 😧
+            {t('not-found.title')}
           </Box>
           <Box as="p" p={2}>
-            Either this page doesn't exist, or you are not logged in.
+            {t('not-found.description')}
           </Box>
         </>
       );
@@ -39,26 +42,30 @@ export const ErrorContent: React.FC<{ statusCode: number }> = ({
       return (
         <>
           <Box as="h1" p={2}>
-            Givto encountered an unknown error ⚠️
+            {t('fallback.title')}
           </Box>
           <Box as="p" p={2}>
-            Please try again later.
+            {t('fallback.description')}
           </Box>
         </>
       );
   }
 };
 
-export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => (
-  <Layout>
-    <PageContent>
-      <StyledLogo />
-      <ErrorContent statusCode={statusCode} />
-      <Link passHref legacyBehavior href="/">
-        <Button as="a" marginTop={2}>
-          Go Home
-        </Button>
-      </Link>
-    </PageContent>
-  </Layout>
-);
+export const ErrorPage: React.FC<{ statusCode: number }> = ({ statusCode }) => {
+  const t = useTranslations('error-page');
+  return (
+    <Layout>
+      <PageContent>
+        <StyledLogo />
+        <ErrorContent statusCode={statusCode} />
+        <Link passHref legacyBehavior href="/">
+          <Button as="a" marginTop={2}>
+            {t('go-home')}
+          </Button>
+        </Link>
+      </PageContent>
+      <Footer />
+    </Layout>
+  );
+};

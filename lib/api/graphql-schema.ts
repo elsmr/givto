@@ -92,13 +92,16 @@ export interface UserInput {
 }
 
 export interface GroupSettingsInput {
-  slug: string;
-  assignExceptions: AssignExceptionInput[];
+  slug?: string;
+  name?: string;
+  locale: string;
+  locales: { email: string; locale: string }[];
+  exclusions: ExclusionInput[];
 }
 
-export interface AssignExceptionInput {
+export interface ExclusionInput {
   from: string;
-  to: string[];
+  to: string;
 }
 
 export interface GivtoContext {
@@ -170,14 +173,22 @@ export const typeDefs = gql`
     email: String!
   }
 
-  input AssignException {
+  input Exclusion {
     from: String!
-    to: [String]!
+    to: String!
+  }
+
+  input UserLocale {
+    email: String!
+    locale: String!
   }
 
   input GroupSettingsInput {
     slug: String
-    assignExceptions: [AssignException]
+    exclusions: [Exclusion]
+    name: String
+    locale: String
+    locales: [UserLocale]
   }
 
   input UserUpdate {

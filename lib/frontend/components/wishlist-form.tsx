@@ -1,10 +1,10 @@
 import { WishListItem } from '@givto/api/data-sources/mongo';
 import { useMutation } from 'graphql-hooks';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Plus, Save, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { Avatar } from './ui/avatar';
-import { BorderBox } from './ui/border-box';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
 import { Input } from './ui/input';
@@ -74,6 +74,7 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
   );
   const [reorderWishlistMutation] = useMutation(REORDER_WISHLISTITEM_MUTATION);
   const [editWishlistMutation] = useMutation(EDIT_WISHLISTITEM_MUTATION);
+  const t = useTranslations('wishlist');
 
   const onSubmit = async (newItem: WishListItem) => {
     const { data } = await addWishlistItemMutation({
@@ -138,12 +139,12 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
           justifyContent="center"
         >
           <Box fontSize={3} as="p" marginBottom={3}>
-            Your wishlist is empty 😧
+            {t('empty')}
           </Box>
           {!isAdding && (
             <IconButton onClick={() => setIsAdding(true)}>
               <Plus />
-              <Box px={2}>Add</Box>
+              <Box px={2}>{t('add')}</Box>
             </IconButton>
           )}
         </Box>
@@ -153,7 +154,7 @@ export const WishlistForm: React.FC<WishListFormProps> = ({
         <Box display="flex" justifyContent="center">
           <IconButton onClick={() => setIsAdding(true)}>
             <Plus />
-            <Box px={2}>Add</Box>
+            <Box px={2}>{t('add')}</Box>
           </IconButton>
         </Box>
       )}
@@ -178,6 +179,7 @@ export const WishlistItemForm: React.FC<{
   const { handleSubmit, register } = useForm<WishListItem>({
     defaultValues: init,
   });
+  const t = useTranslations('wishlist');
 
   return (
     <Box
@@ -190,16 +192,16 @@ export const WishlistItemForm: React.FC<{
     >
       <Avatar name={`${index}`} marginRight={3} />
       <Box as="form" flexGrow={1} onSubmit={handleSubmit(onSubmit)}>
-        <InputLabel label="Title" marginBottom={3}>
+        <InputLabel label={t('title')} marginBottom={3}>
           <Input
             {...register('title', { required: true })}
-            placeholder="What gift do you want?"
+            placeholder={t('title-placeholder')}
           />
         </InputLabel>
-        <InputLabel label="Description" marginBottom={3} isOptional>
+        <InputLabel label={t('description')} marginBottom={3} isOptional>
           <Input
             {...register('description')}
-            placeholder="Describe your gift! include hints, links etc."
+            placeholder={t('description-placeholder')}
             as="textarea"
             noresize
             rows={4}
@@ -207,7 +209,7 @@ export const WishlistItemForm: React.FC<{
         </InputLabel>
         <Box display="flex" justifyContent="flex-end">
           <IconButton marginRight={2} type="submit">
-            <Save size={16} /> <Box px={2}>Save</Box>
+            <Save size={16} /> <Box px={2}>{t('save')}</Box>
           </IconButton>
           <IconButton
             color="black"
@@ -215,7 +217,7 @@ export const WishlistItemForm: React.FC<{
             type="button"
             onClick={onCancel}
           >
-            <X size={16} /> <Box px={2}>Cancel</Box>
+            <X size={16} /> <Box px={2}>{t('cancel')}</Box>
           </IconButton>
         </Box>
       </Box>

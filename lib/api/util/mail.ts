@@ -24,6 +24,7 @@ export const sendInviteEmails = async (
         template: 'invite',
         variables: {
           creator: creator.name,
+          locale: 'en',
           link: `https://givto.app/go?${params}`,
         },
       })

@@ -31,6 +31,7 @@ export const createLoginCode: Mutation<{
           template: 'login-code',
           variables: {
             email,
+            locale: 'en',
             link: `https://givto.app/go?${params}`
           }
         })
@@ -39,6 +40,7 @@ export const createLoginCode: Mutation<{
           subject: 'Confirm your email address on Givto',
           template: 'confirm-email',
           variables: {
+            locale: 'en',
             code: loginCode
           }
         });

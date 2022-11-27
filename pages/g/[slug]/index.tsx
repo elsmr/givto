@@ -17,13 +17,15 @@ import { Popover } from '@givto/frontend/components/ui/popover';
 import { Wishlist } from '@givto/frontend/components/wishlist';
 import { WishlistForm } from '@givto/frontend/components/wishlist-form';
 import { useMutation, useQuery } from 'graphql-hooks';
-import { NextPage } from 'next';
+import { NextPage, NextPageContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Edit2, Plus, Save, X } from 'react-feather';
 import { useForm } from 'react-hook-form';
 import { Tabs } from '@givto/frontend/components/ui/tabs';
+import { useTranslations } from 'next-intl';
+import { Footer } from '../../../lib/frontend/components/footer';
 
 const GET_GROUP_QUERY = `query getGroup($slug: String!) {
     getGroup(slug: $slug) {
@@ -80,6 +82,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
   const [setGroupName] = useMutation<{
     setGroupName: { name: string };
   }>(SET_GROUP_NAME_MUTATION);
+  const t = useTranslations('group-page');
 
   const onSubmit = (values: Record<string, string>) => {
     setGroupName({
@@ -119,11 +122,11 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
         flexShrink={0}
         onClick={() => setIsEditing(true)}
       >
-        <Edit2 size={12} /> <Box marginLeft={1}>Edit</Box>
+        <Edit2 size={12} /> <Box marginLeft={1}>{t('edit')}</Box>
       </IconButton>
     </Box>
   ) : (
-    <Popover isOpen={!name} content={<Box>Give your Group a name ✨</Box>}>
+    <Popover isOpen={!name} content={<Box>{t('group-name-hint')}</Box>}>
       <Box
         display="flex"
         alignItems="center"
@@ -167,6 +170,7 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [selectedTab, setSelectedTab] = useState<Tab['id']>('my_wishlist');
   const [invitedUsers, setInvitedUsers] = useState<UserInput[]>([]);
+  const t = useTranslations('group-page');
 
   if (groupLoading) {
     return <PageLoader key="loader" />;
@@ -181,145 +185,151 @@ const GroupPageContent: React.FC<{ slug: string }> = ({ slug }) => {
   const assignee = group.assignee;
   const allUsers = [...group.users, ...invitedUsers];
 
-  const tabs: Tab[] = [{ id: 'my_wishlist', title: 'My Wishlist' }];
+  const tabs: Tab[] = [{ id: 'my_wishlist', title: t('my-wishlist') }];
   if (assignee) {
     tabs.push({
       id: 'assignee_wishlist',
-      title: `${assignee.user.name}'s Wishlist`,
+      title: t('assignee-wishlist', { name: assignee.user.name }),
     });
   }
 
   return (
-    <Layout display="flex" flexDirection="column">
+    <Layout>
       <Head>
-        <title>Givto - {group.name || 'Unnamed Group'}</title>
+        <title>Givto - {group.name || t('fallback-group-name')}</title>
       </Head>
-      <Header
-        hideTitle
-        actions={
-          <Box flexShrink={0}>
-            {/* <NextLink passHref href={`/g/${slug}/settings`}>
+      <Box as="main">
+        <Header
+          hideTitle
+          actions={
+            <Box flexShrink={0}>
+              {/* <NextLink passHref href={`/g/${slug}/settings`}>
                   <IconButton as="a">
                     <Settings /> <Box px={2}>Settings</Box>
                   </IconButton>
                 </NextLink> */}
-            <ProfileButton />
-          </Box>
-        }
-      />
-      <LayoutWrapper>
-        <Box
-          display="flex"
-          flexDirection={['column', 'column', 'row']}
-          justifyContent="space-between"
-          alignItems={['flex-start', 'flex-start', 'center']}
-        >
-          <GroupTitle multiline group={group} />
-
+              <ProfileButton />
+            </Box>
+          }
+        />
+        <LayoutWrapper>
           <Box
             display="flex"
-            alignItems="center"
-            flexShrink={0}
-            marginTop={[2, 2, 0]}
+            flexDirection={['column', 'column', 'row']}
+            justifyContent="space-between"
+            alignItems={['flex-start', 'flex-start', 'center']}
           >
-            <ButtonReset
-              display="flex"
-              marginRight={2}
-              onClick={() => setShowMembersModal(true)}
-            >
-              {allUsers.slice(0, 4).map((member, index) => (
-                <Avatar
-                  key={member.email}
-                  name={member.name}
-                  marginLeft={index ? `-${12}px` : 0}
-                />
-              ))}
-              {allUsers.length > 4 && (
-                <Avatar
-                  prefix="+"
-                  marginLeft={`-${12}px`}
-                  name={(allUsers.length - 4).toString()}
-                />
-              )}
-            </ButtonReset>
-            {!assignedAt && (
-              <IconButton size="small" onClick={() => setShowInviteModal(true)}>
-                <Plus size={12} /> <Box marginLeft={1}>Invite</Box>
-              </IconButton>
-            )}
-          </Box>
-        </Box>
-      </LayoutWrapper>
+            <GroupTitle multiline group={group} />
 
-      <LayoutWrapper marginBottom={4}>
-        <BorderBox p={3}>
-          <Box mb={3}>
-            <Tabs
-              tabs={tabs}
-              selectedTab={selectedTab}
-              onChange={(selectedTab) =>
-                setSelectedTab(selectedTab as Tab['id'])
-              }
-            />
-          </Box>
-          {selectedTab === 'my_wishlist' && (
-            <WishlistForm slug={slug} wishlist={group.wishlist} />
-          )}
-          {selectedTab === 'assignee_wishlist' && assignee && (
-            <Box>
-              <Wishlist wishlist={assignee.wishlist} />
-              {assignee.wishlist.length === 0 && (
-                <Box
-                  minHeight="250px"
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
+            <Box
+              display="flex"
+              alignItems="center"
+              flexShrink={0}
+              marginTop={[2, 2, 0]}
+            >
+              <ButtonReset
+                display="flex"
+                marginRight={2}
+                onClick={() => setShowMembersModal(true)}
+              >
+                {allUsers.slice(0, 4).map((member, index) => (
+                  <Avatar
+                    key={member.email}
+                    name={member.name}
+                    marginLeft={index ? `-${12}px` : 0}
+                  />
+                ))}
+                {allUsers.length > 4 && (
+                  <Avatar
+                    prefix="+"
+                    marginLeft={`-${12}px`}
+                    name={(allUsers.length - 4).toString()}
+                  />
+                )}
+              </ButtonReset>
+              {!assignedAt && (
+                <IconButton
+                  size="small"
+                  onClick={() => setShowInviteModal(true)}
                 >
-                  <Box
-                    as="h4"
-                    fontWeight="normal"
-                    fontSize={3}
-                    marginBottom={2}
-                  >
-                    {assignee.user.name} has not entered a wishlist yet
-                  </Box>
-                  <Box>
-                    Gently nudge him or her to add some items to their wishlist
-                    😉
-                  </Box>
-                </Box>
+                  <Plus size={12} /> <Box marginLeft={1}>Invite</Box>
+                </IconButton>
               )}
             </Box>
-          )}
-        </BorderBox>
-      </LayoutWrapper>
-
-      {showMembersModal && (
-        <Modal title="Members" onClose={() => setShowMembersModal(false)}>
-          {allUsers.map((member) => (
-            <Box key={member.email} display="flex" alignItems="center" py={2}>
-              <Avatar name={member.name} marginRight={2}></Avatar>
+          </Box>
+        </LayoutWrapper>
+        <LayoutWrapper marginBottom={4}>
+          <BorderBox p={3}>
+            <Box mb={3}>
+              <Tabs
+                tabs={tabs}
+                selectedTab={selectedTab}
+                onChange={(selectedTab) =>
+                  setSelectedTab(selectedTab as Tab['id'])
+                }
+              />
+            </Box>
+            {selectedTab === 'my_wishlist' && (
+              <WishlistForm slug={slug} wishlist={group.wishlist} />
+            )}
+            {selectedTab === 'assignee_wishlist' && assignee && (
               <Box>
-                <Box display="flex" alignItems="center">
-                  <Box>{member.name}</Box>
-                  {member.email === group.creator.email && (
-                    <Badge mx={1}>🎅 Owner</Badge>
-                  )}
+                <Wishlist wishlist={assignee.wishlist} />
+                {assignee.wishlist.length === 0 && (
+                  <Box
+                    minHeight="250px"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Box
+                      as="h4"
+                      fontWeight="normal"
+                      fontSize={3}
+                      marginBottom={2}
+                    >
+                      {t('no-wishlist', { name: assignee.user.name })}
+                    </Box>
+                    <Box>{t('no-wishlist-hint')}</Box>
+                  </Box>
+                )}
+              </Box>
+            )}
+          </BorderBox>
+        </LayoutWrapper>
+        {showMembersModal && (
+          <Modal
+            title={t('members')}
+            onClose={() => setShowMembersModal(false)}
+          >
+            {allUsers.map((member) => (
+              <Box key={member.email} display="flex" alignItems="center" py={2}>
+                <Avatar name={member.name} marginRight={2}></Avatar>
+                <Box>
+                  <Box display="flex" alignItems="center">
+                    <Box>{member.name}</Box>
+                    {member.email === group.creator.email && (
+                      <Badge mx={1}>🎅 {t('owner')}</Badge>
+                    )}
 
-                  {member.email === user?.email && <Badge mx={1}>👋 You</Badge>}
-                  {member.email === assignee?.user.email && (
-                    <Badge mx={1}>🎁</Badge>
-                  )}
-                </Box>
-                <Box color="textMuted" fontSize={1}>
-                  {member.email}
+                    {member.email === user?.email && (
+                      <Badge mx={1}>👋 {t('you')}</Badge>
+                    )}
+                    {member.email === assignee?.user.email && (
+                      <Badge mx={1}>🎁</Badge>
+                    )}
+                  </Box>
+                  <Box color="textMuted" fontSize={1}>
+                    {member.email}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          ))}
-        </Modal>
-      )}
+            ))}
+          </Modal>
+        )}
+      </Box>
+      <Footer />
     </Layout>
   );
 };
@@ -340,3 +350,17 @@ const GroupPage: NextPage = () => {
 };
 
 export default GroupPage;
+
+export async function getStaticProps(context: NextPageContext) {
+  const locale = context.locale;
+
+  return {
+    props: {
+      messages: (await import(`../../../messages/${locale}.json`)).default,
+    },
+  };
+}
+
+export async function getStaticPaths(context: NextPageContext) {
+  return { paths: [], fallback: true };
+}

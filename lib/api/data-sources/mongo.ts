@@ -26,15 +26,15 @@ export interface WishListItem {
 
 export interface MongoGroup {
   slug: string;
-  name: string;
+  name?: string;
   creator: ObjectId;
   options: {};
   users: ObjectId[];
   createdAt: number;
   assignedAt: number | null;
-  assignments: Record<string, string>;
+  assignments?: Record<string, string>;
   wishlists: Record<string, WishListItem[]>;
-  assignExceptions: Record<string, string[]>;
+  exclusions: { from: string; to: string }[];
 }
 
 export interface MongoUser {
@@ -169,16 +169,18 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   }
 
   createGroup = async ({
+    name,
+    exclusions,
     slug,
     users,
     creator,
     assignments,
   }: Pick<
     MongoGroup,
-    'slug' | 'users' | 'creator' | 'assignments' | 'assignExceptions'
+    'slug' | 'users' | 'creator' | 'assignments' | 'exclusions' | 'name'
   >) => {
     await this.collection.insertOne({
-      name: '',
+      name,
       creator,
       slug,
       options: {},
@@ -187,7 +189,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       assignedAt: Date.now(),
       assignments,
       wishlists: {},
-      assignExceptions: {},
+      exclusions,
     });
 
     return this.findBySlug(slug);

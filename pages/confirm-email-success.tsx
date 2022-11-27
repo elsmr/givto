@@ -2,12 +2,15 @@ import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { Button } from '@givto/frontend/components/ui/button';
 import { Layout } from '@givto/frontend/components/ui/layout';
-import { NextPage } from 'next';
+import { NextPage, NextPageContext } from 'next';
+import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import React from 'react';
 import GivtoLogo from '../assets/givto-logo.svg';
+import { Footer } from '../lib/frontend/components/footer';
 
 export const ConfirmEmailConfirmPage: NextPage = () => {
+  const t = useTranslations('confirm-email');
   return (
     <Layout
       display="flex"
@@ -44,14 +47,25 @@ export const ConfirmEmailConfirmPage: NextPage = () => {
           minHeight="280px"
           p={4}
         >
-          <Box>Successfully confirmed your email address.</Box>
+          <Box>{t('success')}</Box>
           <NextLink href="/profile" passHref legacyBehavior>
-            <Button as="a">View Profile</Button>
+            <Button as="a">{t('view-profile')}</Button>
           </NextLink>
         </BorderBox>
       </Box>
+      <Footer />
     </Layout>
   );
 };
 
 export default ConfirmEmailConfirmPage;
+
+export async function getStaticProps(context: NextPageContext) {
+  const locale = context.locale;
+
+  return {
+    props: {
+      messages: (await import(`../messages/${locale}.json`)).default,
+    },
+  };
+}
