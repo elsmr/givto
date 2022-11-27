@@ -7,7 +7,7 @@ export const mapGroup = (group: WithId<MongoGroup>, userId?: string): Group => {
   const assignee = userId ? group.assignments?.[userId] : null;
   return {
     id: group._id.toHexString(),
-    name: group.name,
+    name: group.name ?? '',
     slug: group.slug,
     options: {},
     creator: ObjectIDMapper.toString(group.creator),
