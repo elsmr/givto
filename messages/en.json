@@ -44,7 +44,7 @@
     "email": "Email (read-only)",
     "email-placeholder": "Your Email",
     "groups": "Secret Santas",
-    "add-group": "Nieuw",
+    "add-group": "Add",
     "save": "Save",
     "logout": "Logout",
     "members": "{count} members"
