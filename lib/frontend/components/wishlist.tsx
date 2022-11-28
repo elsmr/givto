@@ -121,7 +121,7 @@ export const Wishlist: React.FC<WishlistProps> = ({
                           <div
                             dangerouslySetInnerHTML={{
                               __html: item.description
-                                .replace(/\n/g, '<br />')
+                                .replace(/\n/g, ' <br /> ')
                                 .replace(
                                   /(https?:\/\/[^\s]+)/g,
                                   (url) => `<a href="${url}">${url}</a>`
