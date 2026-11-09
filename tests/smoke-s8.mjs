@@ -67,6 +67,15 @@ await step('/ static HTML is the same signed in and out', async () => {
   assert.match(signedOut.body, /href="\/new"/);
 });
 
+await step('/nl stays Dutch for a crawler without cookies', async () => {
+  const { res, body } = await get('/nl', {
+    'user-agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'accept-language': '',
+  });
+  assert.equal(res.status, 200);
+  assert.equal(tag(body, /<html lang="([^"]+)"/), 'nl');
+});
+
 for (const path of ['/styleguide', '/auth/sign-in', '/nl/auth/passkeys', '/does-not-exist']) {
   await step(`${path}: noindex, no canonical or social cards`, async () => {
     const { body } = await get(path);
