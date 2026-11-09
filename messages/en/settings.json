@@ -52,7 +52,7 @@
   },
   "danger": {
     "title": "Danger zone",
-    "description": "Deleting the group removes it for everyone, with every edition. Wishlists stay with their owners.",
+    "description": "Deleting the group removes it for everyone, with every edition. Everyone keeps their own wishlist.",
     "button": "Delete group",
     "confirm-title": "Delete {group}?",
     "confirm-description": "Everyone loses access to the group and its editions. This can't be undone.",
