@@ -13,9 +13,14 @@ const OPTIONAL_FIELDS = ['description', 'url', 'imageId', 'price', 'variant'] as
 
 const WishInput = v.object({ wishId: Id });
 
-// superjson keeps explicit `undefined`s, and the driver would store them as null.
-const definedFields = (fields: WishFields): WishFields =>
-  Object.fromEntries(Object.entries(fields).filter(([, value]) => value !== undefined)) as WishFields;
+// superjson keeps explicit `undefined`s (also inside `price`), and the driver would store them as null.
+const withoutUndefined = (value: object): object =>
+  Object.fromEntries(
+    Object.entries(value)
+      .filter(([, entry]) => entry !== undefined)
+      .map(([key, entry]) => [key, entry && typeof entry === 'object' ? withoutUndefined(entry) : entry])
+  );
+const definedFields = (fields: WishFields) => withoutUndefined(fields) as WishFields;
 
 const findOwnWish = async (ctx: { db: Collections; user: { id: string } }, wishId: string): Promise<Wish> => {
   const wish = await ctx.db.wishes.findOne({ _id: wishId, ownerId: ctx.user.id });

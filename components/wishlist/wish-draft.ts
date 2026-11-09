@@ -59,7 +59,10 @@ export const draftToInput = (draft: WishDraft): WishInput => {
     description: optional(draft.description),
     url: optional(draft.url),
     imageId: draft.imageId,
-    price: amount === undefined ? undefined : { currency: draft.currency, amount, maxAmount },
+    price:
+      amount === undefined
+        ? undefined
+        : { currency: draft.currency, amount, ...(maxAmount !== undefined && { maxAmount }) },
     variant: optional(draft.variant),
     reallyWant: draft.reallyWant,
   };

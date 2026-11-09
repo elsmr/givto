@@ -20,7 +20,7 @@ export const step = async (name, fn) => {
 
 /** Untyped tRPC client (superjson, so `undefined` and Dates survive; no batching). */
 export const trpc = async (path, input, { cookie, mutation = false } = {}) => {
-  const payload = JSON.stringify({ json: input ?? null });
+  const payload = JSON.stringify(superjson.serialize(input ?? null));
   const res = await fetch(`${BASE}/api/trpc/${path}${mutation ? '' : `?input=${encodeURIComponent(payload)}`}`, {
     method: mutation ? 'POST' : 'GET',
     headers: { 'content-type': 'application/json', ...(cookie && { cookie }) },

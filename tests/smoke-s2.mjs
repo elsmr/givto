@@ -33,6 +33,10 @@ await step('wish CRUD: create with every field, plain-text title, validation', a
     })
   ).data;
   assert.deepEqual(book.price, { currency: 'EUR', amount: 1500, maxAmount: 2500 });
+  // The browser sends explicit undefineds (superjson); none may be stored as null.
+  const single = (await as(olive).mutate('wish.create', { title: 'Mug', price: { currency: 'EUR', amount: 900, maxAmount: undefined } })).data;
+  assert.equal(mongo(`db.wishes.countDocuments({ _id: '${single.id}', 'price.maxAmount': { $type: 'null' } })`), '0');
+  await as(olive).mutate('wish.delete', { wishId: single.id });
   scarf = (await as(olive).mutate('wish.create', { title: 'Surprise me: something cosy', kind: 'surpriseMe' })).data;
   xss = (await as(olive).mutate('wish.create', { title: XSS, description: XSS })).data;
   assert.equal(xss.title, XSS, 'stored and returned as the same plain string');
