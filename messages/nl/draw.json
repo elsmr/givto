@@ -29,8 +29,7 @@
     "hide": "Verbergen",
     "changed": "Je lootje is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
     "not-in": "Je doet niet mee aan deze trekking.",
-    "not-fitted": "Je deed mee na de trekking en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw lootjes trekken.",
-    "waiting": "De lootjes zijn nog niet getrokken."
+    "not-fitted": "Je deed mee na de trekking en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw lootjes trekken."
   },
   "next": {
     "title": "Volgend jaar weer?",

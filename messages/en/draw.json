@@ -29,8 +29,7 @@
     "hide": "Hide",
     "changed": "Your giftee changed on {date}: someone joined or left.",
     "not-in": "You're not in this draw.",
-    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you.",
-    "waiting": "Names haven't been drawn yet."
+    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you."
   },
   "next": {
     "title": "Same again next year?",
