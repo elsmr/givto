@@ -8,10 +8,11 @@ import { magicLink } from 'better-auth/plugins/magic-link';
 import * as v from 'valibot';
 import { SignInEmail, signInSubject } from '../../emails/sign-in';
 import { locales, type Locale } from '../schema/common';
+import { scrub } from '../scrub';
 import { getDb, getMongoClient, getMongoDb } from './db';
 import { requireEnv } from './env';
 import { preferredLocale } from './locale';
-import { log, scrub } from './log';
+import { log } from './log';
 import { sendMail } from './mail';
 import { consumeRateLimit } from './rate-limit';
 
