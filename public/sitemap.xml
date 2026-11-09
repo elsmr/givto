@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Indexable pages only (components/shell/public-pages.ts); private pages are noindex. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://givto.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/"/>
+  </url>
+  <url>
+    <loc>https://givto.app/nl</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/"/>
+  </url>
+  <url>
+    <loc>https://givto.app/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/privacy"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/privacy"/>
+  </url>
+  <url>
+    <loc>https://givto.app/nl/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/privacy"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl/privacy"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/privacy"/>
+  </url>
+</urlset>
