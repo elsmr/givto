@@ -60,7 +60,7 @@ const trpc = async (path, input, { cookie, mutation = false } = {}) => {
 const mailsTo = async (email) => (await fetch(`${MAIL}/messages?to=${encodeURIComponent(email)}`)).json();
 
 /** Requests a sign-in email and returns the code and link from it. */
-const requestSignIn = async (email, { callbackURL = '/auth/passkeys', headers } = {}) => {
+const requestSignIn = async (email, { callbackURL = '/account', headers } = {}) => {
   secrets.push(email);
   const before = (await mailsTo(email)).length;
   const res = await auth('/sign-in/magic-link', { email, callbackURL }, { headers });
@@ -69,10 +69,11 @@ const requestSignIn = async (email, { callbackURL = '/auth/passkeys', headers } 
   assert.equal(mails.length, before + 1);
   const mail = mails.at(-1);
   const otp = mail.text.match(/\b(\d{6})\b/)?.[1];
-  const link = mail.html.match(/href="([^"]*\/magic-link\/verify[^"]*)"/)?.[1]?.replaceAll('&amp;', '&');
+  const link = mail.html.match(/href="([^"]*\/auth\/link#[^"]*)"/)?.[1]?.replaceAll('&amp;', '&');
   assert.ok(otp && link, 'code and link in one email');
-  secrets.push(otp, new URL(link).searchParams.get('token'));
-  return { otp, link, mail };
+  const token = new URLSearchParams(new URL(link).hash.slice(1)).get('token');
+  secrets.push(otp, token);
+  return { otp, link, token, mail };
 };
 
 const signInWithCode = async (email, otp, headers) => {
@@ -143,17 +144,16 @@ await step('sign-out ends the session', async () => {
   assert.equal((await trpc('me.get', undefined, { cookie })).status, 401);
 });
 
-await step('sign in with the magic link; reused link rejected', async () => {
+await step('sign in with the magic link token (POST); reused token rejected', async () => {
   const bob = emailFor('bob');
-  const { link } = await requestSignIn(bob);
-  const first = await fetch(link, { redirect: 'manual', headers: { 'x-forwarded-for': ip() } });
-  assert.equal(first.status, 302);
-  assert.equal(first.headers.get('location'), `${BASE}/auth/passkeys`);
+  const { token } = await requestSignIn(bob);
+  const first = await auth('/magic-link/verify-token', { token });
+  assert.equal(first.status, 200);
   const bobCookie = cookiesOf(first);
   assert.equal((await trpc('me.get', undefined, { cookie: bobCookie })).data.email, bob);
-  const again = await fetch(link, { redirect: 'manual', headers: { 'x-forwarded-for': ip() } });
-  assert.equal(again.status, 302);
-  assert.match(again.headers.get('location'), /error=INVALID_TOKEN/);
+  const again = await auth('/magic-link/verify-token', { token });
+  assert.equal(again.status, 400);
+  assert.equal((await again.json()).code, 'INVALID_TOKEN');
   assert.equal(cookiesOf(again), '');
 });
 
@@ -195,11 +195,13 @@ await step('callbackURL on another origin rejected', async () => {
   const res = await auth('/sign-in/magic-link', { email: eve, callbackURL: 'https://evil.test/' });
   assert.equal(res.status, 403);
   assert.equal((await mailsTo(eve)).length, 0);
-  const { link } = await requestSignIn(emailFor('fay'));
-  const tampered = new URL(link);
-  tampered.searchParams.set('callbackURL', 'https://evil.test/');
-  const verify = await fetch(tampered, { redirect: 'manual', headers: { 'x-forwarded-for': ip() } });
-  assert.equal(verify.status, 403);
+  // The link's callbackURL is only applied client-side (safeRedirect); the GET verify endpoint is closed.
+  const { token } = await requestSignIn(emailFor('fay'));
+  const verify = await fetch(`${BASE}/api/auth/magic-link/verify?token=${token}&callbackURL=/`, {
+    redirect: 'manual',
+    headers: { 'x-forwarded-for': ip() },
+  });
+  assert.equal(verify.status, 404);
   assert.equal(cookiesOf(verify), '');
 });
 
