@@ -1,4 +1,3 @@
-import { DataSource, DataSourceConfig } from 'apollo-datasource';
 import {
   Collection,
   Db,
@@ -10,7 +9,7 @@ import {
 } from 'mongodb';
 import ms from 'ms';
 import { nanoid } from 'nanoid';
-import { GivtoContext, UserInput } from '../graphql-schema';
+import { UserInput } from '../graphql-schema';
 import { randomString } from '../util/random-string.util';
 
 export interface WishListItemInput {
@@ -80,20 +79,15 @@ export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
   return db;
 };
 
-export class MongoDataSource<
-  T extends Document
-> extends DataSource<GivtoContext> {
+export class MongoDataSource<T extends Document> {
   protected collection!: Collection<T>;
   private collectionName: string;
 
   constructor(collectionName: string) {
-    super();
     this.collectionName = collectionName;
   }
 
-  initialize({
-    context: { db },
-  }: Pick<DataSourceConfig<Pick<GivtoContext, 'db'>>, 'context'>): void {
+  initialize({ context: { db } }: { context: { db: Db } }): void {
     this.collection = db.collection<T>(this.collectionName);
   }
 
@@ -159,7 +153,7 @@ export class MongoUsers extends MongoDataSource<MongoUser> {
       { $set: update },
       { returnDocument: 'after' }
     );
-    return user.value;
+    return user;
   };
 }
 
@@ -209,7 +203,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { $set: update },
       { returnDocument: 'after' }
     );
-    return group.value;
+    return group;
   };
 
   addWishlistItem = async (
@@ -222,7 +216,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { $push: { [`wishlists.${userId}`]: { ...item, id: nanoid() } } },
       { returnDocument: 'after' }
     );
-    return group.value?.wishlists?.[userId] ?? null;
+    return group?.wishlists?.[userId] ?? null;
   };
 
   deleteWishlistItem = async (
@@ -234,7 +228,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { slug },
       { $pull: { [`wishlists.${userId}`]: { id: itemId } } }
     );
-    return group.value?.wishlists?.[userId] ?? null;
+    return group?.wishlists?.[userId] ?? null;
   };
 
   editWishlistItem = async (
@@ -296,7 +290,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
       { $push: { users: { $each: userIds } } },
       { returnDocument: 'after' }
     );
-    return group.value;
+    return group;
   };
 }
 

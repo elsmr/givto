@@ -6,7 +6,7 @@ import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
-import { NextPageContext } from 'next';
+import type { GetStaticPropsContext } from 'next';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -84,14 +84,14 @@ const HomePage = () => {
 
 export default HomePage;
 
-export async function getStaticProps(context: NextPageContext) {
+export async function getStaticProps(context: GetStaticPropsContext) {
   const { locale, locales } = context;
 
   return {
     props: {
       locales,
       locale,
-      messages: (await import(`../messages/${locale}.json`)).default,
+      messages: (await import(`../messages/${locale || 'en'}.json`)).default,
     },
   };
 }

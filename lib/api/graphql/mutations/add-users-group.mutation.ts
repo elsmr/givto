@@ -1,6 +1,6 @@
 import { MongoUser } from '@givto/api/data-sources/mongo';
 import { sendInviteEmails } from '@givto/api/util/mail';
-import { AuthenticationError } from 'apollo-server-micro';
+import { GraphQLError } from 'graphql';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation, UserInput } from '../../graphql-schema';
 
@@ -14,7 +14,7 @@ export const addUsersToGroup: Mutation<{
 ): Promise<Group | null> => {
   const group = await groups.findBySlug(slug);
   if (!group) {
-    throw new AuthenticationError('Unauthenticated');
+    throw new GraphQLError('Unauthenticated', { extensions: { code: 'UNAUTHENTICATED' } });
   }
 
   const mongoUsers = await users.createUsers(...invitees);

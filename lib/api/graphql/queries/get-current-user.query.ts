@@ -1,4 +1,4 @@
-import { AuthenticationError } from 'apollo-server-micro';
+import { GraphQLError } from 'graphql';
 import { mapUser } from '../../graphql-mappers';
 import { Query, User } from '../../graphql-schema';
 
@@ -10,7 +10,9 @@ export const getCurrentUser: Query<null> = async (
   const claims = auth.get();
 
   if (!claims) {
-    throw new AuthenticationError('Unauthenticated');
+    throw new GraphQLError('Unauthenticated', {
+      extensions: { code: 'UNAUTHENTICATED' },
+    });
   }
 
   const user = await users.findById(claims.sub);

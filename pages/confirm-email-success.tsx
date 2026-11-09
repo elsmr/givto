@@ -2,7 +2,7 @@ import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { Button } from '@givto/frontend/components/ui/button';
 import { Layout } from '@givto/frontend/components/ui/layout';
-import { NextPage, NextPageContext } from 'next';
+import type { NextPage, GetStaticPropsContext } from 'next';
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import React from 'react';
@@ -60,8 +60,8 @@ export const ConfirmEmailConfirmPage: NextPage = () => {
 
 export default ConfirmEmailConfirmPage;
 
-export async function getStaticProps(context: NextPageContext) {
-  const locale = context.locale;
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const locale = context.locale || 'en';
 
   return {
     props: {

@@ -5,7 +5,7 @@ import { Box, BoxProps } from './box';
 interface LabeledInputProps extends BoxProps {
   label: string;
   isOptional?: boolean;
-  children: JSX.Element;
+  children: React.ReactElement;
 }
 
 export const InputLabel: React.FC<LabeledInputProps> = ({

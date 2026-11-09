@@ -17,7 +17,7 @@ import { Popover } from '@givto/frontend/components/ui/popover';
 import { Wishlist } from '@givto/frontend/components/wishlist';
 import { WishlistForm } from '@givto/frontend/components/wishlist-form';
 import { useMutation, useQuery } from 'graphql-hooks';
-import { NextPage, NextPageContext } from 'next';
+import type { NextPage, GetStaticPropsContext, GetStaticPathsContext } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
@@ -351,8 +351,8 @@ const GroupPage: NextPage = () => {
 
 export default GroupPage;
 
-export async function getStaticProps(context: NextPageContext) {
-  const locale = context.locale;
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const locale = context.locale || 'en';
 
   return {
     props: {
@@ -361,6 +361,6 @@ export async function getStaticProps(context: NextPageContext) {
   };
 }
 
-export async function getStaticPaths(context: NextPageContext) {
+export async function getStaticPaths() {
   return { paths: [], fallback: true };
 }

@@ -5,6 +5,7 @@ import { ButtonReset } from './button';
 
 interface IconButtonProps extends BoxProps {
   size?: 'small' | 'medium';
+  children?: React.ReactNode;
 }
 
 const sizeToProps: Record<string, BoxProps> = {
@@ -20,8 +21,8 @@ const sizeToProps: Record<string, BoxProps> = {
   },
 };
 
-export const IconButton: React.FC<IconButtonProps> = React.forwardRef(
-  ({ children, size, ...props }, ref) => {
+export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
+  ({ children, size = 'medium', ...props }, ref) => {
     return (
       <ButtonReset
         bg="primary"
@@ -43,7 +44,3 @@ export const IconButton: React.FC<IconButtonProps> = React.forwardRef(
     );
   }
 );
-
-IconButton.defaultProps = {
-  size: 'medium',
-};

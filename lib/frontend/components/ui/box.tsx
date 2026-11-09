@@ -1,4 +1,6 @@
-import styled, { StyledComponent } from '@emotion/styled';
+import styled from '@emotion/styled';
+import { SerializedStyles } from '@emotion/react';
+import React from 'react';
 import {
   borders,
   BordersProps,
@@ -15,7 +17,6 @@ import {
   typography,
   TypographyProps,
 } from 'styled-system';
-import { Theme } from '../../theme';
 
 export type BoxProps = BordersProps &
   SpaceProps &
@@ -23,17 +24,38 @@ export type BoxProps = BordersProps &
   LayoutProps &
   FlexboxProps &
   ColorProps &
-  TypographyProps & { [other: string]: any };
+  TypographyProps & {
+    css?: SerializedStyles | any;
+    as?: React.ElementType;
+    children?: React.ReactNode;
+    type?: string;
+    onChange?: any;
+    onBlur?: any;
+    onClick?: any;
+    onInput?: any;
+    onSubmit?: any;
+    ref?: any;
+    name?: string;
+    value?: any;
+    defaultValue?: any;
+    placeholder?: string;
+    disabled?: boolean;
+    required?: boolean;
+    autoFocus?: boolean;
+    role?: string;
+    rows?: number;
+    noresize?: boolean;
+    'aria-label'?: string;
+    'aria-modal'?: string | boolean;
+  };
 
-export const Box = styled.div(
-  {
-    minWidth: 0,
-  },
-  space,
-  color,
-  layout,
-  flexbox,
-  position,
-  borders,
-  typography
-) as StyledComponent<BoxProps, { [other: string]: any }, Theme>;
+export const Box = styled('div')<BoxProps>`
+  min-width: 0;
+  ${space}
+  ${color}
+  ${layout}
+  ${flexbox}
+  ${position}
+  ${borders}
+  ${typography}
+` as any;

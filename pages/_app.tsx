@@ -1,4 +1,4 @@
-import { css, Global } from '@emotion/core';
+import { css, Global, ThemeProvider } from '@emotion/react';
 import { User } from '@givto/api/graphql-schema';
 import { fetch } from '@givto/frontend/api/api.util';
 import {
@@ -10,28 +10,28 @@ import {
 } from '@givto/frontend/auth/auth.util';
 import { theme } from '@givto/frontend/theme';
 import * as Sentry from '@sentry/browser';
-import { ThemeProvider } from 'emotion-theming';
 import { ClientContext, GraphQLClient } from 'graphql-hooks';
-import { AbstractIntlMessages, NextIntlProvider } from 'next-intl';
+import { NextIntlClientProvider, type Messages } from 'next-intl';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import { Link } from '../lib/frontend/components/ui/link';
 
 const client = new GraphQLClient({
   url: '/api/graphql',
   fetch,
 });
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV,
-  enabled: process.env.NODE_ENV !== 'development',
-});
+if (typeof window !== 'undefined') {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV,
+    enabled: process.env.NODE_ENV !== 'development',
+  });
+}
 
 export default class GivtoApp extends App<
   {},
-  { messages: AbstractIntlMessages },
+  { messages: Messages },
   { authContext: IAuthContext }
 > {
   state = {
@@ -79,15 +79,13 @@ export default class GivtoApp extends App<
   };
 
   render() {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, router } = this.props;
     const { authContext } = this.state;
 
     return (
-      <NextIntlProvider
-        defaultTranslationValues={{
-          Link: (children) => <Link>{children}</Link>,
-        }}
-        messages={pageProps.messages}
+      <NextIntlClientProvider
+        locale={router.locale ?? 'en'}
+        messages={pageProps.messages || {}}
       >
         <ThemeProvider theme={theme}>
           <>
@@ -232,7 +230,7 @@ export default class GivtoApp extends App<
             />
           </>
         </ThemeProvider>
-      </NextIntlProvider>
+      </NextIntlClientProvider>
     );
   }
 }

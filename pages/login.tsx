@@ -3,10 +3,10 @@ import { BorderBox } from '@givto/frontend/components/ui/border-box';
 import { Box } from '@givto/frontend/components/ui/box';
 import { AuthContext } from '@givto/frontend/auth/auth.util';
 import { Layout } from '@givto/frontend/components/ui/layout';
-import { NextPage, NextPageContext } from 'next';
+import type { NextPage, GetStaticPropsContext } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import GivtoLogo from '../assets/givto-logo.svg';
 import { useTranslations } from 'next-intl';
 import { Footer } from '../lib/frontend/components/footer';
@@ -16,9 +16,12 @@ export const LoginPage: NextPage = () => {
   const [email, setEmail] = useState(query.email as string);
   const { isInitialized, user } = useContext(AuthContext);
   const t = useTranslations('login');
-  if (isInitialized && user) {
-    push('/profile');
-  }
+
+  useEffect(() => {
+    if (isInitialized && user) {
+      push('/profile');
+    }
+  }, [isInitialized, user, push]);
 
   return (
     <Layout>
@@ -86,8 +89,8 @@ export const LoginPage: NextPage = () => {
 
 export default LoginPage;
 
-export async function getStaticProps(context: NextPageContext) {
-  const locale = context.locale;
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const locale = context.locale || 'en';
 
   return {
     props: {

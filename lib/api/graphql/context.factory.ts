@@ -1,10 +1,18 @@
-import { IncomingMessage } from 'http';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Auth } from '../auth';
 import { getMongoDb } from '../data-sources/mongo';
-import { GivtoContext } from '../graphql-schema';
+import { GivtoContext, GivtoDataSources } from '../graphql-schema';
 import { Mailer } from '../mail';
 
-export const contextFactory = async ({ req }: { req: IncomingMessage }) => {
+export const contextFactory = async ({
+  req,
+  res,
+  dataSources
+}: {
+  req: NextApiRequest;
+  res: NextApiResponse;
+  dataSources: GivtoDataSources;
+}): Promise<GivtoContext> => {
   const auth = new Auth(req.headers.authorization);
   const mailer = new Mailer({
     apiKey: process.env.MAILGUN_API_KEY as string,
@@ -16,5 +24,10 @@ export const contextFactory = async ({ req }: { req: IncomingMessage }) => {
     process.env.MONGODB_DB as string
   );
 
-  return { db, auth, mailer } as GivtoContext;
+  // Initialize data sources with db context
+  dataSources.users.initialize({ context: { db } });
+  dataSources.groups.initialize({ context: { db } });
+  dataSources.loginCodes.initialize({ context: { db } });
+
+  return { db, auth, mailer, dataSources };
 };

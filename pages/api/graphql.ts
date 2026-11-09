@@ -25,7 +25,8 @@ import { groupResolver } from '@givto/api/graphql/resolvers/group.resolver';
 import { loginCodeResolver } from '@givto/api/graphql/resolvers/login-code.resolver';
 import { userResolver } from '@givto/api/graphql/resolvers/user.resolver';
 import * as Sentry from '@sentry/node';
-import { ApolloServer } from 'apollo-server-micro';
+import { ApolloServer } from '@apollo/server';
+import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 Sentry.init({
@@ -57,43 +58,28 @@ const resolvers = {
   },
 };
 
-const dataSources: () => GivtoDataSources = () => {
-  return {
-    users: new MongoUsers(),
-    groups: new MongoGroups(),
-    loginCodes: new MongoLoginCodes(),
-  };
-};
-
 const isDev = process.env.NODE_ENV === 'development';
 
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  dataSources: dataSources as any,
-  debug: isDev,
   introspection: isDev,
-  context: contextFactory,
   formatError: (error) => {
     Sentry.captureException(error);
     return error;
   },
 });
 
-const startServer = apolloServer.start();
+export default startServerAndCreateNextHandler(apolloServer, {
+  context: async (req: NextApiRequest, res: NextApiResponse) => {
+    // Initialize data sources for each request
+    const dataSources: GivtoDataSources = {
+      users: new MongoUsers(),
+      groups: new MongoGroups(),
+      loginCodes: new MongoLoginCodes(),
+    };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  await startServer;
-  await apolloServer.createHandler({
-    path: '/api/graphql',
-  })(req, res);
-}
-
-export const config = {
-  api: {
-    bodyParser: false,
+    // Call the context factory with req, res, and dataSources
+    return contextFactory({ req, res, dataSources });
   },
-};
+});

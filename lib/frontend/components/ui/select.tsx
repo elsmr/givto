@@ -3,7 +3,9 @@ import React from 'react';
 import { ChevronDown } from 'react-feather';
 import { Box, BoxProps } from './box';
 
-export const Select: React.FC<BoxProps> = React.forwardRef(
+type SelectProps = BoxProps & React.SelectHTMLAttributes<HTMLSelectElement>;
+
+export const Select: React.FC<SelectProps> = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ children, ...props }, ref) => (
     <Box display="inline-block" position="relative">
       <Box

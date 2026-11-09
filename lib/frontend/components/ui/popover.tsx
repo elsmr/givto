@@ -1,10 +1,11 @@
 import { Theme } from '@givto/frontend/theme';
-import { useTheme } from 'emotion-theming';
+import { useTheme } from '@emotion/react';
 import { ArrowContainer, Popover as TinyPopover } from 'react-tiny-popover';
+import React from 'react';
 import { Box } from './box';
 
 interface PopoverProps {
-  content: JSX.Element;
+  content: React.ReactElement;
   isOpen: boolean;
   children?: React.ReactNode;
 }
@@ -14,12 +15,12 @@ export const Popover: React.FC<PopoverProps> = ({
   content,
   isOpen,
 }) => {
-  const theme = useTheme<Theme>();
+  const theme = useTheme() as Theme;
   return (
     <TinyPopover
       isOpen={isOpen}
       positions={['bottom']}
-      content={({ position, childRect, popoverRect }) => (
+      content={({ position, childRect, popoverRect }: any) => (
         <ArrowContainer
           position={position}
           childRect={childRect}

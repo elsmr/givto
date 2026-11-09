@@ -1,5 +1,5 @@
 import { ObjectIDMapper } from '@givto/api/util';
-import { AuthenticationError } from 'apollo-server-micro';
+import { GraphQLError } from 'graphql';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Query } from '../../graphql-schema';
 
@@ -11,12 +11,16 @@ export const getGroup: Query<{ slug: string }> = async (
   const claims = auth.get();
 
   if (!claims) {
-    throw new AuthenticationError('No access to group');
+    throw new GraphQLError('No access to group', {
+      extensions: { code: 'UNAUTHENTICATED' },
+    });
   }
 
   const mongoGroup = await groups.findBySlug(slug);
   if (!mongoGroup) {
-    throw new AuthenticationError('No access to group');
+    throw new GraphQLError('No access to group', {
+      extensions: { code: 'UNAUTHENTICATED' },
+    });
   }
 
   const isUserInGroup = Boolean(
@@ -25,7 +29,9 @@ export const getGroup: Query<{ slug: string }> = async (
     )
   );
   if (!isUserInGroup) {
-    throw new AuthenticationError('No access to group');
+    throw new GraphQLError('No access to group', {
+      extensions: { code: 'UNAUTHENTICATED' },
+    });
   }
 
   return mapGroup(mongoGroup, claims.sub);

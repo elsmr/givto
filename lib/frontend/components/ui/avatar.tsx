@@ -8,7 +8,7 @@ interface AvatarProps extends BoxProps {
 
 export const Avatar: React.FC<AvatarProps> = ({
   name,
-  size,
+  size = 32,
   prefix,
   ...props
 }) => {
@@ -35,8 +35,4 @@ export const Avatar: React.FC<AvatarProps> = ({
       {name?.toUpperCase()[0] ?? '?'}
     </Box>
   );
-};
-
-Avatar.defaultProps = {
-  size: 32,
 };

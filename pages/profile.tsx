@@ -10,7 +10,7 @@ import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
 import { Link } from '@givto/frontend/components/ui/link';
 import { PageLoader } from '@givto/frontend/components/ui/loader';
 import { useMutation, useQuery } from 'graphql-hooks';
-import { NextPage, NextPageContext } from 'next';
+import type { NextPage, GetStaticPropsContext } from 'next';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import NextLink from 'next/link';
@@ -61,6 +61,12 @@ const ProfilePage: NextPage = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push({ pathname: '/login', query: { redirect: '/profile' } });
+    }
+  }, [loading, user, router]);
+
   const onSubmit = (formValues: { name: string }) => {
     updateUserMutation({
       variables: { email: user?.email, update: { name: formValues.name } },
@@ -68,13 +74,8 @@ const ProfilePage: NextPage = () => {
     setName(formValues.name);
   };
 
-  if (loading) {
+  if (loading || !user) {
     return <PageLoader />;
-  }
-
-  if (!user) {
-    router.push({ pathname: '/login', query: { redirect: '/profile' } });
-    return null;
   }
 
   return (
@@ -186,8 +187,8 @@ const ProfilePage: NextPage = () => {
 
 export default ProfilePage;
 
-export async function getStaticProps(context: NextPageContext) {
-  const locale = context.locale;
+export async function getStaticProps(context: GetStaticPropsContext) {
+  const locale = context.locale || 'en';
 
   return {
     props: {

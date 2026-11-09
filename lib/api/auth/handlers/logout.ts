@@ -1,6 +1,6 @@
 import { getMongoDb, MongoRefreshTokens } from '@givto/api/data-sources/mongo';
 import JWT from 'jsonwebtoken';
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const getDataSources = async (): Promise<{
@@ -39,7 +39,7 @@ export const logoutHandler = async (
       ) as {
         sub: string;
       };
-      refreshTokens.deleteAllByUser(new ObjectID(claims.sub));
+      refreshTokens.deleteAllByUser(new ObjectId(claims.sub));
     } catch (e) {
       console.log('bad jwt', e);
       // Bad JWT, do nothing

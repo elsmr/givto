@@ -9,7 +9,7 @@ const ButtonForeground = styled(Box)`
   will-change: transform;
 `;
 
-export const ButtonReset: React.FC<BoxProps> = React.forwardRef(
+export const ButtonReset = React.forwardRef<HTMLButtonElement, BoxProps>(
   (props, ref) => (
     <Box
       as="button"
@@ -51,10 +51,11 @@ const PlainButton = styled(ButtonReset)`
 
 interface ButtonProps extends BoxProps {
   variant?: 'primary' | 'secondary';
+  children?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = React.forwardRef(
-  ({ children, variant, ...props }, ref) => {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, variant = 'primary', ...props }, ref) => {
     const isPrimary = variant === 'primary';
     return (
       <PlainButton
@@ -93,5 +94,3 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
     );
   }
 );
-
-Button.defaultProps = { variant: 'primary', size: 'medium' };

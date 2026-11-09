@@ -1,0 +1,4 @@
+onlyBuiltDependencies:
+  - '@apollo/protobufjs'
+  - '@swc/core'
+  - sharp

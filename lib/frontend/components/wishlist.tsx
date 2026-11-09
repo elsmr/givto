@@ -1,16 +1,15 @@
 import { WishListItem } from '@givto/api/data-sources/mongo';
-import { useState } from 'react';
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  DropResult,
-} from 'react-beautiful-dnd';
+import { useEffect, useRef, useState } from 'react';
 import { Edit2, Trash2 as Trash } from 'react-feather';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
 import { WishlistItemForm } from './wishlist-form';
+import {
+  draggable,
+  dropTargetForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
 
 interface WishlistProps {
   wishlist: WishListItem[];
@@ -20,128 +19,190 @@ interface WishlistProps {
   onReorder?: (move: { id: string; destinationIndex: number }) => void;
 }
 
+interface DraggableItemProps {
+  item: WishListItem;
+  index: number;
+  isEditable: boolean;
+  isEditing: boolean;
+  onDelete?: (id: string) => void;
+  onEdit: () => void;
+  onEditSubmit?: (id: string, update: Partial<WishListItem>) => void;
+  onEditCancel: () => void;
+}
+
+const DraggableItem: React.FC<DraggableItemProps> = ({
+  item,
+  index,
+  isEditable,
+  isEditing,
+  onDelete,
+  onEdit,
+  onEditSubmit,
+  onEditCancel,
+}) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element || !isEditable) return;
+
+    return combine(
+      draggable({
+        element,
+        getInitialData: () => ({ id: item.id, index }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      dropTargetForElements({
+        element,
+        getData: () => ({ index }),
+        canDrop: ({ source }) => {
+          return source.data.id !== item.id;
+        },
+      })
+    );
+  }, [item.id, index, isEditable]);
+
+  if (isEditing && onEditSubmit) {
+    return (
+      <WishlistItemForm
+        key={item.id}
+        index={index + 1}
+        init={item}
+        onCancel={onEditCancel}
+        onSubmit={(update) => {
+          onEditCancel();
+          onEditSubmit(item.id, update);
+        }}
+      />
+    );
+  }
+
+  return (
+    <Box
+      ref={ref}
+      display="flex"
+      flexDirection="column"
+      marginBottom={3}
+      bg="muted"
+      borderRadius={8}
+      borderWidth={1}
+      p={3}
+      pb={item.description ? 4 : 3}
+      style={{
+        opacity: isDragging ? 0.5 : 1,
+        cursor: isEditable ? 'grab' : 'default',
+      }}
+    >
+      <Box display="flex" alignItems="center">
+        <Avatar name={`${index + 1}`} marginRight={3} flexShrink={0} />
+        <Box
+          as="h4"
+          fontSize={3}
+          fontWeight={'body' as any}
+          flexGrow={1}
+        >
+          {item.title}
+        </Box>
+        {isEditable && onDelete && (
+          <Box display="flex" minWidth="auto">
+            <IconButton
+              bg="primary"
+              color="white"
+              size="small"
+              marginRight={1}
+              onClick={onEdit}
+            >
+              <Edit2 size={16} />
+            </IconButton>
+            <IconButton
+              bg="danger"
+              color="black"
+              size="small"
+              onClick={() => onDelete(item.id)}
+            >
+              <Trash size={16} />
+            </IconButton>
+          </Box>
+        )}
+      </Box>
+      {item.description && (
+        <Box marginTop={2} lineHeight="body">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: item.description
+                .replace(/\n/g, ' <br /> ')
+                .replace(
+                  /(https?:\/\/[^\s]+)/g,
+                  (url) => `<a href="${url}">${url}</a>`
+                ),
+            }}
+          />
+        </Box>
+      )}
+    </Box>
+  );
+};
+
 export const Wishlist: React.FC<WishlistProps> = ({
   wishlist,
-  isEditable,
+  isEditable = false,
   onDelete,
   onReorder,
   onEditSubmit,
 }) => {
   const [editingId, setEditingId] = useState('');
-  const onDragEnd = ({
-    destination,
-    source,
-    draggableId,
-  }: DropResult): void => {
-    if (!onReorder || !destination || destination.index === source.index) {
-      return;
-    }
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    onReorder({ id: draggableId, destinationIndex: destination.index });
-  };
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element || !isEditable) return;
+
+    return dropTargetForElements({
+      element,
+      onDrop: ({ source, location }) => {
+        if (!onReorder) return;
+
+        const sourceIndex = source.data.index;
+        const sourceId = source.data.id;
+
+        if (typeof sourceIndex !== 'number' || typeof sourceId !== 'string') {
+          return;
+        }
+
+        // Get the target index from the closest drop target
+        const target = location.current.dropTargets[0];
+        if (!target) return;
+
+        const destinationIndex = target.data.index;
+        if (
+          typeof destinationIndex !== 'number' ||
+          destinationIndex === sourceIndex
+        ) {
+          return;
+        }
+
+        onReorder({ id: sourceId, destinationIndex });
+      },
+    });
+  }, [isEditable, onReorder]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable isDropDisabled={!isEditable} droppableId="wishlist">
-        {({ placeholder, droppableProps, innerRef }) => (
-          <Box {...droppableProps} ref={innerRef}>
-            {wishlist.map((item, index) =>
-              item.id === editingId && onEditSubmit ? (
-                <WishlistItemForm
-                  key={item.id}
-                  index={index + 1}
-                  init={item}
-                  onCancel={() => setEditingId('')}
-                  onSubmit={(update) => {
-                    setEditingId('');
-                    onEditSubmit(item.id, update);
-                  }}
-                />
-              ) : (
-                <Draggable
-                  isDragDisabled={!isEditable}
-                  key={item.id}
-                  draggableId={item.id}
-                  index={index}
-                >
-                  {({ draggableProps, dragHandleProps, innerRef }) => (
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      marginBottom={3}
-                      bg="muted"
-                      borderRadius={8}
-                      borderWidth={1}
-                      p={3}
-                      pb={item.description ? 4 : 3}
-                      {...draggableProps}
-                      {...dragHandleProps}
-                      ref={innerRef}
-                    >
-                      <Box display="flex" alignItems="center">
-                        <Avatar
-                          name={`${index + 1}`}
-                          marginRight={3}
-                          flexShrink={0}
-                        />
-                        <Box
-                          as="h4"
-                          fontSize={3}
-                          fontWeight={'body' as any}
-                          flexGrow={1}
-                        >
-                          {item.title}
-                        </Box>
-                        {isEditable && onDelete && (
-                          <Box display="flex" minWidth="auto">
-                            {!editingId && (
-                              <IconButton
-                                bg="primary"
-                                color="white"
-                                size="small"
-                                marginRight={1}
-                                onClick={() => setEditingId(item.id)}
-                              >
-                                <Edit2 size={16} />
-                              </IconButton>
-                            )}
-                            <IconButton
-                              bg="danger"
-                              color="black"
-                              size="small"
-                              onClick={() => onDelete(item.id)}
-                            >
-                              <Trash size={16} />
-                            </IconButton>
-                          </Box>
-                        )}
-                      </Box>
-                      {item.description && (
-                        <Box marginTop={2} lineHeight="body">
-                          <div
-                            dangerouslySetInnerHTML={{
-                              __html: item.description
-                                .replace(/\n/g, ' <br /> ')
-                                .replace(
-                                  /(https?:\/\/[^\s]+)/g,
-                                  (url) => `<a href="${url}">${url}</a>`
-                                ),
-                            }}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-                </Draggable>
-              )
-            )}
-            {placeholder}
-          </Box>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <Box ref={containerRef}>
+      {wishlist.map((item, index) => (
+        <DraggableItem
+          key={item.id}
+          item={item}
+          index={index}
+          isEditable={!!isEditable}
+          isEditing={item.id === editingId}
+          onDelete={onDelete}
+          onEdit={() => setEditingId(item.id)}
+          onEditSubmit={onEditSubmit}
+          onEditCancel={() => setEditingId('')}
+        />
+      ))}
+    </Box>
   );
-};
-Wishlist.defaultProps = {
-  isEditable: false,
 };

@@ -1,4 +1,4 @@
-import { AuthenticationError } from 'apollo-server-micro';
+import { GraphQLError } from 'graphql';
 import { mapGroup } from '../../graphql-mappers';
 import { Group, Mutation } from '../../graphql-schema';
 
@@ -13,7 +13,7 @@ export const setGroupName: Mutation<{
   const claims = auth.get();
 
   if (!claims) {
-    throw new AuthenticationError('No access to group');
+    throw new GraphQLError('No access to group', { extensions: { code: 'UNAUTHENTICATED' } });
   }
 
   const mongoGroup = await groups.findBySlug(slug);
@@ -23,7 +23,7 @@ export const setGroupName: Mutation<{
   if (
     !mongoGroup?.users?.map(user => user.toHexString()).includes(claims.sub)
   ) {
-    throw new AuthenticationError('No access to group');
+    throw new GraphQLError('No access to group', { extensions: { code: 'UNAUTHENTICATED' } });
   }
   const updatedGroup = await groups.updateBySlug(slug, { name });
 

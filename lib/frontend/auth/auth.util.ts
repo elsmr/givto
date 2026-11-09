@@ -1,5 +1,4 @@
 import { User } from '@givto/api/graphql-schema';
-import unfetch from 'isomorphic-unfetch';
 import { createContext } from 'react';
 
 const LS_AUTH_KEY = 'givto-access-token';
@@ -26,7 +25,7 @@ const tokenCall = async (
   options: RequestInit = {}
 ): Promise<Token> => {
   AuthUtils.clearToken();
-  const response = await unfetch(url, { method: 'POST', ...options });
+  const response = await fetch(url, { method: 'POST', ...options });
 
   if (response.status !== 200) {
     throw new Error('Token call failed');
@@ -77,9 +76,9 @@ export const AuthUtils = {
     for (const subscriber of tokenSubscribers) {
       subscriber(null);
     }
-    await unfetch('/api/auth?action=logout', {
+    await fetch('/api/auth?action=logout', {
       method: 'POST',
-      ...AuthUtils.getAuthHeaders(token),
+      headers: AuthUtils.getAuthHeaders(token),
     });
   },
   subscribe(subscriber: AuthSubscriber): void {

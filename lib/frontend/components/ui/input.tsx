@@ -4,7 +4,7 @@ import { Box, BoxProps } from './box';
 
 export type InputProps = BoxProps & InputHTMLAttributes<HTMLInputElement>;
 
-export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
+export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => (
   <Box
     ref={ref}
     as="input"
@@ -37,7 +37,3 @@ export const Input: React.FC<InputProps> = forwardRef((props, ref) => (
     {...props}
   />
 ));
-
-Input.defaultProps = {
-  hasSubmitted: true,
-};

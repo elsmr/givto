@@ -1,5 +1,5 @@
 import { WishListItem } from '@givto/api/data-sources/mongo';
-import { AuthenticationError } from 'apollo-server-micro';
+import { GraphQLError } from 'graphql';
 import { Mutation } from '../../graphql-schema';
 
 export const reorderWishlistItem: Mutation<{
@@ -14,7 +14,7 @@ export const reorderWishlistItem: Mutation<{
   const claims = auth.get();
 
   if (!claims) {
-    throw new AuthenticationError('Unauthorized');
+    throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHENTICATED' } });
   }
 
   const wishlist = await groups.reorderWishlistItem(
@@ -25,7 +25,7 @@ export const reorderWishlistItem: Mutation<{
   );
 
   if (!wishlist) {
-    throw new AuthenticationError('Unauthorized');
+    throw new GraphQLError('Unauthorized', { extensions: { code: 'UNAUTHENTICATED' } });
   }
 
   return wishlist;

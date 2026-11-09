@@ -11,7 +11,7 @@ const StyledLogo = styled(GivtoLogo)`
   height: 44px;
 `;
 interface HeaderProps extends BoxProps {
-  actions?: JSX.Element;
+  actions?: React.ReactElement;
   hideTitle?: boolean;
 }
 export const Header: React.FC<HeaderProps> = ({

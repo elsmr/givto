@@ -1,5 +1,4 @@
 import FormData from 'form-data';
-import fetch, { Headers } from 'node-fetch';
 
 interface Contact {
   name: string;
@@ -32,7 +31,6 @@ export class Mailer {
     variables,
     template
   }: SendMailOptions): Promise<any> {
-    const headers = new Headers();
     const formData = new FormData();
     const { name, email } = { ...from, ...this.options.from };
     formData.append('from', `${name} <${email}>`);
@@ -47,14 +45,15 @@ export class Mailer {
       }
     }
 
-    headers.set(
-      'Authorization',
-      `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`
-    );
+    const headers: Record<string, string> = {
+      'Authorization': `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`,
+      ...formData.getHeaders(),
+    };
+
     return fetch(`${this.options.baseUrl}/messages`, {
       headers,
       method: 'POST',
-      body: formData
+      body: formData as any
     }).then(res => res.json());
   }
 }
