@@ -1,10 +1,13 @@
 import type account from './en/account.json';
 import type auth from './en/auth.json';
 import type dashboard from './en/dashboard.json';
+import type create from './en/create.json';
 import type errors from './en/errors.json';
 import type home from './en/home.json';
 import type privacy from './en/privacy.json';
 import type seo from './en/seo.json';
+import type group from './en/group.json';
+import type join from './en/join.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
 import type wishlist from './en/wishlist.json';
@@ -16,10 +19,13 @@ declare module 'next-intl' {
       account: typeof account;
       auth: typeof auth;
       dashboard: typeof dashboard;
+      create: typeof create;
       errors: typeof errors;
       home: typeof home;
       privacy: typeof privacy;
       seo: typeof seo;
+      group: typeof group;
+      join: typeof join;
       shell: typeof shell;
       ui: typeof ui;
       wishlist: typeof wishlist;

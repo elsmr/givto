@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "title": "{organizer} invited you to {group}",
+    "generic-title": "You're invited to a Secret Santa",
+    "description": "Join the Secret Santa on Givto: add your wishlist and find out who you're buying for."
+  },
+  "unavailable": {
+    "title": "This link doesn't work anymore",
+    "link": "The organizer may have made a new link. Ask them to share it again.",
+    "invite": "This invite was already used, declined or has expired. Ask your organizer for a new one.",
+    "my-secret-santas": "Go to my Secret Santas",
+    "sign-in": "Sign in",
+    "start": "Start a Secret Santa"
+  },
+  "intro": {
+    "title": "{organizer} invited you to {group}",
+    "description": "Join the Secret Santa: add your wishlist and find out who you're buying for.",
+    "approval": "The organizer lets people in, so you'll be in once they've said yes."
+  },
+  "requested": {
+    "title": "Almost there!",
+    "description": "{organizer} still has to let you in. We'll show the Secret Santa in your list as soon as they do.",
+    "my-secret-santas": "Go to my Secret Santas"
+  },
+  "details": {
+    "name": "Your name",
+    "name-help": "Everyone in the Secret Santa sees this name.",
+    "email": "Your email",
+    "email-help": "We'll send you a code to check it's you.",
+    "signed-in": "You're joining as {email}.",
+    "join": "Join",
+    "send-code": "Send me a code"
+  },
+  "code": {
+    "sent": "We sent a 6-digit code and a sign-in link to {email}. Enter the code, or click the link in the email.",
+    "label": "Code",
+    "help": "It works once and expires in 10 minutes.",
+    "resend": "Send a new code",
+    "change-email": "Use another email",
+    "errors": {
+      "rate-limited": "That's a lot of codes. Wait a few minutes and try again.",
+      "code-wrong": "That code isn't right. Check the email and try again.",
+      "code-expired": "That code has expired. Send yourself a new one.",
+      "code-attempts": "Too many tries. Send yourself a new code.",
+      "generic": "Something went wrong. Try again in a moment."
+    }
+  },
+  "errors": {
+    "GROUP_FULL": "This Secret Santa is full. Ask the organizer to make room.",
+    "JOIN_LINK_INVALID": "This link doesn't work anymore. Ask the organizer for the new one.",
+    "RATE_LIMITED": "That's a lot of tries. Wait a bit and try again.",
+    "INVALID_INPUT": "Something doesn't look right. Check your name and try again.",
+    "INVITE_INVALID": "This invite was already used or has expired.",
+    "INVITE_EMAIL_MISMATCH": "This invite is for another email address.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  },
+  "invite": {
+    "for": "This invite is for {email}.",
+    "other-account": "This invite is for {email}, but you're signed in as {signedInEmail}. Sign out to continue.",
+    "send-code": "Send me a code",
+    "sign-out": "Sign out",
+    "decline": "No thanks",
+    "declined-title": "No problem!",
+    "declined": "{organizer} will see that you're sitting this one out."
+  }
+}

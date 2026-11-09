@@ -1,0 +1,135 @@
+{
+  "page-title": "Secret Santa",
+  "load-failed": "We konden deze Secret Santa niet laden. Check je verbinding en herlaad de pagina.",
+  "status": {
+    "draft": "Concept",
+    "open": "Open om mee te doen",
+    "drawn": "Lootjes getrokken",
+    "giftday": "Pakjesdag",
+    "done": "Afgelopen"
+  },
+  "summary": {
+    "no-gift-day": "Nog geen pakjesdag",
+    "countdown": "{when, select, past {Pakjesdag is voorbij} today {Het is pakjesdag!} other {{days, plural, one {Morgen is het pakjesdag} other {Nog # dagen tot pakjesdag}}}}",
+    "gift-day": "Pakjesdag",
+    "exchange": "Cadeaus",
+    "exchange-modes": {
+      "inPerson": "Persoonlijk",
+      "byPost": "Per post",
+      "both": "Persoonlijk of per post"
+    },
+    "budget": "Budget",
+    "no-budget": "Geen budget"
+  },
+  "people": {
+    "title": "Deelnemers ({count} doen mee)",
+    "organizer": "Organisator",
+    "you": "Jij",
+    "status": {
+      "invited": "Uitgenodigd",
+      "requested": "Wil meedoen",
+      "declined": "Doet deze keer niet mee",
+      "removed": "Vertrokken"
+    }
+  },
+  "requests": {
+    "title": "{count, plural, one {# persoon wil} other {# mensen willen}} meedoen",
+    "approve": "Toelaten",
+    "reject": "Afwijzen"
+  },
+  "share": {
+    "title": "Mensen uitnodigen",
+    "joined": "{count, plural, one {# persoon doet} other {# mensen doen}} mee",
+    "revoked": "De link staat uit. Maak een nieuwe link zodat mensen weer kunnen meedoen.",
+    "link-label": "Link om mee te doen",
+    "copy": "Link kopiëren",
+    "copied": "Link gekopieerd",
+    "copy-failed": "Kopiëren lukte niet. Selecteer de link en kopieer hem zelf.",
+    "share": "Delen",
+    "share-text": "Doe mee met onze Secret Santa {group} op Givto",
+    "show-qr": "QR-code tonen",
+    "hide-qr": "QR-code verbergen",
+    "qr-label": "QR-code met de link om mee te doen aan {group}",
+    "settings": {
+      "title": "Instellingen van de link",
+      "approval": "Ik laat mensen zelf toe",
+      "cap": "Maximaal aantal deelnemers (optioneel)",
+      "cap-help": "Zitten er zoveel mensen in, dan kan er via de link niemand meer bij.",
+      "revoke": "Link uitzetten",
+      "regenerate": "Nieuwe link maken"
+    }
+  },
+  "invite": {
+    "legend": "Of nodig iemand uit per e-mail",
+    "name": "Naam",
+    "email": "E-mailadres",
+    "send": "Uitnodiging sturen",
+    "sent": "Uitnodiging gestuurd naar {email}",
+    "errors": {
+      "ALREADY_MEMBER": "Die doet al mee met deze Secret Santa.",
+      "RATE_LIMITED": "Dat zijn veel uitnodigingen voor één dag. Deel de link, of probeer het morgen opnieuw.",
+      "GROUP_FULL": "Deze Secret Santa zit vol.",
+      "INVALID_INPUT": "Check de naam en het e-mailadres en probeer opnieuw.",
+      "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
+    }
+  },
+  "leave": {
+    "button": "Stoppen met deze Secret Santa",
+    "title": "Stoppen met {group}?",
+    "description": "Je doet niet meer mee met lootjes trekken en ziet de groep niet meer. Je verlanglijstje blijft van jou.",
+    "cancel": "Blijven",
+    "confirm": "Stoppen",
+    "errors": {
+      "ALREADY_DRAWN": "De lootjes zijn al getrokken. Vraag de organisator om je eruit te halen.",
+      "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
+    }
+  },
+  "keep-apart": {
+    "title": "Niet samen",
+    "description": "Stelletjes en huisgenoten kopen toch al iets voor elkaar. Zet ze in een huishouden, dan trekken ze elkaar niet.",
+    "save": "Opslaan",
+    "saved": "Opgeslagen",
+    "errors": {
+      "DRAW_IMPOSSIBLE": "Met deze regels kan niemand een lootje trekken. Haal een regel weg en probeer opnieuw.",
+      "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
+    },
+    "households": {
+      "title": "Huishoudens",
+      "label": "Huishouden {number}",
+      "add": "Nieuw huishouden",
+      "add-person": "Iemand toevoegen…",
+      "remove-person": "{name} eruit halen",
+      "remove": "Huishouden weghalen",
+      "needs-two": "Een huishouden heeft minstens twee mensen nodig."
+    },
+    "pairs": {
+      "title": "Trekken elkaar niet",
+      "pair": "{first} ↔ {second}",
+      "remove": "{first} en {second} weghalen",
+      "first": "Iemand…",
+      "second": "…en iemand",
+      "add": "Toevoegen"
+    },
+    "feasibility": {
+      "too-few": "Voor lootjes trekken zijn minstens {min} mensen nodig.",
+      "possible": "Lootjes trekken kan.",
+      "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal een regel weg."
+    }
+  },
+  "not-found": {
+    "title": "We konden deze Secret Santa niet vinden",
+    "description": "Hij bestaat niet, of je doet niet mee met dit account. Wil je meedoen? Open de link van je organisator opnieuw.",
+    "my-secret-santas": "Naar mijn Secret Santa's",
+    "switch-account": "Inloggen met een ander e-mailadres"
+  },
+  "issues": {
+    "required": "Vul dit in.",
+    "no_urls": "Geen webadressen, alsjeblieft.",
+    "no_at_sign": "Geen @, alsjeblieft.",
+    "no_line_breaks": "Houd het op één regel.",
+    "invalid_price_range": "Het tweede bedrag moet groter zijn.",
+    "too_long": "Dat is te lang.",
+    "invalid": "Dat klopt niet helemaal.",
+    "invalid_email": "Vul een volledig e-mailadres in."
+  }
+}
