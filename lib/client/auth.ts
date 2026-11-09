@@ -7,3 +7,7 @@ import type { Auth } from '../server/auth';
 export const authClient = createAuthClient({
   plugins: [magicLinkClient(), emailOTPClient(), passkeyClient(), inferAdditionalFields<Auth>()],
 });
+
+/** Only same-origin paths ("/g/abc"), never "//evil.test" or "https://…": no open redirects. */
+export const safeRedirect = (target: unknown, fallback = '/'): string =>
+  typeof target === 'string' && /^\/(?![/\\])/.test(target) ? target : fallback;
