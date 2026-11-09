@@ -1,11 +1,16 @@
-import { EditionBetween } from '@/components/between/edition-between';
+import { ForYouSection } from '@/components/between/for-you-section';
+import { SantaSection } from '@/components/between/santa-section';
+import { TipsAboutPeople } from '@/components/between/tips-about-people';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
+import { GiftDayHero } from '@/components/giftday/gift-day-hero';
 import { GiftDaySection } from '@/components/giftday/gift-day-section';
-import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
+import { GifteeWishlist } from '@/components/wishlist/giftee-wishlist';
+import { GroupWishlist } from '@/components/wishlist/group-wishlist';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
+import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { appErrorCode } from './app-error-code';
@@ -26,7 +31,8 @@ const beforeDraw = new Set(['draft', 'open']);
 
 /**
  * /g/[slug]: one page with sections for the current edition (24); /g/[slug]/[edition] shows
- * an earlier one with the same sections, read-only for the organizer tools. Members only.
+ * an earlier one with the same sections, read-only for the organizer tools. Members only. Pages
+ * using this load the `group`, `wishlist`, `between`, `draw` and `giftday` messages.
  */
 export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber?: number }) => {
   const t = useTranslations('group');
@@ -51,26 +57,40 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
   const open = edition && beforeDraw.has(edition.status);
   const current = !edition || edition.isCurrent;
   const manage = organizer && current;
+  const input = edition && { groupSlug: slug, editionNumber: edition.number };
   return (
     <div className="flex flex-col gap-8">
       <GroupHeader group={data} />
       {edition && !current && <PastEditionNotice slug={slug} title={edition.title} />}
       {manage && <PendingRequests group={data} />}
-      {edition && (
-        <EditionSummary edition={edition}>
-          {current && <AddToCalendar groupSlug={slug} groupName={data.name} edition={edition} />}
-        </EditionSummary>
-      )}
-      {manage && open && <ShareSection group={data} />}
-      {edition && <DrawSlot group={data} edition={edition} />}
-      {edition && <GiftDaySection group={data} edition={edition} />}
-      {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
-      {edition && <EditionBetween groupSlug={slug} editionNumber={edition.number} />}
-      <PeopleList group={data} />
-      {manage && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
-      {manage && edition && !open && <NextEditionCard groupSlug={slug} edition={edition} />}
-      {edition && <EditionsList group={data} shownNumber={edition.number} />}
-      {!data.me.isOrganizer && <LeaveGroup slug={slug} groupName={data.name} />}
+      {edition?.status === 'giftday' && <GiftDayHero groupSlug={slug} canPresent={Boolean(manage)} />}
+      {input && <ForYouSection input={input} />}
+      {/* This Secret Santa on the left, me and everyone on the right; one column on phones (13). */}
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
+        <div className="flex min-w-0 flex-col gap-8">
+          {edition && (
+            <EditionSummary edition={edition}>
+              {current && <AddToCalendar groupSlug={slug} groupName={data.name} edition={edition} />}
+            </EditionSummary>
+          )}
+          {edition && <DrawSlot group={data} edition={edition} />}
+          {manage && open && (
+            <ShareSection group={data} primary={edition.status === 'open' && edition.participantIds.length < MIN_PARTICIPANTS} />
+          )}
+          {manage && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
+          {edition && <GiftDaySection group={data} edition={edition} />}
+          {input && <GifteeWishlist {...input} />}
+          {input && <SantaSection input={input} />}
+        </div>
+        <div className="flex min-w-0 flex-col gap-8">
+          {edition && <GroupWishlist groupSlug={slug} />}
+          {input && <TipsAboutPeople input={input} />}
+          <PeopleList group={data} />
+          {manage && edition && !open && <NextEditionCard groupSlug={slug} edition={edition} />}
+          {edition && <EditionsList group={data} shownNumber={edition.number} />}
+          {!data.me.isOrganizer && <LeaveGroup slug={slug} groupName={data.name} />}
+        </div>
+      </div>
     </div>
   );
 };

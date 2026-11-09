@@ -65,7 +65,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
           </CardHeader>
         </Card>
       )}
-      <ShareSection group={data} />
+      <ShareSection group={data} primary={false} />
       {edition?.status === 'drawn' && <RedrawSection group={data} edition={edition} />}
       <DangerZone slug={slug} groupName={data.name} />
     </div>

@@ -37,7 +37,7 @@ export const PsstPanel = ({ input }: { input: EditionInput }) => {
             <p className="text-sm text-muted">{t('next', { date: format.dateTime(nextAt, { weekday: 'long', day: 'numeric', month: 'long' }) })}</p>
           ) : (
             canNudge && (
-              <Button className="w-fit" disabled={send.isPending} onClick={() => send.mutate({ ...input, kind })}>
+              <Button variant="neutral" className="w-fit" disabled={send.isPending} onClick={() => send.mutate({ ...input, kind })}>
                 {t('send')}
               </Button>
             )

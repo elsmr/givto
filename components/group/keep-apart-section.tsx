@@ -55,7 +55,7 @@ export const KeepApartSection = ({ group, edition, organizer }: KeepApartSection
         </section>
         <FeasibilityNote participantIds={edition.participantIds} exclusions={toExclusions(complete, pairs)} members={joined} />
         {errorCode && <FieldError>{t(`errors.${errorCode === 'DRAW_IMPOSSIBLE' ? 'DRAW_IMPOSSIBLE' : 'INTERNAL'}`)}</FieldError>}
-        <Button className="self-start" disabled={save.isPending} onClick={() => save.mutate({ groupSlug: group.slug, households: complete, pairs })}>
+        <Button variant="neutral" className="self-start" disabled={save.isPending} onClick={() => save.mutate({ groupSlug: group.slug, households: complete, pairs })}>
           {t('save')}
         </Button>
       </CardContent>

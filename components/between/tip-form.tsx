@@ -84,7 +84,7 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
       </div>
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={busy}>
+        <Button type="submit" variant="neutral" disabled={busy}>
           {submitLabel}
         </Button>
         {onCancel && (

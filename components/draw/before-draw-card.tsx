@@ -11,6 +11,7 @@ export const BeforeDrawCard = ({ group, edition }: { group: GroupData; edition: 
   const t = useTranslations('draw.before');
   const format = useFormatter();
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
+  const tooFew = people.length < MIN_PARTICIPANTS;
 
   return (
     <Card>
@@ -33,10 +34,10 @@ export const BeforeDrawCard = ({ group, edition }: { group: GroupData; edition: 
             </li>
           ))}
         </ul>
-        {people.length < MIN_PARTICIPANTS && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
+        {tooFew && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
         {group.me.isOrganizer && (
           <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
-            <DrawNamesButton groupSlug={group.slug} editionNumber={edition.number} members={group.members} />
+            <DrawNamesButton groupSlug={group.slug} editionNumber={edition.number} members={group.members} primary={!tooFew} />
             <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
               {t('change')}
             </Link>
