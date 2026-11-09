@@ -46,7 +46,7 @@ export const BigRevealCard = ({ groupSlug, editionNumber, reveal, status, manage
         {reveal.pairs && <RevealPairs pairs={reveal.pairs} />}
         {manage && <RevealSwitch groupSlug={groupSlug} editionNumber={editionNumber} enabled={reveal.enabled} />}
         {manage && reveal.enabled && fromGiftDay && !reveal.revealed && (
-          <RevealButton groupSlug={groupSlug} editionNumber={editionNumber} className="self-start" />
+          <RevealButton groupSlug={groupSlug} editionNumber={editionNumber} className="h-auto min-h-13 self-start py-2 whitespace-normal" />
         )}
       </CardContent>
     </Card>

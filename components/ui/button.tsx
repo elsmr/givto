@@ -18,10 +18,11 @@ const buttonVariants = cva(
       },
       size: {
         default: 'h-11 px-4',
-        sm: 'h-9 px-3 text-sm [&_svg]:size-4',
+        // Small buttons stay 44px tall on phones (50: tap targets).
+        sm: 'h-11 sm:h-9 px-3 text-sm [&_svg]:size-4',
         lg: 'h-13 px-6 text-lg',
         icon: 'size-11',
-        'icon-sm': 'size-9 [&_svg]:size-4',
+        'icon-sm': 'size-11 sm:size-9 [&_svg]:size-4',
       },
     },
     defaultVariants: {

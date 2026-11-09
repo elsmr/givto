@@ -19,11 +19,11 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
       <CardContent>
         <ul className="flex flex-col divide-y-2 divide-ink/10">
           {group.editions.map((edition, index) => (
-            <li key={edition.number} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-2">
+            <li key={edition.number} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1">
               <Link
                 href={index === 0 ? `/g/${group.slug}` : `/g/${group.slug}/${edition.number}`}
                 aria-current={edition.number === shownNumber ? 'page' : undefined}
-                className="font-semibold aria-[current=page]:text-ink aria-[current=page]:no-underline"
+                className="inline-flex min-h-11 items-center font-semibold aria-[current=page]:text-ink aria-[current=page]:no-underline"
               >
                 {edition.title}
               </Link>

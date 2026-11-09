@@ -11,7 +11,7 @@ type MemberSelectProps = {
 };
 
 export const MemberSelect = ({ id, label, placeholder, members, value, onChange }: MemberSelectProps) => (
-  <NativeSelect id={id} aria-label={label} size="sm" value={value} onChange={(event) => onChange(event.target.value)}>
+  <NativeSelect id={id} aria-label={label} value={value} onChange={(event) => onChange(event.target.value)}>
     <NativeSelectOption value="">{placeholder}</NativeSelectOption>
     {members.map((member) => (
       <NativeSelectOption key={member.id} value={member.id}>

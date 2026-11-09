@@ -29,7 +29,7 @@ export const ShareSection = ({ group, primary }: { group: GroupData; primary: bo
         )}
         {joinLink && (
           <details>
-            <summary className="cursor-pointer font-semibold">{t('settings.title')}</summary>
+            <summary className="cursor-pointer py-2.5 font-semibold">{t('settings.title')}</summary>
             <div className="pt-4">
               <JoinLinkSettings slug={group.slug} joinLink={joinLink} />
             </div>

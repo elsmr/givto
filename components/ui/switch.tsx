@@ -18,7 +18,8 @@ function Switch({
       data-slot="switch"
       data-size={size}
       className={cn(
-        'peer inline-flex shrink-0 cursor-pointer items-center border-2 border-ink bg-surface transition-colors data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-unchecked:bg-surface',
+        // ::after widens the hit area to 44px (50: tap targets) without changing the look.
+        'peer relative inline-flex shrink-0 cursor-pointer items-center after:absolute after:-inset-x-1 after:-inset-y-3 after:content-[\'\'] border-2 border-ink bg-surface transition-colors data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-unchecked:bg-surface',
         size === 'default' && 'h-6 w-12',
         size === 'sm' && 'h-5 w-9',
         className,
