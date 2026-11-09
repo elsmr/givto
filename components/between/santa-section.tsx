@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
+import { useGifteeRevealed } from '@/components/draw/use-giftee-revealed';
 import { useTranslations } from 'next-intl';
 import type { EditionInput } from './edition-input';
 import { GifteeTips } from './giftee-tips';
@@ -13,9 +14,11 @@ export const SantaSection = ({ input }: { input: EditionInput }) => {
   const t = useTranslations('between.santa');
   const trpc = useTRPC();
   const tips = useQuery(trpc.tip.forGiftee.queryOptions(input));
+  const [revealed] = useGifteeRevealed(input.groupSlug, input.editionNumber);
 
   if (tips.isPending) return <Skeleton className="h-64" />;
-  if (!tips.data) return null;
+  // Names the giftee: stays hidden until the reveal card is tapped.
+  if (!tips.data || !revealed) return null;
   const name = tips.data.giftee.name;
 
   return (

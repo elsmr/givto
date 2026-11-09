@@ -7,7 +7,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Gift } from 'lucide-react';
 import * as m from 'motion/react-m';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useGifteeRevealed } from './use-giftee-revealed';
 
 type RevealCardProps = { groupSlug: string; editionNumber: number; timeZone: string };
 
@@ -18,7 +18,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone }: RevealCardPro
   const trpc = useTRPC();
   const mine = useQuery(trpc.draw.mine.queryOptions({ groupSlug, editionNumber }));
   const seenChange = useMutation(trpc.draw.seenChange.mutationOptions());
-  const [shown, setShown] = useState(false);
+  const [shown, setShown] = useGifteeRevealed(groupSlug, editionNumber);
 
   if (mine.isPending) return <Skeleton className="h-48" />;
   if (!mine.data) return null;
