@@ -134,7 +134,8 @@
 }
 
 /* Bright fills keep dark text (#111 on yellow 13:1, mint 10.8:1, coral 7:1); unlayered to beat text-ink. */
-:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]) {
+:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]),
+:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral) :is(.text-ink, .text-muted) {
   color: #111111;
 }
 
