@@ -1,0 +1,80 @@
+{
+  "title": "Account",
+  "page-title": "Account · Givto",
+  "profile": {
+    "title": "Your name",
+    "description": "This is how people in your groups see you.",
+    "name-label": "Name",
+    "email-label": "Email",
+    "save": "Save name",
+    "saved": "Name saved",
+    "invalid": "Use 1 to 50 characters, without links or @."
+  },
+  "language": {
+    "title": "Language",
+    "description": "For this site and the emails we send you.",
+    "label": "Language"
+  },
+  "theme": {
+    "title": "Appearance",
+    "description": "Saved on this device.",
+    "label": "Theme",
+    "system": "Same as my device",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "description": "Sign in with your fingerprint, face or device PIN instead of an email code.",
+    "empty": "No passkeys yet.",
+    "add": "Add a passkey",
+    "added": "Passkey added",
+    "add-failed": "Adding the passkey didn't work. Try again.",
+    "unnamed": "Passkey",
+    "added-on": "Added {date}",
+    "rename": "Rename",
+    "rename-label": "New name for {name}",
+    "save": "Save",
+    "cancel": "Cancel",
+    "remove": "Remove",
+    "remove-label": "Remove {name}",
+    "removed": "Passkey removed"
+  },
+  "notifications": {
+    "title": "Emails",
+    "description": "Choose which emails you get. Sign-in emails always come through.",
+    "reminders": "Reminders before deadlines and gift day",
+    "wishlistUpdates": "When your giftee changes their wishlist or gets a tip",
+    "santaMessages": "Psst! hints and questions from your Santa",
+    "nextYear": "A yearly reminder to do it again (organizers)",
+    "saved": "Email settings saved"
+  },
+  "sessions": {
+    "title": "Signed-in devices",
+    "description": "Lost a phone or used a shared computer? Sign out on every device, this one included.",
+    "sign-out-everywhere": "Sign out everywhere"
+  },
+  "export": {
+    "title": "Your data",
+    "description": "Download everything Givto stores about you, as a JSON file.",
+    "download": "Download my data"
+  },
+  "delete": {
+    "title": "Delete account",
+    "description": "This removes your wishlist, your memberships, tips and questions. Draws you're part of stay valid for the others, with your name replaced by “Deleted account”. If you organize a group, the person who joined it first after you takes over.",
+    "open": "Delete my account",
+    "dialog-title": "Delete your account?",
+    "dialog-description": "This can't be undone. To be sure it's you, we'll email you a code.",
+    "send-code": "Email me a code",
+    "code-sent": "We sent a 6-digit code to {email}.",
+    "code-label": "6-digit code",
+    "confirm": "Delete my account for good",
+    "cancel": "Keep my account",
+    "invalid-code": "That code isn't right or has expired.",
+    "deleted": "Your account is deleted. Bye for now!"
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "rate-limited": "Too many attempts. Wait a few minutes and try again."
+  }
+}

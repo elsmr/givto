@@ -1,3 +1,6 @@
+import type account from './en/account.json';
+import type auth from './en/auth.json';
+import type dashboard from './en/dashboard.json';
 import type errors from './en/errors.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
@@ -6,6 +9,9 @@ import type ui from './en/ui.json';
 declare module 'next-intl' {
   interface AppConfig {
     Messages: {
+      account: typeof account;
+      auth: typeof auth;
+      dashboard: typeof dashboard;
       errors: typeof errors;
       shell: typeof shell;
       ui: typeof ui;
