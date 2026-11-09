@@ -128,17 +128,18 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
         )}
       </Box>
       {item.description && (
-        <Box marginTop={2} lineHeight="body">
-          <div
-            dangerouslySetInnerHTML={{
-              __html: item.description
-                .replace(/\n/g, ' <br /> ')
-                .replace(
-                  /(https?:\/\/[^\s]+)/g,
-                  (url) => `<a href="${url}">${url}</a>`
-                ),
-            }}
-          />
+        <Box marginTop={2} lineHeight="body" style={{ whiteSpace: 'pre-line' }}>
+          {item.description
+            .split(/(https?:\/\/[^\s]+)/g)
+            .map((part, index) =>
+              index % 2 === 1 ? (
+                <a key={index} href={part}>
+                  {part}
+                </a>
+              ) : (
+                part
+              )
+            )}
         </Box>
       )}
     </Box>
