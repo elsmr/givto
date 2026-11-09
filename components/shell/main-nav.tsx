@@ -1,8 +1,13 @@
 import { Button } from '@/components/ui/button';
 import type { CurrentUser } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { AccountMenu } from './account-menu';
+
+// Signed-out pages (most visits) don't load the menu code.
+const AccountMenu = dynamic(() =>
+  import('./account-menu').then((module) => module.AccountMenu),
+);
 
 export const MainNav = ({ user }: { user: CurrentUser | null }) => {
   const t = useTranslations('shell');
