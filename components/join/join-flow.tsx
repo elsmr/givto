@@ -1,5 +1,5 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
 import type { JoinPreview } from '@/lib/server/join-preview';
@@ -39,7 +39,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
     })
   );
 
-  if (session.isPending) return <Loader />;
+  if (session.isPending) return <LogoAnimation variant="loading" />;
   if (accept.data?.status === 'requested') return <JoinRequested organizer={preview.organizerFirstName} />;
 
   const signedInEmail = session.data?.user.email ?? null;

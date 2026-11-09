@@ -20,6 +20,7 @@
     "test:smoke:s3": "node tests/smoke-s3.mjs",
     "test:smoke:s4": "node --import ./tests/ts-hooks.mjs tests/smoke-s4.mjs",
     "test:smoke:s5": "node tests/smoke-s5.mjs",
+    "test:smoke:s6": "node tests/smoke-s6.mjs",
     "test:smoke:s7": "node tests/smoke-s7.mjs",
     "test:smoke:s8": "node tests/smoke-s8.mjs"
   },

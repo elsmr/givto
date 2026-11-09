@@ -1,9 +1,10 @@
 import { EditionBetween } from '@/components/between/edition-between';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
+import { GiftDaySection } from '@/components/giftday/gift-day-section';
 import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
@@ -33,7 +34,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
   const user = useRequireSession();
   const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }), enabled: !!user });
 
-  if (!user || group.isPending) return <Loader />;
+  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error) {
     const code = appErrorCode(group.error);
     if (code === 'GROUP_NOT_FOUND') return <GroupNotFound />;
@@ -62,6 +63,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
       )}
       {manage && open && <ShareSection group={data} />}
       {edition && <DrawSlot group={data} edition={edition} />}
+      {edition && <GiftDaySection group={data} edition={edition} />}
       {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
       {edition && <EditionBetween groupSlug={slug} editionNumber={edition.number} />}
       <PeopleList group={data} />

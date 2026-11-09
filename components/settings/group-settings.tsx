@@ -6,7 +6,7 @@ import { ShareSection } from '@/components/group/share-section';
 import { useRequireSession } from '@/components/group/use-require-session';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
@@ -26,7 +26,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const user = useRequireSession();
   const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug }), enabled: !!user });
 
-  if (!user || group.isPending) return <Loader />;
+  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {
     return (
       <Alert variant="danger">

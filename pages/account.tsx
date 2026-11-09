@@ -3,7 +3,7 @@ import { useMe } from '@/components/account/use-me';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
 import { Alert, AlertTitle } from '@/components/ui/alert';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { loadMessages } from '@/messages/load';
 import type { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
@@ -29,7 +29,7 @@ export default function AccountPage() {
             <AlertTitle>{t('errors.generic')}</AlertTitle>
           </Alert>
         ) : (
-          <Loader />
+          <LogoAnimation variant="loading" />
         )}
       </div>
     </AppShell>

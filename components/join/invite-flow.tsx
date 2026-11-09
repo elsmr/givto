@@ -1,6 +1,6 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
 import { signOut } from '@/lib/client/session';
 import { useTRPC } from '@/lib/client/trpc';
@@ -37,7 +37,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   const decline = useMutation(trpc.invite.decline.mutationOptions());
   const { email } = preview.invite;
 
-  if (session.isPending) return <Loader />;
+  if (session.isPending) return <LogoAnimation variant="loading" />;
   if (decline.isSuccess) {
     return (
       <div className="mx-auto flex max-w-xl flex-col gap-4">

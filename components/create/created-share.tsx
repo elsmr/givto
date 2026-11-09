@@ -1,3 +1,4 @@
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
+        <LogoAnimation variant="celebrate" className="mb-2 size-20" />
         <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title', { group: groupName })}</h1>
         <p className="text-lg">{t('description')}</p>
       </div>

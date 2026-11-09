@@ -1,5 +1,5 @@
 import { AppShell } from '@/components/shell/app-shell';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { UnsubscribeCard } from '@/components/unsubscribe/unsubscribe-card';
 import { loadMessages } from '@/messages/load';
 import type { GetStaticProps } from 'next';
@@ -19,7 +19,7 @@ export default function UnsubscribePage() {
         <meta name="robots" content="noindex" />
         <meta name="referrer" content="no-referrer" />
       </Head>
-      {router.isReady ? <UnsubscribeCard token={String(router.query.t ?? '')} /> : <Loader />}
+      {router.isReady ? <UnsubscribeCard token={String(router.query.t ?? '')} /> : <LogoAnimation variant="loading" />}
     </AppShell>
   );
 }

@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/toast';
 import { CircleAlert, Info } from 'lucide-react';
@@ -48,8 +48,9 @@ export const FeedbackSection = () => (
         Error toast
       </Button>
     </StyleguideRow>
-    <StyleguideRow label="Loader">
-      <Loader />
+    <StyleguideRow label="Logo animation">
+      <LogoAnimation variant="loading" />
+      <LogoAnimation variant="celebrate" />
     </StyleguideRow>
     <StyleguideRow label="Skeleton">
       <div className="flex w-full max-w-sm flex-col gap-3">

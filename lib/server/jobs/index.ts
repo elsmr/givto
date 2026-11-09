@@ -2,6 +2,7 @@ import type { Collections } from '../db';
 import { log } from '../log';
 import { runDeliveries } from './deliveries';
 import { runDueDraws } from './draws';
+import { runGiftDayTransitions } from './giftday';
 import { runRetention } from './retention';
 import { sendReminders } from './reminders';
 import { sendWishlistDigests } from './wishlist-digests';
@@ -10,6 +11,7 @@ type Job = (db: Collections, now: Date) => Promise<object>;
 
 const frequent: Record<string, Job> = {
   draws: (_db, now) => runDueDraws(now),
+  giftday: runGiftDayTransitions,
   deliveries: runDeliveries,
   digests: sendWishlistDigests,
   reminders: sendReminders,
