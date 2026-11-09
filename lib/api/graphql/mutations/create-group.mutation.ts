@@ -15,7 +15,7 @@ import {
   drawAssignments,
   Exclusion,
   findStuckGivers,
-} from '../../util/secret-santa.util';
+} from '../../../draw';
 
 export const createGroup: Mutation<{
   creator: UserInput;

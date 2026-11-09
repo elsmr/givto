@@ -1,7 +1,7 @@
-// Run: node lib/api/util/secret-santa.check.mjs
+// Run: pnpm test (or node tests/draw.check.mjs)
 import assert from 'node:assert/strict';
 import { randomInt } from 'node:crypto';
-import { drawAssignments, findStuckGivers } from './secret-santa.util.ts';
+import { drawAssignments, findStuckGivers } from '../lib/draw.ts';
 
 const bothWays = (pairs) => pairs.flatMap(([from, to]) => [{ from, to }, { from: to, to: from }]);
 const isValid = (ids, exclusions, assignments) =>
@@ -52,4 +52,4 @@ const results = [randomInt, sabotaged].map((random) => {
   return [...counts.values()].join(' ');
 });
 
-console.log(`ok  secret-santa\n    shuffle draws:  ${results[0]}\n    fallback draws: ${results[1]}`);
+console.log(`ok  draw\n    shuffle draws:  ${results[0]}\n    fallback draws: ${results[1]}`);
