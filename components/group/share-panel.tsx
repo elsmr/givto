@@ -7,14 +7,14 @@ import { useEffect, useState } from 'react';
 import { JoinQrCode } from './join-qr-code';
 import { joinUrl } from './join-url';
 
-type SharePanelProps = { slug: string; token: string; groupName: string };
+type SharePanelProps = { slug: string; token: string; groupName: string; locale: string };
 
 /** Copy, Web Share and QR for the join link (45). */
-export const SharePanel = ({ slug, token, groupName }: SharePanelProps) => {
+export const SharePanel = ({ slug, token, groupName, locale }: SharePanelProps) => {
   const t = useTranslations('group.share');
   const [canShare, setCanShare] = useState(false);
   const [showQr, setShowQr] = useState(false);
-  const url = joinUrl(slug, token);
+  const url = joinUrl(slug, token, locale);
 
   useEffect(() => setCanShare(typeof navigator.share === 'function'), []);
 

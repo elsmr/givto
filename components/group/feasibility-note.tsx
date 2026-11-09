@@ -1,7 +1,7 @@
 import { findStuckGivers, type Exclusion } from '@/lib/draw';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { CircleCheck, TriangleAlert } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import type { GroupMember } from './group-data';
 
 type FeasibilityNoteProps = { participantIds: string[]; exclusions: Exclusion[]; members: GroupMember[] };
@@ -9,7 +9,8 @@ type FeasibilityNoteProps = { participantIds: string[]; exclusions: Exclusion[];
 /** Live check with the server's own matching (34): names the people who'd be stuck. */
 export const FeasibilityNote = ({ participantIds, exclusions, members }: FeasibilityNoteProps) => {
   const t = useTranslations('group.keep-apart.feasibility');
-  const nameOf = (id: string) => members.find((m) => m.id === id)?.name ?? '?';
+  const format = useFormatter();
+  const names = (ids: string[]) => format.list(ids.map((id) => members.find((m) => m.id === id)?.name ?? '?'));
 
   if (participantIds.length < MIN_PARTICIPANTS) {
     return <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>;
@@ -20,8 +21,8 @@ export const FeasibilityNote = ({ participantIds, exclusions, members }: Feasibi
       {stuck ? <TriangleAlert aria-hidden="true" className="size-5 shrink-0" /> : <CircleCheck aria-hidden="true" className="size-5 shrink-0" />}
       {stuck
         ? t('stuck', {
-            givers: stuck.givers.map(nameOf).join(', '),
-            receivers: stuck.receivers.map(nameOf).join(', ') || '–',
+            givers: names(stuck.givers),
+            receivers: names(stuck.receivers),
             count: stuck.receivers.length,
           })
         : t('possible')}

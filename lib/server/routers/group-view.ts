@@ -31,6 +31,7 @@ export const groupView = async (db: Collections, group: Group, me: Member, editi
   return {
     slug: group.slug,
     name: group.name,
+    locale: group.locale,
     me: { memberId: me.id, isOrganizer },
     members: visible.map((m) => ({
       id: m.id,

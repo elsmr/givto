@@ -21,7 +21,7 @@ export const ShareSection = ({ group }: { group: GroupData }) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-8">
         {joinLink && !joinLink.revoked ? (
-          <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} />
+          <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} />
         ) : (
           <Alert>
             <AlertDescription>{t('revoked')}</AlertDescription>
