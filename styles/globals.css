@@ -21,6 +21,9 @@
   /* 07 dangerText */
   --color-danger: #c2261a;
 
+  /* --font-heading-family is set in pages/_app.tsx from next/font. */
+  --font-heading: var(--font-heading-family), system-ui, sans-serif;
+
   --radius-*: initial;
 
   --shadow-*: initial;
@@ -74,6 +77,15 @@
     background-color: var(--color-page);
     color: var(--color-ink);
     -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
   }
 
   ::selection {

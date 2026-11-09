@@ -15,6 +15,7 @@ import { NextIntlClientProvider, type Messages } from 'next-intl';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import { headingFont } from '../styles/fonts';
 import '../styles/globals.css';
 
 const client = new GraphQLClient({
@@ -154,6 +155,11 @@ export default class GivtoApp extends App<
                 }
               `}
             />
+            <style jsx global>{`
+              :root {
+                --font-heading-family: ${headingFont.style.fontFamily};
+              }
+            `}</style>
             <Head>
               <title>Givto - Secret Santa</title>
               <meta name="title" content="Givto - Secret Santa" />
