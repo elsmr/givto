@@ -24,6 +24,7 @@
     "@sentry/browser": "^10.78.0",
     "@sentry/node": "^10.78.0",
     "@styled-system/css": "^5.1.5",
+    "@tailwindcss/postcss": "^4.3.5",
     "graphql": "^16.15.0",
     "graphql-hooks": "^8.2.0",
     "graphql-tag": "^2.12.7",
@@ -35,13 +36,15 @@
     "nanoid-dictionary": "^5.0.0",
     "next": "^15.5.29",
     "next-intl": "^4.14.9",
+    "postcss": "^8.5.32",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.91.0",
     "react-hotkeys-hook": "^5.4.0",
     "react-spinners": "^0.17.1",
     "react-tiny-popover": "^8.1.6",
-    "styled-system": "^5.1.5"
+    "styled-system": "^5.1.5",
+    "tailwindcss": "^4.3.5"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",

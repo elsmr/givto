@@ -15,6 +15,7 @@ import { NextIntlClientProvider, type Messages } from 'next-intl';
 import App from 'next/app';
 import Head from 'next/head';
 import React from 'react';
+import '../styles/globals.css';
 
 const client = new GraphQLClient({
   url: '/api/graphql',
