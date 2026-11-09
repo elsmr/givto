@@ -65,11 +65,10 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
         </span>
       </div>
       <div className="flex gap-3">
-        <Button size="sm" variant="neutral" onClick={() => setEditing(true)} aria-label={`${t('passkeys.rename')}: ${name}`}>
+        <Button variant="neutral" onClick={() => setEditing(true)} aria-label={`${t('passkeys.rename')}: ${name}`}>
           {t('passkeys.rename')}
         </Button>
         <Button
-          size="sm"
           variant="danger"
           disabled={busy}
           aria-label={t('passkeys.remove-label', { name })}

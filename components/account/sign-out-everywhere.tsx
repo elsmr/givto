@@ -2,17 +2,16 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import { authClient } from '@/lib/client/auth';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
 
 export const SignOutEverywhere = () => {
   const t = useTranslations('account');
-  const router = useRouter();
 
   const signOutEverywhere = async () => {
     const { error } = await authClient.revokeSessions();
     if (error) return toast.add({ title: t('errors.generic'), type: 'error' });
     await authClient.signOut();
-    await router.push('/');
+    // A full load, so this page's own sign-in redirect doesn't race the navigation.
+    location.assign('/');
   };
 
   return (

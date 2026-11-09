@@ -70,8 +70,7 @@
     "code-label": "Code van 6 cijfers",
     "confirm": "Mijn account definitief verwijderen",
     "cancel": "Account houden",
-    "invalid-code": "Die code klopt niet of is verlopen.",
-    "deleted": "Je account is verwijderd. Tot ziens!"
+    "invalid-code": "Die code klopt niet of is verlopen."
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",

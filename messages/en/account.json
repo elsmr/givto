@@ -70,8 +70,7 @@
     "code-label": "6-digit code",
     "confirm": "Delete my account for good",
     "cancel": "Keep my account",
-    "invalid-code": "That code isn't right or has expired.",
-    "deleted": "Your account is deleted. Bye for now!"
+    "invalid-code": "That code isn't right or has expired."
   },
   "errors": {
     "generic": "Something went wrong. Try again.",

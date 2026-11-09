@@ -11,26 +11,21 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/toast';
-import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
 import { useState, type FormEvent } from 'react';
 
 export const DeleteAccountDialog = ({ email }: { email: string }) => {
   const t = useTranslations('account');
-  const router = useRouter();
   const trpc = useTRPC();
   const [code, setCode] = useState('');
   const requestCode = useMutation(trpc.account.requestDeletion.mutationOptions());
   const deleteAccount = useMutation(
     trpc.account.delete.mutationOptions({
-      onSuccess: async () => {
-        toast.add({ title: t('delete.deleted') });
-        authClient.$store.notify('$sessionSignal');
-        await router.push('/');
+      onSuccess: () => {
+        // A full load to the home page: the session is gone with the account.
+        location.assign('/');
       },
     })
   );
