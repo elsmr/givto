@@ -61,7 +61,7 @@
   },
   "delete": {
     "title": "Delete account",
-    "description": "This removes your wishlist, your memberships, tips and questions. Draws you're part of stay valid for the others, with your name replaced by “Deleted account”. If you organize a group, the person who joined it first after you takes over.",
+    "description": "This removes your wishlist, your groups, tips and questions. Draws you're part of stay valid for the others, with your name replaced by “Deleted account”. If you organize a group, the person who joined it first after you takes over.",
     "open": "Delete my account",
     "dialog-title": "Delete your account?",
     "dialog-description": "This can't be undone. To be sure it's you, we'll email you a code.",
