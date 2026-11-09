@@ -95,7 +95,7 @@ export const giftdayRouter = router({
       return { wishId: input.wishId, received: input.received };
     }),
 
-  /** Dev and smoke tests only: what the hourly cron job does, optionally at a given time. */
+  /** Dev and smoke tests only: what the scheduled job does, optionally at a given time. */
   runDue: publicProcedure
     .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())) }))
     .mutation(async ({ ctx, input }) => {

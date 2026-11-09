@@ -24,7 +24,7 @@ export const newUnwrapOrder = (memberIds: string[], now: Date): NonNullable<Edit
 });
 
 /**
- * Gift day status transitions, by each edition's local date. Idempotent; runs hourly (cron) or
+ * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron) or
  * via the dev trigger `giftday.runDue`. Entering gift day shuffles the unwrap order if nobody has.
  */
 export const runGiftDayTransitions = async (db: Collections, now: Date) => {
