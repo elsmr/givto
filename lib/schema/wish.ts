@@ -11,7 +11,8 @@ export const WishFields = v.object({
   title: SingleLine(200),
   description: v.optional(MultiLine(2000)),
   url: v.optional(HttpUrl),
-  imageUrl: v.optional(HttpUrl),
+  /** Image downloaded once by the URL import and served by us (39: no hotlinking). GridFS file id. */
+  imageId: v.optional(Id),
   price: v.optional(Price),
   /** Size, colour, variant. */
   variant: v.optional(SingleLine(200)),
