@@ -1,4 +1,5 @@
 import { AppHead } from '@/components/shell/app-head';
+import { MotionProvider } from '@/components/shell/motion-provider';
 import { Providers } from '@/lib/client/providers';
 import * as Sentry from '@sentry/browser';
 import { NextIntlClientProvider, type Messages } from 'next-intl';
@@ -34,9 +35,11 @@ export default function GivtoApp({
       messages={pageProps.messages ?? {}}
       timeZone={timeZone}
     >
-      <Providers>
-        <Component {...pageProps} />
-      </Providers>
+      <MotionProvider>
+        <Providers>
+          <Component {...pageProps} />
+        </Providers>
+      </MotionProvider>
       <Toaster />
       <AppHead />
     </NextIntlClientProvider>
