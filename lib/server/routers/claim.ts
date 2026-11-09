@@ -3,6 +3,7 @@ import { Id } from '../../schema/common';
 import type { Edition } from '../../schema/edition';
 import { newId } from '../db';
 import { AppError } from '../errors';
+import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
 import { toWishView, visibleWishes } from '../wishlist/wish-view';
 
@@ -22,6 +23,7 @@ export const claimRouter = router({
     const gifteeId = ctx.edition.draw?.assignments[ctx.member.id];
     const giftee = ctx.group.members.find((member) => member.id === gifteeId);
     if (!giftee) return null;
+    await markGifteeWishlistSeen(ctx.db, ctx.edition._id, ctx.member.id);
     const wishes = await visibleWishes(ctx.db, giftee);
     const claims = await ctx.db.claims.find({ wishId: { $in: wishes.map((wish) => wish._id) } }).toArray();
     const claimByWish = new Map(claims.map((claim) => [claim.wishId, claim]));

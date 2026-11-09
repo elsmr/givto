@@ -4,6 +4,7 @@ import { WishFields, type Wish } from '../../schema/wish';
 import { newId, type Collections } from '../db';
 import { AppError } from '../errors';
 import { deleteWishImage, findWishImage } from '../import/wish-images';
+import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { authedProcedure, memberProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
 import { listWishes, toWishView } from '../wishlist/wish-view';
@@ -60,6 +61,7 @@ export const wishRouter = router({
       { $addToSet: { 'members.$[m].wishlistView.hiddenWishIds': wish._id } },
       { arrayFilters: [{ 'm.userId': ctx.user.id, 'm.wishlistView.includeNewWishes': false }] }
     );
+    await markWishlistChanged(ctx.db, ctx.user.id);
     return toWishView(wish);
   }),
 
@@ -77,6 +79,7 @@ export const wishRouter = router({
       );
       if (!updated) throw new AppError('NOT_FOUND');
       if (wish.imageId && wish.imageId !== fields.imageId) await deleteWishImage(wish.imageId);
+      await markWishlistChanged(ctx.db, ctx.user.id);
       return toWishView(updated);
     }),
 
@@ -90,6 +93,7 @@ export const wishRouter = router({
         { $pull: { 'members.$[].wishlistView.hiddenWishIds': wish._id } }
       ),
       wish.imageId && deleteWishImage(wish.imageId),
+      markWishlistChanged(ctx.db, ctx.user.id),
     ]);
     return { wishId: wish._id };
   }),
@@ -120,6 +124,7 @@ export const wishRouter = router({
         input.hidden ? { $addToSet: { [path]: input.wishId } } : { $pull: { [path]: input.wishId } },
         { arrayFilters: [{ 'm.id': ctx.member.id }] }
       );
+      await markWishlistChanged(ctx.db, ctx.user.id);
       return { wishId: input.wishId, hidden: input.hidden };
     }),
 });
