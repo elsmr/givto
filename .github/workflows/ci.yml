@@ -3,6 +3,9 @@ on: push
 jobs:
   Build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      LOG_DIR: /tmp/givto-logs
 
     steps:
       - uses: actions/checkout@v7
@@ -17,5 +20,29 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: TypeScript Compile
         run: pnpm tsc
+      - name: Checks
+        run: pnpm test
       - name: Build
         run: pnpm build
+      # tests/env.sh runs Mongo in Docker as a single-node replica set (Better Auth uses
+      # transactions; a service container can't pass --replSet), the mail mock and the app,
+      # with test-only env vars. The smoke suites reach Mongo through `docker exec`.
+      - name: Smoke (next start)
+        run: |
+          tests/env.sh ci 3000 27017 3691 start
+          BASE_URL=http://localhost:3000 MAIL_URL=http://localhost:3691 SERVER_LOG="$LOG_DIR/app.log" \
+            MONGO_CONTAINER=givto-mongo-ci pnpm test:smoke
+          tests/env.sh stop ci 3000 3691
+      # The scheduled-draw step of smoke-s4 uses a dev-only trigger (closed under next start).
+      - name: Smoke s4 (next dev)
+        run: |
+          LOG_DIR="$LOG_DIR/dev" tests/env.sh ci 3000 27017 3691 dev
+          BASE_URL=http://localhost:3000 MAIL_URL=http://localhost:3691 MONGO_CONTAINER=givto-mongo-ci \
+            pnpm test:smoke:s4
+          tests/env.sh stop ci 3000 3691
+      - name: Upload server logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: server-logs
+          path: /tmp/givto-logs

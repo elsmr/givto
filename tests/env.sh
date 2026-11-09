@@ -50,7 +50,8 @@ if [ "$mode" = start ]; then
 else
   nohup pnpm dev -p "$app" >"$logs/app.log" 2>&1 &
 fi
-until curl -s -o /dev/null "http://localhost:$app/api/trpc/health"; do sleep 1; done
+for _ in $(seq 300); do curl -s -o /dev/null "http://localhost:$app/api/trpc/health" && break; sleep 1; done
+curl -s -o /dev/null "http://localhost:$app/api/trpc/health" || { tail -50 "$logs/app.log"; echo "app did not start" >&2; exit 1; }
 
 echo "ready: app=http://localhost:$app mongo=givto-mongo-$name:$mongo mail=http://localhost:$mail logs=$logs"
 echo "smoke: BASE_URL=http://localhost:$app MAIL_URL=http://localhost:$mail SERVER_LOG=$logs/app.log MONGO_CONTAINER=givto-mongo-$name pnpm test:smoke"
