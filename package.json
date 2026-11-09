@@ -24,6 +24,7 @@
     "@sentry/browser": "^10.78.0",
     "@sentry/node": "^10.78.0",
     "@styled-system/css": "^5.1.5",
+    "@trpc/server": "^11.26.0",
     "graphql": "^16.15.0",
     "graphql-hooks": "^8.2.0",
     "graphql-tag": "^2.12.7",
@@ -35,6 +36,7 @@
     "nanoid-dictionary": "^5.0.0",
     "next": "^15.5.29",
     "next-intl": "^4.14.9",
+    "pino": "^10.4.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-hook-form": "^7.91.0",
@@ -51,6 +53,7 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/styled-system": "^5.1.26",
+    "pino-pretty": "^13.2.0",
     "typescript": "^5.9.3"
   }
 }
