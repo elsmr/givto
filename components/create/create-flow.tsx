@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
+import { useFocusStepHeading } from '@/lib/client/use-focus-step-heading';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
@@ -30,6 +31,7 @@ export const CreateFlow = () => {
   const session = authClient.useSession();
   const { draft, restored, update, clear } = useCreateDraft();
   const [step, setStep] = useState<Step>('details');
+  const heading = useFocusStepHeading(step);
   const emailCode = useEmailCode('/new?resume=1');
   const create = useMutation(
     trpc.group.create.mutationOptions({
@@ -75,7 +77,9 @@ export const CreateFlow = () => {
     <div className="mx-auto flex max-w-xl flex-col gap-8">
       <div className="flex flex-col gap-2">
         <p className="font-semibold text-muted">{t('step', { step: stepNumber, total: signedInEmail ? 2 : 3 })}</p>
-        <h1 className="text-4xl font-extrabold sm:text-5xl">{t(`titles.${step}`)}</h1>
+        <h1 ref={heading} tabIndex={-1} className="text-4xl font-extrabold outline-none sm:text-5xl">
+          {t(`titles.${step}`)}
+        </h1>
       </div>
       {errorCode && (
         <Alert variant="danger">
