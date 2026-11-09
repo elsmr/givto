@@ -225,7 +225,11 @@ await step('"not the same as last year" that makes the draw impossible is refuse
   assert.deepEqual(reopened.draw.assignments, {});
 });
 
-await step('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async () => {
+// `draw.runDue` is closed in production builds (`next start`): there the step only checks that.
+const probe = await trpc('draw.runDue', { now: '2000-01-01T00:00:00.000Z' }, { mutation: true });
+const devTrigger = code(probe) !== 'NOT_FOUND';
+if (!devTrigger) console.log('ok  draw.runDue is closed in this production build; scheduled draw step skipped (run against next dev)');
+if (devTrigger) await step('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async () => {
   const scheduled = await createGroup('Scheduled');
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']]) await join(person, scheduled, name);
   const tomorrow = todayIn(TZ, new Date(Date.now() + 86_400_000));
@@ -251,9 +255,6 @@ await step('scheduled draw runs via runDueDraws once its time has come; impossib
   assert.equal(small.status, 'open');
   assert.equal(small.drawAt, undefined);
 
-  ok(await as(ann).mutate('settings.deleteGroup', { groupSlug: tooSmall.slug }));
-  assert.equal(code(await as(ann).query('group.get', { groupSlug: tooSmall.slug })), 'GROUP_NOT_FOUND');
-  assert.equal(code(await as(bob).query('group.get', { groupSlug: tooSmall.slug })), 'GROUP_NOT_FOUND');
 });
 
 await step('.ics is valid: stable UID, SEQUENCE bumps when gift day changes', async () => {
@@ -279,6 +280,14 @@ await step('.ics is valid: stable UID, SEQUENCE bumps when gift day changes', as
   assert.deepEqual(uids(second), uids(first));
   assert.equal(sequence(second), sequence(first) + 1);
   assert.ok(second.includes('DTSTART;VALUE=DATE:20991223'));
+});
+
+await step('delete group: gone for everyone', async () => {
+  const doomed = await createGroup('Doomed');
+  await join(bob, doomed, 'Bob');
+  ok(await as(ann).mutate('settings.deleteGroup', { groupSlug: doomed.slug }));
+  assert.equal(code(await as(ann).query('group.get', { groupSlug: doomed.slug })), 'GROUP_NOT_FOUND');
+  assert.equal(code(await as(bob).query('group.get', { groupSlug: doomed.slug })), 'GROUP_NOT_FOUND');
 });
 
 console.log('smoke-s4: all ok');
