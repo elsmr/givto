@@ -26,7 +26,10 @@
     "@sentry/browser": "^10.78.0",
     "@sentry/node": "^10.78.0",
     "@styled-system/css": "^5.1.5",
+    "@tanstack/react-query": "^5.107.1",
+    "@trpc/client": "^11.26.0",
     "@trpc/server": "^11.26.0",
+    "@trpc/tanstack-react-query": "^11.26.0",
     "better-auth": "^1.7.18",
     "graphql": "^16.15.0",
     "graphql-hooks": "^8.2.0",
@@ -47,6 +50,7 @@
     "react-spinners": "^0.17.1",
     "react-tiny-popover": "^8.1.6",
     "styled-system": "^5.1.5",
+    "superjson": "^2.2.6",
     "valibot": "^1.5.0"
   },
   "devDependencies": {
