@@ -59,7 +59,8 @@ const findMatching = (
   };
 };
 
-const shuffle = (items: string[], randomInt: RandomInt): string[] => {
+/** Uniform (Fisher–Yates) with the given random source. */
+export const shuffle = (items: string[], randomInt: RandomInt): string[] => {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
     const j = randomInt(i + 1);
