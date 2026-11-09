@@ -34,6 +34,9 @@ export const AccountMenu = ({ user }: { user: CurrentUser }) => {
         <DropdownMenuLinkItem render={<Link href="/groups" />}>
           {t('my-secret-santas')}
         </DropdownMenuLinkItem>
+        <DropdownMenuLinkItem render={<Link href="/wishlist" />}>
+          {t('my-wishlist')}
+        </DropdownMenuLinkItem>
         <DropdownMenuLinkItem render={<Link href="/account" />}>
           {t('account')}
         </DropdownMenuLinkItem>

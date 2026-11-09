@@ -1,7 +1,8 @@
 {
   "skip-to-content": "Skip to content",
   "main-navigation": "Main",
-  "my-secret-santas": "My Secret Santas",
+  "my-secret-santas": "My groups",
+  "my-wishlist": "My wishlist",
   "sign-in": "Sign in",
   "account-menu": "Account menu for {name}",
   "account": "Account",
