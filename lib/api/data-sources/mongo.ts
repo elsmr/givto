@@ -289,7 +289,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   addUsersToGroup = async (
     slug: string,
     userIds: ObjectId[]
-  ): Promise<MongoGroup | null> => {
+  ): Promise<WithId<MongoGroup> | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
       { $push: { users: { $each: userIds } } },

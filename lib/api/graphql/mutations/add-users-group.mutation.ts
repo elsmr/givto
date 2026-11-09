@@ -10,16 +10,17 @@ export const addUsersToGroup: Mutation<{
 }> = async (
   _,
   { slug, invitees },
-  { dataSources: { groups, users, loginCodes }, mailer }
+  { dataSources: { groups, users, loginCodes }, mailer, auth }
 ): Promise<Group | null> => {
+  const claims = auth.get();
   const group = await groups.findBySlug(slug);
-  if (!group) {
-    throw new GraphQLError('Unauthenticated', { extensions: { code: 'UNAUTHENTICATED' } });
+  if (!claims || !group?.users.some((id) => id.toHexString() === claims.sub)) {
+    throw new GraphQLError('No access to group', { extensions: { code: 'UNAUTHENTICATED' } });
   }
 
   const mongoUsers = await users.createUsers(...invitees);
   const userIds = mongoUsers.map(user => user._id);
-  await Promise.all([
+  const [, updatedGroup] = await Promise.all([
     users.addGroupToUsers(userIds, group._id),
     groups.addUsersToGroup(slug, userIds)
   ]);
@@ -30,5 +31,5 @@ export const addUsersToGroup: Mutation<{
 
   await sendInviteEmails(group.slug, mongoUsers, creator, mailer, loginCodes);
 
-  return group ? mapGroup(group, '') : null;
+  return updatedGroup ? mapGroup(updatedGroup, claims.sub) : null;
 };
