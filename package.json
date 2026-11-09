@@ -13,7 +13,8 @@
     "start": "next start",
     "tsc": "tsc --noEmit",
     "test": "node tests/draw.check.mjs",
-    "test:smoke": "node tests/smoke.mjs"
+    "test:smoke": "node tests/smoke.mjs",
+    "test:smoke:s2": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs"
   },
   "author": "",
   "license": "MIT",
