@@ -55,7 +55,7 @@ const createIndexes = async (db: Db, c: Collections) => {
       { unique: true, partialFilterExpression: { 'joinLink.token': { $exists: true } } }
     ),
     c.editions.createIndex({ groupId: 1, number: 1 }, { unique: true }),
-    c.editions.createIndex({ status: 1, drawOn: 1 }),
+    c.editions.createIndex({ status: 1, drawAt: 1 }),
     c.wishes.createIndex({ ownerId: 1, position: 1 }),
     c.claims.createIndex({ wishId: 1 }, { unique: true }),
     c.claims.createIndex({ ownerId: 1 }),

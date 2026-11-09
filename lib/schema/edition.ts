@@ -30,9 +30,20 @@ export const PostalAddress = v.object({
 });
 export type PostalAddress = v.InferOutput<typeof PostalAddress>;
 
-/** A group member taking part in this edition (the organizer may sit out). */
+/** invited: ticked for this edition, not confirmed yet. joined: in. declined: sits this one out. */
+export const ParticipantStatus = v.picklist(['invited', 'joined', 'declined']);
+export type ParticipantStatus = v.InferOutput<typeof ParticipantStatus>;
+
+/**
+ * A group member ticked for this edition. Keyed by member id (managed members have no
+ * user id; the member links the account). Next year's edition starts with every current
+ * member ticked; the organizer unticks (`participates: false`) or adds before opening.
+ */
 export const Participant = v.object({
   memberId: Id,
+  /** In the draw. The organizer may sit out. */
+  participates: v.boolean(),
+  status: ParticipantStatus,
   addedAt: v.date(),
   address: v.optional(PostalAddress),
   /** Last time this participant, as a Santa, viewed their giftee's wishlist (35: skip stale notifications). */
@@ -69,32 +80,30 @@ export const EditionFields = v.object({
   title: EditionTitle,
   timeZone: TimeZone,
   giftDay: v.optional(GiftDay),
-  /** Scheduled draw; absent = the organizer draws manually. */
-  drawOn: v.optional(LocalDate),
+  /** Scheduled draw (an instant, for the scheduler); absent = the organizer draws manually. */
+  drawAt: v.optional(v.date()),
   wishlistBy: v.optional(LocalDate),
   exchangeMode: ExchangeMode,
   /** Posted exchanges: post by this date. */
   postBy: v.optional(LocalDate),
   budget: v.optional(Price),
   notes: v.optional(MultiLine(2000)),
-  /** "Not the same as last year" (33): one-way exclusions derived server-side from the previous edition's draw, never shown. */
+  /** "Not the same as last year" (33): one-way exclusions derived server-side from the previous edition's draw, never exposed. */
   avoidPreviousGiftees: v.optional(v.boolean(), false),
 });
 export type EditionFields = v.InferOutput<typeof EditionFields>;
 
-type EditionDates = Partial<Pick<EditionFields, 'giftDay' | 'drawOn' | 'wishlistBy' | 'postBy'>>;
+type EditionDates = Partial<Pick<EditionFields, 'giftDay' | 'wishlistBy' | 'postBy'>>;
 
 /**
- * Pipe this onto edition inputs that carry dates (28): draw before gift day, wishlists and
- * posting no later than gift day. ISO dates compare as strings. "Not in the past" needs
- * the current date in the edition's time zone, so the procedure checks that.
+ * Pipe this onto edition inputs that carry dates (28): wishlists and posting no later than
+ * gift day (ISO dates compare as strings). "Draw before gift day" and "not in the past"
+ * need the edition's time zone, so the procedure checks those.
  */
 export const checkEditionDates = v.check<EditionDates, 'dates_out_of_order'>(
-  ({ giftDay, drawOn, wishlistBy, postBy }) =>
+  ({ giftDay, wishlistBy, postBy }) =>
     !giftDay ||
-    ((!drawOn || drawOn < giftDay.date) &&
-      (!wishlistBy || wishlistBy <= giftDay.date) &&
-      (!postBy || postBy <= giftDay.date)),
+    ((!wishlistBy || wishlistBy <= giftDay.date) && (!postBy || postBy <= giftDay.date)),
   'dates_out_of_order'
 );
 
@@ -105,8 +114,9 @@ export const checkEditionDates = v.check<EditionDates, 'dates_out_of_order'>(
 export const Edition = v.object({
   _id: Id,
   groupId: Id,
-  /** 1, 2, 3 … per group; the `[edition]` URL segment (`/g/[slug]/[edition]`). */
+  /** 1, 2, 3 … per group; the `[edition]` URL segment (`/g/[slug]/[edition]`). Unique where a year might not be. */
   number: v.pipe(v.number(), v.integer(), v.minValue(1)),
+  /** The edition's label year, e.g. 2026 in "Secret Santa 2026". */
   year: v.pipe(v.number(), v.integer(), v.minValue(2000), v.maxValue(2100)),
   ...EditionFields.entries,
   status: EditionStatus,

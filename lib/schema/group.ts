@@ -25,12 +25,12 @@ export const Household = v.object({
 export type Household = v.InferOutput<typeof Household>;
 
 /**
- * Shareable join link (45): multi-use, revocable (enabled) and regenerable (new token).
+ * Shareable join link (45): multi-use, revocable and regenerable (new token).
  * Joining adds the person to the group and to the open edition.
  */
 export const JoinLink = v.object({
   token: v.pipe(v.string(), v.regex(/^[A-Za-z0-9_-]{16,64}$/, 'invalid_token')),
-  enabled: v.boolean(),
+  revoked: v.boolean(),
   requiresApproval: v.boolean(),
   maxMembers: v.optional(v.pipe(v.number(), v.integer(), v.minValue(MIN_PARTICIPANTS), v.maxValue(MAX_MEMBERS))),
   expiresAt: v.optional(v.date()),
@@ -58,7 +58,7 @@ export type GroupFields = v.InferOutput<typeof GroupFields>;
 /**
  * `groups` collection: the persistent people (members embedded: small, atomic updates),
  * join link, standing exclusions/households and edition defaults. Each Secret Santa is an
- * edition (`editions` collection).
+ * edition (`editions` collection); the group itself has no lifecycle, only archived/deleted.
  */
 export const Group = v.object({
   _id: Id,
@@ -73,6 +73,7 @@ export const Group = v.object({
   joinLink: v.optional(JoinLink),
   createdAt: v.date(),
   updatedAt: v.date(),
+  archivedAt: v.optional(v.date()),
   deletedAt: v.optional(v.date()),
 });
 export type Group = v.InferOutput<typeof Group>;
