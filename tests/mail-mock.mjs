@@ -1,6 +1,7 @@
 // Stands in for Mailgun's HTTP API. Records messages; tests read them back.
 //   POST   /messages          Mailgun-style multipart send (what the app calls)
-//   GET    /messages?to=<email>  recorded messages, oldest first: { to, from, subject, text, html, at }
+//   GET    /messages?to=<email>  recorded messages, oldest first:
+//          { to, from, subject, text, html, headers (h:*), tags (o:tag), attachments (file names), at }
 //   DELETE /messages          forget everything
 // Run: MAIL_PORT=3691 node tests/mail-mock.mjs
 import http from 'node:http';
@@ -35,6 +36,9 @@ http
         subject: field('subject'),
         text: field('text'),
         html: field('html'),
+        headers: Object.fromEntries([...form.keys()].filter((key) => key.startsWith('h:')).map((key) => [key.slice(2), field(key)])),
+        tags: form.getAll('o:tag').map(String),
+        attachments: form.getAll('attachment').map((file) => file.name),
         at: new Date().toISOString(),
       });
       process.stdout.write(`mail #${messages.length}: ${field('subject')}\n`);
