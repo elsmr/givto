@@ -226,7 +226,8 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
   ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOneAndUpdate(
       { slug },
-      { $pull: { [`wishlists.${userId}`]: { id: itemId } } }
+      { $pull: { [`wishlists.${userId}`]: { id: itemId } } },
+      { returnDocument: 'after' }
     );
     return group?.wishlists?.[userId] ?? null;
   };
@@ -255,7 +256,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
         },
       }
     );
-    return wishlist;
+    return newWishlist;
   };
 
   reorderWishlistItem = async (
