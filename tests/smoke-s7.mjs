@@ -79,16 +79,12 @@ await step('cron: secret required, unknown jobs 404', async () => {
   assert.equal((await cron('nope')).status, 404);
 });
 
-await step('join request emails the organizer; approval sends "you\'re in" in the account language', async () => {
+await step('join request emails the organizer', async () => {
   assert.equal(dataOf(await as(dan).mutate('join.accept', { groupSlug: family.slug, token: linkToken, name: 'Dan' })).status, 'requested');
   const [request] = await mails(olive, 'joinRequest');
   assert.match(request.subject, /^Dan wants to join Family$/);
   const danId = JSON.parse(mongo(`JSON.stringify(db.groups.findOne({ _id: '${family._id}' }).members.find((m) => m.name === 'Dan'))`)).id;
   m.dan = { id: danId };
-  dataOf(await as(olive).mutate('membership.approve', { groupSlug: family.slug, memberId: danId }));
-  const joined = await mails(dan, 'joined');
-  assert.equal(joined.length, 1);
-  assert.match(joined[0].subject, /^Je doet mee: Family$/, 'Dan reads Dutch');
 });
 
 await step('names drawn: one email per Santa, once, never naming the giftee; managed members via their manager', async () => {
@@ -106,7 +102,12 @@ await step('names drawn: one email per Santa, once, never naming the giftee; man
   assert.ok(oliveMails.some((mail) => mail.text.includes('For Kid')));
 });
 
-await step('late joiner slots in (Ann → Dan → Bob): only Ann hears "new giftee", Dan gets the draw email', async () => {
+await step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email', async () => {
+  // Approval after the draw slots Dan in at a random place (S4); pin the place so later steps can rely on it.
+  dataOf(await as(olive).mutate('membership.approve', { groupSlug: family.slug, memberId: m.dan.id }));
+  const joined = await mails(dan, 'joined');
+  assert.equal(joined.length, 1);
+  assert.match(joined[0].subject, /^Je doet mee: Family$/, 'Dan reads Dutch');
   const draw = drawOf([[m.olive, m.ann], [m.ann, m.dan], [m.dan, m.bob], [m.bob, m.cee], [m.cee, m.kid], [m.kid, m.olive]]);
   mongo(`db.editions.updateOne({ _id: '${e1._id}' }, { $set: { draw: EJSON.parse(${ejson(draw)}) } })`);
   const result = await run('deliveries');
