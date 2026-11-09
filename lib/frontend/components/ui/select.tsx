@@ -1,6 +1,6 @@
 import css from '@styled-system/css';
 import React from 'react';
-import { ChevronDown } from 'react-feather';
+import { ChevronDown } from 'lucide-react';
 import { Box, BoxProps } from './box';
 
 type SelectProps = BoxProps & React.SelectHTMLAttributes<HTMLSelectElement>;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'react-feather';
+import { X } from 'lucide-react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { BorderBox } from './border-box';
 import { Box } from './box';

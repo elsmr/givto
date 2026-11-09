@@ -16,7 +16,7 @@ import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-import { Plus, Save } from 'react-feather';
+import { Plus, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Footer } from '../lib/frontend/components/footer';
 import { InputLabel } from '../lib/frontend/components/ui/labeled-input';

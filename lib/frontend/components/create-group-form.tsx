@@ -18,7 +18,7 @@ import { Loader } from './ui/loader';
 import { Link } from './ui/link';
 import css from '@styled-system/css';
 import { IconButton } from './ui/icon-button';
-import { Plus, Trash } from 'react-feather';
+import { Plus, Trash } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Select } from './ui/select';
 import { GroupSettingsInput, UserInput } from '../../api/graphql-schema';

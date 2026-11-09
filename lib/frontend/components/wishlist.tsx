@@ -1,6 +1,6 @@
 import { WishListItem } from '@givto/api/data-sources/mongo';
 import { useEffect, useRef, useState } from 'react';
-import { Edit2, Trash2 as Trash } from 'react-feather';
+import { Pen, Trash2 as Trash } from 'lucide-react';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
 import { IconButton } from './ui/icon-button';
@@ -114,7 +114,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
               marginRight={1}
               onClick={onEdit}
             >
-              <Edit2 size={16} />
+              <Pen size={16} />
             </IconButton>
             <IconButton
               bg="danger"

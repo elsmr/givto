@@ -21,7 +21,7 @@ import type { NextPage, GetStaticPropsContext, GetStaticPathsContext } from 'nex
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react';
-import { Edit2, Plus, Save, X } from 'react-feather';
+import { Pen, Plus, Save, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Tabs } from '@givto/frontend/components/ui/tabs';
 import { useTranslations } from 'next-intl';
@@ -122,7 +122,7 @@ const GroupTitle: React.FC<{ group: EnrichedGroup; multiline?: boolean }> = ({
         flexShrink={0}
         onClick={() => setIsEditing(true)}
       >
-        <Edit2 size={12} /> <Box marginLeft={1}>{t('edit')}</Box>
+        <Pen size={12} /> <Box marginLeft={1}>{t('edit')}</Box>
       </IconButton>
     </Box>
   ) : (

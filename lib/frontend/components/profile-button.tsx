@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
-import { ArrowRight } from 'react-feather';
+import { ArrowRight } from 'lucide-react';
 import { AuthContext } from '../auth/auth.util';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';

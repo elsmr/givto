@@ -2,7 +2,7 @@ import { WishListItem } from '@givto/api/data-sources/mongo';
 import { useMutation } from 'graphql-hooks';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
-import { Plus, Save, X } from 'react-feather';
+import { Plus, Save, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Avatar } from './ui/avatar';
 import { Box } from './ui/box';
