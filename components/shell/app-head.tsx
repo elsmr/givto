@@ -10,27 +10,27 @@ export const AppHead = () => (
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <meta name="title" content="Givto - Secret Santa" />
       <meta
-        name="description"
+        key="description" name="description"
         content="Organize Secret Santa with your friends and family with ease."
       />
 
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://givto.app/" />
-      <meta property="og:title" content="Givto - Secret Santa" />
+      <meta key="og:url" property="og:url" content="https://givto.app/" />
+      <meta key="og:title" property="og:title" content="Givto - Secret Santa" />
       <meta
-        property="og:description"
+        key="og:description" property="og:description"
         content="Organize Secret Santa with your friends and family with ease."
       />
-      <meta property="og:image" content="/givto-logo.png" />
+      <meta key="og:image" property="og:image" content="/givto-logo.png" />
 
-      <meta property="twitter:card" content="summary_large_image" />
-      <meta property="twitter:url" content="https://givto.app/" />
-      <meta property="twitter:title" content="Givto - Secret Santa" />
+      <meta key="twitter:card" property="twitter:card" content="summary_large_image" />
+      <meta key="twitter:url" property="twitter:url" content="https://givto.app/" />
+      <meta key="twitter:title" property="twitter:title" content="Givto - Secret Santa" />
       <meta
-        property="twitter:description"
+        key="twitter:description" property="twitter:description"
         content="Organize Secret Santa with your friends and family with ease."
       />
-      <meta property="twitter:image" content="/givto-logo.png" />
+      <meta key="twitter:image" property="twitter:image" content="/givto-logo.png" />
       <link
         rel="apple-touch-icon"
         sizes="180x180"
