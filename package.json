@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Secret Santa app",
   "main": "index.js",
+  "type": "module",
   "packageManager": "pnpm@10.21.0",
   "engines": {
     "node": "24.x"
@@ -12,12 +13,12 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",
-    "test": "node tests/draw.check.mjs && node tests/names.check.mjs && node tests/exclusions.check.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/anonymous-delay.check.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/draw-patch.check.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/emails.check.mjs",
+    "test": "node tests/draw.check.mjs && node tests/names.check.mjs && node tests/exclusions.check.mjs && node tests/anonymous-delay.check.mjs && node --import ./tests/ts-hooks.mjs tests/draw-patch.check.mjs && node tests/emails.check.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:smoke:s1": "node tests/smoke-s1.mjs",
-    "test:smoke:s2": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
+    "test:smoke:s2": "node --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
     "test:smoke:s3": "node tests/smoke-s3.mjs",
-    "test:smoke:s4": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s4.mjs",
+    "test:smoke:s4": "node --import ./tests/ts-hooks.mjs tests/smoke-s4.mjs",
     "test:smoke:s5": "node tests/smoke-s5.mjs",
     "test:smoke:s7": "node tests/smoke-s7.mjs",
     "test:smoke:s8": "node tests/smoke-s8.mjs"

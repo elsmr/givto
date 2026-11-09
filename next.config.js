@@ -1,6 +1,6 @@
-const { withSentryConfig } = require('@sentry/nextjs/config');
+import { withSentryConfig } from '@sentry/nextjs/config';
 
-module.exports = withSentryConfig(
+export default withSentryConfig(
   {
     i18n: {
       locales: ['en', 'nl'],
