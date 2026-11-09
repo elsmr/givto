@@ -12,6 +12,7 @@ import type group from './en/group.json';
 import type join from './en/join.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
+import type unsubscribe from './en/unsubscribe.json';
 import type wishlist from './en/wishlist.json';
 
 // One entry per namespace file in messages/en/; nl must have the same keys.
@@ -32,6 +33,7 @@ declare module 'next-intl' {
       join: typeof join;
       shell: typeof shell;
       ui: typeof ui;
+      unsubscribe: typeof unsubscribe;
       wishlist: typeof wishlist;
     };
   }
