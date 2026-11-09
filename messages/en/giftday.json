@@ -1,0 +1,61 @@
+{
+  "hero": {
+    "title": "It's gift day!",
+    "description": "Time to unwrap. Have fun, everyone.",
+    "present": "Open the presenter view"
+  },
+  "order": {
+    "title": "Unwrap order",
+    "intro": "Who unwraps when, picked at random. Everyone sees the same order.",
+    "none": "No unwrap order yet. The organizer can shuffle one; otherwise it's shuffled on gift day.",
+    "none-organizer": "Shuffle a random unwrap order. Everyone sees the same one. If you don't, it's shuffled on gift day.",
+    "you": "you",
+    "shuffle": "Shuffle the unwrap order",
+    "reshuffle": "Shuffle again",
+    "shuffled": "Unwrap order shuffled",
+    "present": "Presenter view"
+  },
+  "reveal": {
+    "title": "The big reveal",
+    "switch": "Do the big reveal",
+    "switch-help": "From gift day on, you can show everyone who was whose Santa. Off unless you turn it on.",
+    "teaser": "On gift day, the organizer reveals who was whose Santa.",
+    "ready": "Reveal it when everyone has unwrapped: then everyone sees who was whose Santa.",
+    "button": "Reveal who was whose Santa",
+    "revealed": "Here's who was whose Santa.",
+    "pairs-label": "Who was whose Santa",
+    "pair": "<name>{giftee}</name> got a gift from <name>{santa}</name>"
+  },
+  "after": {
+    "title": "How did it go?",
+    "description": "Hope you got something lovely. Mark the wishes you got: they leave your wishlist, so nobody buys them again.",
+    "got-it": "I got this",
+    "got-it-label": "I got {title}",
+    "marked": "Marked as received: {title}",
+    "undo": "Undo",
+    "empty": "Nothing left on your wishlist for this group."
+  },
+  "present": {
+    "page-title": "Presenter view",
+    "back": "Back to the group",
+    "only-organizer": "Only the organizer can open the presenter view.",
+    "intro-hint": "Press → or space for the first person.",
+    "next-up": "Next to unwrap",
+    "step": "{current} of {total}",
+    "reveal-hint": "Press → or space to reveal who was whose Santa.",
+    "end-title": "That's everyone!",
+    "end-hint": "Happy holidays.",
+    "no-order": "There's no unwrap order yet.",
+    "previous": "Previous",
+    "next": "Next",
+    "keys": "← → or space to step through"
+  },
+  "errors": {
+    "NOT_DRAWN": "Names aren't drawn yet.",
+    "NOT_GIFT_DAY": "The big reveal opens on gift day.",
+    "REVEAL_OFF": "Turn on the big reveal first.",
+    "EDITION_CLOSED": "This edition is over.",
+    "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  }
+}

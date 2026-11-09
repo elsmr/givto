@@ -1,0 +1,61 @@
+{
+  "hero": {
+    "title": "Het is pakjesdag!",
+    "description": "Tijd om uit te pakken. Veel plezier, allemaal.",
+    "present": "Presentatieweergave openen"
+  },
+  "order": {
+    "title": "Uitpakvolgorde",
+    "intro": "Wie wanneer uitpakt, willekeurig gekozen. Iedereen ziet dezelfde volgorde.",
+    "none": "Er is nog geen uitpakvolgorde. De organisator kan er een schudden; anders gebeurt dat op pakjesdag.",
+    "none-organizer": "Schud een willekeurige uitpakvolgorde. Iedereen ziet dezelfde. Doe je het niet, dan gebeurt het op pakjesdag.",
+    "you": "jij",
+    "shuffle": "Uitpakvolgorde schudden",
+    "reshuffle": "Opnieuw schudden",
+    "shuffled": "Uitpakvolgorde geschud",
+    "present": "Presentatieweergave"
+  },
+  "reveal": {
+    "title": "De grote onthulling",
+    "switch": "De grote onthulling doen",
+    "switch-help": "Vanaf pakjesdag kun je iedereen laten zien wie wiens Santa was. Staat uit tot je hem aanzet.",
+    "teaser": "Op pakjesdag onthult de organisator wie wiens Santa was.",
+    "ready": "Onthul het als iedereen heeft uitgepakt: dan ziet iedereen wie wiens Santa was.",
+    "button": "Onthul wie wiens Santa was",
+    "revealed": "Dit is wie wiens Santa was.",
+    "pairs-label": "Wie wiens Santa was",
+    "pair": "<name>{giftee}</name> kreeg een cadeau van <name>{santa}</name>"
+  },
+  "after": {
+    "title": "Hoe was het?",
+    "description": "Hopelijk heb je iets leuks gekregen. Duid de wensen aan die je kreeg: ze verdwijnen van je verlanglijstje, zodat niemand ze nog eens koopt.",
+    "got-it": "Gekregen",
+    "got-it-label": "{title} gekregen",
+    "marked": "Gekregen: {title}",
+    "undo": "Ongedaan maken",
+    "empty": "Er staat niets meer op je verlanglijstje voor deze groep."
+  },
+  "present": {
+    "page-title": "Presentatieweergave",
+    "back": "Terug naar de groep",
+    "only-organizer": "Alleen de organisator kan de presentatieweergave openen.",
+    "intro-hint": "Druk op → of spatie voor de eerste persoon.",
+    "next-up": "Pakt nu uit",
+    "step": "{current} van {total}",
+    "reveal-hint": "Druk op → of spatie om te onthullen wie wiens Santa was.",
+    "end-title": "Dat was iedereen!",
+    "end-hint": "Fijne feestdagen.",
+    "no-order": "Er is nog geen uitpakvolgorde.",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "keys": "← → of spatie om verder te gaan"
+  },
+  "errors": {
+    "NOT_DRAWN": "De lootjes zijn nog niet getrokken.",
+    "NOT_GIFT_DAY": "De grote onthulling kan vanaf pakjesdag.",
+    "REVEAL_OFF": "Zet eerst de grote onthulling aan.",
+    "EDITION_CLOSED": "Deze editie is voorbij.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  }
+}

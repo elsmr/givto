@@ -1,6 +1,7 @@
 import { EditionBetween } from '@/components/between/edition-between';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
+import { GiftDaySection } from '@/components/giftday/gift-day-section';
 import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
@@ -62,6 +63,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
       )}
       {manage && open && <ShareSection group={data} />}
       {edition && <DrawSlot group={data} edition={edition} />}
+      {edition && <GiftDaySection group={data} edition={edition} />}
       {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
       {edition && <EditionBetween groupSlug={slug} editionNumber={edition.number} />}
       <PeopleList group={data} />

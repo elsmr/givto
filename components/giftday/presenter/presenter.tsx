@@ -1,0 +1,62 @@
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useTRPC } from '@/lib/client/trpc';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
+import { appErrorCode } from '../../group/app-error-code';
+import { GroupNotFound } from '../../group/group-not-found';
+import { useRequireSession } from '../../group/use-require-session';
+import { ShuffleButton } from '../shuffle-button';
+import { PresenterFrame } from './presenter-frame';
+import { PresenterStage } from './presenter-stage';
+
+const notice = (text: string) => (
+  <div className="mx-auto w-full max-w-xl px-6 py-16 text-ink">
+    <Alert>
+      <AlertDescription>{text}</AlertDescription>
+    </Alert>
+  </div>
+);
+
+/** /g/[slug]/present: the current edition's unwrap order on a big screen. Organizer only (PLAN-v2). */
+export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
+  const t = useTranslations('giftday');
+  const trpc = useTRPC();
+  const user = useRequireSession();
+  const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug }), enabled: !!user });
+  const editionNumber = group.data?.edition?.number ?? 0;
+  const isOrganizer = Boolean(group.data?.me.isOrganizer);
+  const view = useQuery({
+    ...trpc.giftday.presenter.queryOptions({ groupSlug, editionNumber }),
+    enabled: isOrganizer && editionNumber > 0,
+  });
+
+  const frame = (children: ReactNode) => (
+    <PresenterFrame groupSlug={groupSlug} heading={group.data?.name}>
+      {children}
+    </PresenterFrame>
+  );
+  if (group.error && appErrorCode(group.error) === 'GROUP_NOT_FOUND') {
+    return frame(
+      <div className="flex-1 bg-page px-6 py-12 text-ink">
+        <GroupNotFound />
+      </div>
+    );
+  }
+  if (group.error || view.error) return frame(notice(t('errors.INTERNAL')));
+  if (group.data && !isOrganizer) return frame(notice(t('present.only-organizer')));
+  if (group.data && !editionNumber) return frame(notice(t('present.no-order')));
+  if (!view.data) return frame(<LogoAnimation variant="loading" className="size-24" />);
+  if (!view.data.unwrapOrder) {
+    return frame(
+      <div className="flex flex-col items-center gap-6 px-6 py-16 text-center">
+        <p className="text-2xl font-semibold">{t('present.no-order')}</p>
+        {(view.data.status === 'drawn' || view.data.status === 'giftday') && (
+          <ShuffleButton groupSlug={groupSlug} editionNumber={editionNumber} again={false} />
+        )}
+      </div>
+    );
+  }
+  return frame(<PresenterStage groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} />);
+};
