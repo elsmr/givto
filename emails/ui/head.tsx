@@ -29,7 +29,7 @@ h1 { mso-font-alt: 'Arial Black'; }
 [data-ogsc] .text-muted { color: ${dark.muted} !important; }
 [data-ogsc] .ink-border { border-color: ${color.page} !important; }
 [data-ogsb] .shadow-ink { background-color: ${color.page} !important; }
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .container { width: 100% !important; }
   .card-body { padding: 20px !important; }
 }
