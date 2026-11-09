@@ -1,19 +1,10 @@
 import { AppHead } from '@/components/shell/app-head';
 import { MotionProvider } from '@/components/shell/motion-provider';
 import { Providers } from '@/lib/client/providers';
-import * as Sentry from '@sentry/browser';
 import { NextIntlClientProvider, type Messages } from 'next-intl';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
 import '../styles/globals.css';
-
-if (typeof window !== 'undefined') {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV,
-    enabled: process.env.NODE_ENV !== 'development',
-  });
-}
 
 // Toasts only follow user actions, so the toast UI loads after the page.
 const Toaster = dynamic(

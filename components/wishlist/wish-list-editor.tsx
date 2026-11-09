@@ -1,4 +1,4 @@
-import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/adapter/element-adapter';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { SortableWishItem } from './sortable-wish-item';

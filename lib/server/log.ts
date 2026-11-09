@@ -1,7 +1,8 @@
 import pino, { type DestinationStream, type Logger } from 'pino';
+import { scrub } from '../scrub';
 
 // Never log emails, codes, tokens, cookies or addresses (44). Structured fields are redacted
-// by key; free text (error messages, library log lines) is scrubbed by pattern.
+// by key; free text (error messages, library log lines) is scrubbed by pattern (lib/scrub.ts).
 const SECRET_KEYS = [
   'email',
   'otp',
@@ -25,16 +26,6 @@ const REDACT_PATHS = [
   '*.headers.authorization',
   '*.headers["set-cookie"]',
 ];
-
-const PATTERNS: [RegExp, string][] = [
-  // Domain must end in letters, so `mongodb@7.8.0/…` in stack paths isn't mistaken for an email.
-  [/[^\s@<>"'(),;:/]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b/gi, '[email]'],
-  [/([?&](?:token|otp|code|callbackURL)=)[^&\s"']*/gi, '$1[redacted]'],
-  [/\b\d{6}\b/g, '[code]'],
-];
-
-export const scrub = (text: string): string =>
-  PATTERNS.reduce((result, [pattern, replacement]) => result.replace(pattern, replacement), text);
 
 const serializeError = (error: Error) => {
   const serialized = pino.stdSerializers.err(error);
