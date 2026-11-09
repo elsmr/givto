@@ -1,3 +1,4 @@
+import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader } from '@/components/ui/loader';
 import { useTRPC } from '@/lib/client/trpc';
@@ -14,7 +15,6 @@ import { PendingRequests } from './pending-requests';
 import { PeopleList } from './people-list';
 import { ShareSection } from './share-section';
 import { useRequireSession } from './use-require-session';
-import { WishlistSlot } from './wishlist-slot';
 
 const beforeDraw = new Set(['draft', 'open']);
 
@@ -45,7 +45,7 @@ export const GroupHome = ({ slug }: { slug: string }) => {
       {edition && <EditionSummary edition={edition} />}
       {organizer && open && <ShareSection group={data} />}
       {edition && <DrawSlot groupSlug={slug} editionNumber={edition.number} />}
-      {edition && <WishlistSlot groupSlug={slug} editionNumber={edition.number} />}
+      {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
       <PeopleList group={data} />
       {organizer && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
       {!data.me.isOrganizer && <LeaveGroup slug={slug} groupName={data.name} />}
