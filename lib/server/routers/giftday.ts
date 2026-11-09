@@ -6,7 +6,7 @@ import { AppError } from '../errors';
 import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
 import { authedProcedure, editionProcedure, publicProcedure, router } from '../trpc';
 import { organizerEditionProcedure } from './draw';
-import { giftDayView } from './giftday-view';
+import { giftDayView, presenterGiftDayView } from './giftday-view';
 import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
 const fromGiftDay = (edition: Edition) => edition.status === 'giftday' || edition.status === 'done';
@@ -15,7 +15,7 @@ const presenterView = (group: Group, edition: Edition) => ({
   groupName: group.name,
   title: edition.title,
   status: edition.status,
-  ...giftDayView(group, edition, { presenter: true }),
+  ...presenterGiftDayView(group, edition),
 });
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */

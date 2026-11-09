@@ -4,7 +4,7 @@ import type { Group } from '../../schema/group';
 import { unwrapState } from '../../unwrap-turns';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
-import { giftDayView } from './giftday-view';
+import { presenterGiftDayView } from './giftday-view';
 
 /**
  * start: past the intro. spin: the reel landed on whose turn it is. more / last: their turn is
@@ -19,7 +19,7 @@ type Advance = v.InferOutput<typeof AdvanceInput>;
 
 /** The presenter's next step in the unwrapping (32), stored on the edition. Returns the updated edition. */
 export const advanceUnwrapping = async (db: Collections, group: Group, edition: Edition, { action, turnsTaken }: Advance) => {
-  const view = giftDayView(group, edition, { presenter: true }).unwrapOrder;
+  const view = presenterGiftDayView(group, edition).unwrapOrder;
   const order = edition.unwrapOrder;
   if (!view || !order) throw new AppError('NOT_DRAWN');
   const progress = order.progress;

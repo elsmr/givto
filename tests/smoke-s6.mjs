@@ -46,30 +46,30 @@ await step('unwrap order: organizer-only shuffle, the same for every member, res
   assert.equal(ok(await as(bob).query('giftday.get', edition)).unwrapOrder, null);
 
   ok(await as(ann).mutate('giftday.shuffle', edition));
+  // Members see the same view, without the order itself (a surprise, see smoke-z2); the presenter has it.
   const orders = await Promise.all([ann, bob, cee, dan].map(async (p) => ok(await as(p).query('giftday.get', edition)).unwrapOrder));
   for (const order of orders) assert.deepEqual(order, orders[0]);
+  const presented = ok(await as(ann).query('giftday.presenter', edition)).unwrapOrder;
   const inDraw = Object.keys(editionOf(slug).draw.assignments);
-  assert.deepEqual(orders[0].people.map((p) => p.memberId).toSorted(), inDraw.toSorted());
-  assert.deepEqual(orders[0].people.map((p) => p.memberId), editionOf(slug).unwrapOrder.memberIds);
+  assert.deepEqual(presented.people.map((p) => p.memberId).toSorted(), inDraw.toSorted());
+  assert.deepEqual(presented.people.map((p) => p.memberId), editionOf(slug).unwrapOrder.memberIds);
 
-  const first = orders[0].people.map((p) => p.memberId).join();
+  const first = presented.people.map((p) => p.memberId).join();
   let changed = false;
   for (let i = 0; i < 10 && !changed; i++) {
     ok(await as(ann).mutate('giftday.shuffle', edition));
     changed = editionOf(slug).unwrapOrder.memberIds.join() !== first;
   }
   assert.ok(changed, 'ten reshuffles never changed the order');
-  const after = ok(await as(cee).query('giftday.get', edition)).unwrapOrder;
+  const after = ok(await as(ann).query('giftday.presenter', edition)).unwrapOrder;
   assert.deepEqual(after.people.map((p) => p.memberId), editionOf(slug).unwrapOrder.memberIds);
 });
 
-await step('late joiners unwrap last, for everyone', async () => {
+await step('late joiners unwrap last', async () => {
   ok(await as(eve).mutate('join.accept', { groupSlug: slug, token: family.joinToken, name: 'Eve' }));
   const eveId = memberIdOf(slug, eve);
   assert.ok(eveId in editionOf(slug).draw.assignments, 'Eve was not slotted in');
-  for (const person of [ann, eve]) {
-    assert.equal(ok(await as(person).query('giftday.get', edition)).unwrapOrder.people.at(-1).memberId, eveId);
-  }
+  assert.equal(ok(await as(ann).query('giftday.presenter', edition)).unwrapOrder.people.at(-1).memberId, eveId);
 });
 
 await step('presenter view is organizer-only', async () => {
@@ -175,7 +175,8 @@ await step('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same fo
       order = await presenter();
     }
     const views = await Promise.all([bob, cee].map(async (p) => ok(await as(p).query('giftday.get', at)).unwrapOrder));
-    for (const view of views) assert.deepEqual(view, { ...order, current: view.current, next: view.next });
+    assert.deepEqual(views[0], views[1]);
+    assert.deepEqual(views[0].went.map((p) => p.memberId), [...new Set(seen)]);
     for (const view of views) assert.equal(view.current.memberId, order.current.memberId);
     const current = order.current.memberId;
     seen.push(current);

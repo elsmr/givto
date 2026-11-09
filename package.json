@@ -22,7 +22,8 @@
     "test:smoke:s5": "node tests/smoke-s5.mjs",
     "test:smoke:s6": "node tests/smoke-s6.mjs",
     "test:smoke:s7": "node tests/smoke-s7.mjs",
-    "test:smoke:s8": "node tests/smoke-s8.mjs"
+    "test:smoke:s8": "node tests/smoke-s8.mjs",
+    "test:smoke:z2": "node --import ./tests/ts-hooks.mjs tests/smoke-z2.mjs"
   },
   "author": "",
   "license": "MIT",
