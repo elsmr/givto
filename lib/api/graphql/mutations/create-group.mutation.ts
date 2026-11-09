@@ -1,4 +1,6 @@
+import { GraphQLError } from 'graphql';
 import { WithId } from 'mongodb';
+import { randomInt } from 'node:crypto';
 import qs from 'querystring';
 import { MongoUser } from '../../data-sources/mongo';
 import { mapGroup } from '../../graphql-mappers';
@@ -9,7 +11,11 @@ import {
   UserInput,
 } from '../../graphql-schema';
 import { generateSlug } from '../../url-generator';
-import { assignSecretSantas } from '../../util/secret-santa.util';
+import {
+  drawAssignments,
+  Exclusion,
+  findStuckGivers,
+} from '../../util/secret-santa.util';
 
 export const createGroup: Mutation<{
   creator: UserInput;
@@ -21,6 +27,30 @@ export const createGroup: Mutation<{
   { dataSources: { groups, users, loginCodes }, mailer }
 ): Promise<Group | null> => {
   const allUsers = [creator, ...invitees];
+  const stuck = findStuckGivers(
+    [...new Set(allUsers.map((user) => user.email))],
+    bothWays(settings?.exclusions ?? [])
+  );
+  if (stuck) {
+    const nameOf = (email: string) =>
+      allUsers.find((user) => user.email === email)?.name ?? email;
+    const list = (emails: string[]) =>
+      new Intl.ListFormat('en-GB').format(emails.map(nameOf));
+    const reason = stuck.receivers.length
+      ? `can only give to ${list(stuck.receivers)}`
+      : `can't give to anyone`;
+    throw new GraphQLError(
+      `These exclusions make a draw impossible: ${list(stuck.givers)} ${reason}`,
+      {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+          stuckGivers: stuck.givers,
+          possibleReceivers: stuck.receivers,
+        },
+      }
+    );
+  }
+
   const slug = settings?.slug ?? (await generateSlug(groups.hasSlug));
   const mongoUsers = await users.createUsers(...allUsers);
   const mongoCreator = mongoUsers.find((user) => user.email === creator.email);
@@ -44,7 +74,7 @@ export const createGroup: Mutation<{
     return null;
   }
 
-  const assignments = assignSecretSantas(userIds, exclusions);
+  const assignments = drawAssignments(userIds, bothWays(exclusions), randomInt);
 
   const mongoGroup = await groups.createGroup({
     slug,
@@ -98,6 +128,13 @@ export const createGroup: Mutation<{
     ? mapGroup(mongoGroup, mongoCreator._id.toHexString())
     : null;
 };
+
+// The API treats exclusions as symmetric; the draw supports one-way ones.
+const bothWays = (exclusions: Exclusion[]): Exclusion[] =>
+  exclusions.flatMap(({ from, to }) => [
+    { from, to },
+    { from: to, to: from },
+  ]);
 
 const getEmailSubject = (locale: string, name: string): string => {
   switch (locale) {
