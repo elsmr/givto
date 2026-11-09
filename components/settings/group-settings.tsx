@@ -4,7 +4,7 @@ import { KeepApartSection } from '@/components/group/keep-apart-section';
 import { PendingRequests } from '@/components/group/pending-requests';
 import { ShareSection } from '@/components/group/share-section';
 import { useRequireSession } from '@/components/group/use-require-session';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LoadFailed } from '@/components/shell/load-failed';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
@@ -28,11 +28,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
 
   if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {
-    return (
-      <Alert variant="danger">
-        <AlertDescription>{tGroup('load-failed')}</AlertDescription>
-      </Alert>
-    );
+    return <LoadFailed message={tGroup('load-failed')} onRetry={() => void group.refetch()} />;
   }
   const organizer = group.data?.organizer;
   if (group.error || !organizer) return <GroupNotFound />;
@@ -43,7 +39,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <Link href={`/g/${slug}`} className="inline-flex items-center gap-1 self-start font-semibold">
+        <Link href={`/g/${slug}`} className="inline-flex min-h-11 items-center gap-1 self-start font-semibold">
           <ArrowLeft aria-hidden="true" className="size-4" />
           {t('back', { group: data.name })}
         </Link>

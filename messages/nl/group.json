@@ -1,6 +1,6 @@
 {
   "page-title": "Secret Santa",
-  "load-failed": "We konden deze Secret Santa niet laden. Check je verbinding en herlaad de pagina.",
+  "load-failed": "We konden deze Secret Santa niet laden. Check je verbinding en probeer het opnieuw.",
   "status": {
     "draft": "Concept",
     "open": "Open om mee te doen",

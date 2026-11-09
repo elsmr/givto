@@ -3,7 +3,6 @@
   "page-title": "My groups · Givto",
   "start": "Start a Secret Santa",
   "load-failed": "We couldn't load your groups.",
-  "retry": "Try again",
   "empty": {
     "title": "No groups yet",
     "body": "Start a Secret Santa for your family, friends or colleagues. Invited by someone? Open the link from your group chat or email."

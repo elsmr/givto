@@ -1,4 +1,4 @@
-import { Alert } from '@/components/ui/alert';
+import { LoadFailed } from '@/components/shell/load-failed';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
@@ -22,7 +22,7 @@ export const MyWishlist = () => {
           <Skeleton className="h-24" />
         </div>
       ) : wishes.isError ? (
-        <Alert variant="danger">{t('errors.generic')}</Alert>
+        <LoadFailed message={t('errors.generic')} onRetry={() => void wishes.refetch()} />
       ) : (
         <>
           <AddWish />

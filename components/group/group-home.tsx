@@ -7,7 +7,7 @@ import { GiftDayHero } from '@/components/giftday/gift-day-hero';
 import { GiftDaySection } from '@/components/giftday/gift-day-section';
 import { GifteeWishlist } from '@/components/wishlist/giftee-wishlist';
 import { GroupWishlist } from '@/components/wishlist/group-wishlist';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LoadFailed } from '@/components/shell/load-failed';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
@@ -45,11 +45,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
     const code = appErrorCode(group.error);
     if (code === 'GROUP_NOT_FOUND') return <GroupNotFound />;
     if (code === 'EDITION_NOT_FOUND') return <PastEditionNotice slug={slug} />;
-    return (
-      <Alert variant="danger">
-        <AlertDescription>{t('load-failed')}</AlertDescription>
-      </Alert>
-    );
+    return <LoadFailed message={t('load-failed')} onRetry={() => void group.refetch()} />;
   }
 
   const { data } = group;

@@ -2,7 +2,7 @@ import { AccountSettings } from '@/components/account/account-settings';
 import { useMe } from '@/components/account/use-me';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
-import { Alert, AlertTitle } from '@/components/ui/alert';
+import { LoadFailed } from '@/components/shell/load-failed';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { loadMessages } from '@/messages/load';
 import type { GetStaticProps } from 'next';
@@ -25,9 +25,7 @@ export default function AccountPage() {
         {me.data ? (
           <AccountSettings me={me.data} />
         ) : me.isError && user ? (
-          <Alert variant="danger">
-            <AlertTitle>{t('errors.generic')}</AlertTitle>
-          </Alert>
+          <LoadFailed message={t('errors.generic')} onRetry={() => void me.refetch()} />
         ) : (
           <LogoAnimation variant="loading" />
         )}

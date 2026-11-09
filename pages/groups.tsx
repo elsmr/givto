@@ -2,8 +2,8 @@ import { useRequireSession } from '@/components/auth/use-require-session';
 import { EmptyState } from '@/components/dashboard/empty-state';
 import { GroupList } from '@/components/dashboard/group-list';
 import { AppShell } from '@/components/shell/app-shell';
-import { Alert, AlertTitle } from '@/components/ui/alert';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { LoadFailed } from '@/components/shell/load-failed';
+import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
@@ -36,12 +36,7 @@ export default function GroupsPage() {
           )}
         </div>
         {groups.isError ? (
-          <Alert variant="danger">
-            <AlertTitle>{t('load-failed')}</AlertTitle>
-            <Button variant="neutral" size="sm" className="col-start-2 mt-2 justify-self-start" onClick={() => groups.refetch()}>
-              {t('retry')}
-            </Button>
-          </Alert>
+          <LoadFailed message={t('load-failed')} onRetry={() => void groups.refetch()} />
         ) : !groups.data ? (
           <div className="grid gap-6 sm:grid-cols-2">
             <Skeleton className="h-40" />

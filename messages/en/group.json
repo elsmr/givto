@@ -1,6 +1,6 @@
 {
   "page-title": "Secret Santa",
-  "load-failed": "We couldn't load this Secret Santa. Check your connection and reload the page.",
+  "load-failed": "We couldn't load this Secret Santa. Check your connection and try again.",
   "status": {
     "draft": "Draft",
     "open": "Open to join",
