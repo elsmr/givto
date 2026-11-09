@@ -1,0 +1,45 @@
+{
+  "title": "Privacy",
+  "updated": "Last updated on {date}",
+  "intro": "Givto is a small, open-source Secret Santa app. We only keep what your Secret Santa needs, we never sell it and we don't track you.",
+  "stored": {
+    "title": "What we store and why",
+    "account": "<b>Your account:</b> your name, email address, language and email settings. To sign you in and send the emails you need, like your draw and reminders.",
+    "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part) and your sessions with the device's IP address and browser. To keep your account safe.",
+    "groups": "<b>Groups and Secret Santas:</b> group names, people's names, households and Keep apart pairs, dates, budget and the draw. The organizer also sees everyone's email address. To run your Secret Santa.",
+    "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, tips, questions and Psst! messages. So your Santa knows what to get you.",
+    "addresses": "<b>Postal addresses:</b> only when a Secret Santa sends gifts by post, and only shown to your Santa.",
+    "emails": "<b>Emails we sent:</b> which email went to whom and when. So we never send the same email twice.",
+    "cookies": "<b>Cookies:</b> one to keep you signed in and one to remember your language. No tracking or advertising cookies and no analytics, so no cookie banner."
+  },
+  "basis": "We use this data to give you the service you asked for (GDPR article 6(1)(b)). Sign-in security, rate limits and error reports rely on our legitimate interest in keeping Givto safe and working (article 6(1)(f)).",
+  "retention": {
+    "title": "How long we keep it",
+    "sign-in": "Sign-in codes and links expire after {minutes} minutes.",
+    "sessions": "You're signed out after {days} days without a visit.",
+    "addresses": "Postal addresses are deleted right after gift day.",
+    "edition-messages": "Dibs!, tips, questions and Psst! messages are deleted {months} months after gift day.",
+    "draw": "The draw is kept until the next edition's draw, so nobody gets the same giftee two years in a row, and for {months} months at most.",
+    "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",
+    "account": "Your account and wishlist stay until you delete them.",
+    "errors": "Error reports are deleted after {days} days at most.",
+    "logs": "Server logs never contain names, email addresses or wishes."
+  },
+  "processors": {
+    "title": "Who helps us run Givto",
+    "intro": "These services process data for us, only to run Givto:",
+    "vercel": "<b>Vercel:</b> hosting and server logs.",
+    "mongodb": "<b>MongoDB Atlas:</b> the database.",
+    "mailgun": "<b>Mailgun:</b> sending emails.",
+    "sentry": "<b>Sentry:</b> error reports, so we can fix bugs."
+  },
+  "rights": {
+    "title": "Your rights",
+    "account": "On your <link>account page</link> you can download all your data and delete your account. Deleting removes your wishes, memberships and tips; other people's draws keep working.",
+    "other": "You can also ask us to see or correct your data, or object to how we use it. And you can always complain to your data protection authority."
+  },
+  "contact": {
+    "title": "Contact",
+    "text": "{controller} is responsible for Givto and your data. Questions or requests? Email <link>{email}</link>."
+  }
+}

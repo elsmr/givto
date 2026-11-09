@@ -13,7 +13,8 @@
     "start": "next start",
     "tsc": "tsc --noEmit",
     "test": "node tests/draw.check.mjs",
-    "test:smoke": "node tests/smoke.mjs"
+    "test:smoke": "node tests/smoke.mjs",
+    "test:smoke:s8": "node tests/smoke-s8.mjs"
   },
   "author": "",
   "license": "MIT",

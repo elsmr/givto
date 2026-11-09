@@ -1,29 +1,44 @@
-import React from 'react';
+import type { SVGProps } from 'react';
 
-export const GivtoLogo: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+// Same drawing as public/givto-logo.svg; data-part names the pieces for animation (12).
+export const GivtoLogo = (props: SVGProps<SVGSVGElement>) => (
   <svg
-    focusable="false"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 144 144"
+    stroke="#111111"
+    strokeWidth="4"
     {...props}
   >
-    <path fill="#5A51FF" stroke="#000" strokeWidth="2" d="M9 9h134v134H9z" />
-    <path
-      fill="#FE7362"
-      stroke="#000"
-      strokeWidth="2"
-      d="M1 1h134v134H1V1z"
-    />
-    <path
+    <rect
+      data-part="shadow"
+      x="10"
+      y="10"
+      width="132"
+      height="132"
       fill="#5A51FF"
-      stroke="#000"
-      strokeWidth="2"
-      d="M135 101v10H1v-10h134zM49.757 89.138c-4.436 0-8.412-1.305-11.253-3.365-2.52-1.826-4.1-4.202-4.428-6.773h31.362c-.328 2.571-1.909 4.947-4.428 6.773-2.842 2.06-6.817 3.365-11.253 3.365z"
     />
-    <path fill="#5A51FF" stroke="#000" strokeWidth="2" d="M99 1h10v134H99z" />
-    <path
-      fill="#000"
-      d="M78 65a5 5 0 11-10 0 5 5 0 0110 0zM32 65a5 5 0 11-10 0 5 5 0 0110 0z"
+    <rect
+      data-part="box"
+      x="2"
+      y="2"
+      width="132"
+      height="132"
+      fill="#FE7362"
     />
+    <g data-part="ribbon" fill="#5A51FF">
+      <rect x="2" y="98" width="132" height="12" />
+      <rect x="96" y="2" width="12" height="132" />
+    </g>
+    <g data-part="face">
+      <g data-part="eyes" fill="#111111" stroke="none">
+        <circle cx="27" cy="64" r="6" />
+        <circle cx="71" cy="64" r="6" />
+      </g>
+      <path
+        data-part="mouth"
+        fill="#5A51FF"
+        d="M33 78h32a16 12 0 0 1-32 0z"
+      />
+    </g>
   </svg>
 );

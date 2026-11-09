@@ -1,6 +1,7 @@
 import { useCurrentUser } from '@/lib/client/session';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { isPublicPath } from './public-pages';
 import { localeCookie } from './remember-locale';
 
 // Account setting is applied once per page load, so a manual switch sticks for the visit.
@@ -19,10 +20,12 @@ export const usePreferredLocale = () => {
     const hasRememberedLocale = document.cookie
       .split('; ')
       .some((cookie) => cookie.startsWith(`${localeCookie}=`));
-    const browserLocale =
-      navigator.languages
-        .map((language) => language.split('-')[0].toLowerCase())
-        .find((language) => locales.includes(language)) ?? defaultLocale;
+    // Indexable pages keep their URL's language: crawlers (en-US) must see /nl in Dutch.
+    const browserLocale = isPublicPath(router.pathname)
+      ? undefined
+      : (navigator.languages
+          .map((language) => language.split('-')[0].toLowerCase())
+          .find((language) => locales.includes(language)) ?? defaultLocale);
     const isNewAccountLocale =
       accountLocale !== undefined && accountLocale !== appliedAccountLocale;
     appliedAccountLocale = accountLocale;
