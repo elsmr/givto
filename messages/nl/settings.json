@@ -1,5 +1,6 @@
 {
   "page-title": "Instellingen",
+  "only-organizer": "Alleen de organisator kan de instellingen van {group} aanpassen.",
   "back": "Terug naar {group}",
   "title": "Instellingen",
   "saved": "Opgeslagen",

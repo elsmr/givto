@@ -8,7 +8,7 @@
     "title": "This link doesn't work anymore",
     "link": "The organizer may have made a new link. Ask them to share it again.",
     "invite": "This invite was already used, declined or has expired. Ask your organizer for a new one.",
-    "my-secret-santas": "Go to my Secret Santas",
+    "my-secret-santas": "Go to my groups",
     "sign-in": "Sign in",
     "start": "Start a Secret Santa"
   },
@@ -20,7 +20,7 @@
   "requested": {
     "title": "Almost there!",
     "description": "{organizer} still has to let you in. We'll show the Secret Santa in your list as soon as they do.",
-    "my-secret-santas": "Go to my Secret Santas"
+    "my-secret-santas": "Go to my groups"
   },
   "details": {
     "name": "Your name",
