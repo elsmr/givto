@@ -62,21 +62,25 @@ export interface MongoRefreshToken {
   exp: number;
 }
 
-let connectionPromise: Promise<MongoClient> | null = null;
-let db: Db | null = null;
+let dbPromise: Promise<Db> | null = null;
 
-export const getMongoDb = async (uri: string, dbName: string): Promise<Db> => {
-  if (db) {
+// The data sources rely on these for deduplication (createUsers catches 11000) and slug/code lookups.
+// Failure is logged, not thrown: existing duplicates must not take the app down.
+const createIndexes = (db: Db) =>
+  Promise.all([
+    db.collection('users').createIndex({ email: 1 }, { unique: true }),
+    db.collection('groups').createIndex({ slug: 1 }, { unique: true }),
+    db.collection('loginCodes').createIndex({ code: 1 }, { unique: true }),
+    db.collection('refreshTokens').createIndex({ token: 1 }, { unique: true }),
+  ]).catch((error) => console.error('Failed to create indexes', error));
+
+export const getMongoDb = (uri: string, dbName: string): Promise<Db> => {
+  dbPromise ??= new MongoClient(uri).connect().then(async (client) => {
+    const db = client.db(dbName);
+    await createIndexes(db);
     return db;
-  }
-
-  if (!connectionPromise) {
-    connectionPromise = new MongoClient(uri).connect();
-  }
-
-  const client = await connectionPromise;
-  db = client.db(dbName);
-  return db;
+  });
+  return dbPromise;
 };
 
 export class MongoDataSource<T extends Document> {
