@@ -25,5 +25,5 @@ export default function GroupPage() {
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['group', 'wishlist']) },
+  props: { messages: await loadMessages(locale, ['group', 'wishlist', 'between']) },
 });

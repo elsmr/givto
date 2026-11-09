@@ -1,3 +1,4 @@
+import { EditionBetween } from '@/components/between/edition-between';
 import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader } from '@/components/ui/loader';
@@ -46,6 +47,7 @@ export const GroupHome = ({ slug }: { slug: string }) => {
       {organizer && open && <ShareSection group={data} />}
       {edition && <DrawSlot groupSlug={slug} editionNumber={edition.number} />}
       {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
+      {edition && <EditionBetween groupSlug={slug} editionNumber={edition.number} />}
       <PeopleList group={data} />
       {organizer && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
       {!data.me.isOrganizer && <LeaveGroup slug={slug} groupName={data.name} />}
