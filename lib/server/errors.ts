@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/nextjs';
 import { StandardSchemaV1Error, TRPCError } from '@trpc/server';
 import type { TRPC_ERROR_CODE_KEY } from '@trpc/server/rpc';
 
@@ -60,6 +61,11 @@ export const toAppCode = (error: TRPCError): AppErrorCode =>
 
 /** Unexpected errors are logged with their stack; the client only gets a generic message. */
 export const isUnexpected = (error: TRPCError) => toAppCode(error) === 'INTERNAL';
+
+/** Unexpected errors go to Sentry (off without a DSN; scrubbed, lib/sentry-options.ts). AppErrors never do. */
+export const reportUnexpected = (error: TRPCError, context: { requestId?: string; procedure?: string }) => {
+  if (isUnexpected(error)) captureException(error.cause ?? error, { tags: context });
+};
 
 export interface InputIssue {
   path: string;
