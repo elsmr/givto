@@ -9,6 +9,7 @@ import {
   TriangleAlertIcon,
   XIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import * as React from 'react';
 
@@ -123,10 +124,11 @@ function ToastClose({
   render = <Button variant="ghost" size="icon-sm" />,
   ...props
 }: ToastPrimitive.Close.Props) {
+  const t = useTranslations('ui');
   return (
     <ToastPrimitive.Close
       data-slot="toast-close"
-      aria-label="Close toast"
+      aria-label={t('close-toast')}
       render={render}
       className={cn('relative shrink-0', className)}
       {...props}

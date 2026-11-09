@@ -1,5 +1,6 @@
 import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import * as React from 'react';
 
@@ -53,6 +54,7 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Popup> & {
   showCloseButton?: boolean;
 }) {
+  const t = useTranslations('ui');
   return (
     <DialogPortal>
       <DialogOverlay />
@@ -71,7 +73,7 @@ function DialogContent({
             className="absolute right-2 top-2 flex size-11 items-center justify-center text-ink hover:bg-primary-muted disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
           >
             <X />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{t('close')}</span>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Popup>

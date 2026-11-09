@@ -3,7 +3,7 @@ import type { Messages } from 'next-intl';
 type Namespace = keyof Messages;
 
 // Every page gets the shared namespaces; pages add their own feature namespaces.
-const sharedNamespaces: Namespace[] = ['ui'];
+const sharedNamespaces: Namespace[] = ['shell', 'ui'];
 
 export const loadMessages = async (
   locale: string | undefined,

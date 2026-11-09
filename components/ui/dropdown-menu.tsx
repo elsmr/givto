@@ -145,6 +145,9 @@ function DropdownMenuContent({
   );
 }
 
+const dropdownMenuItemClassName =
+  'relative gap-2 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0 flex cursor-default select-none items-center border-2 border-transparent data-inset:pl-8 min-h-11 px-2 py-1.5 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-disabled:pointer-events-none data-disabled:opacity-50';
+
 function DropdownMenuItem({
   className,
   inset,
@@ -156,10 +159,20 @@ function DropdownMenuItem({
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-inset={inset}
-      className={cn(
-        'relative gap-2 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0 flex cursor-default select-none items-center border-2 border-transparent data-inset:pl-8 min-h-11 px-2 py-1.5 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-disabled:pointer-events-none data-disabled:opacity-50',
-        className,
-      )}
+      className={cn(dropdownMenuItemClassName, className)}
+      {...props}
+    />
+  );
+}
+
+function DropdownMenuLinkItem({
+  className,
+  ...props
+}: React.ComponentProps<typeof MenuPrimitive.LinkItem>) {
+  return (
+    <MenuPrimitive.LinkItem
+      data-slot="dropdown-menu-link-item"
+      className={cn(dropdownMenuItemClassName, 'no-underline', className)}
       {...props}
     />
   );
@@ -282,6 +295,7 @@ export {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLinkItem,
   DropdownMenuCheckboxItem,
   DropdownMenuRadioItem,
   DropdownMenuLabel,
