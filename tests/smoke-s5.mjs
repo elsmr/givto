@@ -302,7 +302,8 @@ await step('after deletion the others’ draw stays valid and the organizer role
 if (SERVER_LOG) {
   await step('server log (incl. request lines) has no sign-in tokens', async () => {
     const log = readFileSync(SERVER_LOG, 'utf8');
-    assert.match(log, /\/auth\/link/, 'the landing page request is logged');
+    // next dev prints request lines (next start doesn't): then the landing page must be among them.
+    if (/ GET \//.test(log)) assert.match(log, /GET \/auth\/link/);
     for (const token of tokens) assert.ok(!log.includes(token), `token in log: ${token}`);
     assert.doesNotMatch(log, /s5-[a-z]+-\d+@example\.test/);
   });
