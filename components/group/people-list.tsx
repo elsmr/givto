@@ -23,6 +23,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
               {person.role === 'organizer' && <Badge variant="yellow">{t('organizer')}</Badge>}
               {person.id === group.me.memberId && <Badge>{t('you')}</Badge>}
               {person.status !== 'joined' && <Badge variant="coral">{t(`status.${person.status}`)}</Badge>}
+              {person.bounced && <Badge variant="coral">{t('bounced')}</Badge>}
               {person.email && <span className="w-full text-sm text-muted break-all">{person.email}</span>}
             </li>
           ))}

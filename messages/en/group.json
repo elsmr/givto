@@ -37,7 +37,8 @@
       "requested": "Wants to join",
       "declined": "Sits this one out",
       "removed": "Left"
-    }
+    },
+    "bounced": "Email bounced: check the address"
   },
   "requests": {
     "title": "{count, plural, one {# person wants} other {# people want}} to join",

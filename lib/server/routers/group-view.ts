@@ -4,6 +4,7 @@ import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
+import { suppressedEmails } from '../mail/suppression';
 
 /** Organizer only (privacy rules): emails of accounts, or of pending email invites. */
 const memberEmails = async (db: Collections, group: Group): Promise<Map<string, string>> => {
@@ -36,6 +37,7 @@ export const groupView = async (
     isOrganizer ? m.status !== 'removed' : m.status === 'joined'
   );
   const emails = isOrganizer ? await memberEmails(db, group) : new Map<string, string>();
+  const bounced = isOrganizer ? await suppressedEmails(db, [...emails.values()]) : new Set<string>();
   return {
     slug: group.slug,
     name: group.name,
@@ -46,7 +48,7 @@ export const groupView = async (
       name: m.name,
       role: m.role,
       status: m.status,
-      ...(isOrganizer && { email: emails.get(m.id) }),
+      ...(isOrganizer && { email: emails.get(m.id), bounced: bounced.has(emails.get(m.id) ?? '') }),
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,
     /** Newest first; the group home lists them once there's history (33). */

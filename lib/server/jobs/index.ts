@@ -1,5 +1,6 @@
 import type { Collections } from '../db';
 import { runDeliveries } from './deliveries';
+import { runDueDraws } from './draws';
 import { runRetention } from './retention';
 import { sendReminders } from './reminders';
 import { sendWishlistDigests } from './wishlist-digests';
@@ -13,5 +14,5 @@ export const jobs: Record<string, (db: Collections, now: Date) => Promise<object
   digests: sendWishlistDigests,
   reminders: sendReminders,
   retention: runRetention,
-  // S4 merge (coordinator): add `draws: () => runDueDraws()` from './draws' here and to vercel.json.
+  draws: (_db, now) => runDueDraws(now),
 };

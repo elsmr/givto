@@ -37,7 +37,8 @@
       "requested": "Wil meedoen",
       "declined": "Doet deze keer niet mee",
       "removed": "Vertrokken"
-    }
+    },
+    "bounced": "E-mail kwam niet aan: check het adres"
   },
   "requests": {
     "title": "{count, plural, one {# persoon wil} other {# mensen willen}} meedoen",
