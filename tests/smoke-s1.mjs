@@ -258,7 +258,7 @@ await step('keep apart: households saved; impossible sets refused', async () => 
   assert.equal((await query('group.get', { groupSlug: slug }, annCookie)).data.organizer.households.length, 1);
 });
 
-await step('leave before the draw; organizer can’t leave; leaving after the draw refused', async () => {
+await step('leave before the draw; organizer can’t leave; leaving after the draw works (S4 patches the draw)', async () => {
   assert.equal(appCode(await mutate('membership.leave', { groupSlug: slug }, annCookie)), 'ORGANIZER_CANNOT_LEAVE');
   const bobId = (await memberId(bob)).id;
   assert.equal((await mutate('membership.leave', { groupSlug: slug }, bobCookie)).status, 200);
@@ -267,7 +267,7 @@ await step('leave before the draw; organizer can’t leave; leaving after the dr
   assert.ok(!data.edition.participantIds.includes(bobId));
   assert.equal(data.organizer.households.length, 0, 'a one-person household is dropped');
   mongo(`db.groups.findOne({ slug: '${slug}' })._id && db.editions.updateOne({ groupId: db.groups.findOne({ slug: '${slug}' })._id }, { $set: { status: 'drawn' } })`);
-  assert.equal(appCode(await mutate('membership.leave', { groupSlug: slug }, ceeCookie)), 'ALREADY_DRAWN');
+  assert.equal((await mutate('membership.leave', { groupSlug: slug }, ceeCookie)).status, 200);
 });
 
 await step('invites rate limited per organizer', async () => {

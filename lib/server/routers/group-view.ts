@@ -22,7 +22,15 @@ const memberEmails = async (db: Collections, group: Group): Promise<Map<string, 
   );
 };
 
-export const groupView = async (db: Collections, group: Group, me: Member, edition: Edition | null) => {
+type EditionListItem = Pick<Edition, 'number' | 'title' | 'status'>;
+
+export const groupView = async (
+  db: Collections,
+  group: Group,
+  me: Member,
+  edition: Edition | null,
+  editions: EditionListItem[]
+) => {
   const isOrganizer = me.role === 'organizer';
   const visible = group.members.filter((m) =>
     isOrganizer ? m.status !== 'removed' : m.status === 'joined'
@@ -41,14 +49,24 @@ export const groupView = async (db: Collections, group: Group, me: Member, editi
       ...(isOrganizer && { email: emails.get(m.id) }),
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,
+    /** Newest first; the group home lists them once there's history (33). */
+    editions: editions.map(({ number, title, status }) => ({ number, title, status })),
     edition: edition && {
       number: edition.number,
+      isCurrent: edition.number === editions[0]?.number,
       title: edition.title,
       status: edition.status,
       timeZone: edition.timeZone,
       giftDay: edition.giftDay,
+      drawAt: edition.drawAt,
+      wishlistBy: edition.wishlistBy,
+      postBy: edition.postBy,
       exchangeMode: edition.exchangeMode,
       budget: edition.budget,
+      notes: edition.notes,
+      avoidPreviousGiftees: edition.avoidPreviousGiftees,
+      hasPreviousEdition: Boolean(edition.previousEditionId),
+      calendarSequence: edition.calendarSequence ?? 0,
       participantIds: edition.participants
         .filter((p) => p.participates && p.status === 'joined')
         .map((p) => p.memberId),

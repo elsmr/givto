@@ -7,6 +7,7 @@ import { joinRouter } from './join';
 import { meRouter } from './me';
 import { wishlistRouters } from './wishlist';
 import { membershipRouter } from './membership';
+import { drawRouters } from './draw-routers';
 
 /** Slices add their router here: `<domain>: <domain>Router` from `./<domain>`. */
 export const appRouter = router({
@@ -21,6 +22,7 @@ export const appRouter = router({
   join: joinRouter,
   invite: inviteRouter,
   membership: membershipRouter,
+  ...drawRouters,
 });
 
 export type AppRouter = typeof appRouter;

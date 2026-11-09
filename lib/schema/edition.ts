@@ -48,6 +48,8 @@ export const Participant = v.object({
   address: v.optional(PostalAddress),
   /** Last time this participant, as a Santa, viewed their giftee's wishlist (35: skip stale notifications). */
   gifteeWishlistSeenAt: v.optional(v.date()),
+  /** Set when this Santa's giftee changed after the draw (late joiner, someone left, re-draw); cleared once they've seen it. */
+  gifteeChangedAt: v.optional(v.date()),
 });
 export type Participant = v.InferOutput<typeof Participant>;
 
@@ -133,6 +135,8 @@ export const Edition = v.object({
   draw: v.optional(Draw),
   unwrapOrder: v.optional(UnwrapOrder),
   reveal: Reveal,
+  /** iCalendar SEQUENCE (47), absent = 0: bumped when the calendar events change, so re-imports update instead of duplicating. */
+  calendarSequence: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0))),
   createdAt: v.date(),
   updatedAt: v.date(),
 });
