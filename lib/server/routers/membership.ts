@@ -3,6 +3,7 @@ import { Id } from '../../schema/common';
 import { AppError } from '../errors';
 import { addToCurrentEdition } from '../membership';
 import { removeMember } from '../remove-member';
+import { notifyJoined } from '../mail/join-notices';
 import { memberProcedure, organizerProcedure, router } from '../trpc';
 
 const MemberInput = v.object({ memberId: Id });
@@ -24,6 +25,7 @@ export const membershipRouter = router({
     );
     if (result.matchedCount === 0) throw new AppError('NOT_FOUND');
     await addToCurrentEdition(ctx.db, ctx.group._id, input.memberId);
+    await notifyJoined(ctx.db, ctx.group._id, input.memberId);
     return { ok: true };
   }),
 

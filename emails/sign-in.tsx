@@ -1,45 +1,23 @@
 /** @jsxImportSource react */
 import type { Locale } from '../lib/schema/common';
+import { Button } from './ui/button';
+import { CodeBox } from './ui/code-box';
+import { EmailLayout } from './ui/layout';
+import { Text } from './ui/text';
+import { emailTranslator } from './ui/translator';
 
-// Minimal on purpose; the email slice (S7) restyles it.
-const copy = {
-  en: {
-    subject: 'Sign in to Givto',
-    greeting: 'Hi!',
-    code: 'Here’s your code to sign in to Givto:',
-    link: 'Or sign in with one click:',
-    button: 'Sign in to Givto',
-    expiry: 'The code and the link work once and expire in 10 minutes.',
-    ignore: 'Didn’t ask for this? Then you can ignore this email.',
-  },
-  nl: {
-    subject: 'Inloggen bij Givto',
-    greeting: 'Hoi!',
-    code: 'Hier is je code om in te loggen bij Givto:',
-    link: 'Of log in met één klik:',
-    button: 'Inloggen bij Givto',
-    expiry: 'De code en de link werken één keer en verlopen na 10 minuten.',
-    ignore: 'Niet aangevraagd? Dan kun je deze e-mail negeren.',
-  },
-} satisfies Record<Locale, Record<string, string>>;
-
-export const signInSubject = (locale: Locale) => copy[locale].subject;
+export const signInSubject = (locale: Locale) => emailTranslator(locale)('sign-in.subject');
 
 export const SignInEmail = ({ locale, otp, url }: { locale: Locale; otp: string; url: string }) => {
-  const t = copy[locale];
+  const t = emailTranslator(locale);
   return (
-    <html lang={locale}>
-      <body>
-        <p>{t.greeting}</p>
-        <p>{t.code}</p>
-        <p style={{ fontSize: 28, fontWeight: 700, letterSpacing: 4 }}>{otp}</p>
-        <p>{t.link}</p>
-        <p>
-          <a href={url}>{t.button}</a>
-        </p>
-        <p>{t.expiry}</p>
-        <p>{t.ignore}</p>
-      </body>
-    </html>
+    <EmailLayout locale={locale} title={t('sign-in.title')} preheader={t('sign-in.preheader', { otp })}>
+      <Text>{t('sign-in.code')}</Text>
+      <CodeBox code={otp} />
+      <Text>{t('sign-in.link')}</Text>
+      <Button href={url}>{t('sign-in.button')}</Button>
+      <Text muted>{t('sign-in.expiry')}</Text>
+      <Text muted>{t('sign-in.ignore')}</Text>
+    </EmailLayout>
   );
 };

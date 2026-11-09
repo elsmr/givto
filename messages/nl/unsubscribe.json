@@ -1,0 +1,17 @@
+{
+  "page-title": "Afmelden · Givto",
+  "title": "Geen {category} meer?",
+  "intro": "Je krijgt dan geen {category} van Givto meer per e-mail. Inlogmails komen altijd door.",
+  "confirm": "Afmelden",
+  "done-title": "Je bent afgemeld",
+  "done": "Geen {category} meer. Toch weer wel? Zet ze terug aan in je e-mailinstellingen.",
+  "settings": "E-mailinstellingen",
+  "invalid-title": "Deze link werkt niet",
+  "invalid": "Misschien is hij onvolledig. In je e-mailinstellingen kies je welke e-mails je krijgt.",
+  "failed": "Dat lukte niet. Probeer het opnieuw.",
+  "category": {
+    "reminders": "herinneringen",
+    "wishlistUpdates": "updates over verlanglijstjes",
+    "santaMessages": "berichten van je Santa"
+  }
+}

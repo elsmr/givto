@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { Id, SingleLine } from './common';
+import { Email, Id, SingleLine } from './common';
 
 /**
  * `sentNotifications` collection: idempotency log for scheduled emails (29) and one-off
@@ -37,6 +37,19 @@ export const WishlistNotification = v.object({
   snapshotAt: v.optional(v.date()),
   /** Set while changes are pending. */
   firstChangeAt: v.optional(v.date()),
+  /** The latest pending change: a Santa who viewed the wishlist after it gets no email. */
+  lastChangeAt: v.optional(v.date()),
   notifyAfter: v.optional(v.date()),
 });
 export type WishlistNotification = v.InferOutput<typeof WishlistNotification>;
+
+/**
+ * `emailSuppressions` collection (54): addresses that hard-bounced or marked us as spam,
+ * from Mailgun's webhook. Notifications skip them; the organizer sees "bounced".
+ */
+export const EmailSuppression = v.object({
+  _id: Email,
+  reason: v.picklist(['bounce', 'complaint']),
+  at: v.date(),
+});
+export type EmailSuppression = v.InferOutput<typeof EmailSuppression>;

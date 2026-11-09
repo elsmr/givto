@@ -5,6 +5,7 @@ import type dashboard from './en/dashboard.json';
 import type draw from './en/draw.json';
 import type settings from './en/settings.json';
 import type create from './en/create.json';
+import type email from './en/email.json';
 import type errors from './en/errors.json';
 import type home from './en/home.json';
 import type privacy from './en/privacy.json';
@@ -13,6 +14,7 @@ import type group from './en/group.json';
 import type join from './en/join.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
+import type unsubscribe from './en/unsubscribe.json';
 import type wishlist from './en/wishlist.json';
 
 // One entry per namespace file in messages/en/; nl must have the same keys.
@@ -26,6 +28,7 @@ declare module 'next-intl' {
       draw: typeof draw;
       settings: typeof settings;
       create: typeof create;
+      email: typeof email;
       errors: typeof errors;
       home: typeof home;
       privacy: typeof privacy;
@@ -34,6 +37,7 @@ declare module 'next-intl' {
       join: typeof join;
       shell: typeof shell;
       ui: typeof ui;
+      unsubscribe: typeof unsubscribe;
       wishlist: typeof wishlist;
     };
   }

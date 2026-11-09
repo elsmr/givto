@@ -1,44 +1,25 @@
 /** @jsxImportSource react */
 import type { Locale } from '../lib/schema/common';
+import { Button } from './ui/button';
+import { EmailLayout } from './ui/layout';
+import { Text } from './ui/text';
+import { emailTranslator } from './ui/translator';
 
-// Minimal on purpose; the email slice (S7) restyles it. Names are validated plain text (43).
-const copy = {
-  en: {
-    subject: (organizer: string, group: string) => `${organizer} invited you to ${group} on Givto`,
-    greeting: (name: string) => `Hi ${name}!`,
-    body: (organizer: string, group: string) => `${organizer} invited you to the Secret Santa “${group}”.`,
-    button: 'Join the Secret Santa',
-    expiry: 'This link is just for you and works once, for 7 days.',
-    ignore: 'Not interested? You can decline from the same link, or ignore this email.',
-  },
-  nl: {
-    subject: (organizer: string, group: string) => `${organizer} nodigt je uit voor ${group} op Givto`,
-    greeting: (name: string) => `Hoi ${name}!`,
-    body: (organizer: string, group: string) => `${organizer} nodigt je uit voor de Secret Santa “${group}”.`,
-    button: 'Doe mee',
-    expiry: 'Deze link is alleen voor jou en werkt één keer, 7 dagen lang.',
-    ignore: 'Geen zin? Via dezelfde link kun je afzeggen, of je negeert deze e-mail.',
-  },
-} satisfies Record<Locale, Record<string, unknown>>;
-
+// Names are validated plain text (43): no links, no @.
 type InviteProps = { locale: Locale; name: string; organizer: string; group: string; url: string };
 
 export const inviteSubject = ({ locale, organizer, group }: Omit<InviteProps, 'name' | 'url'>) =>
-  copy[locale].subject(organizer, group);
+  emailTranslator(locale)('invite.subject', { organizer, group });
 
 export const InviteEmail = ({ locale, name, organizer, group, url }: InviteProps) => {
-  const t = copy[locale];
+  const t = emailTranslator(locale);
   return (
-    <html lang={locale}>
-      <body>
-        <p>{t.greeting(name)}</p>
-        <p>{t.body(organizer, group)}</p>
-        <p>
-          <a href={url}>{t.button}</a>
-        </p>
-        <p>{t.expiry}</p>
-        <p>{t.ignore}</p>
-      </body>
-    </html>
+    <EmailLayout locale={locale} title={t('invite.title')} preheader={t('invite.preheader')}>
+      <Text>{t('invite.greeting', { name })}</Text>
+      <Text>{t('invite.body', { organizer, group })}</Text>
+      <Button href={url}>{t('invite.button')}</Button>
+      <Text muted>{t('invite.expiry')}</Text>
+      <Text muted>{t('invite.ignore')}</Text>
+    </EmailLayout>
   );
 };

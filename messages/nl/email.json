@@ -1,0 +1,160 @@
+{
+  "layout": {
+    "logo-alt": "Givto",
+    "tagline": "Lootjes trekken, zonder gedoe.",
+    "for": "Voor {name}",
+    "why": "Je krijgt deze e-mail omdat je meedoet aan een Secret Santa op Givto.",
+    "manage": "E-mailinstellingen",
+    "unsubscribe": "Geen {category} meer",
+    "category": {
+      "reminders": "herinneringen",
+      "wishlistUpdates": "updates over verlanglijstjes",
+      "santaMessages": "berichten van je Santa"
+    }
+  },
+  "sign-in": {
+    "subject": "Inloggen bij Givto",
+    "preheader": "Je code: {otp}. Hij werkt één keer, 10 minuten lang.",
+    "title": "Inloggen bij Givto",
+    "code": "Hier is je code:",
+    "link": "Of log in met één klik:",
+    "button": "Inloggen bij Givto",
+    "expiry": "De code en de link werken één keer en verlopen na 10 minuten.",
+    "ignore": "Niet aangevraagd? Dan kun je deze e-mail negeren."
+  },
+  "delete-account": {
+    "subject": "Bevestig het verwijderen van je Givto-account",
+    "preheader": "Je code om je account te verwijderen. Hij werkt één keer, 10 minuten lang.",
+    "title": "Account verwijderen?",
+    "intro": "Hier is je code om je Givto-account te verwijderen:",
+    "effect": "Dit verwijdert je verlanglijstje, je groepen, tips en vragen. Dat kan niet ongedaan worden gemaakt.",
+    "expiry": "De code werkt één keer en verloopt na 10 minuten.",
+    "ignore": "Niet aangevraagd? Dan kun je deze e-mail negeren; er verandert niets."
+  },
+  "invite": {
+    "subject": "{organizer} nodigt je uit voor {group} op Givto",
+    "preheader": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en wacht op de loting.",
+    "title": "Je bent uitgenodigd!",
+    "greeting": "Hoi {name}!",
+    "body": "{organizer} nodigt je uit voor de Secret Santa “{group}”.",
+    "button": "Doe mee",
+    "expiry": "Deze link is alleen voor jou en werkt één keer, 7 dagen lang.",
+    "ignore": "Geen zin? Via dezelfde link kun je afzeggen, of je negeert deze e-mail."
+  },
+  "join-reminder": {
+    "subject": "Doe je nog mee met {group}?",
+    "preheader": "{organizer} wacht op je in de Secret Santa.",
+    "title": "Doe je nog mee?",
+    "greeting": "Hoi {name}!",
+    "body": "{organizer} nodigde je uit voor de Secret Santa “{group}”, maar je doet nog niet mee. Doe mee vóór de lootjes getrokken worden.",
+    "button": "Doe mee",
+    "expiry": "Deze link is alleen voor jou en werkt één keer, zolang je uitnodiging geldig is.",
+    "ignore": "Geen zin? Via dezelfde link kun je afzeggen. We herinneren je er niet nog eens aan."
+  },
+  "join-request": {
+    "subject": "{name} wil meedoen met {group}",
+    "preheader": "Laat je ze toe? Jij beslist.",
+    "title": "Iemand wil meedoen",
+    "body": "{name} wil via de groepslink meedoen met “{group}”. Je wilde nieuwe deelnemers eerst goedkeuren, dus ze wachten op jou.",
+    "button": "Bekijk de aanvraag"
+  },
+  "joined": {
+    "subject": "Je doet mee: {group}",
+    "preheader": "De organisator heeft je toegelaten. Tijd voor je verlanglijstje.",
+    "title": "Je doet mee!",
+    "body": "De organisator heeft je toegelaten tot “{group}”. Zet een paar wensen op je verlanglijstje, dan weet je Santa wat je wilt.",
+    "button": "Naar de groep"
+  },
+  "names-drawn": {
+    "subject": "De lootjes zijn getrokken in {group}!",
+    "preheader": "Ontdek voor wie je een cadeau koopt. Geheim houden!",
+    "title": "De lootjes zijn getrokken!",
+    "body": "De loting voor “{group}” is klaar. Open Givto om te zien wie je lootje is. Niet verklappen!",
+    "gift-day": "Pakjesdag: {date}.",
+    "budget": "Budget: {budget}.",
+    "button": "Toon mijn lootje"
+  },
+  "giftee-changed": {
+    "subject": "Je hebt een nieuw lootje in {group}",
+    "preheader": "Er veranderde iets in de loting, en dat raakt jou.",
+    "title": "Je hebt een nieuw lootje",
+    "body": "Na de loting kwam er iemand bij of ging er iemand weg in “{group}”, dus je koopt nu voor iemand anders. Alle anderen houden hun lootje.",
+    "button": "Toon mijn nieuwe lootje"
+  },
+  "organizer-handover": {
+    "subject": "Jij bent nu de organisator van {group}",
+    "preheader": "De vorige organisator heeft het account verwijderd.",
+    "title": "Jij bent nu de organisator",
+    "body": "De organisator van “{group}” heeft het Givto-account verwijderd, dus de groep gaat naar jou: jij bent er het langst bij. Je kunt nu mensen uitnodigen, de datums aanpassen en de lootjes trekken.",
+    "button": "Open de groep"
+  },
+  "psst": {
+    "subject": "Psst! Je Santa heeft een verzoek",
+    "preheader": "Iemand koopt een cadeau voor je en kan wel wat hulp gebruiken.",
+    "title": "Psst!",
+    "emptyWishlist": "Je Santa in “{group}” wil graag wat ideeën. Zet een paar wensen op je verlanglijstje: dat maakt het een stuk makkelijker.",
+    "moreDetails": "Je Santa in “{group}” wil graag wat meer details over je wensen: maten, kleuren, links.",
+    "secret": "Wie je Santa is, verklappen we niet. Dat is juist de lol.",
+    "button": "Open mijn verlanglijstje"
+  },
+  "question": {
+    "subject": "Psst! Je Santa heeft een vraag",
+    "preheader": "Een anonieme vraag van je Santa.",
+    "title": "Je Santa vroeg…",
+    "intro": "Je Santa in “{group}” heeft een vraag voor je:",
+    "secret": "Alleen je Santa ziet je antwoord. Jij komt niet te weten wie het vroeg.",
+    "button": "Beantwoord de vraag"
+  },
+  "answer": {
+    "subject": "Je lootje heeft je vraag beantwoord",
+    "preheader": "Het antwoord is binnen. Veel succes met shoppen!",
+    "title": "Je hebt een antwoord",
+    "intro": "Je vroeg je lootje in “{group}”:",
+    "answer-label": "Het antwoord:",
+    "button": "Bekijk het in Givto"
+  },
+  "wishlist-updated": {
+    "subject": "Het verlanglijstje van je lootje is veranderd",
+    "preheader": "{count, plural, one {# nieuwe of gewijzigde wens} other {# nieuwe of gewijzigde wensen}} in {group}.",
+    "title": "Nieuw op het verlanglijstje",
+    "intro": "Je lootje in “{group}” heeft het verlanglijstje bijgewerkt.",
+    "added": "{count, plural, one {Nieuwe wens:} other {# nieuwe wensen:}}",
+    "updated": "{count, plural, one {Gewijzigd:} other {# gewijzigd:}}",
+    "button": "Bekijk het verlanglijstje"
+  },
+  "reminder-wishlist": {
+    "subject": "Je Santa wacht op je verlanglijstje",
+    "preheader": "Zet een paar wensen klaar voor {group}.",
+    "title": "Je verlanglijstje is leeg",
+    "body": "Je Santa in “{group}” weet nog niet wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
+    "by": "Verlanglijstjes klaar vóór {date}.",
+    "button": "Wens toevoegen"
+  },
+  "reminder-gift": {
+    "subject": "Heb je je cadeau al? {group} komt eraan",
+    "subject-post": "Verstuur je cadeau vóór {date}",
+    "preheader": "Pakjesdag is {date}.",
+    "title": "Heb je je cadeau al?",
+    "title-post": "Tijd om je cadeau te versturen",
+    "body": "Pakjesdag voor “{group}” is {date}. Nog aan het zoeken? Het verlanglijstje van je lootje staat vol ideeën.",
+    "body-post": "Je cadeau voor “{group}” moet vóór {postBy} op de post, zodat het er vóór pakjesdag ({date}) is. Het adres staat in Givto.",
+    "button": "Open het verlanglijstje van mijn lootje"
+  },
+  "reminder-gift-day": {
+    "subject": "Het is pakjesdag! {group}",
+    "preheader": "Vandaag is het zover. Veel plezier!",
+    "title": "Het is pakjesdag!",
+    "body": "Vandaag is het zover voor “{group}”. Veel uitpakplezier!",
+    "when": "Hoe laat: {time}",
+    "where": "Waar: {place}",
+    "button": "Open de groep"
+  },
+  "group-deletion": {
+    "subject": "{group} wordt op {date} verwijderd",
+    "preheader": "Er is lang niets gebeurd in deze groep.",
+    "title": "We verwijderen deze groep binnenkort",
+    "body": "Er is al {months, number} maanden niets gebeurd in “{group}”. Om zo weinig mogelijk gegevens te bewaren, verwijderen we de groep en zijn Secret Santa's op {date}.",
+    "keep": "Wil je hem houden? Begin vóór die datum een nieuwe Secret Santa in de groep.",
+    "button": "Open de groep"
+  }
+}

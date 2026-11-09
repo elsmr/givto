@@ -3,7 +3,7 @@ import type { Claim } from '../schema/claim';
 import type { Edition } from '../schema/edition';
 import type { Group } from '../schema/group';
 import type { Invite } from '../schema/invite';
-import type { SentNotification, WishlistNotification } from '../schema/notification';
+import type { EmailSuppression, SentNotification, WishlistNotification } from '../schema/notification';
 import type { Nudge } from '../schema/nudge';
 import type { Question } from '../schema/question';
 import type { RateLimitCounter } from '../schema/rate-limit';
@@ -31,6 +31,7 @@ const collections = (db: Db) => ({
   invites: db.collection<Invite>('invites'),
   sentNotifications: db.collection<SentNotification>('sentNotifications'),
   wishlistNotifications: db.collection<WishlistNotification>('wishlistNotifications'),
+  emailSuppressions: db.collection<EmailSuppression>('emailSuppressions'),
   rateLimits: db.collection<RateLimitCounter>('rateLimits'),
 });
 export type Collections = ReturnType<typeof collections>;

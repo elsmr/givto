@@ -45,7 +45,7 @@ export const groupWithout = (group: Group, userId: string, now: Date): Group | n
 };
 
 /** Deletes a group and everything in its editions. */
-const deleteGroup = async (db: Collections, group: Group) => {
+export const deleteGroup = async (db: Collections, group: Group) => {
   const editionIds = (await db.editions.find({ groupId: group._id }, { projection: { _id: 1 } }).toArray()).map(
     (edition) => edition._id
   );

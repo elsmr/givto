@@ -12,10 +12,16 @@ export interface Mail {
   subject: string;
   /** A React Email template; rendered to HTML and plain text. */
   body: ReactElement;
+  /** One-click unsubscribe endpoint (RFC 8058): sets List-Unsubscribe and List-Unsubscribe-Post. */
+  unsubscribeUrl?: string;
+  /** Mailgun tag for delivery stats, e.g. `psst`. Never ids or names. */
+  tag?: string;
+  /** An .ics part (47), e.g. from lib/calendar's `toIcs`. */
+  calendar?: { filename: string; content: string };
 }
 
 /** Sends through Mailgun's HTTP API (`MAILGUN_API_BASE` is the domain's base URL). */
-export const sendMail = async ({ to, subject, body }: Mail): Promise<void> => {
+export const sendMail = async ({ to, subject, body, unsubscribeUrl, tag, calendar }: Mail): Promise<void> => {
   const [html, text] = await Promise.all([render(body), render(body, { plainText: true })]);
   const form = new FormData();
   form.append('from', FROM);
@@ -23,6 +29,14 @@ export const sendMail = async ({ to, subject, body }: Mail): Promise<void> => {
   form.append('subject', oneLine(subject));
   form.append('html', html);
   form.append('text', text);
+  if (unsubscribeUrl) {
+    form.append('h:List-Unsubscribe', `<${unsubscribeUrl}>`);
+    form.append('h:List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');
+  }
+  if (tag) form.append('o:tag', tag);
+  if (calendar) {
+    form.append('attachment', new Blob([calendar.content], { type: 'text/calendar; charset=utf-8; method=PUBLISH' }), calendar.filename);
+  }
   const response = await fetch(`${requireEnv('MAILGUN_API_BASE')}/messages`, {
     method: 'POST',
     headers: {
