@@ -22,9 +22,6 @@
     "paths": {
       "@givto/frontend/*": [
         "lib/frontend/*"
-      ],
-      "@givto/api/*": [
-        "lib/api/*"
       ]
     },
     "incremental": true
