@@ -1,6 +1,7 @@
 import { getMongoDb } from '../db';
 import { publicProcedure, router } from '../trpc';
 import { accountRouter } from './account';
+import { betweenRouters } from './between';
 import { meRouter } from './me';
 import { wishlistRouters } from './wishlist';
 
@@ -13,6 +14,7 @@ export const appRouter = router({
   me: meRouter,
   account: accountRouter,
   ...wishlistRouters,
+  ...betweenRouters,
 });
 
 export type AppRouter = typeof appRouter;
