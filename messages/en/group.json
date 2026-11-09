@@ -19,7 +19,14 @@
       "both": "In person or by post"
     },
     "budget": "Budget",
-    "no-budget": "No budget"
+    "no-budget": "No budget",
+    "draw": "The draw",
+    "draw-on": "Names are drawn on {date}",
+    "draw-manual": "The organizer draws the names",
+    "drawn": "Names are drawn",
+    "wishlist-by": "Wishlists ready by",
+    "post-by": "Post gifts by",
+    "notes": "Notes"
   },
   "people": {
     "title": "People ({count} in)",
@@ -76,11 +83,10 @@
   "leave": {
     "button": "Leave this Secret Santa",
     "title": "Leave {group}?",
-    "description": "You'll be out of the draw and won't see the group anymore. Your wishlist stays yours.",
+    "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, your Santa gets someone else. Your wishlist stays yours.",
     "cancel": "Stay",
     "confirm": "Leave",
     "errors": {
-      "ALREADY_DRAWN": "The names are already drawn. Ask the organizer to take you out.",
       "INTERNAL": "Something went wrong on our side. Try again in a moment."
     }
   },
@@ -131,5 +137,13 @@
     "too_long": "That's too long.",
     "invalid": "That doesn't look right.",
     "invalid_email": "Enter a full email address."
+  },
+  "settings-link": "Settings",
+  "editions": {
+    "title": "Editions",
+    "current": "Current",
+    "past": "This is {edition}, an earlier edition.",
+    "go-current": "Go to the current edition",
+    "not-found": "This edition doesn't exist."
   }
 }

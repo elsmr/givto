@@ -7,7 +7,7 @@ import { newId } from '../db';
 import { requireEnv } from '../env';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
-import { addToOpenEdition, hashToken, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, hashToken, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
 import { sendMail } from '../mail';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
@@ -105,7 +105,7 @@ export const inviteRouter = router({
           },
         }
       );
-      await addToOpenEdition(ctx.db, group._id, invite.memberId);
+      await addToCurrentEdition(ctx.db, group._id, invite.memberId);
       const name = group.members.find((m) => m.id === invite.memberId)?.name;
       if (name) await nameUserIfUnnamed(ctx.db, ctx.user.id, name);
     }

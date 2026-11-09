@@ -1,4 +1,6 @@
 import { EditionBetween } from '@/components/between/edition-between';
+import { AddToCalendar } from '@/components/calendar/add-to-calendar';
+import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader } from '@/components/ui/loader';
@@ -8,27 +10,34 @@ import { useTranslations } from 'next-intl';
 import { appErrorCode } from './app-error-code';
 import { DrawSlot } from './draw-slot';
 import { EditionSummary } from './edition-summary';
+import { EditionsList } from './editions-list';
 import { GroupHeader } from './group-header';
 import { GroupNotFound } from './group-not-found';
 import { KeepApartSection } from './keep-apart-section';
 import { LeaveGroup } from './leave-group';
 import { PendingRequests } from './pending-requests';
+import { PastEditionNotice } from './past-edition-notice';
 import { PeopleList } from './people-list';
 import { ShareSection } from './share-section';
 import { useRequireSession } from './use-require-session';
 
 const beforeDraw = new Set(['draft', 'open']);
 
-/** /g/[slug]: one page with sections for the current edition (24). Members only. */
-export const GroupHome = ({ slug }: { slug: string }) => {
+/**
+ * /g/[slug]: one page with sections for the current edition (24); /g/[slug]/[edition] shows
+ * an earlier one with the same sections, read-only for the organizer tools. Members only.
+ */
+export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber?: number }) => {
   const t = useTranslations('group');
   const trpc = useTRPC();
   const user = useRequireSession();
-  const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug }), enabled: !!user });
+  const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }), enabled: !!user });
 
   if (!user || group.isPending) return <Loader />;
   if (group.error) {
-    if (appErrorCode(group.error) === 'GROUP_NOT_FOUND') return <GroupNotFound />;
+    const code = appErrorCode(group.error);
+    if (code === 'GROUP_NOT_FOUND') return <GroupNotFound />;
+    if (code === 'EDITION_NOT_FOUND') return <PastEditionNotice slug={slug} />;
     return (
       <Alert variant="danger">
         <AlertDescription>{t('load-failed')}</AlertDescription>
@@ -39,17 +48,26 @@ export const GroupHome = ({ slug }: { slug: string }) => {
   const { data } = group;
   const { edition, organizer } = data;
   const open = edition && beforeDraw.has(edition.status);
+  const current = !edition || edition.isCurrent;
+  const manage = organizer && current;
   return (
     <div className="flex flex-col gap-8">
       <GroupHeader group={data} />
-      {organizer && <PendingRequests group={data} />}
-      {edition && <EditionSummary edition={edition} />}
-      {organizer && open && <ShareSection group={data} />}
-      {edition && <DrawSlot groupSlug={slug} editionNumber={edition.number} />}
+      {edition && !current && <PastEditionNotice slug={slug} title={edition.title} />}
+      {manage && <PendingRequests group={data} />}
+      {edition && (
+        <EditionSummary edition={edition}>
+          {current && <AddToCalendar groupSlug={slug} groupName={data.name} edition={edition} />}
+        </EditionSummary>
+      )}
+      {manage && open && <ShareSection group={data} />}
+      {edition && <DrawSlot group={data} edition={edition} />}
       {edition && <EditionWishlists groupSlug={slug} editionNumber={edition.number} />}
       {edition && <EditionBetween groupSlug={slug} editionNumber={edition.number} />}
       <PeopleList group={data} />
-      {organizer && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
+      {manage && edition && open && <KeepApartSection group={data} edition={edition} organizer={organizer} />}
+      {manage && edition && !open && <NextEditionCard groupSlug={slug} edition={edition} />}
+      {edition && <EditionsList group={data} shownNumber={edition.number} />}
       {!data.me.isOrganizer && <LeaveGroup slug={slug} groupName={data.name} />}
     </div>
   );

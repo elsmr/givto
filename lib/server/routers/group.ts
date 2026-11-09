@@ -29,13 +29,13 @@ const KeepApartInput = v.object({
   pairs: v.pipe(v.array(v.tuple([Id, Id])), v.maxLength(MAX_MEMBERS * MAX_MEMBERS)),
 });
 
-const compactGiftDay = ({ date, time, place }: GiftDay): GiftDay => ({
+export const compactGiftDay = ({ date, time, place }: GiftDay): GiftDay => ({
   date,
   ...(time && { time }),
   ...(place && { place }),
 });
 
-const compactPrice = ({ currency, amount, maxAmount }: Price): Price => ({
+export const compactPrice = ({ currency, amount, maxAmount }: Price): Price => ({
   currency,
   amount,
   ...(maxAmount !== undefined && { maxAmount }),
@@ -101,10 +101,18 @@ export const groupRouter = router({
     return { slug: group.slug, joinToken: group.joinLink!.token };
   }),
 
-  /** Group home: current edition, people (emails for the organizer only), organizer tools. */
-  get: memberProcedure.query(async ({ ctx }) =>
-    groupView(ctx.db, ctx.group, ctx.member, await currentEdition(ctx.db, ctx.group._id))
-  ),
+  /** Group home: the current edition (or `editionNumber`), people (emails for the organizer only), organizer tools. */
+  get: memberProcedure
+    .input(v.object({ editionNumber: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))) }))
+    .query(async ({ ctx, input }) => {
+      const editions = await ctx.db.editions
+        .find({ groupId: ctx.group._id }, { projection: { number: 1, title: 1, status: 1 }, sort: { number: -1 } })
+        .toArray();
+      const number = input.editionNumber ?? editions[0]?.number;
+      const edition = number === undefined ? null : await ctx.db.editions.findOne({ groupId: ctx.group._id, number });
+      if (input.editionNumber !== undefined && !edition) throw new AppError('EDITION_NOT_FOUND');
+      return groupView(ctx.db, ctx.group, ctx.member, edition, editions);
+    }),
 
   /** Households + keep-apart pairs (26). Before the draw; refuses sets that make the draw impossible. */
   setKeepApart: organizerProcedure.input(KeepApartInput).mutation(async ({ ctx, input }) => {

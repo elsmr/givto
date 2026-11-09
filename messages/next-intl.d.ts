@@ -2,6 +2,8 @@ import type account from './en/account.json';
 import type auth from './en/auth.json';
 import type between from './en/between.json';
 import type dashboard from './en/dashboard.json';
+import type draw from './en/draw.json';
+import type settings from './en/settings.json';
 import type create from './en/create.json';
 import type errors from './en/errors.json';
 import type home from './en/home.json';
@@ -21,6 +23,8 @@ declare module 'next-intl' {
       auth: typeof auth;
       between: typeof between;
       dashboard: typeof dashboard;
+      draw: typeof draw;
+      settings: typeof settings;
       create: typeof create;
       errors: typeof errors;
       home: typeof home;

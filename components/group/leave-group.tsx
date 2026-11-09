@@ -13,15 +13,13 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
-import { appErrorCode } from './app-error-code';
 
-/** Members can leave before the draw (48); wishes stay theirs. */
+/** Members can leave, also after the draw (48: the draw is patched); wishes stay theirs. */
 export const LeaveGroup = ({ slug, groupName }: { slug: string; groupName: string }) => {
   const t = useTranslations('group.leave');
   const trpc = useTRPC();
   const router = useRouter();
   const leave = useMutation(trpc.membership.leave.mutationOptions({ onSuccess: () => void router.push('/groups') }));
-  const errorCode = leave.error && appErrorCode(leave.error);
 
   return (
     <Dialog>
@@ -31,9 +29,9 @@ export const LeaveGroup = ({ slug, groupName }: { slug: string; groupName: strin
           <DialogTitle>{t('title', { group: groupName })}</DialogTitle>
           <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
-        {errorCode && (
+        {leave.error && (
           <p role="alert" className="text-danger">
-            {t(errorCode === 'ALREADY_DRAWN' ? 'errors.ALREADY_DRAWN' : 'errors.INTERNAL')}
+            {t('errors.INTERNAL')}
           </p>
         )}
         <DialogFooter>

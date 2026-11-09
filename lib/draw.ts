@@ -18,7 +18,8 @@ type RandomInt = (max: number) => number;
 const MAX_SHUFFLES = 1000;
 const SWAPS_PER_PERSON = 100;
 
-const allowedBy = (exclusions: Exclusion[]) => {
+/** `allowed(giver, receiver)`: not themselves and not excluded. */
+export const allowedBy = (exclusions: Exclusion[]) => {
   const excluded = new Set(exclusions.map(({ from, to }) => JSON.stringify([from, to])));
   return (giver: string, receiver: string) =>
     giver !== receiver && !excluded.has(JSON.stringify([giver, receiver]));

@@ -19,7 +19,14 @@
       "both": "Persoonlijk of per post"
     },
     "budget": "Budget",
-    "no-budget": "Geen budget"
+    "no-budget": "Geen budget",
+    "draw": "Lootjes trekken",
+    "draw-on": "De lootjes worden getrokken op {date}",
+    "draw-manual": "De organisator trekt de lootjes",
+    "drawn": "De lootjes zijn getrokken",
+    "wishlist-by": "Verlanglijstjes klaar op",
+    "post-by": "Cadeaus op de post op",
+    "notes": "Notities"
   },
   "people": {
     "title": "Deelnemers ({count} doen mee)",
@@ -76,11 +83,10 @@
   "leave": {
     "button": "Stoppen met deze Secret Santa",
     "title": "Stoppen met {group}?",
-    "description": "Je doet niet meer mee met lootjes trekken en ziet de groep niet meer. Je verlanglijstje blijft van jou.",
+    "description": "Je doet niet meer mee aan de trekking en ziet de groep niet meer. Zijn de lootjes al getrokken, dan krijgt je Santa iemand anders. Je verlanglijstje blijft van jou.",
     "cancel": "Blijven",
     "confirm": "Stoppen",
     "errors": {
-      "ALREADY_DRAWN": "De lootjes zijn al getrokken. Vraag de organisator om je eruit te halen.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     }
   },
@@ -131,5 +137,13 @@
     "too_long": "Dat is te lang.",
     "invalid": "Dat klopt niet helemaal.",
     "invalid_email": "Vul een volledig e-mailadres in."
+  },
+  "settings-link": "Instellingen",
+  "editions": {
+    "title": "Edities",
+    "current": "Huidige",
+    "past": "Dit is {edition}, een eerdere editie.",
+    "go-current": "Naar de huidige editie",
+    "not-found": "Deze editie bestaat niet."
   }
 }

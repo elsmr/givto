@@ -1,0 +1,61 @@
+{
+  "before": {
+    "title": "The draw",
+    "who": "{count, plural, =0 {Nobody's in yet.} one {# person is in:} other {# people are in:}}",
+    "scheduled": "Names will be drawn on {date}.",
+    "manual": "The organizer draws the names when everyone's in.",
+    "too-few": "The draw needs at least {min} people. Share the join link to get more people in.",
+    "change": "Change who's in or schedule the draw",
+    "draw": "Draw names",
+    "confirm-title": "Draw names now?",
+    "confirm-description": "Everyone gets their giftee right away. People who join later are slotted in.",
+    "confirm": "Draw names",
+    "cancel": "Not yet",
+    "drawn": "Names drawn!"
+  },
+  "draft": {
+    "title": "Nothing's sent yet",
+    "description": "This edition is a draft. Check who's in and the dates, then open it so people can join and names can be drawn.",
+    "member": "The organizer is getting this edition ready.",
+    "settings": "Who's in and dates",
+    "open": "Open this edition",
+    "opened": "Edition opened"
+  },
+  "reveal": {
+    "title": "Your giftee",
+    "tap": "Tap to see who you're buying for",
+    "hint": "Check nobody's looking over your shoulder.",
+    "buying-for": "You're buying for",
+    "hide": "Hide",
+    "changed": "Your giftee changed on {date}: someone joined or left.",
+    "not-in": "You're not in this draw.",
+    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you."
+  },
+  "next": {
+    "title": "Same again next year?",
+    "description": "Start the {year} edition with everyone from this one. Nothing gets sent until you open it.",
+    "start": "Start the {year} edition",
+    "errors": {
+      "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn yet.",
+      "INTERNAL": "Something went wrong on our side. Try again in a moment."
+    }
+  },
+  "errors": {
+    "TOO_FEW_PEOPLE": "The draw needs at least {min} people.",
+    "DRAW_IMPOSSIBLE": "{count, plural, =0 {{givers} can't give to anyone} other {{givers} can only give to {receivers}}}. Change who's kept apart, then try again.",
+    "AVOID_PREVIOUS": "\"Not the same as last year\" makes a draw impossible with these people. Turn it off in the settings, then try again.",
+    "ALREADY_DRAWN": "The names are already drawn.",
+    "NOT_DRAWN": "There's no draw to redo.",
+    "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  },
+  "calendar": {
+    "button": "Add to calendar",
+    "ics": "Download for Apple or Outlook (.ics)",
+    "google": "Google Calendar: {event}",
+    "outlook": "Outlook.com: {event}",
+    "gift-day": "{group}: gift day",
+    "post-by": "{group}: post your gift",
+    "description": "Your Secret Santa on Givto: {url}"
+  }
+}
