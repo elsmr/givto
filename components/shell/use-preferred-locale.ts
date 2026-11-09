@@ -1,14 +1,7 @@
 import { useCurrentUser } from '@/lib/client/session';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-
-const localeCookie = 'NEXT_LOCALE';
-
-// Next's locale detection on `/` reads this cookie before Accept-Language.
-export const rememberLocale = (locale: string) => {
-  const secure = location.protocol === 'https:' ? '; secure' : '';
-  document.cookie = `${localeCookie}=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax${secure}`;
-};
+import { localeCookie } from './remember-locale';
 
 // Account setting is applied once per page load, so a manual switch sticks for the visit.
 let appliedAccountLocale: string | undefined;

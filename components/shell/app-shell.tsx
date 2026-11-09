@@ -2,7 +2,7 @@ import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { Footer } from './footer';
 import { Header } from './header';
-import { usePreferredLocale } from './locale';
+import { usePreferredLocale } from './use-preferred-locale';
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   const t = useTranslations('shell');
