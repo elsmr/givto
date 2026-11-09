@@ -1,7 +1,6 @@
 import type { Collections } from '../db';
 import { runDeliveries } from './deliveries';
 import { runDueDraws } from './draws';
-import { runGiftDayTransitions } from './giftday';
 import { runRetention } from './retention';
 import { sendReminders } from './reminders';
 import { sendWishlistDigests } from './wishlist-digests';
@@ -16,5 +15,5 @@ export const jobs: Record<string, (db: Collections, now: Date) => Promise<object
   reminders: sendReminders,
   retention: runRetention,
   draws: (_db, now) => runDueDraws(now),
-  giftday: runGiftDayTransitions,
+  giftday: async (db, now) => (await import('./giftday')).runGiftDayTransitions(db, now),
 };
