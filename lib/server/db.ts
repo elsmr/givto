@@ -36,9 +36,18 @@ const collections = (db: Db) => ({
 export type Collections = ReturnType<typeof collections>;
 
 // createIndex is a no-op when the same index exists, so this runs on every cold start.
-// Better Auth creates its own indexes (users.email, sessions.token, …); we only add TTLs there.
+// Better Auth's Mongo adapter doesn't create indexes for its own collections, so we do.
 const createIndexes = async (db: Db, c: Collections) => {
   await Promise.all([
+    c.users.createIndex({ email: 1 }, { unique: true }),
+    db.collection('sessions').createIndex({ token: 1 }, { unique: true }),
+    db.collection('sessions').createIndex({ userId: 1 }),
+    db.collection('sessions').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+    db.collection('accounts').createIndex({ userId: 1 }),
+    db.collection('verifications').createIndex({ identifier: 1 }),
+    db.collection('verifications').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
+    db.collection('passkeys').createIndex({ credentialID: 1 }, { unique: true }),
+    db.collection('passkeys').createIndex({ userId: 1 }),
     c.groups.createIndex({ slug: 1 }, { unique: true }),
     c.groups.createIndex({ 'members.userId': 1 }),
     c.groups.createIndex(
@@ -65,8 +74,6 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.wishlistNotifications.createIndex({ editionId: 1, gifteeMemberId: 1 }, { unique: true }),
     c.wishlistNotifications.createIndex({ notifyAfter: 1 }, { sparse: true }),
     c.rateLimits.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
-    db.collection('sessions').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
-    db.collection('verifications').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
   ]);
 };
 
