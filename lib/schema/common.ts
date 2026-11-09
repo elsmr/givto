@@ -15,8 +15,10 @@ export const Email = v.pipe(v.string(), v.trim(), v.toLowerCase(), v.maxLength(2
 
 const CONTROL_CHARS = /[\u0000-\u001f\u007f]/;
 const CONTROL_CHARS_EXCEPT_NEWLINE = /[\u0000-\u0009\u000b\u000c\u000e-\u001f\u007f]/;
-// Mail clients auto-link anything that looks like a domain, so "evil.test" counts as a URL too.
-const URL_LIKE = /:\/\/|www\.|[a-z0-9-]\.[a-z]{2,}\b/i;
+// Mail clients auto-link domains with a known TLD, so "evil.com" counts as a URL too. Only
+// common and two-letter (country) TLDs: "Ann.Smith" is a name, not a link.
+const URL_LIKE =
+  /:\/\/|www\.|[a-z0-9-]\.(?:[a-z]{2}|com|net|org|info|biz|app|dev|xyz|top|site|online|shop|store|link|click|live|life|club|email|page|cloud|tech|world|today)\b/i;
 
 /** One line of plain text: trimmed, no line breaks or control characters. */
 export const SingleLine = (max: number) =>

@@ -12,7 +12,7 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",
-    "test": "node tests/draw.check.mjs",
+    "test": "node tests/draw.check.mjs && node tests/names.check.mjs && node tests/exclusions.check.mjs",
     "test:smoke": "node tests/smoke.mjs"
   },
   "author": "",
