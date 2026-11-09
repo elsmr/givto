@@ -216,7 +216,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     item: WishListItemInput
   ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOneAndUpdate(
-      { slug },
+      { slug, users: new ObjectId(userId) },
       { $push: { [`wishlists.${userId}`]: { ...item, id: nanoid() } } },
       { returnDocument: 'after' }
     );
@@ -229,7 +229,7 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     itemId: string
   ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOneAndUpdate(
-      { slug },
+      { slug, users: new ObjectId(userId) },
       { $pull: { [`wishlists.${userId}`]: { id: itemId } } },
       { returnDocument: 'after' }
     );
@@ -243,10 +243,13 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     update: Partial<WishListItem>
   ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOne(
-      { slug },
+      { slug, users: new ObjectId(userId) },
       { projection: { [`wishlists.${userId}`]: 1 } }
     );
-    const wishlist = group?.wishlists?.[userId] ?? [];
+    if (!group) {
+      return null;
+    }
+    const wishlist = group.wishlists?.[userId] ?? [];
     const srcItem = wishlist.find((item) => item.id === itemId)!;
     const newItem: WishListItem = { ...srcItem, ...update };
     const newWishlist = wishlist.map((item) =>
@@ -270,10 +273,13 @@ export class MongoGroups extends MongoDataSource<MongoGroup> {
     destinationIndex: number
   ): Promise<WishListItem[] | null> => {
     const group = await this.collection.findOne(
-      { slug },
+      { slug, users: new ObjectId(userId) },
       { projection: { [`wishlists.${userId}`]: 1 } }
     );
-    const wishlist = group?.wishlists?.[userId];
+    if (!group) {
+      return null;
+    }
+    const wishlist = group.wishlists?.[userId];
     const srcIndex = wishlist?.findIndex((item) => item.id === itemId)!;
     const [srcItem] = wishlist?.splice(srcIndex, 1)!;
     wishlist?.splice(destinationIndex, 0, srcItem);
