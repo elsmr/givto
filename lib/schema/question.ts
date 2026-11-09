@@ -19,7 +19,7 @@ const Delivery = {
  */
 export const Question = v.object({
   _id: Id,
-  groupId: Id,
+  editionId: Id,
   gifteeMemberId: Id,
   askerMemberId: Id,
   ...QuestionFields.entries,

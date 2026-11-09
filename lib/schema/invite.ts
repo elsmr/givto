@@ -3,7 +3,8 @@ import { Email, Id } from './common';
 
 /**
  * `invites` collection: email invites (secondary to the join link, 45). Single-use token,
- * bound to the invited email, 7 days; only its SHA-256 hash is stored. Expires via TTL.
+ * bound to the invited email, 7 days; only its SHA-256 hash is stored. Accepting joins the
+ * group and its open edition. Expires via TTL.
  */
 export const Invite = v.object({
   _id: Id,

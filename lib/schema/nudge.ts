@@ -11,7 +11,7 @@ export type NudgeKind = v.InferOutput<typeof NudgeKind>;
  */
 export const Nudge = v.object({
   _id: Id,
-  groupId: Id,
+  editionId: Id,
   santaMemberId: Id,
   gifteeMemberId: Id,
   kind: NudgeKind,

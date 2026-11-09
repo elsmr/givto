@@ -9,12 +9,12 @@ export const TipFields = v.object({
 export type TipFields = v.InferOutput<typeof TipFields>;
 
 /**
- * `tips` collection (42): a tip about a member for that member's Santa. Readable only by
+ * `tips` collection (42): a tip about a participant for their Santa in that edition. Readable only by
  * the subject's current Santa and the author; never by the subject or the organizer.
  */
 export const Tip = v.object({
   _id: Id,
-  groupId: Id,
+  editionId: Id,
   aboutMemberId: Id,
   authorMemberId: Id,
   ...TipFields.entries,
