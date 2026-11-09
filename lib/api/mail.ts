@@ -1,5 +1,3 @@
-import FormData from 'form-data';
-
 interface Contact {
   name: string;
   email: string;
@@ -45,15 +43,12 @@ export class Mailer {
       }
     }
 
-    const headers: Record<string, string> = {
-      'Authorization': `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`,
-      ...formData.getHeaders(),
-    };
-
     return fetch(`${this.options.baseUrl}/messages`, {
-      headers,
+      headers: {
+        Authorization: `Basic ${Buffer.from(`api:${this.options.apiKey}`).toString('base64')}`,
+      },
       method: 'POST',
-      body: formData as any
+      body: formData
     }).then(res => res.json());
   }
 }

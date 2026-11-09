@@ -22,7 +22,6 @@
     "@sentry/node": "^10.24.0",
     "@styled-system/css": "^5.1.5",
     "@use-it/event-listener": "^0.1.7",
-    "form-data": "^4.0.4",
     "graphql": "^16.12.0",
     "graphql-hooks": "^8.2.0",
     "graphql-tag": "^2.12.6",
