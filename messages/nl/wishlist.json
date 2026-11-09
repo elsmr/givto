@@ -55,6 +55,7 @@
     "title": "Mijn verlanglijstje in deze groep",
     "intro": "Alles op je verlanglijstje staat hier, tenzij je het voor deze groep verbergt.",
     "empty": "Je verlanglijstje is nog leeg.",
+    "show": "Tonen in deze groep",
     "shown": "“{title}” tonen in deze groep",
     "hidden-badge": "Hier verborgen",
     "edit": "Mijn verlanglijstje bewerken"

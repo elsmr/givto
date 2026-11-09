@@ -55,6 +55,7 @@
     "title": "My wishlist in this group",
     "intro": "Everything on your wishlist shows here, unless you hide it from this group.",
     "empty": "Your wishlist is empty.",
+    "show": "Show in this group",
     "shown": "Show “{title}” in this group",
     "hidden-badge": "Hidden here",
     "edit": "Edit my wishlist"

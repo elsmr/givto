@@ -12,7 +12,7 @@ interface EditionWishlistsProps {
  * the `wishlist` messages namespace.
  */
 export const EditionWishlists = ({ groupSlug, editionNumber }: EditionWishlistsProps) => (
-  <div className="grid gap-8 lg:grid-cols-2">
+  <div className="grid gap-8 lg:grid-cols-2 [&>*]:min-w-0">
     <GifteeWishlist groupSlug={groupSlug} editionNumber={editionNumber} />
     <GroupWishlist groupSlug={groupSlug} />
   </div>

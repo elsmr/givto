@@ -12,7 +12,7 @@ export const WishSummary = ({ wish, inBudget }: { wish: WishView; inBudget?: boo
   const details = [wish.variant, wish.price && formatPrice(wish.price, locale)].filter(Boolean).join(' · ');
 
   return (
-    <div className="flex min-w-0 flex-1 gap-3">
+    <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row">
       {wish.imageId && <WishImage imageId={wish.imageId} alt={t('form.image-alt', { title: wish.title })} />}
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <h3 className="font-sans text-lg leading-snug font-bold break-words">{wish.title}</h3>
@@ -24,10 +24,10 @@ export const WishSummary = ({ wish, inBudget }: { wish: WishView; inBudget?: boo
             href={wish.url}
             target="_blank"
             rel="noopener noreferrer nofollow ugc"
-            className="inline-flex w-fit items-center gap-1 text-sm font-semibold"
+            className="inline-flex max-w-full items-center gap-1 text-sm font-semibold"
           >
-            {t('item.open-link')}
-            <span className="max-w-48 truncate font-normal text-muted">{new URL(wish.url).hostname}</span>
+            <span className="whitespace-nowrap">{t('item.open-link')}</span>
+            <span className="min-w-0 truncate font-normal text-muted">{new URL(wish.url).hostname}</span>
             <ExternalLink aria-hidden="true" className="size-4" />
           </a>
         )}

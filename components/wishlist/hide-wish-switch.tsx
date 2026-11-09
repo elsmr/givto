@@ -26,10 +26,11 @@ export const HideWishSwitch = ({ groupSlug, wish }: { groupSlug: string; wish: W
       <Switch
         id={id}
         size="sm"
+        aria-label={t('shown', { title: wish.title })}
         checked={!wish.hidden}
         onCheckedChange={(shown) => setHidden.mutate({ groupSlug, wishId: wish.id, hidden: !shown })}
       />
-      <FieldLabel htmlFor={id}>{t('shown', { title: wish.title })}</FieldLabel>
+      <FieldLabel htmlFor={id}>{t('show')}</FieldLabel>
     </Field>
   );
 };
