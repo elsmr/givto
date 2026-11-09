@@ -12,7 +12,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
     <div className="flex min-h-dvh flex-col">
       <a
         href="#main"
-        className="sr-only bg-surface px-4 py-3 font-semibold text-ink bordered focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50"
+        className="sr-only bg-surface font-semibold text-ink bordered focus:not-sr-only focus:px-4 focus:py-3 focus:fixed focus:top-2 focus:left-2 focus:z-50"
       >
         {t('skip-to-content')}
       </a>

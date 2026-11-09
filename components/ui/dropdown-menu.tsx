@@ -172,7 +172,11 @@ function DropdownMenuLinkItem({
   return (
     <MenuPrimitive.LinkItem
       data-slot="dropdown-menu-link-item"
-      className={cn(dropdownMenuItemClassName, 'no-underline', className)}
+      className={cn(
+        dropdownMenuItemClassName,
+        'text-ink no-underline',
+        className,
+      )}
       {...props}
     />
   );

@@ -1,5 +1,4 @@
 import { AccountMenu } from '@/components/shell/account-menu';
-import { MainNav } from '@/components/shell/main-nav';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
@@ -7,8 +6,7 @@ const sampleUser = { name: 'Ann', email: 'ann@example.com' };
 
 export const NavigationSection = () => (
   <StyleguideSection id="navigation" title="Navigation">
-    <StyleguideRow label="Header nav, signed out and signed in">
-      <MainNav user={null} />
+    <StyleguideRow label="Account menu (signed in; the header above shows signed out)">
       <AccountMenu user={sampleUser} />
     </StyleguideRow>
     <StyleguideRow label="Tabs">

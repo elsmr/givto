@@ -35,13 +35,13 @@ export default function GivtoApp({
       messages={pageProps.messages ?? {}}
       timeZone={timeZone}
     >
+      <AppHead />
       <MotionProvider>
         <Providers>
           <Component {...pageProps} />
         </Providers>
       </MotionProvider>
       <Toaster />
-      <AppHead />
     </NextIntlClientProvider>
   );
 }

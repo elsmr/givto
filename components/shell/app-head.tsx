@@ -1,14 +1,10 @@
 import Head from 'next/head';
-import { headingFont } from '../../styles/fonts';
+import { HeadingFont } from './heading-font';
 
-// Global <head> tags, the heading font variable and the JSON-LD for every page.
+// Global <head> tags and JSON-LD; render before the page so page titles win.
 export const AppHead = () => (
   <>
-    <style jsx global>{`
-      :root {
-        --font-heading-family: ${headingFont.style.fontFamily};
-      }
-    `}</style>
+    <HeadingFont />
     <Head>
       <title>Givto - Secret Santa</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
