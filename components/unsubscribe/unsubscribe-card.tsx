@@ -1,5 +1,5 @@
 import { Alert, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -36,9 +36,9 @@ export const UnsubscribeCard = ({ token }: { token: string }) => {
               {t('confirm')}
             </Button>
           )}
-          <Button variant="neutral" nativeButton={false} render={<Link href="/account" />}>
+          <Link href="/account" className={buttonVariants({ variant: 'neutral' })}>
             {t('settings')}
-          </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

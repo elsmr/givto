@@ -1,6 +1,6 @@
 import { GivtoLogo } from '@/components/givto-logo';
 import { AppShell } from '@/components/shell/app-shell';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { useCurrentUser } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
@@ -46,36 +46,20 @@ export const ErrorPage = ({ statusCode }: { statusCode: number }) => {
               <Button onClick={() => router.reload()}>{t('try-again')}</Button>
             )}
             {user ? (
-              <Button
-                variant={isNotFound ? 'default' : 'neutral'}
-                nativeButton={false}
-                render={<Link href="/groups" />}
-              >
-                {t('my-secret-santas')}
-              </Button>
+              <Link href="/groups" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
+              {t('my-secret-santas')}
+            </Link>
             ) : (
-              <Button
-                variant={isNotFound ? 'default' : 'neutral'}
-                nativeButton={false}
-                render={<Link href="/auth/sign-in" />}
-              >
-                {t('sign-in')}
-              </Button>
+              <Link href="/auth/sign-in" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
+              {t('sign-in')}
+            </Link>
             )}
-            <Button
-              variant="neutral"
-              nativeButton={false}
-              render={<Link href="/new" />}
-            >
+            <Link href="/new" className={buttonVariants({ variant: 'neutral' })}>
               {t('start')}
-            </Button>
-            <Button
-              variant="neutral"
-              nativeButton={false}
-              render={<Link href="/" />}
-            >
+            </Link>
+            <Link href="/" className={buttonVariants({ variant: 'neutral' })}>
               {t('home')}
-            </Button>
+            </Link>
           </div>
         </section>
       </div>

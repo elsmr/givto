@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
@@ -35,9 +35,9 @@ export const DraftCard = ({ group, edition }: { group: GroupData; edition: Group
         <CardContent className="flex flex-col gap-4">
           {open.error && <DrawError error={open.error} members={group.members} />}
           <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-            <Button variant="neutral" nativeButton={false} render={<Link href={`/g/${group.slug}/settings`} />}>
+            <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
               {t('settings')}
-            </Button>
+            </Link>
             <Button disabled={open.isPending} onClick={() => open.mutate({ groupSlug: group.slug, editionNumber: edition.number })}>
               {t('open')}
             </Button>

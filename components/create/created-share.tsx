@@ -1,5 +1,5 @@
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -22,9 +22,9 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
       </div>
       <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} />
       <p className="text-muted">{t('later')}</p>
-      <Button size="lg" variant="neutral" className="self-start" nativeButton={false} render={<Link href={`/g/${slug}`} />}>
+      <Link href={`/g/${slug}`} className={buttonVariants({ size: 'lg', variant: 'neutral', className: 'self-start' })}>
         {t('go-to-group')}
-      </Button>
+      </Link>
     </div>
   );
 };

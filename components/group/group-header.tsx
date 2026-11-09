@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Settings } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -21,10 +21,10 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="min-w-0 text-4xl font-extrabold break-words sm:text-5xl">{group.name}</h1>
         {group.me.isOrganizer && (
-          <Button variant="neutral" nativeButton={false} render={<Link href={`/g/${group.slug}/settings`} />}>
+          <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
             <Settings aria-hidden="true" />
             {t('settings-link')}
-          </Button>
+          </Link>
         )}
       </div>
     </div>

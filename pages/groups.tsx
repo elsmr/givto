@@ -3,7 +3,7 @@ import { EmptyState } from '@/components/dashboard/empty-state';
 import { GroupList } from '@/components/dashboard/group-list';
 import { AppShell } from '@/components/shell/app-shell';
 import { Alert, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
@@ -29,10 +29,10 @@ export default function GroupsPage() {
         <div className="flex flex-col gap-4 xs:flex-row xs:items-center xs:justify-between">
           <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
           {groups.data && groups.data.length > 0 && (
-            <Button nativeButton={false} render={<Link href="/new" />}>
+            <Link href="/new" className={buttonVariants()}>
               <Plus aria-hidden="true" />
               {t('start')}
-            </Button>
+            </Link>
           )}
         </div>
         {groups.isError ? (

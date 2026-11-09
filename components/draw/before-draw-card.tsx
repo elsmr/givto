@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -37,9 +37,9 @@ export const BeforeDrawCard = ({ group, edition }: { group: GroupData; edition: 
         {group.me.isOrganizer && (
           <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
             <DrawNamesButton groupSlug={group.slug} editionNumber={edition.number} members={group.members} />
-            <Button variant="neutral" nativeButton={false} render={<Link href={`/g/${group.slug}/settings`} />}>
+            <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
               {t('change')}
-            </Button>
+            </Link>
           </div>
         )}
       </CardContent>

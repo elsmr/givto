@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
@@ -43,9 +43,9 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             ))}
           </ul>
         )}
-        <Button variant="neutral" className="w-fit" nativeButton={false} render={<Link href="/wishlist" />}>
+        <Link href="/wishlist" className={buttonVariants({ variant: 'neutral', className: 'w-fit' })}>
           {t('edit')}
-        </Button>
+        </Link>
       </CardContent>
     </Card>
   );
