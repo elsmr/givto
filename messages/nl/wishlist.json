@@ -1,0 +1,81 @@
+{
+  "page-title": "Mijn verlanglijstje",
+  "intro": "Eén lijstje voor al je Secret Santa's. Je Santa ziet het, en jij ziet nooit wat er geclaimd is.",
+  "loading": "Je verlanglijstje laden…",
+  "empty": "Je verlanglijstje is nog leeg. Zet er een paar ideeën op, dan weet je Santa waar te beginnen.",
+  "add-title": "Wens toevoegen",
+  "import": {
+    "label": "Heb je een link? Plak hem en wij vullen de rest in",
+    "placeholder": "https://…",
+    "submit": "Invullen via link",
+    "busy": "Pagina lezen…",
+    "done": "We hebben ingevuld wat we vonden. Kijk het na voor je opslaat.",
+    "failed": "We konden die pagina niet lezen. Vul de titel zelf in, de link hebben we bewaard.",
+    "blocked": "Dat adres kan niet. Probeer een link naar een winkel of webpagina."
+  },
+  "form": {
+    "title": "Wens",
+    "title-placeholder": "bijv. wollen sokken, maat 42",
+    "more": "Meer details",
+    "less": "Minder details",
+    "kind": "Wat voor wens?",
+    "kind-wish": "Iets concreets",
+    "kind-surpriseMe": "Verras me",
+    "kind-donation": "Liever een donatie",
+    "kind-surpriseMe-hint": "Vertel wat je leuk vindt; je Santa kiest iets uit.",
+    "kind-donation-hint": "Geen cadeau, maar een gift aan een goed doel. Voeg er een link naar toe.",
+    "description": "Toelichting",
+    "url": "Link",
+    "price-from": "Prijs",
+    "price-to": "Tot (optioneel)",
+    "currency": "Valuta",
+    "variant": "Maat, kleur of uitvoering",
+    "really-want": "Dit wil ik heel graag",
+    "image-alt": "Afbeelding van {title}",
+    "remove-image": "Afbeelding verwijderen",
+    "add": "Wens toevoegen",
+    "save": "Opslaan",
+    "cancel": "Annuleren"
+  },
+  "item": {
+    "edit": "“{title}” bewerken",
+    "delete": "“{title}” verwijderen",
+    "deleted": "“{title}” verwijderd",
+    "drag": "Sleep om “{title}” te verplaatsen",
+    "move-up": "“{title}” omhoog",
+    "move-down": "“{title}” omlaag",
+    "moved": "“{title}” staat nu op plek {position} van {count}.",
+    "open-link": "Link openen",
+    "really-want": "Heel graag",
+    "surprise-me": "Verras me",
+    "donation": "Liever een donatie",
+    "in-budget": "Binnen budget"
+  },
+  "group": {
+    "title": "Mijn verlanglijstje in deze groep",
+    "intro": "Alles op je verlanglijstje staat hier, tenzij je het voor deze groep verbergt.",
+    "empty": "Je verlanglijstje is nog leeg.",
+    "shown": "“{title}” tonen in deze groep",
+    "hidden-badge": "Hier verborgen",
+    "edit": "Mijn verlanglijstje bewerken"
+  },
+  "giftee": {
+    "title": "Verlanglijstje van {name}",
+    "intro": "Jij bent de Santa van {name}. Claim een wens, dan koopt niemand anders hem ook.",
+    "empty": "{name} heeft nog geen wensen.",
+    "claim": "Claimen",
+    "claim-label": "“{title}” claimen",
+    "mine": "Geclaimd! Door jou",
+    "unclaim": "Ongedaan maken",
+    "unclaim-label": "Claim op “{title}” ongedaan maken",
+    "taken": "Al geclaimd",
+    "taken-hint": "Iemand anders koopt deze al."
+  },
+  "errors": {
+    "generic": "Er ging iets mis. Probeer het opnieuw.",
+    "invalid": "Kijk de velden na en probeer het opnieuw.",
+    "taken": "Iemand heeft deze net geclaimd.",
+    "full": "Je verlanglijstje is vol (200 wensen).",
+    "rate-limited": "Dat is veel tegelijk. Probeer het over een paar minuten opnieuw."
+  }
+}

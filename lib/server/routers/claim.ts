@@ -25,7 +25,7 @@ export const claimRouter = router({
     const wishes = await visibleWishes(ctx.db, giftee);
     const claims = await ctx.db.claims.find({ wishId: { $in: wishes.map((wish) => wish._id) } }).toArray();
     const claimByWish = new Map(claims.map((claim) => [claim.wishId, claim]));
-    const claimState = (wishId: string) => {
+    const claimState = (wishId: string): 'mine' | 'taken' | null => {
       const claim = claimByWish.get(wishId);
       if (!claim) return null;
       return claim.editionId === ctx.edition._id && claim.santaMemberId === ctx.member.id ? 'mine' : 'taken';

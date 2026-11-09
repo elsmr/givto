@@ -1,0 +1,24 @@
+import { AppShell } from '@/components/shell/app-shell';
+import { MyWishlist } from '@/components/wishlist/my-wishlist';
+import { loadMessages } from '@/messages/load';
+import type { GetStaticProps } from 'next';
+import { useTranslations } from 'next-intl';
+import Head from 'next/head';
+
+// Signed in only: a static shell, data loads on the client (37).
+export default function WishlistPage() {
+  const t = useTranslations('wishlist');
+  return (
+    <AppShell>
+      <Head>
+        <title>{`${t('page-title')} · Givto`}</title>
+        <meta name="robots" content="noindex" />
+      </Head>
+      <MyWishlist />
+    </AppShell>
+  );
+}
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { messages: await loadMessages(locale, ['wishlist']) },
+});

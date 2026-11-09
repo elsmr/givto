@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import { HttpUrl } from '../../schema/common';
 import { AppError } from '../errors';
+import { cleanProductUrl } from '../import/clean-url';
 import { importProduct } from '../import/import-product';
 import { ImportError } from '../import/safe-fetch';
 import { enforceRateLimit } from '../rate-limit';
@@ -17,7 +18,8 @@ export const importRouter = router({
     } catch (error) {
       if (!(error instanceof ImportError)) throw error;
       if (error.reason === 'blocked') throw new AppError('IMPORT_BLOCKED');
-      throw new AppError('IMPORT_FAILED', { details: { reason: error.reason } });
+      // The link is still useful: the person types the title (39).
+      throw new AppError('IMPORT_FAILED', { details: { reason: error.reason, url: cleanProductUrl(input.url) } });
     }
   }),
 });
