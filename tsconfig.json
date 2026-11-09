@@ -25,6 +25,9 @@
       ],
       "@givto/api/*": [
         "lib/api/*"
+      ],
+      "@/*": [
+        "./*"
       ]
     },
     "incremental": true
