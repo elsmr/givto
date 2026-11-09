@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { AppError } from '../errors';
+import { notifyJoined } from '../mail/join-notices';
 import { addToOpenEdition, currentEdition } from '../membership';
 import { memberProcedure, organizerProcedure, router } from '../trpc';
 
@@ -49,6 +50,7 @@ export const membershipRouter = router({
     );
     if (result.matchedCount === 0) throw new AppError('NOT_FOUND');
     await addToOpenEdition(ctx.db, ctx.group._id, input.memberId);
+    await notifyJoined(ctx.db, ctx.group._id, input.memberId);
     return { ok: true };
   }),
 

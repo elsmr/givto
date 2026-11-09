@@ -1,11 +1,10 @@
 /** @jsxImportSource react */
 import type { Locale } from '../../lib/schema/common';
+import type { UnsubscribeCategory } from './categories';
 import { siteUrl } from './site';
 import { color, font } from './tokens';
 import { emailTranslator } from './translator';
 
-export const unsubscribeCategories = ['reminders', 'wishlistUpdates', 'santaMessages'] as const;
-export type UnsubscribeCategory = (typeof unsubscribeCategories)[number];
 
 export interface FooterProps {
   locale: Locale;

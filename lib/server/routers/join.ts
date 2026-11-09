@@ -6,6 +6,7 @@ import { newId } from '../db';
 import { AppError } from '../errors';
 import { findGroupByJoinLink, joinLinkPreview } from '../join-preview';
 import { addToOpenEdition, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
+import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
 
@@ -97,6 +98,7 @@ export const joinRouter = router({
       const fresh = await ctx.db.groups.findOne({ _id: group._id });
       const member = fresh?.members.find((m) => m.userId === ctx.user.id);
       if (member && status === 'joined') await addToOpenEdition(ctx.db, group._id, member.id);
+      if (member && status === 'requested') await notifyJoinRequest(ctx.db, group._id, member.id);
       await nameUserIfUnnamed(ctx.db, ctx.user.id, input.name);
       return { slug: group.slug, status };
     }),
