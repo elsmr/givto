@@ -16,8 +16,12 @@ if (!suite) {
   process.exit(2);
 }
 
+// smoke-s7 asserts job counts across the whole database, so it runs first, on the fresh one tests/env.sh starts.
+const runsFirst = (file) => (file === 'smoke-s7.mjs' ? 0 : 1);
 const testsDir = new URL('.', import.meta.url);
-const files = readdirSync(testsDir).filter(suite).sort();
+const files = readdirSync(testsDir)
+  .filter(suite)
+  .sort((a, b) => runsFirst(a) - runsFirst(b) || a.localeCompare(b));
 const failed = files.filter((file) => {
   console.log(`\n▶ tests/${file}`);
   const { status } = spawnSync(process.execPath, ['--import', './tests/ts-hooks.mjs', `tests/${file}`], {
