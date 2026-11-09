@@ -18,6 +18,7 @@
     "test:smoke:s2": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
     "test:smoke:s3": "node tests/smoke-s3.mjs",
     "test:smoke:s5": "node tests/smoke-s5.mjs",
+    "test:smoke:s7": "node tests/smoke-s7.mjs",
     "test:smoke:s8": "node tests/smoke-s8.mjs"
   },
   "author": "",
