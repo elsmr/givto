@@ -7,6 +7,7 @@ import type privacy from './en/privacy.json';
 import type seo from './en/seo.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
+import type wishlist from './en/wishlist.json';
 
 // One entry per namespace file in messages/en/; nl must have the same keys.
 declare module 'next-intl' {
@@ -21,6 +22,7 @@ declare module 'next-intl' {
       seo: typeof seo;
       shell: typeof shell;
       ui: typeof ui;
+      wishlist: typeof wishlist;
     };
   }
 }

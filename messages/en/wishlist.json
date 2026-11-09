@@ -1,0 +1,82 @@
+{
+  "page-title": "My wishlist",
+  "intro": "One list for all your Secret Santas. Your Santa sees it, and you'll never see what's been claimed.",
+  "loading": "Loading your wishlist…",
+  "empty": "Your wishlist is empty. Add a few ideas so your Santa has something to go on.",
+  "add-title": "Add a wish",
+  "import": {
+    "label": "Got a link? Paste it and we'll fill in the rest",
+    "placeholder": "https://…",
+    "submit": "Fill in from link",
+    "busy": "Reading the page…",
+    "done": "We filled in what we found. Check it before you save.",
+    "failed": "We couldn't read that page. Add the title yourself, we kept the link.",
+    "blocked": "That address can't be used. Try a link to a shop or web page."
+  },
+  "form": {
+    "title": "Wish",
+    "title-placeholder": "e.g. wool socks, size 42",
+    "more": "More details",
+    "less": "Fewer details",
+    "kind": "What kind of wish?",
+    "kind-wish": "A thing",
+    "kind-surpriseMe": "Surprise me",
+    "kind-donation": "Donate instead",
+    "kind-surpriseMe-hint": "Describe what you like; your Santa picks something.",
+    "kind-donation-hint": "No gift, a donation to a cause. Add a link to it.",
+    "description": "Notes",
+    "url": "Link",
+    "price-from": "Price",
+    "price-to": "Up to (optional)",
+    "currency": "Currency",
+    "variant": "Size, colour or variant",
+    "really-want": "I really want this",
+    "image-alt": "Picture of {title}",
+    "remove-image": "Remove picture",
+    "add": "Add wish",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "item": {
+    "edit": "Edit “{title}”",
+    "delete": "Delete “{title}”",
+    "deleted": "Deleted “{title}”",
+    "drag": "Drag to reorder “{title}”",
+    "move-up": "Move “{title}” up",
+    "move-down": "Move “{title}” down",
+    "moved": "Moved “{title}” to position {position} of {count}.",
+    "open-link": "Open link",
+    "really-want": "Really want",
+    "surprise-me": "Surprise me",
+    "donation": "Donate instead",
+    "in-budget": "In budget"
+  },
+  "group": {
+    "title": "My wishlist in this group",
+    "intro": "Everything on your wishlist shows here, unless you hide it from this group.",
+    "empty": "Your wishlist is empty.",
+    "show": "Show in this group",
+    "shown": "Show “{title}” in this group",
+    "hidden-badge": "Hidden here",
+    "edit": "Edit my wishlist"
+  },
+  "giftee": {
+    "title": "{name}'s wishlist",
+    "intro": "You're {name}'s Santa. Call dibs on a wish so nobody else buys it too.",
+    "empty": "{name} hasn't added any wishes yet.",
+    "claim": "Dibs!",
+    "claim-label": "Dibs on “{title}”",
+    "mine": "Dibs! It's yours",
+    "unclaim": "Undo",
+    "unclaim-label": "Undo dibs on “{title}”",
+    "taken": "Taken",
+    "taken-hint": "Someone else is getting this one."
+  },
+  "errors": {
+    "generic": "Something went wrong. Try again.",
+    "invalid": "Check the fields and try again.",
+    "taken": "Someone just called dibs on this one.",
+    "full": "Your wishlist is full (200 wishes).",
+    "rate-limited": "That's a lot at once. Try again in a few minutes."
+  }
+}

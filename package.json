@@ -14,6 +14,7 @@
     "tsc": "tsc --noEmit",
     "test": "node tests/draw.check.mjs",
     "test:smoke": "node tests/smoke.mjs",
+    "test:smoke:s2": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
     "test:smoke:s5": "node tests/smoke-s5.mjs",
     "test:smoke:s8": "node tests/smoke-s8.mjs"
   },
