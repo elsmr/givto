@@ -146,6 +146,72 @@ await step('received wishes: owner only, hidden from Santas and lists', async ()
   ok(await as(bob).mutate('giftday.markReceived', { wishId: wish.id, received: true }));
 });
 
+await step('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same for everyone, organizer-only', async () => {
+  const trio = (await ok(await as(ann).mutate('group.create', { name: 'Trio', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' })));
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']]) ok(await as(person).mutate('join.accept', { groupSlug: trio.slug, token: trio.joinToken, name }));
+  const at = { groupSlug: trio.slug, editionNumber: 1 };
+  ok(await as(ann).mutate('draw.run', at));
+  assert.equal(code(await as(bob).mutate('giftday.setMode', { ...at, mode: 'oneByOne' })), 'NOT_ORGANIZER');
+  ok(await as(ann).mutate('giftday.setMode', { ...at, mode: 'oneByOne' }));
+  ok(await as(ann).mutate('giftday.shuffle', at));
+  const presenter = async () => ok(await as(ann).query('giftday.presenter', at)).unwrapOrder;
+  const [a, b, c] = (await presenter()).people.map((p) => p.memberId);
+  const gifts = { [a]: 3, [b]: 1, [c]: 2 };
+  const advance = async (action, by = ann) => {
+    const { turnsTaken } = await presenter();
+    return as(by).mutate('giftday.advance', { ...at, action, turnsTaken });
+  };
+  assert.equal(code(await advance('start', bob)), 'NOT_ORGANIZER');
+  ok(await advance('start'));
+  assert.equal(code(await as(ann).mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 })), 'EDITION_CHANGED');
+  const seen = [];
+  for (let i = 0; i < 10; i++) {
+    let order = await presenter();
+    if (order.finished) break;
+    // Before the reel lands nobody else sees whose turn it is; after, everyone sees the same.
+    if (!order.currentShown) {
+      assert.equal(ok(await as(bob).query('giftday.get', at)).unwrapOrder.current, null);
+      ok(await advance('spin'));
+      order = await presenter();
+    }
+    const views = await Promise.all([bob, cee].map(async (p) => ok(await as(p).query('giftday.get', at)).unwrapOrder));
+    for (const view of views) assert.deepEqual(view, { ...order, current: view.current, next: view.next });
+    for (const view of views) assert.equal(view.current.memberId, order.current.memberId);
+    const current = order.current.memberId;
+    seen.push(current);
+    gifts[current]--;
+    assert.equal(code(await advance(gifts[current] > 0 ? 'more' : 'last', bob)), 'NOT_ORGANIZER');
+    if (i === 2) {
+      // A refresh (a fresh read) keeps the position, and a stale step is refused.
+      assert.equal((await presenter()).current.memberId, current);
+      assert.equal(code(await as(ann).mutate('giftday.advance', { ...at, action: 'more', turnsTaken: 0 })), 'EDITION_CHANGED');
+    }
+    ok(await advance(gifts[current] > 0 ? 'more' : 'last'));
+    if (seen.length === 5) assert.equal((await presenter()).currentShown, true, 'one person left: no spin');
+  }
+  assert.deepEqual(seen, [a, b, c, a, c, a]);
+  const end = await presenter();
+  assert.equal(end.finished, true);
+  assert.deepEqual(end.people.map((p) => p.done), [true, true, true]);
+
+  ok(await advance('back'));
+  assert.equal((await presenter()).current.memberId, a);
+  ok(await as(ann).mutate('giftday.shuffle', at));
+  const reset = await presenter();
+  assert.equal(reset.started, false);
+  assert.equal(editionOf(trio.slug).unwrapOrder.progress, undefined);
+
+  ok(await as(ann).mutate('giftday.setMode', { ...at, mode: 'allAtOnce' }));
+  ok(await advance('start'));
+  const once = [];
+  for (let order = await presenter(); !order.finished; order = await presenter()) {
+    if (!order.currentShown) ok(await advance('spin'));
+    once.push((await presenter()).current.memberId);
+    ok(await advance('more'));
+  }
+  assert.deepEqual(once, reset.people.map((p) => p.memberId));
+});
+
 await step('shuffling and the reveal stay put once the edition is done', async () => {
   setStatus(slug, 'done');
   assert.equal(code(await as(ann).mutate('giftday.shuffle', edition)), 'EDITION_CLOSED');

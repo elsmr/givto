@@ -65,10 +65,30 @@ export const Draw = v.object({
 });
 export type Draw = v.InferOutput<typeof Draw>;
 
-/** Unwrap order (32): independent of the Santa chain. */
+/** allAtOnce: each person opens all their gifts in their turn. oneByOne: one gift per turn, round and round until nobody has any left. */
+export const UnwrapMode = v.picklist(['allAtOnce', 'oneByOne']);
+export type UnwrapMode = v.InferOutput<typeof UnwrapMode>;
+
+/** One turn taken in the presenter view. `last`: that was their last gift (always true in allAtOnce). */
+export const UnwrapTurn = v.object({ memberId: Id, last: v.boolean() });
+export type UnwrapTurn = v.InferOutput<typeof UnwrapTurn>;
+
+/**
+ * Unwrap order (32): independent of the Santa chain. `progress`: the presenter's turns so far,
+ * stored so a refresh or another device carries on and the group home shows who's unwrapping.
+ * Who's up, the round and who's done follow from the order and the turns (lib/unwrap-turns.ts).
+ */
 export const UnwrapOrder = v.object({
   memberIds: v.array(Id),
   shuffledAt: v.date(),
+  progress: v.optional(
+    v.object({
+      startedAt: v.date(),
+      turns: v.array(UnwrapTurn),
+      /** The presenter's "Who's next?" reel has landed on the current person (until then members don't see who). */
+      currentShown: v.boolean(),
+    })
+  ),
 });
 
 /** The big reveal (31): organizer toggle, off by default. */
@@ -134,6 +154,8 @@ export const Edition = v.object({
   previousEditionId: v.optional(Id),
   draw: v.optional(Draw),
   unwrapOrder: v.optional(UnwrapOrder),
+  /** Organizer setting; absent = allAtOnce. */
+  unwrapMode: v.optional(UnwrapMode),
   reveal: Reveal,
   /** iCalendar SEQUENCE (47), absent = 0: bumped when the calendar events change, so re-imports update instead of duplicating. */
   calendarSequence: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0))),
