@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { authClient } from '@/lib/client/auth';
+import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { KeyRound } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
@@ -17,6 +18,7 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
   const format = useFormatter();
   const name = passkey.name || t('passkeys.unnamed');
   const [editing, setEditing] = useState(false);
+  const editButton = useFocusAfterEdit(editing);
   const [value, setValue] = useState(name);
   const [busy, setBusy] = useState(false);
 
@@ -65,7 +67,7 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
         </span>
       </div>
       <div className="flex gap-3">
-        <Button variant="neutral" onClick={() => setEditing(true)} aria-label={`${t('passkeys.rename')}: ${name}`}>
+        <Button ref={editButton} variant="neutral" onClick={() => setEditing(true)} aria-label={`${t('passkeys.rename')}: ${name}`}>
           {t('passkeys.rename')}
         </Button>
         <Button

@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
 import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
+import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -19,6 +20,7 @@ export const AuthoredTip = ({ input, tip, canEdit }: { input: EditionInput; tip:
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const editButton = useFocusAfterEdit(editing);
   const onSettled = () => queryClient.invalidateQueries({ queryKey: trpc.tip.pathKey() });
   const update = useMutation(trpc.tip.update.mutationOptions({ onSuccess: () => setEditing(false), onSettled }));
   const remove = useMutation(
@@ -49,7 +51,7 @@ export const AuthoredTip = ({ input, tip, canEdit }: { input: EditionInput; tip:
           <p className="break-words whitespace-pre-line">{tip.text}</p>
           {canEdit && (
             <div className="flex flex-wrap gap-2">
-              <Button variant="neutral" size="sm" aria-label={t('edit-label', { name: tip.aboutName })} onClick={() => setEditing(true)}>
+              <Button ref={editButton} variant="neutral" size="sm" aria-label={t('edit-label', { name: tip.aboutName })} onClick={() => setEditing(true)}>
                 <Pencil aria-hidden="true" />
                 {t('edit')}
               </Button>
