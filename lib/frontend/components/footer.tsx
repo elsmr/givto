@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { GitHub } from 'react-feather';
 import { ChangeEvent } from 'react';
 import { useTranslations } from 'next-intl';
-import { setCookie } from 'typescript-cookie';
 
 const StyledLogo = styled(GivtoLogo)`
   transform: rotate(-15deg);
@@ -46,11 +45,11 @@ export const Footer = () => {
             defaultValue={router.locale}
             onChange={(event: ChangeEvent<HTMLSelectElement>) => {
               const newLocale = event.target.value;
-              setCookie('NEXT_LOCALE', newLocale, {
-                expires: 365 * 5,
-                secure: process.env.NODE_ENV !== 'development',
-                sameSite: 'Strict',
-              });
+              const secure =
+                process.env.NODE_ENV !== 'development' ? '; secure' : '';
+              document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${
+                60 * 60 * 24 * 365 * 5
+              }; samesite=strict${secure}`;
               router.push({ pathname, query }, asPath, {
                 locale: newLocale,
               });

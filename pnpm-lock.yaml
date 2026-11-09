@@ -32,9 +32,6 @@ importers:
       '@styled-system/css':
         specifier: ^5.1.5
         version: 5.1.5
-      '@use-it/event-listener':
-        specifier: ^0.1.7
-        version: 0.1.7(react@19.3.1)
       graphql:
         specifier: ^16.15.0
         version: 16.15.0
@@ -89,9 +86,6 @@ importers:
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
-      typescript-cookie:
-        specifier: ^1.0.6
-        version: 1.0.6
     devDependencies:
       '@babel/core':
         specifier: ^7.29.13
@@ -1065,11 +1059,6 @@ packages:
 
   '@types/whatwg-url@13.0.0':
     resolution: {integrity: sha512-N8WXpbE6Wgri7KUSvrmQcqrMllKZ9uxkYWMt+mCSGwNc0Hsw9VQTW7ApqI4XNrx6/SaM2QQJCzMPDEXE058s+Q==}
-
-  '@use-it/event-listener@0.1.7':
-    resolution: {integrity: sha512-hgfExDzUU9uTRTPDCpw2s9jWTxcxmpJya3fK5ADpf5VDpSy8WYwY/kh28XE0tUcbsljeP8wfan48QvAQTSSa3Q==}
-    peerDependencies:
-      react: '>=16.8.0'
 
   '@whatwg-node/promise-helpers@2.0.1':
     resolution: {integrity: sha512-ziVgm01A9irPLVBaUFei64qp771BrDXldbv5pY6kgFgNtA+7zq8ux6nj/6w8bELGH/+Ttnc76ox04HIjU8nqvg==}
@@ -2111,10 +2100,6 @@ packages:
     resolution: {integrity: sha512-phPGCwqr2+Qo0fwniCE8e4pKnGu/yFb5nD5Y8bf0EEeiI5GklnACYA9GFy/DrAeRrKHXvHn+1SUsOWgJp6RO+g==}
     engines: {node: '>= 0.4'}
 
-  typescript-cookie@1.0.6:
-    resolution: {integrity: sha512-s+BZr7/9BUG6Kg7jGGcOY/4XJcP+iZRFdF3q4FPTfRSP83ivLWF94OcH8PrzGmnS8Ab9qP7ENu/ikLwNFsIafA==}
-    engines: {node: '>=14'}
-
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
     engines: {node: '>=14.17'}
@@ -3149,10 +3134,6 @@ snapshots:
   '@types/whatwg-url@13.0.0':
     dependencies:
       '@types/webidl-conversions': 7.0.3
-
-  '@use-it/event-listener@0.1.7(react@19.3.1)':
-    dependencies:
-      react: 19.3.1
 
   '@whatwg-node/promise-helpers@2.0.1':
     dependencies:
@@ -4356,8 +4337,6 @@ snapshots:
       is-typed-array: 1.1.15
       possible-typed-array-names: 1.1.0
       reflect.getprototypeof: 1.0.10
-
-  typescript-cookie@1.0.6: {}
 
   typescript@5.9.3: {}
 

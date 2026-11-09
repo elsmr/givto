@@ -1,4 +1,3 @@
-import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
@@ -193,13 +192,17 @@ export const CreateGroupForm: React.FunctionComponent<{
       participant && participant.name.trim() && participant.email.trim()
   );
 
-  useEventListener('beforeunload', (event) => {
-    const hasEnteredInvitee = getValues().invitees[0].name;
-    if (hasEnteredInvitee && !isSubmitted) {
-      event.preventDefault();
-      event.returnValue = true;
-    }
-  });
+  useEffect(() => {
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      const hasEnteredInvitee = getValues().invitees[0].name;
+      if (hasEnteredInvitee && !isSubmitted) {
+        event.preventDefault();
+        event.returnValue = true;
+      }
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [getValues, isSubmitted]);
 
   const submitGroup = async () => {
     setIsSubmittingGroup(true);

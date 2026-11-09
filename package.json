@@ -21,7 +21,6 @@
     "@sentry/browser": "^10.78.0",
     "@sentry/node": "^10.78.0",
     "@styled-system/css": "^5.1.5",
-    "@use-it/event-listener": "^0.1.7",
     "graphql": "^16.15.0",
     "graphql-hooks": "^8.2.0",
     "graphql-tag": "^2.12.7",
@@ -39,8 +38,7 @@
     "react-hotkeys-hook": "^5.4.0",
     "react-spinners": "^0.17.1",
     "react-tiny-popover": "^8.1.6",
-    "styled-system": "^5.1.5",
-    "typescript-cookie": "^1.0.6"
+    "styled-system": "^5.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.29.13",

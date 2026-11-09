@@ -1,4 +1,3 @@
-import useEventListener from '@use-it/event-listener';
 import { useMutation } from 'graphql-hooks';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
@@ -50,13 +49,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
   useEffect(sendEmail, []);
 
-  useEventListener('storage', (event) => {
-    const storageEvent = event as any as StorageEvent;
-    if (storageEvent.key === 'givto-access-token' && storageEvent.newValue) {
-      setIsDone(true);
-      onLogin();
-    }
-  });
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === 'givto-access-token' && event.newValue) {
+        setIsDone(true);
+        onLogin();
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [onLogin]);
 
   return (
     <Box my={3} lineHeight="body">
