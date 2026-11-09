@@ -7,7 +7,7 @@ import { log } from '../../../lib/server/log';
 
 const digest = (text: string) => createHash('sha256').update(text).digest();
 
-/** Vercel Cron sends `Authorization: Bearer $CRON_SECRET`; tests and manual runs do the same. */
+/** Vercel Schedules send `Authorization: Bearer $CRON_SECRET`; tests and manual runs do the same. */
 const isAuthorized = (req: NextApiRequest) =>
   timingSafeEqual(digest(req.headers.authorization ?? ''), digest(`Bearer ${requireEnv('CRON_SECRET')}`));
 
