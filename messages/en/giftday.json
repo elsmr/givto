@@ -13,7 +13,26 @@
     "shuffle": "Shuffle the unwrap order",
     "reshuffle": "Shuffle again",
     "shuffled": "Unwrap order shuffled",
-    "present": "Presenter view"
+    "present": "Presenter view",
+    "mode-label": "How do you unwrap?",
+    "modes": {
+      "allAtOnce": "All at once",
+      "oneByOne": "One by one"
+    },
+    "mode-help": {
+      "allAtOnce": "In their turn, each person opens all their gifts.",
+      "oneByOne": "One gift per turn, round and round until nobody has any left."
+    },
+    "mode-locked": "You can change this before the unwrapping starts, or after shuffling again.",
+    "now": "Now unwrapping",
+    "up-next": "Up next",
+    "spinning": "Who's next? The reel is spinning…",
+    "finished": "Everyone has unwrapped.",
+    "done": "done",
+    "reshuffle-title": "Shuffle again?",
+    "reshuffle-description": "Everyone gets a new unwrap order and the unwrapping starts over.",
+    "reshuffle-confirm": "Shuffle again",
+    "cancel": "Keep this order"
   },
   "reveal": {
     "title": "The big reveal",
@@ -48,7 +67,16 @@
     "no-order": "There's no unwrap order yet.",
     "previous": "Previous",
     "next": "Next",
-    "keys": "← → or space to step through"
+    "keys": "← → or space to step through",
+    "whos-next": "Who's next?",
+    "spin": "Spin",
+    "skip": "Skip",
+    "skip-spin": "Skip the spin",
+    "round": "Round {round}",
+    "more": "More to open",
+    "last": "That was the last one",
+    "keys-spin": "Space or → to spin · ← back",
+    "keys-one-by-one": "→ or space: more to open · L: that was the last one · ← back"
   },
   "errors": {
     "NOT_DRAWN": "Names aren't drawn yet.",

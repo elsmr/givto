@@ -13,7 +13,26 @@
     "shuffle": "Uitpakvolgorde schudden",
     "reshuffle": "Opnieuw schudden",
     "shuffled": "Uitpakvolgorde geschud",
-    "present": "Presentatieweergave"
+    "present": "Presentatieweergave",
+    "mode-label": "Hoe pakken jullie uit?",
+    "modes": {
+      "allAtOnce": "Alles tegelijk",
+      "oneByOne": "Om de beurt"
+    },
+    "mode-help": {
+      "allAtOnce": "Wie aan de beurt is, pakt alle cadeaus in één keer uit.",
+      "oneByOne": "Eén cadeau per beurt, rondje na rondje tot niemand nog iets heeft."
+    },
+    "mode-locked": "Dit kun je aanpassen voor het uitpakken begint, of na opnieuw schudden.",
+    "now": "Nu aan het uitpakken",
+    "up-next": "Hierna",
+    "spinning": "Wie is er nu? De rol draait…",
+    "finished": "Iedereen heeft uitgepakt.",
+    "done": "klaar",
+    "reshuffle-title": "Opnieuw schudden?",
+    "reshuffle-description": "Iedereen krijgt een nieuwe uitpakvolgorde en het uitpakken begint opnieuw.",
+    "reshuffle-confirm": "Opnieuw schudden",
+    "cancel": "Deze volgorde houden"
   },
   "reveal": {
     "title": "De grote onthulling",
@@ -48,7 +67,16 @@
     "no-order": "Er is nog geen uitpakvolgorde.",
     "previous": "Vorige",
     "next": "Volgende",
-    "keys": "← → of spatie om verder te gaan"
+    "keys": "← → of spatie om verder te gaan",
+    "whos-next": "Wie is er nu?",
+    "spin": "Draaien",
+    "skip": "Overslaan",
+    "skip-spin": "Zonder draaien",
+    "round": "Ronde {round}",
+    "more": "Nog meer uit te pakken",
+    "last": "Dat was de laatste",
+    "keys-spin": "Spatie of → om te draaien · ← terug",
+    "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug"
   },
   "errors": {
     "NOT_DRAWN": "De lootjes zijn nog niet getrokken.",

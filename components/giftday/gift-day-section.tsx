@@ -16,10 +16,15 @@ export const GiftDaySection = ({ group, edition }: { group: GroupData; edition: 
   const trpc = useTRPC();
   const shown = afterDraw.has(edition.status);
   const input = { groupSlug: group.slug, editionNumber: edition.number };
-  const giftDay = useQuery({ ...trpc.giftday.get.queryOptions(input), enabled: shown });
+  // On gift day the presenter moves the turns on: other phones follow along.
+  const giftDay = useQuery({
+    ...trpc.giftday.get.queryOptions(input),
+    enabled: shown,
+    refetchInterval: edition.status === 'giftday' ? 10_000 : false,
+  });
 
   if (!shown || !giftDay.data) return null;
-  const { unwrapOrder, reveal } = giftDay.data;
+  const { unwrapOrder, unwrapMode, reveal } = giftDay.data;
   const manage = group.me.isOrganizer && edition.isCurrent;
   const { status } = edition;
   return (
@@ -30,6 +35,7 @@ export const GiftDaySection = ({ group, edition }: { group: GroupData; edition: 
         <UnwrapOrderCard
           {...input}
           order={unwrapOrder}
+          mode={unwrapMode}
           meId={group.me.memberId}
           canShuffle={manage && status !== 'done'}
           canPresent={manage && status !== 'giftday'}

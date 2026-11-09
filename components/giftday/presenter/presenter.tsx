@@ -12,7 +12,7 @@ import { PresenterFrame } from './presenter-frame';
 import { PresenterStage } from './presenter-stage';
 
 const notice = (text: string) => (
-  <div className="mx-auto w-full max-w-xl px-6 py-16 text-ink">
+  <div className="mx-auto w-full max-w-xl px-6 py-16">
     <Alert>
       <AlertDescription>{text}</AlertDescription>
     </Alert>
@@ -39,7 +39,7 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
   );
   if (group.error && appErrorCode(group.error) === 'GROUP_NOT_FOUND') {
     return frame(
-      <div className="flex-1 bg-page px-6 py-12 text-ink">
+      <div className="px-6 py-12">
         <GroupNotFound />
       </div>
     );
@@ -58,5 +58,5 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
       </div>
     );
   }
-  return frame(<PresenterStage groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} />);
+  return frame(<PresenterStage groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} order={view.data.unwrapOrder} />);
 };

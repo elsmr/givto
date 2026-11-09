@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-type PresenterActions = { next: () => void; previous: () => void; first: () => void; last: () => void };
+export type PresenterKeyActions = { next?: () => void; previous?: () => void; last?: () => void };
 
-const keyActions: Record<string, keyof PresenterActions> = {
+const keyActions: Record<string, keyof PresenterKeyActions> = {
   ArrowRight: 'next',
   ArrowDown: 'next',
   PageDown: 'next',
@@ -11,20 +11,21 @@ const keyActions: Record<string, keyof PresenterActions> = {
   ArrowLeft: 'previous',
   ArrowUp: 'previous',
   PageUp: 'previous',
-  Home: 'first',
-  End: 'last',
+  l: 'last',
+  L: 'last',
 };
 
 /** Presenter keyboard (and clicker) control. Space and Enter on a focused control keep their own meaning. */
-export const usePresenterKeys = (actions: PresenterActions) => {
+export const usePresenterKeys = (actions: PresenterKeyActions) => {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const action = keyActions[event.key];
-      if (!action || event.altKey || event.ctrlKey || event.metaKey) return;
-      const onControl = event.target instanceof Element && event.target.closest('button, a, input, [role="switch"]');
+      const run = action && actions[action];
+      if (!run || event.altKey || event.ctrlKey || event.metaKey) return;
+      const onControl = event.target instanceof Element && event.target.closest('button, a, input, select, [role="switch"]');
       if (onControl && (event.key === ' ' || event.key === 'Enter')) return;
       event.preventDefault();
-      actions[action]();
+      run();
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
