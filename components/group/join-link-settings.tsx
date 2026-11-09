@@ -40,6 +40,7 @@ export const JoinLinkSettings = ({ slug, joinLink }: { slug: string; joinLink: J
         <Input
           id="member-cap"
           type="number"
+          inputMode="numeric"
           min={MIN_PARTICIPANTS}
           max={MAX_MEMBERS}
           className="max-w-32"
