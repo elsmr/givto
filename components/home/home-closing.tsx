@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
@@ -13,9 +13,9 @@ export const HomeClosing = () => {
       <h2 id="closing-title" className="text-2xl font-extrabold sm:text-3xl">
         {t('title')}
       </h2>
-      <Button size="lg" nativeButton={false} render={<Link href="/new" />}>
+      <Link href="/new" className={buttonVariants({ size: 'lg' })}>
         {t('cta')}
-      </Button>
+      </Link>
     </section>
   );
 };

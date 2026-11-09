@@ -1,6 +1,6 @@
 import { GivtoLogo } from '@/components/givto-logo';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
@@ -24,17 +24,15 @@ export const HomeHero = () => {
         </h1>
         <p className="max-w-xl text-lg sm:text-xl">{t('lead')}</p>
         <div className="flex w-full flex-col gap-4 xs:w-auto xs:flex-row">
-          <Button size="lg" nativeButton={false} render={<Link href="/new" />}>
+          <Link href="/new" className={buttonVariants({ size: 'lg' })}>
             {t('cta')}
-          </Button>
-          <Button
-            size="lg"
-            variant="neutral"
-            nativeButton={false}
-            render={<a href="#how-it-works" />}
+          </Link>
+          <a
+            href="#how-it-works"
+            className={buttonVariants({ size: 'lg', variant: 'neutral' })}
           >
             {t('how-it-works')}
-          </Button>
+          </a>
         </div>
         <p className="text-muted">{t('note')}</p>
       </div>
