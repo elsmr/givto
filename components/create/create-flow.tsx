@@ -1,6 +1,6 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
@@ -53,7 +53,7 @@ export const CreateFlow = () => {
     if (restored !== 'pending' && accountName && !draft.organizerName) update({ organizerName: accountName });
   }, [restored, accountName]);
 
-  if (restored === 'pending' || session.isPending) return <Loader />;
+  if (restored === 'pending' || session.isPending) return <LogoAnimation variant="loading" />;
   if (create.data) {
     return <CreatedShare slug={create.data.slug} token={create.data.joinToken} groupName={create.variables.name} />;
   }

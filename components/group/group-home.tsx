@@ -3,7 +3,7 @@ import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { EditionWishlists } from '@/components/wishlist/edition-wishlists';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader } from '@/components/ui/loader';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
@@ -33,7 +33,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
   const user = useRequireSession();
   const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }), enabled: !!user });
 
-  if (!user || group.isPending) return <Loader />;
+  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error) {
     const code = appErrorCode(group.error);
     if (code === 'GROUP_NOT_FOUND') return <GroupNotFound />;
