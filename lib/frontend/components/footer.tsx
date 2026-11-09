@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { Box } from './ui/box';
-import GivtoLogo from '../../../assets/givto-logo.svg';
+import { GivtoLogo } from './givto-logo';
 import { LayoutWrapper } from './ui/layout';
 import { Link } from './ui/link';
 import { Select } from './ui/select';

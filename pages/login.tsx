@@ -7,7 +7,7 @@ import type { NextPage, GetStaticPropsContext } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useState, useEffect } from 'react';
-import GivtoLogo from '../assets/givto-logo.svg';
+import { GivtoLogo } from '@givto/frontend/components/givto-logo';
 import { useTranslations } from 'next-intl';
 import { Footer } from '../lib/frontend/components/footer';
 

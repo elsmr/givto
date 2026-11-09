@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import React from 'react';
-import GivtoLogo from '../../../assets/givto-logo.svg';
+import { GivtoLogo } from './givto-logo';
 import { Footer } from './footer';
 import { Box } from './ui/box';
 import { Button } from './ui/button';

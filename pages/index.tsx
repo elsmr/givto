@@ -10,8 +10,6 @@ import type { GetStaticPropsContext } from 'next';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import React from 'react';
-import AssignIllustration from '../assets/assign.svg';
-import InviteIllustration from '../assets/invite.svg';
 import { Footer } from '../lib/frontend/components/footer';
 
 const HomePage = () => {
@@ -46,7 +44,7 @@ const HomePage = () => {
                 flexBasis={['100%', '50%']}
                 order={[2, 1]}
               >
-                <InviteIllustration style={{ width: '100%' }} />
+                <img src="/invite.svg" alt="" style={{ width: '100%' }} />
               </Box>
 
               <Box flexBasis={['100%', '50%']} order={[1, 2]}>
@@ -71,7 +69,7 @@ const HomePage = () => {
               </Box>
 
               <Box p={[4, 1]} flexBasis={['100%', '50%']}>
-                <AssignIllustration style={{ width: '100% ' }} />
+                <img src="/assign.svg" alt="" style={{ width: '100%' }} />
               </Box>
             </Box>
           </LayoutWrapper>

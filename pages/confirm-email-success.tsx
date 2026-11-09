@@ -6,7 +6,7 @@ import type { NextPage, GetStaticPropsContext } from 'next';
 import { useTranslations } from 'next-intl';
 import NextLink from 'next/link';
 import React from 'react';
-import GivtoLogo from '../assets/givto-logo.svg';
+import { GivtoLogo } from '@givto/frontend/components/givto-logo';
 import { Footer } from '../lib/frontend/components/footer';
 
 export const ConfirmEmailConfirmPage: NextPage = () => {
