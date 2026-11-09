@@ -1,0 +1,30 @@
+{
+  "title": "Mijn groepen",
+  "page-title": "Mijn groepen · Givto",
+  "start": "Start een Secret Santa",
+  "load-failed": "We konden je groepen niet laden.",
+  "retry": "Opnieuw proberen",
+  "empty": {
+    "title": "Nog geen groepen",
+    "body": "Start een Secret Santa met je familie, vrienden of collega's. Uitgenodigd? Open de link uit je groepschat of e-mail."
+  },
+  "current": "Nu",
+  "past": "Eerder",
+  "organizer": "Jij bent de organisator",
+  "no-edition": "Nog geen Secret Santa",
+  "status": {
+    "draft": "Nog niet verstuurd",
+    "open": "Open",
+    "drawn": "Lootjes getrokken",
+    "giftday": "Pakjesdag!",
+    "done": "Afgelopen",
+    "archived": "Gearchiveerd"
+  },
+  "gift-day": {
+    "in-days": "{days, plural, =1 {Morgen is het pakjesdag} other {Nog # dagen tot pakjesdag}}",
+    "today": "Vandaag is het pakjesdag!",
+    "past": "Pakjesdag was op {date}",
+    "none": "Nog geen pakjesdag gekozen"
+  },
+  "giftee-ready": "Je lootje is getrokken"
+}

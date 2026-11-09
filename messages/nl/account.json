@@ -1,0 +1,79 @@
+{
+  "title": "Account",
+  "page-title": "Account · Givto",
+  "profile": {
+    "title": "Je naam",
+    "description": "Zo zien de mensen in je groepen je.",
+    "name-label": "Naam",
+    "email-label": "E-mailadres",
+    "save": "Naam opslaan",
+    "saved": "Naam opgeslagen",
+    "invalid": "Gebruik 1 tot 50 tekens, zonder links of @."
+  },
+  "language": {
+    "title": "Taal",
+    "description": "Voor deze site en de e-mails die we je sturen.",
+    "label": "Taal"
+  },
+  "theme": {
+    "title": "Weergave",
+    "description": "Wordt op dit apparaat bewaard.",
+    "label": "Thema",
+    "system": "Zoals mijn apparaat",
+    "light": "Licht",
+    "dark": "Donker"
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "description": "Log in met je vingerafdruk, gezicht of pincode in plaats van een code per e-mail.",
+    "empty": "Nog geen passkeys.",
+    "add": "Passkey toevoegen",
+    "added": "Passkey toegevoegd",
+    "add-failed": "Het toevoegen van de passkey lukte niet. Probeer het opnieuw.",
+    "unnamed": "Passkey",
+    "added-on": "Toegevoegd op {date}",
+    "rename": "Hernoemen",
+    "rename-label": "Nieuwe naam voor {name}",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "remove": "Verwijderen",
+    "remove-label": "{name} verwijderen",
+    "removed": "Passkey verwijderd"
+  },
+  "notifications": {
+    "title": "E-mails",
+    "description": "Kies welke e-mails je krijgt. Inlogmails komen altijd door.",
+    "reminders": "Herinneringen voor deadlines en pakjesdag",
+    "wishlistUpdates": "Als je lootje het verlanglijstje aanpast of een tip krijgt",
+    "santaMessages": "Psst!-hints en vragen van je Santa",
+    "nextYear": "Een jaarlijkse herinnering om het opnieuw te doen (organisatoren)",
+    "saved": "E-mailinstellingen opgeslagen"
+  },
+  "sessions": {
+    "title": "Ingelogde apparaten",
+    "description": "Telefoon kwijt of een gedeelde computer gebruikt? Log overal uit, ook hier.",
+    "sign-out-everywhere": "Overal uitloggen"
+  },
+  "export": {
+    "title": "Je gegevens",
+    "description": "Download alles wat Givto over je bewaart, als JSON-bestand.",
+    "download": "Mijn gegevens downloaden"
+  },
+  "delete": {
+    "title": "Account verwijderen",
+    "description": "Dit verwijdert je verlanglijstje, je groepen, tips en vragen. Lootjes waar je in zit blijven geldig voor de anderen, met “Verwijderd account” in plaats van je naam. Organiseer je een groep, dan neemt wie na jou als eerste lid werd het over.",
+    "open": "Mijn account verwijderen",
+    "dialog-title": "Je account verwijderen?",
+    "dialog-description": "Dit kan niet ongedaan worden gemaakt. Om zeker te weten dat jij het bent, mailen we je een code.",
+    "send-code": "Mail me een code",
+    "code-sent": "We hebben een code van 6 cijfers naar {email} gestuurd.",
+    "code-label": "Code van 6 cijfers",
+    "confirm": "Mijn account definitief verwijderen",
+    "cancel": "Account houden",
+    "invalid-code": "Die code klopt niet of is verlopen."
+  },
+  "errors": {
+    "generic": "Er ging iets mis. Probeer het opnieuw.",
+    "rate-limited": "Te veel pogingen. Wacht een paar minuten en probeer het opnieuw."
+  }
+}

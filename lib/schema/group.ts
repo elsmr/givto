@@ -71,6 +71,8 @@ export const Group = v.object({
   exclusions: v.array(Exclusion),
   households: v.array(Household),
   joinLink: v.optional(JoinLink),
+  /** Set when the organizer deleted their account and the role passed to `toMemberId` (55); the notice email sets `notifiedAt`. */
+  organizerHandover: v.optional(v.object({ toMemberId: Id, at: v.date(), notifiedAt: v.optional(v.date()) })),
   createdAt: v.date(),
   updatedAt: v.date(),
   archivedAt: v.optional(v.date()),

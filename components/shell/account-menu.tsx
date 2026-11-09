@@ -17,22 +17,27 @@ import { useRouter } from 'next/router';
 export const AccountMenu = ({ user }: { user: CurrentUser }) => {
   const t = useTranslations('shell');
   const router = useRouter();
+  // New accounts have no name until they enter one.
+  const label = user.name || user.email;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label={t('account-menu', { name: user.name })}
+        aria-label={t('account-menu', { name: label })}
         render={<Button variant="neutral" className="gap-2 px-1.5 sm:px-2" />}
       >
         <Avatar size="sm" className="border-0">
-          <AvatarFallback>{user.name.slice(0, 1).toUpperCase()}</AvatarFallback>
+          <AvatarFallback>{label.slice(0, 1).toUpperCase()}</AvatarFallback>
         </Avatar>
-        <span className="hidden max-w-40 truncate sm:inline">{user.name}</span>
+        <span className="hidden max-w-40 truncate sm:inline">{label}</span>
         <ChevronDown aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLinkItem render={<Link href="/groups" />}>
           {t('my-secret-santas')}
+        </DropdownMenuLinkItem>
+        <DropdownMenuLinkItem render={<Link href="/wishlist" />}>
+          {t('my-wishlist')}
         </DropdownMenuLinkItem>
         <DropdownMenuLinkItem render={<Link href="/account" />}>
           {t('account')}

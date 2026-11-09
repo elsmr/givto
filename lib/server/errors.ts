@@ -17,6 +17,7 @@ export const appErrorCodes = {
   NOT_ORGANIZER: 'FORBIDDEN',
   NOT_DRAWN: 'PRECONDITION_FAILED',
   NOT_SANTA: 'FORBIDDEN',
+  INVALID_CODE: 'BAD_REQUEST',
   INTERNAL: 'INTERNAL_SERVER_ERROR',
 } as const satisfies Record<string, TRPC_ERROR_CODE_KEY>;
 export type AppErrorCode = keyof typeof appErrorCodes;

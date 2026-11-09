@@ -1,0 +1,30 @@
+{
+  "title": "My groups",
+  "page-title": "My groups · Givto",
+  "start": "Start a Secret Santa",
+  "load-failed": "We couldn't load your groups.",
+  "retry": "Try again",
+  "empty": {
+    "title": "No groups yet",
+    "body": "Start a Secret Santa for your family, friends or colleagues. Invited by someone? Open the link from your group chat or email."
+  },
+  "current": "Now",
+  "past": "Earlier",
+  "organizer": "You organize this",
+  "no-edition": "No Secret Santa yet",
+  "status": {
+    "draft": "Not sent yet",
+    "open": "Open",
+    "drawn": "Names drawn",
+    "giftday": "Gift day!",
+    "done": "Done",
+    "archived": "Archived"
+  },
+  "gift-day": {
+    "in-days": "{days, plural, =1 {Gift day is tomorrow} other {Gift day in # days}}",
+    "today": "Gift day is today!",
+    "past": "Gift day was {date}",
+    "none": "No gift day set yet"
+  },
+  "giftee-ready": "Your giftee is ready"
+}

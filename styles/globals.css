@@ -115,3 +115,41 @@
     }
   }
 }
+
+/*
+ * Dark mode (53): <html data-theme="dark">, set before the first paint by
+ * components/account/theme-script.tsx (stored choice, else the system setting).
+ * Ink turns light, so text, borders and hard shadows become light ink on dark surfaces.
+ * Contrast: ink 17.5:1 on page, 15.6:1 on surface; muted 8.1:1+; danger 7.2:1+;
+ * links 9:1+; white on primary 5.2:1; ink on primary-muted 10:1; focus ring 3.2:1+.
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-ink: #fff8ec;
+  --color-page: #141414;
+  --color-surface: #1f1f23;
+  --color-primary-muted: #3a3480;
+  --color-muted: #b5b5c0;
+  --color-danger: #ff8a7a;
+}
+
+/* Bright fills keep dark text (#111 on yellow 13:1, mint 10.8:1, coral 7:1); unlayered to beat text-ink. */
+:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]),
+:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral) :is(.text-ink, .text-muted) {
+  color: #111111;
+}
+
+/* Tooltips are ink-filled with white text: dark text on the light ink. */
+:root[data-theme='dark'] .bg-ink {
+  color: var(--color-page);
+}
+
+:root[data-theme='dark'] [data-slot='dialog-overlay'] {
+  background-color: rgb(0 0 0 / 0.7);
+}
+
+@layer base {
+  :root[data-theme='dark'] a {
+    color: #bdb9ff;
+  }
+}
