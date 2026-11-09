@@ -27,7 +27,8 @@ const REDACT_PATHS = [
 ];
 
 const PATTERNS: [RegExp, string][] = [
-  [/[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+\.[^\s@<>"'(),;:]+/g, '[email]'],
+  // Domain must end in letters, so `mongodb@7.8.0/…` in stack paths isn't mistaken for an email.
+  [/[^\s@<>"'(),;:/]+@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}\b/gi, '[email]'],
   [/([?&](?:token|otp|code|callbackURL)=)[^&\s"']*/gi, '$1[redacted]'],
   [/\b\d{6}\b/g, '[code]'],
 ];
