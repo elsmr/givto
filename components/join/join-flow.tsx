@@ -25,7 +25,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
   const trpc = useTRPC();
   const router = useRouter();
   const session = authClient.useSession();
-  const joinName = useJoinName();
+  const joinName = useJoinName(session.data?.user.name);
   const [email, setEmail] = useState('');
   const [step, setStep] = useState<'details' | 'code'>('details');
   const emailCode = useEmailCode(router.asPath);

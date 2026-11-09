@@ -47,6 +47,12 @@ export const CreateFlow = () => {
     if (restored === 'saved' && resuming) setStep('organizer');
   }, [restored, resuming]);
 
+  // Signed in: start from the account's name.
+  const accountName = session.data?.user.name;
+  useEffect(() => {
+    if (restored !== 'pending' && accountName && !draft.organizerName) update({ organizerName: accountName });
+  }, [restored, accountName]);
+
   if (restored === 'pending' || session.isPending) return <Loader />;
   if (create.data) {
     return <CreatedShare slug={create.data.slug} token={create.data.joinToken} groupName={create.variables.name} />;
