@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* Design tokens: .scratch/07-neobrutalism-research.md */
+@theme {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-ink: #111111;
+  --color-page: #fff8ec;
+  --color-surface: #ffffff;
+  --color-primary: #5a51ff;
+  --color-primary-muted: #bdb9ff;
+  /* Fill only, never text. */
+  --color-coral: #fe7362;
+  --color-yellow: #ffd23f;
+  --color-mint: #4ade80;
+  /* 07 textMuted */
+  --color-muted: #5c5c66;
+  /* 07 dangerText */
+  --color-danger: #c2261a;
+
+  /* --font-heading-family is set in pages/_app.tsx from next/font. */
+  --font-heading: var(--font-heading-family), system-ui, sans-serif;
+
+  --radius-*: initial;
+
+  --shadow-*: initial;
+  --shadow-sm: 2px 2px 0 0 var(--color-ink);
+  --shadow-md: 4px 4px 0 0 var(--color-ink);
+  --shadow-lg: 6px 6px 0 0 var(--color-ink);
+  --shadow-brand: 8px 8px 0 0 var(--color-primary);
+
+  --breakpoint-xs: 30rem;
+
+  --default-transition-duration: 80ms;
+  --default-transition-timing-function: linear;
+}
+
+:root {
+  --border-width: 2px;
+}
+
+@media (min-width: 30rem) {
+  :root {
+    --border-width: 3px;
+  }
+}
+
+/* Box border: 3px ink, 2px under 480px. Inputs use border-2. */
+@utility bordered {
+  border: var(--border-width) solid var(--color-ink);
+}
+
+/* Press into the shadow; pair with shadow-md. */
+@utility pressable {
+  transition-property: translate, box-shadow;
+  transition-duration: 80ms;
+  transition-timing-function: linear;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled, [data-disabled]) {
+      translate: 2px 2px;
+      box-shadow: var(--shadow-sm);
+    }
+  }
+
+  &:active:not(:disabled, [data-disabled]) {
+    translate: 4px 4px;
+    box-shadow: none;
+  }
+}
+
+@layer base {
+  html {
+    background-color: var(--color-page);
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
+  ::selection {
+    background-color: var(--color-primary-muted);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration-line: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
