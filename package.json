@@ -11,7 +11,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "test": "node tests/draw.check.mjs",
+    "test:smoke": "node tests/smoke.mjs"
   },
   "author": "",
   "license": "MIT",
