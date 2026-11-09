@@ -28,6 +28,7 @@ export const appErrorCodes = {
   ORGANIZER_CANNOT_LEAVE: 'FORBIDDEN',
   DRAW_IMPOSSIBLE: 'BAD_REQUEST',
   DATE_IN_PAST: 'BAD_REQUEST',
+  EDITION_CLOSED: 'PRECONDITION_FAILED', WRONG_NUDGE_KIND: 'CONFLICT',
   INTERNAL: 'INTERNAL_SERVER_ERROR',
 } as const satisfies Record<string, TRPC_ERROR_CODE_KEY>;
 export type AppErrorCode = keyof typeof appErrorCodes;

@@ -12,10 +12,11 @@
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",
-    "test": "node tests/draw.check.mjs && node tests/names.check.mjs && node tests/exclusions.check.mjs",
+    "test": "node tests/draw.check.mjs && node tests/names.check.mjs && node tests/exclusions.check.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON tests/anonymous-delay.check.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:smoke:s1": "node tests/smoke-s1.mjs",
     "test:smoke:s2": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
+    "test:smoke:s3": "node tests/smoke-s3.mjs",
     "test:smoke:s5": "node tests/smoke-s5.mjs",
     "test:smoke:s8": "node tests/smoke-s8.mjs"
   },

@@ -4,6 +4,7 @@ import { accountRouter } from './account';
 import { groupRouter } from './group';
 import { inviteRouter } from './invite';
 import { joinRouter } from './join';
+import { betweenRouters } from './between';
 import { meRouter } from './me';
 import { wishlistRouters } from './wishlist';
 import { membershipRouter } from './membership';
@@ -21,6 +22,7 @@ export const appRouter = router({
   join: joinRouter,
   invite: inviteRouter,
   membership: membershipRouter,
+  ...betweenRouters,
 });
 
 export type AppRouter = typeof appRouter;

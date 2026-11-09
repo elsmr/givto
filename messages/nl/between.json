@@ -1,0 +1,81 @@
+{
+  "tips": {
+    "title": "Tips voor iemands Santa",
+    "intro": "Weet je wat iemand leuk zou vinden? Geef hun Santa een tip. Alleen hun Santa leest die: nooit de persoon over wie het gaat, nooit de organisator, en jij komt niet te weten wie hun Santa is.",
+    "about": "Over wie gaat het?",
+    "about-placeholder": "Kies iemand",
+    "text": "Je tip",
+    "text-placeholder": "bv. spaart Moomin-mokken, draagt maat M",
+    "anonymous": "Anoniem plaatsen",
+    "anonymous-hint": "Hun Santa ziet je naam niet.",
+    "add": "Geef een tip",
+    "added": "Tip bewaard. Alleen de Santa van {name} ziet hem.",
+    "mine-title": "Jouw tips",
+    "about-name": "Over {name}",
+    "anonymous-badge": "Anoniem",
+    "edit": "Bewerken",
+    "edit-label": "Je tip over {name} bewerken",
+    "delete": "Verwijderen",
+    "delete-label": "Je tip over {name} verwijderen",
+    "deleted": "Tip verwijderd",
+    "save": "Bewaren",
+    "cancel": "Annuleren",
+    "closed": "Tips zijn gesloten voor deze Secret Santa.",
+    "nobody": "Nog niemand om een tip over te geven."
+  },
+  "santa": {
+    "title": "Cadeau voor {name}",
+    "intro": "Tips van anderen, en manieren om {name} om ideeën te vragen zonder dat ze weten dat jij het bent.",
+    "tips-title": "Tips voor jou",
+    "tips-empty": "Nog geen tips over {name}.",
+    "tip-from": "Van {name}",
+    "tip-anonymous": "Anonieme tip",
+    "tip-yours": "Je eigen notitie",
+    "mark-used": "Markeer als gebruikt",
+    "used": "Gebruikt",
+    "unmark-used": "Ongedaan maken"
+  },
+  "ask": {
+    "title": "Stel {name} een vraag",
+    "intro": "Vragen gaan één keer per dag 's avonds de deur uit, zodat het tijdstip je niet verraadt. {name} ziet nooit wie het vroeg.",
+    "text": "Je vraag",
+    "placeholder": "bv. Welke maat heb je?",
+    "submit": "Anoniem vragen",
+    "sent": "Vraag onderweg. {name} krijgt hem vanavond of morgenavond.",
+    "asked-title": "Jouw vragen",
+    "waiting": "Nog geen antwoord",
+    "answer-label": "Antwoord",
+    "unanswerable": "Jij zorgt voor {name}, dus hun antwoorden komen bij jou terug. Vragen staan hier uit."
+  },
+  "psst": {
+    "title": "Psst!",
+    "emptyWishlist": "Het verlanglijstje van {name} is leeg. Stuur een Psst! en ze horen dat hun Santa graag wat ideeën wil.",
+    "moreDetails": "Stuur een Psst! en {name} hoort dat hun Santa graag wat meer details over hun wensen wil.",
+    "send": "Psst! sturen",
+    "sent": "Psst! verstuurd. {name} hoort het 's avonds, zonder je naam.",
+    "next": "Je kunt vanaf {date} weer een Psst! sturen.",
+    "unanswerable": "Jij zorgt voor {name}, dus een Psst! komt bij jou terug."
+  },
+  "for-you": {
+    "psst-emptyWishlist": "Je Santa wil graag wat ideeën. Zet een paar wensen op je verlanglijstje.",
+    "psst-emptyWishlist-for": "De Santa van {name} wil graag wat ideeën. Zet een paar wensen op het verlanglijstje van {name}.",
+    "psst-moreDetails": "Je Santa wil graag wat meer details over je wensen: maten, kleuren, links.",
+    "psst-moreDetails-for": "De Santa van {name} wil graag wat meer details over de wensen van {name}.",
+    "edit-wishlist": "Naar mijn verlanglijstje",
+    "questions-title": "Je Santa vroeg…",
+    "questions-intro": "Je Santa ziet je antwoord. Jij komt nooit te weten wie het vroeg.",
+    "question-for": "Voor {name}",
+    "answer": "Je antwoord",
+    "answer-placeholder": "Schrijf je antwoord",
+    "answer-submit": "Antwoord sturen",
+    "answered": "Je antwoord"
+  },
+  "errors": {
+    "generic": "Er ging iets mis. Probeer het opnieuw.",
+    "invalid": "Controleer de tekst en probeer het opnieuw.",
+    "rate-limited": "Dat is de limiet voor nu. Probeer het later opnieuw.",
+    "closed": "Deze Secret Santa is daarvoor gesloten.",
+    "gone": "Dit is niet meer beschikbaar. Vernieuw de pagina.",
+    "wrong-kind": "Hun verlanglijstje is net veranderd. Vernieuw en probeer het opnieuw."
+  }
+}
