@@ -57,10 +57,10 @@
     "unanswerable": "Jij zorgt voor {name}, dus een Psst! komt bij jou terug."
   },
   "for-you": {
-    "psst-emptyWishlist": "Psst! Je Santa wil graag wat ideeën. Zet een paar wensen op je verlanglijstje.",
-    "psst-emptyWishlist-for": "Psst! De Santa van {name} wil graag wat ideeën. Zet een paar wensen op het verlanglijstje van {name}.",
-    "psst-moreDetails": "Psst! Je Santa wil graag wat meer details over je wensen: maten, kleuren, links.",
-    "psst-moreDetails-for": "Psst! De Santa van {name} wil graag wat meer details over de wensen van {name}.",
+    "psst-emptyWishlist": "Je Santa wil graag wat ideeën. Zet een paar wensen op je verlanglijstje.",
+    "psst-emptyWishlist-for": "De Santa van {name} wil graag wat ideeën. Zet een paar wensen op het verlanglijstje van {name}.",
+    "psst-moreDetails": "Je Santa wil graag wat meer details over je wensen: maten, kleuren, links.",
+    "psst-moreDetails-for": "De Santa van {name} wil graag wat meer details over de wensen van {name}.",
     "edit-wishlist": "Naar mijn verlanglijstje",
     "questions-title": "Je Santa vroeg…",
     "questions-intro": "Je Santa ziet je antwoord. Jij komt nooit te weten wie het vroeg.",

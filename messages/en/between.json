@@ -57,10 +57,10 @@
     "unanswerable": "You look after {name}, so a Psst! would come back to you."
   },
   "for-you": {
-    "psst-emptyWishlist": "Psst! Your Santa would love some ideas. Add a few wishes to your wishlist.",
-    "psst-emptyWishlist-for": "Psst! {name}'s Santa would love some ideas. Add a few wishes to {name}'s wishlist.",
-    "psst-moreDetails": "Psst! Your Santa would love a bit more detail on your wishes: sizes, colours, links.",
-    "psst-moreDetails-for": "Psst! {name}'s Santa would love a bit more detail on {name}'s wishes.",
+    "psst-emptyWishlist": "Your Santa would love some ideas. Add a few wishes to your wishlist.",
+    "psst-emptyWishlist-for": "{name}'s Santa would love some ideas. Add a few wishes to {name}'s wishlist.",
+    "psst-moreDetails": "Your Santa would love a bit more detail on your wishes: sizes, colours, links.",
+    "psst-moreDetails-for": "{name}'s Santa would love a bit more detail on {name}'s wishes.",
     "edit-wishlist": "Go to my wishlist",
     "questions-title": "Your Santa asked…",
     "questions-intro": "Your Santa sees your answer. You'll never know who asked.",
