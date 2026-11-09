@@ -4,13 +4,13 @@ import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { ExchangeMode } from '@/lib/schema/group';
 import { useTranslations } from 'next-intl';
 import type { FieldIssue } from '../group/field-issue';
-import type { CreateDraft } from './use-create-draft';
+import type { EditionDetailsDraft } from './use-create-draft';
 
 type GiftDayFieldsProps = {
-  draft: CreateDraft;
+  draft: EditionDetailsDraft;
   today: string;
   placeIssue: FieldIssue | null;
-  onChange: (patch: Partial<CreateDraft>) => void;
+  onChange: (patch: Partial<EditionDetailsDraft>) => void;
 };
 
 /** Gift day (28): optional date, time and place, plus how gifts change hands. */
@@ -65,7 +65,7 @@ export const GiftDayFields = ({ draft, today, placeIssue, onChange }: GiftDayFie
           id="exchange-mode"
           className="w-full"
           value={draft.exchangeMode}
-          onChange={(event) => onChange({ exchangeMode: event.target.value as CreateDraft['exchangeMode'] })}
+          onChange={(event) => onChange({ exchangeMode: event.target.value as EditionDetailsDraft['exchangeMode'] })}
         >
           {ExchangeMode.options.map((mode) => (
             <NativeSelectOption key={mode} value={mode}>

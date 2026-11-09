@@ -2,13 +2,13 @@ import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/co
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { useTranslations } from 'next-intl';
-import type { CreateDraft } from './use-create-draft';
+import type { EditionDetailsDraft } from './use-create-draft';
 
 const currencies = ['EUR', 'USD', 'GBP', 'CHF', 'SEK', 'DKK', 'NOK', 'PLN'];
 
 type BudgetFieldsProps = {
-  draft: CreateDraft;
-  onChange: (patch: Partial<CreateDraft>) => void;
+  draft: EditionDetailsDraft;
+  onChange: (patch: Partial<EditionDetailsDraft>) => void;
 };
 
 /** Optional budget (51): one amount, or a range with "up to". */

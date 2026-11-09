@@ -14,6 +14,12 @@ export type CreateDraft = {
   email: string;
 };
 
+/** The edition details the create flow and the settings share (gift day, exchange, budget). */
+export type EditionDetailsDraft = Pick<
+  CreateDraft,
+  'giftDate' | 'giftTime' | 'place' | 'exchangeMode' | 'currency' | 'budgetAmount' | 'budgetMax'
+>;
+
 export const emptyDraft: CreateDraft = {
   name: '',
   giftDate: '',

@@ -1,0 +1,73 @@
+{
+  "page-title": "Settings",
+  "back": "Back to {group}",
+  "title": "Settings",
+  "saved": "Saved",
+  "save": "Save",
+  "group-name": {
+    "title": "Group",
+    "label": "Group name",
+    "help": "Stays the same every year, like Family or The office."
+  },
+  "edition": {
+    "title": "{edition}",
+    "done": "This edition is over, so it can't be changed anymore.",
+    "name": "Name of this edition",
+    "draw-on": "Draw names on",
+    "draw-on-help": "Optional. Names are drawn that morning. Leave it empty to draw them yourself.",
+    "wishlist-by": "Wishlists ready by",
+    "wishlist-by-help": "Optional. A gentle deadline for everyone's wishes.",
+    "post-by": "Post gifts by",
+    "post-by-help": "Optional. So posted gifts arrive on gift day.",
+    "notes": "Notes for everyone",
+    "notes-help": "Optional. Dress code, theme, house rules…",
+    "avoid-previous": "Not the same as last year",
+    "avoid-previous-help": "Nobody draws the person they had last time. Nobody sees who that was, not even you."
+  },
+  "people": {
+    "title": "People",
+    "in-edition": "{count, plural, one {# person in this edition} other {# people in this edition}}",
+    "ticked": "In {edition}",
+    "ticked-label": "{name} is in {edition}",
+    "resend": "Send invite again",
+    "resent": "Invite sent again to {email}",
+    "remove": "Remove",
+    "remove-title": "Remove {name}?",
+    "remove-before": "{name} leaves the group and won't be in the draw. Their wishlist stays theirs.",
+    "remove-after": "{name} leaves the group. The names are drawn already: their Santa gets someone else, everyone else keeps their giftee.",
+    "remove-confirm": "Remove {name}",
+    "removed": "{name} removed",
+    "cancel": "Keep",
+    "drawn": "Names are drawn, so who's in can't change here anymore. People who join now are slotted in."
+  },
+  "keep-apart-drawn": "Names are drawn, so households and pairs can't change for this edition.",
+  "redraw": {
+    "title": "Re-draw",
+    "description": "Draw all names again. Everyone may get someone new, and Dibs! of people whose giftee changes are cleared. If people already bought gifts, they'll have to start over.",
+    "button": "Re-draw names",
+    "confirm-title": "Draw all names again?",
+    "confirm": "Yes, re-draw",
+    "cancel": "Keep the current draw",
+    "done": "Names re-drawn"
+  },
+  "danger": {
+    "title": "Danger zone",
+    "description": "Deleting the group removes it for everyone, with every edition. Wishlists stay with their owners.",
+    "button": "Delete group",
+    "confirm-title": "Delete {group}?",
+    "confirm-description": "Everyone loses access to the group and its editions. This can't be undone.",
+    "confirm": "Delete for everyone",
+    "cancel": "Keep the group"
+  },
+  "errors": {
+    "DATE_IN_PAST": "Dates can't be in the past.",
+    "DATES_OUT_OF_ORDER": "The draw has to come before gift day, and wishlists and posting no later than gift day.",
+    "INVALID_INPUT": "Something doesn't look right. Check the fields and try again.",
+    "ALREADY_DRAWN": "Names are drawn already, so the draw date and \"not the same as last year\" can't change.",
+    "AVOID_PREVIOUS": "With \"not the same as last year\" a draw would be impossible for these people.",
+    "EDITION_CLOSED": "This edition is over, so it can't be changed anymore.",
+    "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "ORGANIZER_CANNOT_LEAVE": "The organizer can't be removed.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  }
+}

@@ -54,6 +54,7 @@ export const groupView = async (
     edition: edition && {
       number: edition.number,
       isCurrent: edition.number === editions[0]?.number,
+      year: edition.year,
       title: edition.title,
       status: edition.status,
       timeZone: edition.timeZone,
