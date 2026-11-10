@@ -12,7 +12,8 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
   const { draw } = (await db.editions.findOne({ groupId, number: 1 }))!;
   const idOf = (userId: string) => members.find((m) => m.userId === userId)!.id;
   const nameOf = (memberId: string) => members.find((m) => m.id === memberId)!.name;
-  const bobsSanta = Object.entries(draw!.assignments).find(([, giftee]) => giftee === idOf(bob.id))![0];
+  const santaOf = (memberId: string) => Object.entries(draw!.assignments).find(([, giftee]) => giftee === memberId)![0];
+  const bobsSanta = santaOf(idOf(bob.id));
 
   await test.step('Bob makes his guess and it locks', async () => {
     await signInPage(page, bob);
@@ -33,7 +34,8 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
 
   ok(await ann.trpc.mutate('manage.startGiftDay', at));
   // Bob unwraps first, so his turn is the one with the guess.
-  await db.editions.updateOne({ groupId, number: 1 }, { $set: { 'unwrapOrder.memberIds': [idOf(bob.id), ...Object.keys(draw!.assignments).filter((id) => id !== idOf(bob.id))] } });
+  const order = [idOf(bob.id), ...Object.keys(draw!.assignments).filter((id) => id !== idOf(bob.id))];
+  await db.editions.updateOne({ groupId, number: 1 }, { $set: { 'unwrapOrder.memberIds': order } });
 
   await test.step('the presenter: spin, unwrap, then who it was from', async () => {
     const presenter = await browser.newPage();
@@ -57,6 +59,25 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     await expect(page.getByText(`Your gift was from ${nameOf(bobsSanta)}`)).toBeVisible();
     await expect(page.getByText('Nailed it!').first()).toBeVisible();
     await expect(page.getByText('1 of 1 guessed their Santa')).toBeVisible();
+  });
+
+  await test.step('the presenter goes on: the other two turns, each with who it was from, then the end', async () => {
+    const presenter = await browser.newPage();
+    await signInPage(presenter, ann);
+    await presenter.goto(`/g/${group.slug}/present`);
+    await presenter.getByRole('switch', { name: 'Skip the spin' }).setChecked(true);
+    for (const [i, memberId] of order.entries()) {
+      if (i === 0) continue;
+      await presenter.getByRole('button', { name: 'Next' }).click();
+      // Nobody spins for the last one.
+      if (i === 1) await presenter.getByRole('button', { name: 'Spin' }).click();
+      await expect(presenter.getByText(`${i + 1} of 3`, { exact: true })).toBeVisible();
+      await presenter.getByRole('button', { name: 'Who was it from?' }).click();
+      await expect(presenter.getByText(`From ${nameOf(santaOf(memberId))}`)).toBeVisible();
+    }
+    await presenter.getByRole('button', { name: 'Next' }).click();
+    await expect(presenter.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
+    await presenter.close();
   });
 });
 

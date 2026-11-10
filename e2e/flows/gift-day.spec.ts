@@ -10,6 +10,7 @@ import { drawOf } from './draw-seed';
 /**
  * Ann, Bob and Cee on gift day with a shuffled unwrap order. `counts[i]`: how many gifts the i-th
  * person in the unwrap order gets, as their Santa marked them; null: their Santa marked nothing.
+ * Guess your Santa is off: guess-your-santa.spec.ts walks the presenter with it on.
  */
 const giftDayGroup = async (db: TestDb, people: User[], name: string, { mode, counts, reveal }: { mode: UnwrapMode; counts: (number | null)[]; reveal: boolean }) => {
   const [ann] = people;
@@ -26,7 +27,7 @@ const giftDayGroup = async (db: TestDb, people: User[], name: string, { mode, co
     const lines = Array.from({ length: count }, (_, k) => `Gift ${k + 1}`);
     ok(await draw.santaOf(userOf(order[i].memberId)).trpc.mutate('gift.set', { ...at, wishIds: [], lines }));
   }
-  await db.editions.updateOne({ _id: draw.editionId }, { $set: { status: 'giftday' } });
+  await db.editions.updateOne({ _id: draw.editionId }, { $set: { status: 'giftday', guessing: false } });
   const pairs = people.map((person) => `${draw.nameOf(person)} got a gift from ${draw.nameOf(draw.santaOf(person))}`);
   return { slug: group.slug, names: order.map((person) => person.name), countOf: (user: User) => counts[order.findIndex((p) => p.memberId === draw.memberIdOf(user))], pairs };
 };
