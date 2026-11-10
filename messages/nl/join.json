@@ -1,8 +1,8 @@
 {
   "meta": {
     "title": "{organizer} nodigt je uit voor {group}",
-    "generic-title": "Je bent uitgenodigd voor lootjes trekken",
-    "description": "Doe mee met de Secret Santa op Givto: zet je verlanglijstje klaar en ontdek wie je lootje is."
+    "generic-title": "Je bent uitgenodigd voor een Secret Santa",
+    "description": "Doe mee met de Secret Santa op Givto: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt."
   },
   "unavailable": {
     "title": "Deze link werkt niet meer",
@@ -10,11 +10,11 @@
     "invite": "Deze uitnodiging is al gebruikt, afgeslagen of verlopen. Vraag de organisator om een nieuwe.",
     "my-secret-santas": "Naar mijn groepen",
     "sign-in": "Inloggen",
-    "start": "Start lootjes trekken"
+    "start": "Start een Secret Santa"
   },
   "intro": {
     "title": "{organizer} nodigt je uit voor {group}",
-    "description": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en ontdek wie je lootje is.",
+    "description": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt.",
     "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt."
   },
   "requested": {

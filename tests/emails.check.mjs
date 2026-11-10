@@ -58,6 +58,8 @@ for (const locale of ['en', 'nl']) {
       assert.ok(!/undefined|NaN|\{[a-z-]+\}/.test(output), `${label}: unfilled variable in ${kind}`);
     }
     assert.ok(text.trim().length > 50, `${label}: plain text`);
+    // Dutch copy says "namen trekken" and "je persoon"; "lootjes" is only for search metadata.
+    assert.ok(!/lootje/i.test(`${preview.subject} ${text}`), `${label}: says lootje`);
     if (preview.url) assert.ok(text.includes(preview.url), `${label}: link in plain text`);
     for (const secret of preview.mustNotContain ?? []) {
       assert.ok(!html.includes(secret) && !text.includes(secret) && !preview.subject.includes(secret), `${label}: leaks ${secret}`);

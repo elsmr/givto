@@ -14,8 +14,8 @@
     "title": "{edition}",
     "done": "Deze editie is voorbij en kan niet meer veranderen.",
     "name": "Naam van deze editie",
-    "draw-on": "Lootjes trekken op",
-    "draw-on-help": "Optioneel. De lootjes worden die ochtend getrokken. Laat leeg om ze zelf te trekken.",
+    "draw-on": "Namen trekken op",
+    "draw-on-help": "Optioneel. De namen worden die ochtend getrokken. Laat leeg om ze zelf te trekken.",
     "wishlist-by": "Verlanglijstjes klaar op",
     "wishlist-by-help": "Optioneel. Een vriendelijke deadline voor ieders wensen.",
     "post-by": "Cadeaus op de post op",
@@ -23,7 +23,7 @@
     "notes": "Notities voor iedereen",
     "notes-help": "Optioneel. Dresscode, thema, huisregels…",
     "avoid-previous": "Niet hetzelfde als vorig jaar",
-    "avoid-previous-help": "Niemand trekt het lootje van vorige keer. Niemand ziet wie dat was, jij ook niet."
+    "avoid-previous-help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet."
   },
   "people": {
     "title": "Deelnemers",
@@ -35,21 +35,21 @@
     "remove": "Verwijderen",
     "remove-title": "{name} verwijderen?",
     "remove-before": "{name} verlaat de groep en doet niet mee aan de trekking. Het verlanglijstje blijft van {name}.",
-    "remove-after": "{name} verlaat de groep. De lootjes zijn al getrokken: de Santa van {name} krijgt een ander lootje, de rest houdt hetzelfde lootje.",
+    "remove-after": "{name} verlaat de groep. De namen zijn al getrokken: de Santa van {name} krijgt iemand anders, voor de rest verandert er niets.",
     "remove-confirm": "{name} verwijderen",
     "removed": "{name} verwijderd",
     "cancel": "Laten staan",
-    "drawn": "De lootjes zijn getrokken, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen."
+    "drawn": "De namen zijn getrokken, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen."
   },
-  "keep-apart-drawn": "De lootjes zijn getrokken, dus huishoudens en duo's kunnen voor deze editie niet meer veranderen.",
+  "keep-apart-drawn": "De namen zijn getrokken, dus huishoudens en duo's kunnen voor deze editie niet meer veranderen.",
   "redraw": {
     "title": "Opnieuw trekken",
-    "description": "Trek alle lootjes opnieuw. Iedereen kan iemand anders krijgen, en wat iemand met een nieuw lootje al geclaimd had, komt weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
-    "button": "Lootjes opnieuw trekken",
-    "confirm-title": "Alle lootjes opnieuw trekken?",
+    "description": "Trek alle namen opnieuw. Iedereen kan iemand anders krijgen; krijg je iemand anders, dan komt wat je al geclaimd had weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
+    "button": "Namen opnieuw trekken",
+    "confirm-title": "Alle namen opnieuw trekken?",
     "confirm": "Ja, opnieuw trekken",
-    "cancel": "Huidige lootjes houden",
-    "done": "Lootjes opnieuw getrokken"
+    "cancel": "Huidige trekking houden",
+    "done": "Namen opnieuw getrokken"
   },
   "danger": {
     "title": "Gevarenzone",
@@ -64,8 +64,8 @@
     "DATE_IN_PAST": "Data kunnen niet in het verleden liggen.",
     "DATES_OUT_OF_ORDER": "De trekking moet voor pakjesdag zijn, en verlanglijstjes en posten niet later dan pakjesdag.",
     "INVALID_INPUT": "Er klopt iets niet. Kijk de velden na en probeer het opnieuw.",
-    "ALREADY_DRAWN": "De lootjes zijn al getrokken, dus de datum van de trekking en 'niet hetzelfde als vorig jaar' kunnen niet meer veranderen.",
-    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het niet om lootjes te trekken voor deze mensen.",
+    "ALREADY_DRAWN": "De namen zijn al getrokken, dus de datum van de trekking en 'niet hetzelfde als vorig jaar' kunnen niet meer veranderen.",
+    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het niet om namen te trekken voor deze mensen.",
     "EDITION_CLOSED": "Deze editie is voorbij en kan niet meer veranderen.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "ORGANIZER_CANNOT_LEAVE": "De organisator kan niet verwijderd worden.",
