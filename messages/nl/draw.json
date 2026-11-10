@@ -1,0 +1,61 @@
+{
+  "before": {
+    "title": "Iedereen erbij",
+    "who": "{count, plural, =0 {Nog niemand doet mee} one {# persoon doet mee} other {# mensen doen mee}}",
+    "scheduled": "Er wordt geloot op {date}.",
+    "too-few": "Om te loten {count, plural, one {is er nog # persoon} other {zijn er nog # mensen}} nodig.",
+    "draw": "Loten",
+    "confirm-title": "Nu loten?",
+    "confirm-description": "Iedereen krijgt meteen een naam. Wie later meedoet, schuift er tussen.",
+    "left-out": "Niet in deze loting: {names}.",
+    "confirm": "Loten",
+    "cancel": "Nog niet",
+    "drawn": "Er is geloot!"
+  },
+  "draft": {
+    "title": "Er is nog niets verstuurd",
+    "description": "Kijk wie er meedoet en of de data kloppen, en open hem dan zodat mensen kunnen meedoen.",
+    "member": "De organisator zet deze editie klaar.",
+    "settings": "Deelnemers en data",
+    "open": "Editie openen",
+    "opened": "Editie geopend"
+  },
+  "reveal": {
+    "title": "Je persoon",
+    "tap": "Tik om te zien voor wie je een cadeau koopt",
+    "hint": "Kijk even of er niemand over je schouder meekijkt.",
+    "buying-for": "Je koopt een cadeau voor",
+    "hide": "Verbergen",
+    "changed": "Je persoon is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
+    "not-in": "Je doet niet mee aan deze loting.",
+    "not-fitted": "Je deed mee na de loting en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw loten.",
+    "show": "Tonen"
+  },
+  "next": {
+    "title": "Volgend jaar weer?",
+    "description": "Begin de editie van {year} met iedereen van deze keer. Er wordt niets verstuurd tot je hem opent.",
+    "start": "Editie {year} beginnen",
+    "errors": {
+      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is.",
+      "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+    }
+  },
+  "errors": {
+    "TOO_FEW_PEOPLE": "Om te loten zijn er minstens {min} mensen nodig.",
+    "DRAW_IMPOSSIBLE": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Pas aan wie niet samen mag, en probeer het opnieuw.",
+    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het loten niet voor deze mensen. Zet het uit in de instellingen en probeer het opnieuw.",
+    "ALREADY_DRAWN": "Er is al geloot.",
+    "NOT_DRAWN": "Er is nog niet geloot.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  },
+  "calendar": {
+    "button": "Zet in je agenda",
+    "ics": "Downloaden voor Apple of Outlook (.ics)",
+    "google": "Google Agenda: {event}",
+    "outlook": "Outlook.com: {event}",
+    "gift-day": "{group}: pakjesdag",
+    "post-by": "{group}: cadeau op de post doen",
+    "description": "Je Secret Santa op Givto: {url}"
+  }
+}

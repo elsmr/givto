@@ -1,20 +1,19 @@
-import { ErrorPage } from '@givto/frontend/components/error';
-import { NextPage, NextPageContext } from 'next';
-import React from 'react';
+import { ErrorPage } from '@/components/error-page';
+import { loadMessages } from '@/messages/load';
+import { captureUnderscoreErrorException } from '@sentry/nextjs';
+import type { NextPage } from 'next';
 
-export const NextErrorPage: NextPage<{ statusCode: number }> = ({
-  statusCode,
-}) => <ErrorPage statusCode={statusCode} />;
+const NextErrorPage: NextPage<{ statusCode: number }> = ({ statusCode }) => (
+  <ErrorPage statusCode={statusCode} />
+);
 
-NextErrorPage.getInitialProps = async ({ res, err, locale }) => {
-  const statusCode = res
-    ? res.statusCode
-    : err
-    ? (err.statusCode as number)
-    : 404;
+NextErrorPage.getInitialProps = async (context) => {
+  // Render errors (server and browser) with status 500+; awaited so serverless doesn't drop it.
+  await captureUnderscoreErrorException(context);
+  const { res, err, locale } = context;
   return {
-    statusCode,
-    // messages: (await import(`../messages/${locale}.json`)).default,
+    statusCode: res?.statusCode ?? err?.statusCode ?? 500,
+    messages: await loadMessages(locale, ['errors']),
   };
 };
 

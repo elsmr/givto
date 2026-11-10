@@ -1,0 +1,83 @@
+{
+  "hero": {
+    "eyebrow": "Secret Santa for family and friends",
+    "title": "Secret Santa, sorted with one link",
+    "lead": "Start a Secret Santa, share the link with your family or friends and let everyone join. Givto draws the names, keeps the wishlists and counts down to gift day.",
+    "cta": "Start a Secret Santa",
+    "how-it-works": "How it works",
+    "note": "Free. No passwords, no app to install."
+  },
+  "steps": {
+    "title": "How it works",
+    "create": {
+      "title": "Start a Secret Santa",
+      "description": "Give it a name, and add a gift day and a budget if you like. Takes a minute."
+    },
+    "share": {
+      "title": "Share one link",
+      "description": "Share the link with your family or friends. You don't need anyone's email address."
+    },
+    "join": {
+      "title": "Everyone joins",
+      "description": "People tap the link, enter their name and email and confirm with a code we send them."
+    },
+    "draw": {
+      "title": "Draw names",
+      "description": "Once everyone's in, draw names. Everyone only sees their own giftee, and you can keep couples apart."
+    },
+    "wishlists": {
+      "title": "Fill your wishlists",
+      "description": "Add a few wishes so your Santa knows what to get you. Santas call Dibs! so nobody buys the same thing twice."
+    },
+    "gift-day": {
+      "title": "Gift day",
+      "description": "Unwrap in turns with the unwrap order, and end with the big reveal if you want one."
+    }
+  },
+  "features": {
+    "title": "Everything your Secret Santa needs",
+    "wishlist": {
+      "title": "One wishlist, every group",
+      "description": "Keep one personal wishlist and use it in all your groups. Hide wishes from a group that shouldn't see them."
+    },
+    "dibs": {
+      "title": "Dibs!",
+      "description": "Santas claim a wish so nobody doubles up. You never see what's been claimed on your own list."
+    },
+    "tips": {
+      "title": "Tips for Santa",
+      "description": "Know what someone really wants? Leave a tip for their Santa, with your name or anonymously."
+    },
+    "editions": {
+      "title": "Same again next year",
+      "description": "Your group sticks around. Next year, start a new edition with everyone ticked, and the draw avoids last year's pairs."
+    }
+  },
+  "faq": {
+    "title": "Questions",
+    "account": {
+      "question": "Does everyone need an account?",
+      "answer": "No passwords and nothing to install. People join from the link with their name and email and confirm with a code we email them."
+    },
+    "secret": {
+      "question": "Who can see who drew whom?",
+      "answer": "Everyone only sees who they give to. If you like, end gift day with the big reveal."
+    },
+    "apart": {
+      "question": "Can I keep couples apart?",
+      "answer": "Yes. Put them in the same Keep apart row and they never draw each other."
+    },
+    "cost": {
+      "question": "What does it cost?",
+      "answer": "Nothing. Givto is free and open source."
+    },
+    "data": {
+      "question": "What happens to my data?",
+      "answer": "We only keep what your Secret Santa needs and clean up after gift day. Read the <link>privacy page</link>."
+    }
+  },
+  "closing": {
+    "title": "Ready? It takes a minute.",
+    "cta": "Start a Secret Santa"
+  }
+}

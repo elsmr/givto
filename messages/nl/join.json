@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "title": "{organizer} nodigt je uit voor {group}",
+    "generic-title": "Je bent uitgenodigd voor een Secret Santa",
+    "description": "Doe mee met de Secret Santa op Givto: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt."
+  },
+  "unavailable": {
+    "title": "Deze link werkt niet meer",
+    "link": "Misschien heeft de organisator een nieuwe link gemaakt. Vraag of die hem nog eens deelt.",
+    "invite": "Deze uitnodiging is al gebruikt, afgeslagen of verlopen. Vraag de organisator om een nieuwe.",
+    "my-secret-santas": "Naar mijn groepen",
+    "sign-in": "Inloggen",
+    "start": "Start een Secret Santa"
+  },
+  "intro": {
+    "title": "Je bent uitgenodigd!",
+    "description": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt.",
+    "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt.",
+    "organizer": "Organisator: {name}",
+    "gift-day": "Pakjesdag {date}"
+  },
+  "requested": {
+    "title": "Bijna!",
+    "description": "{organizer} moet je nog toelaten. Zodra dat gebeurt, staat de Secret Santa in je lijst.",
+    "my-secret-santas": "Naar mijn groepen"
+  },
+  "details": {
+    "name": "Je naam",
+    "name-help": "Iedereen in de Secret Santa ziet deze naam.",
+    "email": "Je e-mailadres",
+    "email-help": "We sturen je een code om te checken dat jij het bent.",
+    "signed-in": "Je doet mee als {email}.",
+    "join": "Doe mee",
+    "send-code": "Stuur me een code"
+  },
+  "code": {
+    "sent": "We hebben een code van 6 cijfers en een inloglink gestuurd naar {email}. Vul de code in, of klik op de link in de e-mail.",
+    "label": "Code",
+    "help": "Hij werkt één keer en verloopt na 10 minuten.",
+    "resend": "Stuur een nieuwe code",
+    "change-email": "Ander e-mailadres",
+    "errors": {
+      "rate-limited": "Dat zijn veel codes. Wacht een paar minuten en probeer opnieuw.",
+      "code-wrong": "Die code klopt niet. Check de e-mail en probeer opnieuw.",
+      "code-expired": "Die code is verlopen. Stuur jezelf een nieuwe.",
+      "code-attempts": "Te vaak geprobeerd. Stuur jezelf een nieuwe code.",
+      "generic": "Er ging iets mis. Probeer het zo opnieuw."
+    }
+  },
+  "errors": {
+    "GROUP_FULL": "Deze Secret Santa zit vol. Vraag de organisator om plek te maken.",
+    "JOIN_LINK_INVALID": "Deze link werkt niet meer. Vraag de organisator om de nieuwe.",
+    "RATE_LIMITED": "Dat zijn veel pogingen. Wacht even en probeer opnieuw.",
+    "INVALID_INPUT": "Er klopt iets niet. Check je naam en probeer opnieuw.",
+    "INVITE_INVALID": "Deze uitnodiging is al gebruikt of verlopen.",
+    "INVITE_EMAIL_MISMATCH": "Deze uitnodiging is voor een ander e-mailadres.",
+    "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
+  },
+  "invite": {
+    "for": "Deze uitnodiging is voor {email}.",
+    "other-account": "Deze uitnodiging is voor {email}, maar je bent ingelogd als {signedInEmail}. Log uit om verder te gaan.",
+    "send-code": "Stuur me een code",
+    "sign-out": "Uitloggen",
+    "decline": "Nee, bedankt",
+    "declined-title": "Geen probleem!",
+    "declined": "{organizer} ziet dat je deze keer niet meedoet.",
+    "home": "Naar de startpagina"
+  }
+}

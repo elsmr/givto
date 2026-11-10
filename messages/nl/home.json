@@ -1,0 +1,83 @@
+{
+  "hero": {
+    "eyebrow": "Secret Santa voor familie en vrienden",
+    "title": "Secret Santa, geregeld met één link",
+    "lead": "Start een Secret Santa, deel de link met je familie of vrienden en laat iedereen meedoen. Givto loot, bewaart de verlanglijstjes en telt af naar pakjesdag.",
+    "cta": "Start een Secret Santa",
+    "how-it-works": "Zo werkt het",
+    "note": "Gratis. Geen wachtwoorden, geen app nodig."
+  },
+  "steps": {
+    "title": "Zo werkt het",
+    "create": {
+      "title": "Start een Secret Santa",
+      "description": "Geef hem een naam en kies als je wil een pakjesdag en een budget. Klaar in een minuut."
+    },
+    "share": {
+      "title": "Deel één link",
+      "description": "Deel de link met je familie of vrienden. Je hebt niemands e-mailadres nodig."
+    },
+    "join": {
+      "title": "Iedereen doet mee",
+      "description": "Iedereen tikt op de link, vult naam en e-mailadres in en bevestigt met een code die we mailen."
+    },
+    "draw": {
+      "title": "Loten",
+      "description": "Is iedereen erbij? Dan loot je. Je ziet alleen voor wie jij koopt, en koppels hou je makkelijk uit elkaar."
+    },
+    "wishlists": {
+      "title": "Vul je verlanglijstje",
+      "description": "Zet een paar wensen op je lijstje, dan weet je Santa wat je wil. Santa's claimen een wens, zodat niemand twee keer hetzelfde koopt."
+    },
+    "gift-day": {
+      "title": "Pakjesdag",
+      "description": "Pak om de beurt uit met de uitpakvolgorde en sluit af met de grote onthulling als je dat wil."
+    }
+  },
+  "features": {
+    "title": "Alles voor je Secret Santa",
+    "wishlist": {
+      "title": "Eén verlanglijstje voor elke groep",
+      "description": "Hou één persoonlijk verlanglijstje bij en gebruik het in al je groepen. Verberg wensen voor een groep die ze niet hoeft te zien."
+    },
+    "dibs": {
+      "title": "Geclaimd!",
+      "description": "Santa's claimen een wens, zodat niemand dubbel koopt. Op je eigen lijstje zie je nooit wat er geclaimd is."
+    },
+    "tips": {
+      "title": "Tips voor Santa",
+      "description": "Weet je wat iemand echt graag wil? Geef hun Santa een tip, met je naam of anoniem."
+    },
+    "editions": {
+      "title": "Volgend jaar weer",
+      "description": "Je groep blijft bestaan. Start volgend jaar een nieuwe editie met iedereen aangevinkt, en de loting zorgt dat niemand dezelfde persoon krijgt als vorig jaar."
+    }
+  },
+  "faq": {
+    "title": "Vragen",
+    "account": {
+      "question": "Heeft iedereen een account nodig?",
+      "answer": "Geen wachtwoorden en niets te installeren. Iedereen doet mee via de link met naam en e-mailadres en bevestigt met een code die we mailen."
+    },
+    "secret": {
+      "question": "Wie ziet wie voor wie koopt?",
+      "answer": "Niemand. Je ziet alleen voor wie jij zelf koopt. Wil je toch alles weten? Sluit pakjesdag af met de grote onthulling."
+    },
+    "apart": {
+      "question": "Kan ik koppels uit elkaar houden?",
+      "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan krijgen ze elkaar nooit."
+    },
+    "cost": {
+      "question": "Wat kost het?",
+      "answer": "Niets. Givto is gratis en open source."
+    },
+    "data": {
+      "question": "Wat gebeurt er met mijn gegevens?",
+      "answer": "We bewaren alleen wat je Secret Santa nodig heeft en ruimen op na pakjesdag. Lees de <link>privacyverklaring</link>."
+    }
+  },
+  "closing": {
+    "title": "Klaar? Het duurt maar een minuut.",
+    "cta": "Start een Secret Santa"
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "page-title": "Secret Santa",
+  "load-failed": "We couldn't load this Secret Santa. Check your connection and try again.",
+  "status": {
+    "draft": "Draft",
+    "open": "Open to join",
+    "drawn": "Names drawn",
+    "giftday": "Gift day",
+    "done": "Done"
+  },
+  "summary": {
+    "gift-day": "Gift day",
+    "exchange": "Gifts",
+    "exchange-modes": {
+      "inPerson": "In person",
+      "byPost": "By post",
+      "both": "In person or by post"
+    },
+    "budget": "Budget",
+    "no-budget": "No budget",
+    "draw": "The draw",
+    "draw-on": "Names are drawn on {date}",
+    "drawn": "Names are drawn",
+    "wishlist-by": "Wishlists ready by",
+    "post-by": "Post gifts by",
+    "notes": "Notes"
+  },
+  "people": {
+    "title": "People ({count} in)",
+    "organizer": "Organizer",
+    "you": "You",
+    "status": {
+      "invited": "Invited",
+      "requested": "Wants to join",
+      "declined": "Sits this one out",
+      "removed": "Left"
+    },
+    "bounced": "Email bounced: check the address",
+    "manage": "Invite and manage people"
+  },
+  "requests": {
+    "title": "{count, plural, one {# person wants} other {# people want}} to join",
+    "approve": "Let in",
+    "reject": "Decline"
+  },
+  "share": {
+    "title": "Invite people",
+    "joined": "{count, plural, one {# person has} other {# people have}} joined",
+    "revoked": "The join link is turned off. Make a new link to let people join again.",
+    "link-label": "Join link",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "copy-failed": "Couldn't copy. Select the link and copy it yourself.",
+    "share": "Share",
+    "share-text": "Join our Secret Santa {group} on Givto",
+    "show-qr": "Show QR code",
+    "qr-label": "QR code with the join link for {group}",
+    "settings": {
+      "title": "Link settings",
+      "approval": "I let people in myself",
+      "cap": "Most people (optional)",
+      "cap-help": "When this many people are in, the link stops letting people join.",
+      "revoke": "Turn off the link",
+      "regenerate": "Make a new link"
+    }
+  },
+  "invite": {
+    "legend": "Or invite someone by email",
+    "name": "Name",
+    "email": "Email",
+    "send": "Send invite",
+    "sent": "Invite sent to {email}",
+    "errors": {
+      "ALREADY_MEMBER": "They're already in this Secret Santa.",
+      "RATE_LIMITED": "That's a lot of invites for one day. Share the link instead, or try again tomorrow.",
+      "GROUP_FULL": "This Secret Santa is full.",
+      "INVALID_INPUT": "Check the name and email and try again.",
+      "INTERNAL": "Something went wrong on our side. Try again in a moment."
+    }
+  },
+  "leave": {
+    "button": "Leave this Secret Santa",
+    "title": "Leave {group}?",
+    "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, your Santa gets someone else. Your wishlist stays yours.",
+    "cancel": "Stay",
+    "confirm": "Leave",
+    "errors": {
+      "INTERNAL": "Something went wrong on our side. Try again in a moment."
+    }
+  },
+  "keep-apart": {
+    "title": "Keep apart",
+    "description": "Who shouldn't draw each other? People in the same row never draw each other.",
+    "save": "Save",
+    "saved": "Saved",
+    "errors": {
+      "DRAW_IMPOSSIBLE": "With these rows nobody can draw names. Take someone out of a row and try again.",
+      "INTERNAL": "Something went wrong on our side. Try again in a moment."
+    },
+    "rows": {
+      "label": "Row {number}",
+      "add": "Add a row",
+      "add-person": "Add someone…",
+      "remove-person": "Take {name} out",
+      "remove": "Remove row",
+      "needs-two": "Add at least two people to this row."
+    },
+    "feasibility": {
+      "too-few": "The draw needs at least {min} people.",
+      "stuck": "{count, plural, =0 {{givers} can't give to anyone} other {{givers} can only give to {receivers}}}. Take someone out of a row."
+    }
+  },
+  "not-found": {
+    "title": "We couldn't find this Secret Santa",
+    "description": "It doesn't exist, or you're not in it with this account. Joining? Open the link from your organizer again.",
+    "my-secret-santas": "Go to my groups",
+    "switch-account": "Sign in with another email"
+  },
+  "issues": {
+    "required": "Fill this in.",
+    "no_urls": "No web addresses, please.",
+    "no_at_sign": "No @, please.",
+    "no_line_breaks": "Keep it on one line.",
+    "invalid_price_range": "The second amount should be bigger.",
+    "too_long": "That's too long.",
+    "invalid": "That doesn't look right.",
+    "invalid_email": "Enter a full email address."
+  },
+  "settings-link": "Settings",
+  "editions": {
+    "title": "Editions",
+    "current": "Current",
+    "past": "This is {edition}, an earlier edition.",
+    "go-current": "Go to the current edition",
+    "not-found": "This edition doesn't exist."
+  },
+  "hi": "Hi {name}",
+  "budget-chip": "Budget {budget}",
+  "phase": {
+    "label": "Where this Secret Santa is",
+    "join": "Join",
+    "draw": "Draw",
+    "shop": "Shop",
+    "giftday": "Gift day",
+    "done": "Done",
+    "done-state": "finished"
+  },
+  "tabs": {
+    "label": "This Secret Santa",
+    "overview": "Overview",
+    "giftee": "My giftee",
+    "wishlist": "My wishlist",
+    "people": "People"
+  },
+  "stats": {
+    "gift-day": "Gift day",
+    "no-gift-day": "Not set yet",
+    "days-to-go": "{count, plural, one {day to go} other {days to go}} · {date}",
+    "today": "Today!",
+    "over": "Over",
+    "wishes": "My wishes",
+    "people": "People",
+    "gifts": "Got their gift",
+    "gifts-still": "Still shopping: {names}",
+    "gifts-all": "Everyone has a gift"
+  },
+  "overview": {
+    "details": "Dates, budget and notes",
+    "to-giftee": "Their wishlist and tips"
+  }
+}

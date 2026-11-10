@@ -1,0 +1,66 @@
+{
+  "button": "Beheren",
+  "cancel": "Annuleren",
+  "startGiftDay": {
+    "item": "Pakjesdag nu starten",
+    "title": "Pakjesdag nu starten?",
+    "description": "Pakjesdag begint meteen voor iedereen, zonder op de datum te wachten.",
+    "points": {
+      "date": "Pakjesdag is vandaag, {today}.",
+      "order": "De uitpakvolgorde wordt geschud, want dat heeft nog niemand gedaan.",
+      "open": "Geclaimd!, tips en vragen blijven open tot het eind van de dag. Daarna is het voorbij.",
+      "secret": "Voor wie iedereen kocht, blijft geheim, tenzij je de grote onthulling doet."
+    },
+    "confirm": "Pakjesdag starten",
+    "done": "Pakjesdag is begonnen"
+  },
+  "finishGiftDay": {
+    "item": "Pakjesdag afsluiten",
+    "title": "Pakjesdag nu afsluiten?",
+    "description": "Deze Secret Santa is voor iedereen voorbij, zonder op morgen te wachten.",
+    "points": {
+      "closed": "Geclaimd!, tips, vragen en de instellingen gaan dicht.",
+      "received": "Iedereen kan de gekregen wensen afvinken.",
+      "next": "Je kunt de editie van volgend jaar starten.",
+      "undo": "Toch niet? Heropen pakjesdag via dit menu."
+    },
+    "confirm": "Pakjesdag afsluiten",
+    "done": "Pakjesdag is voorbij"
+  },
+  "backToShopping": {
+    "item": "Terug naar shoppen",
+    "underway": "Niet meer als er iets is uitgepakt of onthuld",
+    "title": "Terug naar shoppen?",
+    "description": "Pakjesdag stopt: iedereen gaat weer shoppen voor de eigen persoon, tot de nieuwe pakjesdag.",
+    "points": {
+      "date": "Pakjesdag verschuift naar de datum die je hieronder kiest. Herinneringen volgen die datum.",
+      "order": "De uitpakvolgorde blijft een verrassing; het uitpakken begint opnieuw.",
+      "secret": "Er is nog niets uitgepakt of onthuld, dus niemand komt iets te weten."
+    },
+    "date": "Nieuwe pakjesdag",
+    "date-help": "Na vandaag. Je kunt hem nog aanpassen in de instellingen.",
+    "confirm": "Terug naar shoppen",
+    "done": "Terug naar shoppen"
+  },
+  "reopenGiftDay": {
+    "item": "Pakjesdag heropenen",
+    "title": "Pakjesdag heropenen voor vandaag?",
+    "description": "Om iets recht te zetten: het is weer pakjesdag tot het eind van vandaag, {today}. Daarna is het weer voorbij.",
+    "points": {
+      "open": "Geclaimd!, tips, vragen, de uitpakvolgorde en de instellingen gaan weer open.",
+      "date": "De datum van pakjesdag wordt vandaag.",
+      "secret": "De grote onthulling blijft zoals hij is."
+    },
+    "confirm": "Pakjesdag heropenen",
+    "done": "Pakjesdag is weer open"
+  },
+  "errors": {
+    "NOT_DRAWN": "Er is nog niet geloot.",
+    "NOT_GIFT_DAY": "Het is nog geen pakjesdag.",
+    "GIFT_DAY_UNDERWAY": "Er is al iets uitgepakt of onthuld, dus terug kan niet meer.",
+    "DATE_IN_PAST": "Kies een dag na vandaag.",
+    "EDITION_CLOSED": "Alleen de nieuwste editie kan weer open.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  }
+}

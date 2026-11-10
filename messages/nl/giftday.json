@@ -1,0 +1,98 @@
+{
+  "hero": {
+    "title": "Het is pakjesdag!",
+    "description": "Tijd om uit te pakken. Veel plezier, allemaal.",
+    "present": "Presentatieweergave openen",
+    "to-open": "{count, plural, one {# cadeau om uit te pakken} other {# cadeaus om uit te pakken}}"
+  },
+  "order": {
+    "title": "Uitpakvolgorde",
+    "intro": "Willekeurig gekozen en een verrassing: de presentator draait wie er aan de beurt is.",
+    "none": "Nog geen uitpakvolgorde: die wordt uiterlijk op pakjesdag geschud.",
+    "none-organizer": "De volgorde blijft een verrassing: in de presentatieweergave draai je voor elke beurt. Schud je niet, dan gebeurt het op pakjesdag.",
+    "you": "jij",
+    "shuffle": "Uitpakvolgorde schudden",
+    "reshuffle": "Opnieuw schudden",
+    "shuffled": "Uitpakvolgorde geschud",
+    "present": "Presentatieweergave",
+    "mode-label": "Hoe pakken jullie uit?",
+    "modes": {
+      "allAtOnce": "Alles tegelijk",
+      "oneByOne": "Om de beurt"
+    },
+    "mode-help": {
+      "allAtOnce": "Wie aan de beurt is, pakt alle cadeaus in één keer uit.",
+      "oneByOne": "Eén cadeau per beurt, rondje na rondje tot niemand nog iets heeft."
+    },
+    "mode-locked": "Dit kun je aanpassen voor het uitpakken begint, of na opnieuw schudden.",
+    "now": "Nu aan het uitpakken",
+    "spinning": "Wie is er nu? De rol draait…",
+    "finished": "Iedereen heeft uitgepakt.",
+    "went": "Al uitgepakt",
+    "done": "klaar",
+    "reshuffle-title": "Opnieuw schudden?",
+    "reshuffle-description": "Iedereen krijgt een nieuwe uitpakvolgorde en het uitpakken begint opnieuw.",
+    "reshuffle-confirm": "Opnieuw schudden",
+    "cancel": "Deze volgorde houden"
+  },
+  "reveal": {
+    "title": "De grote onthulling",
+    "switch": "De grote onthulling doen",
+    "switch-help": "Vanaf pakjesdag kun je iedereen laten zien wie wiens Santa was.",
+    "teaser": "Op pakjesdag onthult de organisator wie wiens Santa was.",
+    "ready": "Onthul het als iedereen heeft uitgepakt: dan ziet iedereen wie wiens Santa was.",
+    "button": "Onthul wie wiens Santa was",
+    "revealed": "Dit is wie wiens Santa was.",
+    "pairs-label": "Wie wiens Santa was",
+    "pair": "<name>{giftee}</name> kreeg een cadeau van <name>{santa}</name>"
+  },
+  "after": {
+    "title": "Hoe was het?",
+    "description": "Hopelijk heb je iets leuks gekregen. Duid de wensen aan die je kreeg: ze verdwijnen van je verlanglijstje, zodat niemand ze nog eens koopt.",
+    "got-it": "Gekregen",
+    "got-it-label": "{title} gekregen",
+    "marked": "Gekregen: {title}",
+    "undo": "Ongedaan maken",
+    "empty": "Er staat niets meer op je verlanglijstje voor deze groep."
+  },
+  "present": {
+    "page-title": "Presentatieweergave",
+    "back": "Terug naar de groep",
+    "only-organizer": "Alleen de organisator kan de presentatieweergave openen.",
+    "intro-hint": "Druk op → of spatie voor de eerste persoon.",
+    "next-up": "Pakt nu uit",
+    "last-one": "Als laatste, maar zeker niet de minste",
+    "step": "{current} van {total}",
+    "reveal-hint": "Druk op → of spatie om te onthullen wie wiens Santa was.",
+    "end-title": "Dat was iedereen!",
+    "end-hint": "Fijne feestdagen.",
+    "no-order": "Er is nog geen uitpakvolgorde.",
+    "previous": "Vorige",
+    "next": "Volgende",
+    "keys": "← → of spatie om verder te gaan",
+    "whos-next": "Wie is er nu?",
+    "spin": "Draaien",
+    "skip": "Overslaan",
+    "skip-spin": "Zonder draaien",
+    "round": "Ronde {round}",
+    "more": "Nog meer uit te pakken",
+    "last": "Dat was de laatste",
+    "keys-spin": "Spatie of → om te draaien · ← terug",
+    "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug",
+    "gift-of": "Cadeau {current} van {total}",
+    "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
+    "keys-counted": "→ of spatie: volgende · ← terug"
+  },
+  "errors": {
+    "NOT_DRAWN": "Er is nog niet geloot.",
+    "NOT_GIFT_DAY": "De grote onthulling kan vanaf pakjesdag.",
+    "REVEAL_OFF": "Zet eerst de grote onthulling aan.",
+    "EDITION_CLOSED": "Deze editie is voorbij.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  },
+  "panel": {
+    "order": "Uitpakvolgorde",
+    "with-reveal": "Pakjesdag: uitpakvolgorde en de grote onthulling"
+  }
+}

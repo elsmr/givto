@@ -1,97 +1,29 @@
-import styled from '@emotion/styled';
-import { CreateGroupForm } from '@givto/frontend/components/create-group-form';
-import { Header } from '@givto/frontend/components/header';
-import { ProfileButton } from '@givto/frontend/components/profile-button';
-import { BorderBox } from '@givto/frontend/components/ui/border-box';
-import { Box } from '@givto/frontend/components/ui/box';
-import { Layout, LayoutWrapper } from '@givto/frontend/components/ui/layout';
-import { Link } from '@givto/frontend/components/ui/link';
-import { NextPageContext } from 'next';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
-import React from 'react';
-import AssignIllustration from '../assets/assign.svg';
-import InviteIllustration from '../assets/invite.svg';
-import { Footer } from '../lib/frontend/components/footer';
+import { HomeClosing } from '@/components/home/home-closing';
+import { HomeFaq } from '@/components/home/home-faq';
+import { HomeFeatures } from '@/components/home/home-features';
+import { HomeHero } from '@/components/home/home-hero';
+import { HomeJsonLd } from '@/components/home/home-json-ld';
+import { HowItWorks } from '@/components/home/how-it-works';
+import { AppShell } from '@/components/shell/app-shell';
+import { loadMessages } from '@/messages/load';
+import type { GetStaticProps } from 'next';
 
-const HomePage = () => {
-  const t = useTranslations('home');
+// Static per locale (37): no session-dependent markup; the header hydrates the account state.
+export default function HomePage() {
   return (
-    <Layout display="flex" flexDirection="column" justifyItems="stretch">
-      <Box as="main">
-        <Box marginBottom={4}>
-          <Header bg="white" actions={<ProfileButton />} />
-        </Box>
-
-        <LayoutWrapper marginBottom={4}>
-          <BorderBox p={4}>
-            <Box as="h2" marginBottom={4} fontSize={5}>
-              {t('tagline')}
-            </Box>
-            <CreateGroupForm />
-          </BorderBox>
-        </LayoutWrapper>
-
-        <Box marginBottom={4} py={3}>
-          <LayoutWrapper>
-            <Box
-              display="flex"
-              flexWrap="wrap"
-              alignItems="center"
-              marginBottom={5}
-            >
-              <Box
-                p={[4, 1]}
-                paddingRight={[4, 5]}
-                flexBasis={['100%', '50%']}
-                order={[2, 1]}
-              >
-                <InviteIllustration style={{ width: '100%' }} />
-              </Box>
-
-              <Box flexBasis={['100%', '50%']} order={[1, 2]}>
-                <Box as="h3" fontSize={5} marginBottom={3}>
-                  {t('invite-friends.title')}
-                </Box>
-
-                <Box as="p" lineHeight="body" fontSize={3}>
-                  {t('invite-friends.description')}
-                </Box>
-              </Box>
-            </Box>
-            <Box display="flex" flexWrap="wrap" alignItems="center">
-              <Box paddingRight={[4, 5]} flexBasis={['100%', '50%']}>
-                <Box as="h3" fontSize={5} marginBottom={3}>
-                  {t('assign.title')}
-                </Box>
-
-                <Box as="p" lineHeight="body" fontSize={3}>
-                  {t('assign.description')}
-                </Box>
-              </Box>
-
-              <Box p={[4, 1]} flexBasis={['100%', '50%']}>
-                <AssignIllustration style={{ width: '100% ' }} />
-              </Box>
-            </Box>
-          </LayoutWrapper>
-        </Box>
-      </Box>
-      <Footer />
-    </Layout>
+    <AppShell>
+      <HomeJsonLd />
+      <div className="flex flex-col gap-20 sm:gap-28">
+        <HomeHero />
+        <HowItWorks />
+        <HomeFeatures />
+        <HomeFaq />
+        <HomeClosing />
+      </div>
+    </AppShell>
   );
-};
-
-export default HomePage;
-
-export async function getStaticProps(context: NextPageContext) {
-  const { locale, locales } = context;
-
-  return {
-    props: {
-      locales,
-      locale,
-      messages: (await import(`../messages/${locale}.json`)).default,
-    },
-  };
 }
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { messages: await loadMessages(locale, ['home', 'seo']) },
+});

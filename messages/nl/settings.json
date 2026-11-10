@@ -1,0 +1,76 @@
+{
+  "guess": "Raad je Santa",
+  "page-title": "Instellingen",
+  "only-organizer": "Alleen de organisator kan de instellingen van {group} aanpassen.",
+  "back": "Terug naar {group}",
+  "title": "Instellingen",
+  "on-this-page": "Op deze pagina",
+  "saved": "Opgeslagen",
+  "save": "Opslaan",
+  "group-name": {
+    "title": "Groep",
+    "label": "Naam van de groep",
+    "help": "Blijft elk jaar hetzelfde, zoals Familie of Het werk."
+  },
+  "edition": {
+    "title": "{edition}",
+    "done": "Deze editie is voorbij en kan niet meer veranderen.",
+    "name": "Naam van deze editie",
+    "draw-on": "Loten op",
+    "draw-on-help": "Optioneel. Er wordt die ochtend geloot. Laat leeg om zelf te loten.",
+    "wishlist-by": "Verlanglijstjes klaar op",
+    "wishlist-by-help": "Optioneel.",
+    "post-by": "Cadeaus op de post op",
+    "post-by-help": "Optioneel.",
+    "notes": "Notities voor iedereen",
+    "notes-help": "Optioneel. Dresscode, thema, huisregels…",
+    "avoid-previous": "Niet hetzelfde als vorig jaar",
+    "avoid-previous-help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet."
+  },
+  "people": {
+    "title": "Deelnemers",
+    "in-edition": "{count, plural, one {# persoon doet mee aan deze editie} other {# mensen doen mee aan deze editie}}",
+    "ticked": "Doet mee aan {edition}",
+    "ticked-label": "{name} doet mee aan {edition}",
+    "resend": "Uitnodiging opnieuw sturen",
+    "resent": "Uitnodiging opnieuw gestuurd naar {email}",
+    "remove": "Verwijderen",
+    "remove-title": "{name} verwijderen?",
+    "remove-before": "{name} verlaat de groep en doet niet mee aan de loting. Het verlanglijstje blijft van {name}.",
+    "remove-after": "{name} verlaat de groep. Er is al geloot: de Santa van {name} krijgt iemand anders, voor de rest verandert er niets.",
+    "remove-confirm": "{name} verwijderen",
+    "removed": "{name} verwijderd",
+    "cancel": "Laten staan",
+    "drawn": "Er is al geloot, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen."
+  },
+  "keep-apart-drawn": "Er is al geloot, dus wie niet samen mag, verandert voor deze editie niet meer.",
+  "redraw": {
+    "title": "Opnieuw loten",
+    "description": "Loot opnieuw. Iedereen kan iemand anders krijgen; krijg je iemand anders, dan komt wat je al geclaimd had weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
+    "button": "Opnieuw loten",
+    "confirm-title": "Opnieuw loten?",
+    "confirm": "Ja, opnieuw loten",
+    "cancel": "Huidige loting houden",
+    "done": "Er is opnieuw geloot"
+  },
+  "danger": {
+    "title": "Gevarenzone",
+    "description": "Als je de groep verwijdert, verdwijnt die voor iedereen, met alle edities. Ieders verlanglijstje blijft bewaard.",
+    "button": "Groep verwijderen",
+    "confirm-title": "{group} verwijderen?",
+    "confirm-description": "Niemand kan nog bij de groep en de edities. Dit kun je niet ongedaan maken.",
+    "confirm": "Voor iedereen verwijderen",
+    "cancel": "Groep houden"
+  },
+  "errors": {
+    "DATE_IN_PAST": "Data kunnen niet in het verleden liggen.",
+    "DATES_OUT_OF_ORDER": "De loting moet voor pakjesdag zijn, en verlanglijstjes en posten niet later dan pakjesdag.",
+    "INVALID_INPUT": "Er klopt iets niet. Kijk de velden na en probeer het opnieuw.",
+    "ALREADY_DRAWN": "Er is al geloot, dus de datum van de loting en 'niet hetzelfde als vorig jaar' kunnen niet meer veranderen.",
+    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het loten niet voor deze mensen.",
+    "EDITION_CLOSED": "Deze editie is voorbij en kan niet meer veranderen.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "ORGANIZER_CANNOT_LEAVE": "De organisator kan niet verwijderd worden.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  }
+}

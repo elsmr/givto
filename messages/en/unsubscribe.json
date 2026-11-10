@@ -1,0 +1,18 @@
+{
+  "page-title": "Unsubscribe · Givto",
+  "title": "Stop {category}?",
+  "intro": "You won't get {category} from Givto by email anymore. Sign-in emails always come through.",
+  "confirm": "Unsubscribe",
+  "done-title": "You're unsubscribed",
+  "done": "No more {category}. Changed your mind? Turn them back on in your email settings.",
+  "settings": "Email settings",
+  "invalid-title": "This link doesn't work",
+  "invalid": "It may be incomplete. You can choose which emails you get in your email settings.",
+  "failed": "That didn't work. Try again.",
+  "category": {
+    "reminders": "reminders",
+    "wishlistUpdates": "wishlist updates",
+    "santaMessages": "messages from your Santa",
+    "joins": "who joined your groups"
+  }
+}

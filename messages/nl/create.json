@@ -1,0 +1,58 @@
+{
+  "page-title": "Start een Secret Santa",
+  "step": "Stap {step} van {total}",
+  "titles": {
+    "details": "Start een Secret Santa",
+    "organizer": "En wie ben jij?",
+    "code": "Check je e-mail"
+  },
+  "create": "Secret Santa aanmaken",
+  "errors": {
+    "RATE_LIMITED": "Dat zijn veel Secret Santa's voor één dag. Probeer het morgen opnieuw.",
+    "DATE_IN_PAST": "Pakjesdag kan niet in het verleden liggen.",
+    "INVALID_INPUT": "Er klopt iets niet in het formulier. Kijk de velden na en probeer opnieuw.",
+    "UNAUTHENTICATED": "Je bent niet meer ingelogd. Stuur jezelf een nieuwe code.",
+    "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
+  },
+  "details": {
+    "name": "Hoe heet je Secret Santa?",
+    "name-placeholder": "Familie",
+    "next": "Volgende",
+    "gift-day": {
+      "legend": "Wanneer is pakjesdag?",
+      "help": "Mag je overslaan. Je kunt het later nog instellen of wijzigen.",
+      "date": "Datum",
+      "time": "Tijd",
+      "place": "Plek",
+      "place-placeholder": "Bij oma thuis"
+    },
+    "exchange": {
+      "label": "Hoe geven jullie de cadeaus?",
+      "inPerson": "Persoonlijk",
+      "byPost": "Per post",
+      "both": "Persoonlijk of per post"
+    },
+    "budget": {
+      "legend": "Budget",
+      "help": "Mag je overslaan. Iedereen ziet het.",
+      "amount": "Bedrag",
+      "max": "Tot (optioneel)",
+      "currency": "Munteenheid"
+    }
+  },
+  "organizer": {
+    "name": "Je naam",
+    "name-help": "Iedereen in de Secret Santa ziet deze naam.",
+    "email": "Je e-mailadres",
+    "email-help": "We sturen je een code om te checken dat jij het bent. Er gaat niets naar iemand anders.",
+    "signed-in": "Je bent ingelogd als {email}.",
+    "send-code": "Stuur me een code",
+    "back": "Terug"
+  },
+  "share": {
+    "title": "{group} staat klaar!",
+    "description": "Deel deze link met je familie of vrienden. Iedereen die hem opent, kan meedoen.",
+    "later": "Je vindt de link ook op de groepspagina. Daar kun je mensen ook per e-mail uitnodigen.",
+    "go-to-group": "Naar je Secret Santa"
+  }
+}

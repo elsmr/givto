@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "schedules": {
+    "tick": { "schedule": "*/30 * * * *", "path": "/api/cron/tick", "requestMethod": "GET" },
+    "retention": { "schedule": "30 3 * * *", "path": "/api/cron/retention", "requestMethod": "GET" }
+  }
+}

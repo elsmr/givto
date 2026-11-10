@@ -1,0 +1,15 @@
+{
+  "status": "Foutcode {code}",
+  "not-found": {
+    "title": "We kunnen deze pagina niet vinden",
+    "description": "Misschien is de link oud of zit er een typfout in."
+  },
+  "fallback": {
+    "title": "Er ging iets mis",
+    "description": "Het ligt niet aan jou, maar aan ons. Probeer het zo meteen opnieuw."
+  },
+  "invite-hint": "Kreeg je een link van de organisator? Open hem opnieuw vanuit de e-mail of het bericht, of log in om je Secret Santa's te zien.",
+  "try-again": "Opnieuw proberen",
+  "sign-in": "Inloggen",
+  "home": "Naar de startpagina"
+}

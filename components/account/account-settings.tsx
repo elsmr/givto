@@ -1,0 +1,57 @@
+import { CardDivider } from '@/components/ui/card';
+import type { RouterOutputs } from '@/lib/client/trpc';
+import { Download, KeyRound, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { AccountSection, AccountSubsection } from './account-section';
+import { DeleteAccountDialog } from './delete-account-dialog';
+import { ExportButton } from './export-button';
+import { LanguageSelect } from './language-select';
+import { NameForm } from './name-form';
+import { NotificationSettings } from './notification-settings';
+import { PasskeyList } from './passkey-list';
+import { SignOutEverywhere } from './sign-out-everywhere';
+import { ThemeSelect } from './theme-select';
+
+/** Profile, sign-in, preferences, then data; deleting the account last, on its own coral card. */
+export const AccountSettings = ({ me }: { me: RouterOutputs['me']['get'] }) => {
+  const t = useTranslations('account');
+
+  return (
+    <div className="flex flex-col gap-8">
+      <AccountSection title={t('profile.title')} icon={UserRound} tone="primary-muted" description={t('profile.description')}>
+        <AccountSubsection>
+          <NameForm name={me.name} email={me.email} />
+        </AccountSubsection>
+      </AccountSection>
+      <AccountSection title={t('security.title')} icon={KeyRound} tone="mint">
+        <AccountSubsection title={t('passkeys.title')} description={t('passkeys.description')}>
+          <PasskeyList email={me.email} />
+        </AccountSubsection>
+        <CardDivider />
+        <AccountSubsection title={t('sessions.title')} description={t('sessions.description')}>
+          <SignOutEverywhere />
+        </AccountSubsection>
+      </AccountSection>
+      <AccountSection title={t('preferences.title')} icon={SlidersHorizontal} tone="yellow">
+        <AccountSubsection className="gap-6">
+          <LanguageSelect />
+          <ThemeSelect />
+        </AccountSubsection>
+        <CardDivider />
+        <AccountSubsection title={t('notifications.title')} description={t('notifications.description')}>
+          <NotificationSettings prefs={me.notifications} />
+        </AccountSubsection>
+      </AccountSection>
+      <AccountSection title={t('export.title')} icon={Download} tone="primary-muted" description={t('export.description')}>
+        <AccountSubsection>
+          <ExportButton />
+        </AccountSubsection>
+      </AccountSection>
+      <AccountSection title={t('delete.title')} icon={TriangleAlert} tone="yellow" description={t('delete.description')} danger>
+        <AccountSubsection>
+          <DeleteAccountDialog email={me.email} />
+        </AccountSubsection>
+      </AccountSection>
+    </div>
+  );
+};

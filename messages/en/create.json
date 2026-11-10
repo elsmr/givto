@@ -1,0 +1,58 @@
+{
+  "page-title": "Start a Secret Santa",
+  "step": "Step {step} of {total}",
+  "titles": {
+    "details": "Start a Secret Santa",
+    "organizer": "And you are?",
+    "code": "Check your email"
+  },
+  "create": "Create Secret Santa",
+  "errors": {
+    "RATE_LIMITED": "That's a lot of Secret Santas for one day. Try again tomorrow.",
+    "DATE_IN_PAST": "Gift day can't be in the past.",
+    "INVALID_INPUT": "Something in the form doesn't look right. Check the fields and try again.",
+    "UNAUTHENTICATED": "Your sign-in expired. Send yourself a new code.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  },
+  "details": {
+    "name": "What's your Secret Santa called?",
+    "name-placeholder": "Family",
+    "next": "Next",
+    "gift-day": {
+      "legend": "When's gift day?",
+      "help": "Optional. You can set or change it later.",
+      "date": "Date",
+      "time": "Time",
+      "place": "Place",
+      "place-placeholder": "Grandma's house"
+    },
+    "exchange": {
+      "label": "How do gifts change hands?",
+      "inPerson": "In person",
+      "byPost": "By post",
+      "both": "In person or by post"
+    },
+    "budget": {
+      "legend": "Budget",
+      "help": "Optional. Everyone sees it.",
+      "amount": "Amount",
+      "max": "Up to (optional)",
+      "currency": "Currency"
+    }
+  },
+  "organizer": {
+    "name": "Your name",
+    "name-help": "Everyone in the Secret Santa sees this name.",
+    "email": "Your email",
+    "email-help": "We'll send you a code to check it's you. Nothing gets sent to anyone else.",
+    "signed-in": "You're signed in as {email}.",
+    "send-code": "Send me a code",
+    "back": "Back"
+  },
+  "share": {
+    "title": "{group} is ready!",
+    "description": "Share this link with your family or friends. Everyone who opens it can join.",
+    "later": "You'll find the link on the group page too, where you can also invite people by email.",
+    "go-to-group": "Go to your Secret Santa"
+  }
+}

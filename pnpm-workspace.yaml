@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@swc/core'
+  - sharp
+# Turbopack resolves Next's styled-jsx runtime from the project root (Pages Router); with pnpm
+# it's only next's own dependency, so the build warned "Can't resolve 'styled-jsx/style.js'".
+publicHoistPattern:
+  - styled-jsx
