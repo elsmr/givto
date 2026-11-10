@@ -39,7 +39,9 @@ export default defineConfig({
       reuseExistingServer: false,
     },
     {
-      command: `mkdir -p "${OUTPUT_DIR}" && pnpm exec next start -p ${APP_PORT} > "${SERVER_LOG}" 2>&1`,
+      // keepAliveTimeout above Node's 5s: a test's request context that idles longer would otherwise
+      // reuse a socket the server is closing (ECONNRESET).
+      command: `mkdir -p "${OUTPUT_DIR}" && pnpm exec next start -p ${APP_PORT} --keepAliveTimeout 70000 > "${SERVER_LOG}" 2>&1`,
       cwd: ROOT_DIR,
       url: `${BASE_URL}/robots.txt`,
       env: appEnv,

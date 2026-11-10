@@ -7,10 +7,11 @@ import { log } from '../log';
  * Scheduled draws (28): every open edition whose `drawAt` has passed. Safe to call on every
  * cron tick (S7). A draw that can't run (too few people, rules) drops its schedule, so the
  * organizer draws by hand instead of the job retrying every tick.
+ * `editionIds` (test trigger `draw.runDue` only) limits it to those editions, so a test never draws another test's.
  */
-export const runDueDraws = async (now = new Date()) => {
+export const runDueDraws = async (now = new Date(), editionIds?: string[]) => {
   const db = await getDb();
-  const due = await db.editions.find({ status: 'open', drawAt: { $lte: now } }).toArray();
+  const due = await db.editions.find({ status: 'open', drawAt: { $lte: now }, ...(editionIds && { _id: { $in: editionIds } }) }).toArray();
   const drawn: string[] = [];
   const failed: string[] = [];
   for (const edition of due) {

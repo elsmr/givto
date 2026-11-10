@@ -9,7 +9,7 @@ const now = '2000-01-01T00:00:00.000Z';
 
 test('draw.runDue is open under E2E_TEST_HOOKS', async ({ newClient }) => {
   const { trpc } = await newClient();
-  expect(ok(await trpc.mutate('draw.runDue', { now }))).toEqual({ drawn: [], failed: [] });
+  expect(ok(await trpc.mutate('draw.runDue', { now, editionIds: [] }))).toEqual({ drawn: [], failed: [] });
 });
 
 test('giftday.runDue is open under E2E_TEST_HOOKS', async ({ newClient }) => {
