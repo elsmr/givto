@@ -105,7 +105,7 @@ function FieldLabel({
     <Label
       data-slot="field-label"
       className={cn(
-        'group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:border-2 has-[>[data-slot=field]]:border-ink has-[>[data-slot=field]]:bg-surface has-[>[data-slot=field]]:has-data-checked:bg-primary-muted *:data-[slot=field]:p-2.5',
+        'group/field-label peer/field-label flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:border-2 has-[>[data-slot=field]]:border-outline has-[>[data-slot=field]]:bg-surface has-[>[data-slot=field]]:has-data-checked:bg-primary-muted *:data-[slot=field]:p-2.5',
         'has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col',
         className,
       )}
@@ -162,7 +162,7 @@ function FieldSeparator({
       <div
         role="separator"
         aria-orientation="horizontal"
-        className="absolute inset-x-0 top-1/2 border-t-2 border-ink"
+        className="absolute inset-x-0 top-1/2 border-t-2 border-outline"
       />
       {children && (
         <span

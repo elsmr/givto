@@ -19,7 +19,7 @@ function Switch({
       data-size={size}
       className={cn(
         // ::after widens the hit area to 44px (50: tap targets) without changing the look.
-        'peer relative inline-flex shrink-0 cursor-pointer items-center after:absolute after:-inset-x-1 after:-inset-y-3 after:content-[\'\'] border-2 border-ink bg-surface transition-colors data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-unchecked:bg-surface',
+        'peer relative inline-flex shrink-0 cursor-pointer items-center after:absolute after:-inset-x-1 after:-inset-y-3 after:content-[\'\'] border-2 border-control bg-surface transition-colors data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-unchecked:bg-surface',
         size === 'default' && 'h-6 w-12',
         size === 'sm' && 'h-5 w-9',
         className,
@@ -29,7 +29,7 @@ function Switch({
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className={cn(
-          'pointer-events-none block bg-white border-2 border-ink transition-transform data-unchecked:translate-x-1',
+          'pointer-events-none block bg-white border-2 border-outline transition-transform data-unchecked:translate-x-1',
           size === 'default' && 'h-4 w-4 data-checked:translate-x-6',
           size === 'sm' && 'h-3 w-3 data-checked:translate-x-4',
         )}

@@ -7,7 +7,12 @@
   --color-transparent: transparent;
   --color-current: currentColor;
   --color-white: #ffffff;
+  /* Text. Turns cream in dark mode. */
   --color-ink: #111111;
+  /* Borders and hard shadows. Stays dark in both themes (neobrutalism.dev's dark theme). */
+  --color-outline: #111111;
+  /* Form control boundaries (input, select, checkbox, switch): 3:1 against page and surface (WCAG 1.4.11). */
+  --color-control: #111111;
   --color-page: #fff8ec;
   --color-surface: #ffffff;
   --color-primary: #5a51ff;
@@ -20,6 +25,10 @@
   --color-muted: #5c5c66;
   /* 07 dangerText */
   --color-danger: #c2261a;
+  --color-link: #5a51ff;
+  /* Focus ring: 3:1 against page and surface. */
+  --color-focus: #5a51ff;
+  --color-overlay: rgb(17 17 17 / 0.6);
 
   /* --font-heading-family is set in pages/_app.tsx from next/font. */
   --font-heading: var(--font-heading-family), system-ui, sans-serif;
@@ -27,9 +36,9 @@
   --radius-*: initial;
 
   --shadow-*: initial;
-  --shadow-sm: 2px 2px 0 0 var(--color-ink);
-  --shadow-md: 4px 4px 0 0 var(--color-ink);
-  --shadow-lg: 6px 6px 0 0 var(--color-ink);
+  --shadow-sm: 2px 2px 0 0 var(--color-outline);
+  --shadow-md: 4px 4px 0 0 var(--color-outline);
+  --shadow-lg: 6px 6px 0 0 var(--color-outline);
   --shadow-brand: 8px 8px 0 0 var(--color-primary);
 
   --breakpoint-xs: 30rem;
@@ -48,9 +57,9 @@
   }
 }
 
-/* Box border: 3px ink, 2px under 480px. Inputs use border-2. */
+/* Box border: 3px outline, 2px under 480px. Inputs use border-2 border-control. */
 @utility bordered {
-  border: var(--border-width) solid var(--color-ink);
+  border: var(--border-width) solid var(--color-outline);
 }
 
 /* Press into the shadow; pair with shadow-md. */
@@ -94,12 +103,12 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-primary);
+    outline: 3px solid var(--color-focus);
     outline-offset: 3px;
   }
 
   a {
-    color: var(--color-primary);
+    color: var(--color-link);
     text-decoration-line: underline;
     text-underline-offset: 0.2em;
   }
@@ -117,42 +126,39 @@
 }
 
 /*
- * Dark mode (53): <html data-theme="dark">, set before the first paint by
+ * Dark mode (53, G2): <html data-theme="dark">, set before the first paint by
  * components/account/theme-script.tsx (stored choice, else the system setting).
- * Ink turns light, so text, borders and hard shadows become light ink on dark surfaces.
- * Contrast: ink 17.5:1 on page, 15.6:1 on surface; muted 8.1:1+; danger 7.2:1+;
- * links 9:1+; white on primary 5.2:1; ink on primary-muted 10:1; focus ring 3.2:1+.
+ * Outlines and hard shadows stay dark; a warm purple-ink page with lighter tinted surfaces;
+ * the colour fills carry the style; cream is for text only. Contrast table: .scratch/53 Findings.
  */
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --color-ink: #fff8ec;
-  --color-page: #141414;
-  --color-surface: #1f1f23;
-  --color-primary-muted: #3a3480;
-  --color-muted: #b5b5c0;
-  --color-danger: #ff8a7a;
-}
-
-/*
- * Bright fills keep dark text (#111 on yellow 13:1, mint 10.8:1, coral 7:1); unlayered to beat text-ink.
- * Surfaces inside them (a neutral button on a yellow card) keep the light ink.
- */
-:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]),
-:root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral) :is(.text-ink, .text-muted):not(.bg-surface, .bg-page) {
-  color: #111111;
-}
-
-/* Tooltips are ink-filled with white text: dark text on the light ink. */
-:root[data-theme='dark'] .bg-ink {
-  color: var(--color-page);
-}
-
-:root[data-theme='dark'] [data-slot='dialog-overlay'] {
-  background-color: rgb(0 0 0 / 0.7);
-}
-
 @layer base {
-  :root[data-theme='dark'] a {
-    color: #bdb9ff;
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-page: #2b1c3b;
+    --color-surface: #3c2d51;
+    --color-primary-muted: #49379f;
+    --color-danger: #ff9a8a;
+    --color-control: #988ab2;
+    --color-link: #bdb9ff;
+    --color-focus: #bdb9ff;
+    --color-overlay: rgb(0 0 0 / 0.7);
+  }
+
+  :root[data-theme='dark'],
+  :root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral) :is(.bg-surface, .bg-page) {
+    --color-ink: #fff8ec;
+    --color-muted: #c7bfd8;
+    color: var(--color-ink);
+  }
+
+  /*
+   * Yellow, mint and coral are too light for cream text: they keep the light theme's text and an
+   * ink focus ring (lavender vanishes on them). Surfaces inside them switch back (rule above).
+   */
+  :root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]) {
+    --color-ink: #111111;
+    --color-muted: #5c5c66;
+    --color-focus: #111111;
+    color: var(--color-ink);
   }
 }
