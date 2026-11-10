@@ -22,22 +22,26 @@ export const wishOwnerId = (member: Member): string | undefined =>
 /** Archived (76) or received: only in the owner's archive. */
 export const inArchive = { $or: [{ archivedAt: { $exists: true } }, { receivedAt: { $exists: true } }] };
 
-/** The current (not archived, not received) wishes of an owner, in the global order. */
-export const listWishes = (db: Collections, ownerId: string, excludeIds: string[] = []) =>
+/** The current (not archived, not received) wishes of an owner, in the global order; only `onlyIds` when given. */
+export const listWishes = (db: Collections, ownerId: string, onlyIds?: string[]) =>
   db.wishes
     .find({
       ownerId,
       archivedAt: { $exists: false },
       receivedAt: { $exists: false },
-      ...(excludeIds.length > 0 && { _id: { $nin: excludeIds } }),
+      ...(onlyIds && { _id: { $in: onlyIds } }),
     })
     .sort({ position: 1, _id: 1 })
     .toArray();
 
-/** What this member's group sees of their wishlist: everything minus the wishes hidden in this group. */
+/**
+ * What this member's group sees of their wishlist: the wishes shown in this group. A managed member's
+ * wishes belong to this group alone, so they all show.
+ */
 export const visibleWishes = (db: Collections, member: Member) => {
   const ownerId = wishOwnerId(member);
-  return ownerId ? listWishes(db, ownerId, member.wishlistView?.hiddenWishIds ?? []) : Promise.resolve([]);
+  if (!ownerId) return Promise.resolve([]);
+  return listWishes(db, ownerId, member.userId ? (member.wishlistView?.shownWishIds ?? []) : undefined);
 };
 
 /**

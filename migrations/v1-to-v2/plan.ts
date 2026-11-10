@@ -150,7 +150,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
         role: 'member',
         status: 'joined',
         joinedAt: createdAt,
-        wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+        wishlistView: { shownWishIds: [] },
       });
     }
 
@@ -252,8 +252,8 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
     members: group.members.map((m) => {
       const owner = m.userId ?? m.id;
       const shown = shownIn.get(`${group._id}:${owner}`) ?? new Set<string>();
-      const hiddenWishIds = (wishIdsOf.get(owner) ?? []).filter((id) => !shown.has(id));
-      return { ...m, wishlistView: { includeNewWishes: true, hiddenWishIds } };
+      const shownWishIds = (wishIdsOf.get(owner) ?? []).filter((id) => shown.has(id));
+      return { ...m, wishlistView: { shownWishIds } };
     }),
   }));
 

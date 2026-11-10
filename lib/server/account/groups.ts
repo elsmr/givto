@@ -59,8 +59,8 @@ export const accountGroups = async (db: Collections, userId: string) => {
     const unanswered = questions.filter(
       (q) => q.editionId === edition?._id && !ownIds.includes(q.askerMemberId)
     ).length;
-    const hidden = new Set(member.wishlistView?.hiddenWishIds ?? []);
-    const visibleWishCount = wishes.filter((wish) => !hidden.has(wish._id)).length;
+    const shown = new Set(member.wishlistView?.shownWishIds ?? []);
+    const visibleWishCount = wishes.filter((wish) => shown.has(wish._id)).length;
     const joinRequests = group.members.filter((m) => m.status === 'requested').length;
     const status = edition?.status;
     const todos = group.archivedAt

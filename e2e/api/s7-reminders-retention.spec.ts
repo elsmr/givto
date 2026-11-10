@@ -15,7 +15,10 @@ const trio = (olive: User, ann: User, bob: User) => [member(olive, 'Olive', { ro
 test('reminders at real time: one combined email (wishlist + gift), opt-out, suppression, managed, gift day morning, join; each once', async ({ signIn, db, secrets }) => {
   const [olive, ann, bob, cee] = await Promise.all(['olive', 'ann', 'bob', 'cee'].map((name) => signIn(name)));
   // Family (locale nl): Olive organizes and manages Kid; Ann and Olive have wishes; Ivy is invited without an account.
-  const m = { olive: member(olive, 'Olive', { role: 'organizer' }), ann: member(ann, 'Ann'), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
+  const mug = ok(await ann.trpc.mutate('wish.create', { title: 'Moomin mug' }));
+  const socks = ok(await olive.trpc.mutate('wish.create', { title: 'Green socks' }));
+  const shows = (wish: { id: string }) => ({ wishlistView: { shownWishIds: [wish.id] } });
+  const m = { olive: member(olive, 'Olive', { role: 'organizer', ...shows(socks) }), ann: member(ann, 'Ann', shows(mug)), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
   const kid = member(null, 'Kid', { managedBy: m.olive.id });
   const invitee = member(null, 'Ivy', { status: 'invited', invitedAt: new Date(Date.now() - 4 * DAY) });
   const inviteeEmail = uniqueEmail('invitee');
@@ -27,8 +30,6 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
   const monthAgo = new Date(Date.now() - 30 * DAY);
   const drawn = editionDoc(family, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: { ...circle(people), drawnAt: monthAgo } });
   const e1 = { ...drawn, statusChangedAt: { open: monthAgo, drawn: monthAgo }, participants: drawn.participants.map((p) => ({ ...p, addedAt: monthAgo })) };
-  ok(await ann.trpc.mutate('wish.create', { title: 'Moomin mug' }));
-  ok(await olive.trpc.mutate('wish.create', { title: 'Green socks' }));
   const morningZone = Array.from({ length: 27 }, (_, i) => i - 12)
     .map((offset) => (offset === 0 ? 'Etc/GMT' : `Etc/GMT${offset > 0 ? '+' : ''}${offset}`))
     .find((zone) => Number(new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', hourCycle: 'h23' }).format(new Date())) === 9)!;

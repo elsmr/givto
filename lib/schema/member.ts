@@ -12,11 +12,9 @@ export type MemberRole = v.InferOutput<typeof MemberRole>;
 export const MemberStatus = v.picklist(['invited', 'requested', 'joined', 'declined', 'removed']);
 export type MemberStatus = v.InferOutput<typeof MemberStatus>;
 
-/** Which of the member's own wishes this group sees (38): all wishes minus the hidden ones, in global order. */
+/** Which of the member's own wishes this group sees (38): only the ones shown here, in global order. New wishes show nowhere unless picked. */
 export const WishlistView = v.object({
-  /** When false, the wish slice hides a newly added wish in this group. */
-  includeNewWishes: v.optional(v.boolean(), true),
-  hiddenWishIds: v.optional(v.array(Id), []),
+  shownWishIds: v.array(Id),
 });
 export type WishlistView = v.InferOutput<typeof WishlistView>;
 

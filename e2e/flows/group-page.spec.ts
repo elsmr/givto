@@ -155,7 +155,7 @@ test('the people stat fits as many avatars as it has room for and counts the res
   const now = new Date();
   const crowd = ['Cee', 'Dee', 'Eve', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jan', 'Kim', 'Lou'].map((name) => ({
     id: new ObjectId().toHexString(), name, role: 'member' as const, status: 'joined' as const, joinedAt: now,
-    wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+    wishlistView: { shownWishIds: [] },
   }));
   await db.groups.updateOne({ _id: groupId }, { $push: { members: { $each: crowd } } });
   const participants = crowd.map((m) => ({ memberId: m.id, participates: true, status: 'joined' as const, addedAt: now }));

@@ -1,11 +1,11 @@
 {
   "page-title": "Mijn verlanglijstje",
-  "intro": "Eén lijstje voor al je Secret Santa's. Je Santa ziet het, en jij ziet nooit wat er geclaimd is.",
+  "intro": "Eén lijstje voor al je Secret Santa's. Jij kiest welke groepen een wens zien, en je ziet nooit wat er geclaimd is.",
   "loading": "Je verlanglijstje laden…",
   "empty-title": "Je verlanglijstje is nog leeg",
   "count": "{count, plural, =0 {Nog geen wensen} one {# wens} other {# wensen}}",
   "list-title": "Je wensen",
-  "hide-hint": "Moet een groep een wens niet zien? Verberg hem in die groep, op het tabblad “Mijn verlanglijstje”.",
+  "hide-hint": "Moet een groep meer of minder zien? Kies het in die groep, op het tabblad “Mijn verlanglijstje”.",
   "add-title": "Wens toevoegen",
   "import": {
     "label": "Link naar een winkel (optioneel)",
@@ -38,6 +38,9 @@
     "add": "Wens toevoegen",
     "save": "Opslaan",
     "cancel": "Annuleren",
+    "show-in": "Tonen in",
+    "show-in-hint": "Alleen de groepen die je aanvinkt zien deze wens. Je kunt het later per groep nog aanpassen.",
+    "show-in-duplicate": "Deze wens komt in meer dan één actieve groep te staan, dus misschien kopen twee Santa's hetzelfde.",
     "links": "{count, plural, one {# link} other {# links}}",
     "remove-link": "Link naar {shop} verwijderen"
   },
@@ -72,17 +75,21 @@
   },
   "group": {
     "title": "Mijn verlanglijstje in deze groep",
-    "intro": "Alles op je verlanglijstje staat hier, tenzij je het voor deze groep verbergt.",
+    "intro": "Alleen de wensen die je kiest staan hier. Een nieuwe wens staat in geen enkele groep tot je er een kiest.",
     "empty": "Je verlanglijstje is nog leeg.",
     "show": "Tonen in deze groep",
     "shown": "“{title}” tonen in deze groep",
     "edit": "Mijn verlanglijstje bewerken",
     "add": "Wensen toevoegen",
     "visibility": "Kies wat deze groep ziet",
-    "visibility-description": "Zet een wens uit om hem alleen voor deze groep te verbergen. Je andere groepen zien hem nog wel.",
+    "visibility-description": "Zet een wens aan om hem in deze groep te tonen. Je andere groepen veranderen niet.",
     "done": "Klaar",
     "hidden-summary": "{count, plural, one {# wens hier verborgen} other {# wensen hier verborgen}}",
-    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep."
+    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep.",
+    "duplicate-title": "Staat al in {groups}",
+    "duplicate-description": "Als meer dan één groep een wens ziet, kopen misschien twee Santa's hetzelfde. Ook hier tonen?",
+    "duplicate-confirm": "Ook hier tonen",
+    "duplicate-cancel": "Annuleren"
   },
   "giftee": {
     "title": "Verlanglijstje van {name}",

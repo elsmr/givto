@@ -76,7 +76,7 @@ test('finish gift day: organizer only, done now, edition closes, mark what you g
   const group = await drawnGroup([ann, bob, cee], 'Finish');
   const edition = { groupSlug: group.slug, editionNumber: 1 };
   const finish = (user: User) => user.trpc.mutate('manage.finishGiftDay', edition);
-  ok(await bob.trpc.mutate('wish.create', { title: 'Warm socks' }));
+  ok(await bob.trpc.mutate('wish.create', { title: 'Warm socks', groupSlugs: [group.slug] }));
   const ceeId = await memberIdOf(db, group.slug, cee);
   const tip = { ...edition, aboutMemberId: ceeId, text: 'Loves tea', anonymous: false };
 

@@ -86,7 +86,7 @@ export const joinRouter = router({
                   role: 'member',
                   status,
                   joinedAt: now,
-                  wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+                  wishlistView: { shownWishIds: [] },
                 } satisfies Member,
               },
               $set: { updatedAt: now },

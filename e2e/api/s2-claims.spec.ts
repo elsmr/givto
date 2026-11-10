@@ -7,13 +7,13 @@ import { assignments, newMember, seedEdition, seedGroup } from './seed-groups';
 const XSS = '<img src=x onerror="document.body.dataset.xss=1">';
 const codeOf = (result: { error?: TrpcError }) => result.error?.data.appCode;
 
-test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ signIn, db }) => {
+test('group views and Dibs!: shown wishes, claims, who sees what', async ({ signIn, db }) => {
   const [olive, sam, cee, nina, ben] = await Promise.all(['olive', 'sam', 'cee', 'nina', 'ben'].map((name) => signIn(name)));
   // Olive's wishes.
   const socks = ok(await olive.trpc.mutate('wish.create', { title: 'Wool socks' }));
   const book = ok(await olive.trpc.mutate('wish.create', { title: 'A great novel', links: [{ url: 'https://shop.test/book' }] }));
   const scarf = ok(await olive.trpc.mutate('wish.create', { title: 'Surprise me: something cosy', kind: 'surpriseMe' }));
-  ok(await olive.trpc.mutate('wish.create', { title: XSS, description: XSS }));
+  const xss = ok(await olive.trpc.mutate('wish.create', { title: XSS, description: XSS }));
 
   // Group A: Sam → Olive → Cee → Sam in edition 1; Cee → Olive in edition 2; Nina sits out (not in a draw).
   // Group B: Ben → Olive → Dee (no account) → Ben.
@@ -31,17 +31,18 @@ test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ sig
   const A2 = { groupSlug: a.slug, editionNumber: 2 };
   const B1 = { groupSlug: b.slug, editionNumber: 1 };
 
-  await test.step('group view: hide a wish in group B only', async () => {
+  await test.step('group view: nothing shows until picked; socks in group A only', async () => {
     const view = ok(await olive.trpc.query('wish.groupView', { groupSlug: b.slug }));
-    expect(view.every((wish) => wish.hidden === false)).toBe(true);
-    await olive.trpc.mutate('wish.setHidden', { groupSlug: b.slug, wishId: socks.id, hidden: true });
+    expect(view.every((wish) => wish.shown === false)).toBe(true);
+    for (const wish of [socks, book, scarf, xss]) ok(await olive.trpc.mutate('wish.setShown', { groupSlug: a.slug, wishId: wish.id, shown: true }));
+    for (const wish of [book, scarf, xss]) ok(await olive.trpc.mutate('wish.setShown', { groupSlug: b.slug, wishId: wish.id, shown: true }));
     const after = ok(await olive.trpc.query('wish.groupView', { groupSlug: b.slug }));
-    expect(after.filter((wish) => wish.hidden).map((wish) => wish.id)).toEqual([socks.id]);
-    expect(ok(await olive.trpc.query('wish.groupView', { groupSlug: a.slug })).every((wish) => !wish.hidden)).toBe(true);
-    expect(codeOf(await olive.trpc.mutate('wish.setHidden', { groupSlug: b.slug, wishId: newId(), hidden: true }))).toBe('NOT_FOUND');
+    expect(after.filter((wish) => !wish.shown).map((wish) => wish.id)).toEqual([socks.id]);
+    expect(ok(await olive.trpc.query('wish.groupView', { groupSlug: a.slug })).every((wish) => wish.shown)).toBe(true);
+    expect(codeOf(await olive.trpc.mutate('wish.setShown', { groupSlug: b.slug, wishId: newId(), shown: true }))).toBe('NOT_FOUND');
   });
 
-  await test.step('hidden wish never reaches that group’s members; XSS string stays text', async () => {
+  await test.step('a wish not shown never reaches that group’s members; XSS string stays text', async () => {
     const inA = ok(await sam.trpc.query('claim.gifteeWishlist', A1))!;
     expect(inA.giftee.name).toBe('Olive');
     expect(inA.budget).toEqual(budget);
@@ -49,7 +50,7 @@ test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ sig
     expect(inA.wishes.some((wish) => wish.title === XSS && wish.description === XSS)).toBe(true);
     const inB = await ben.trpc.query('claim.gifteeWishlist', B1);
     expect(inB.data!.wishes.some((wish) => wish.id === socks.id)).toBe(false);
-    expect(JSON.stringify(inB), 'hidden wish id not in the response at all').not.toContain(socks.id);
+    expect(JSON.stringify(inB), 'unshown wish id not in the response at all').not.toContain(socks.id);
     expect(codeOf(await ben.trpc.mutate('claim.add', { ...B1, wishId: socks.id }))).toBe('NOT_FOUND');
   });
 
@@ -103,6 +104,6 @@ test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ sig
   await test.step('deleting a claimed wish removes its claim', async () => {
     await olive.trpc.mutate('wish.delete', { wishId: book.id });
     expect(await db.claims.countDocuments({ wishId: book.id })).toBe(0);
-    expect(await db.groups.countDocuments({ 'members.wishlistView.hiddenWishIds': book.id })).toBe(0);
+    expect(await db.groups.countDocuments({ 'members.wishlistView.shownWishIds': book.id })).toBe(0);
   });
 });

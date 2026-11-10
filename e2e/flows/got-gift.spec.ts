@@ -10,8 +10,8 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   const { draw } = (await db.editions.findOne({ groupId, number: 1 }))!;
   const gifteeId = draw!.assignments[members.find((m) => m.userId === ann.id)!.id];
   const giftee = people.find((p) => members.find((m) => m.id === gifteeId)?.userId === p.id)!;
-  const mug = ok(await giftee.trpc.mutate('wish.create', { title: 'Moomin mug', links: [{ url: 'https://www.bol.com/nl/nl/p/moomin-mok/9300000012345678/' }] }));
-  ok(await giftee.trpc.mutate('wish.create', { title: 'Green socks' }));
+  const mug = ok(await giftee.trpc.mutate('wish.create', { title: 'Moomin mug', links: [{ url: 'https://www.bol.com/nl/nl/p/moomin-mok/9300000012345678/' }], groupSlugs: [group.slug] }));
+  ok(await giftee.trpc.mutate('wish.create', { title: 'Green socks', groupSlugs: [group.slug] }));
   ok(await ann.trpc.mutate('claim.add', { ...at, wishId: mug.id }));
 
   await signInPage(page, ann);

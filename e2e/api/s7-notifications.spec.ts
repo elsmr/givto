@@ -170,7 +170,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   const expectBatchTaken = () => expect.poll(async () => (await pending())?.notifyAfter, { message: 'digest batch taken' }).toBeUndefined();
 
   await test.step('wishlist digest: 3 quick adds → one email after the quiet period, listing them', async () => {
-    for (const title of ['Moomin mug', 'Green socks', 'A good novel']) ok(await ann.trpc.mutate('wish.create', { title }));
+    for (const title of ['Moomin mug', 'Green socks', 'A good novel']) ok(await ann.trpc.mutate('wish.create', { title, groupSlugs: [family.slug] }));
     await run('digests');
     expect(await mails(olive, 'wishlistUpdated'), 'quiet period').toHaveLength(0);
     expect((await pending())!.notifyAfter!.getTime(), 'still waiting').toBeGreaterThan(Date.now());
@@ -184,8 +184,8 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(digest.headers['List-Unsubscribe']).toMatch(/wishlistUpdates/);
   });
 
-  await test.step('wishlist digest: add + delete, reorder, a hidden wish, or a Santa who already looked → nothing', async () => {
-    const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Gone again' }));
+  await test.step('wishlist digest: add + delete, reorder, a wish not shown here, or a Santa who already looked → nothing', async () => {
+    const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Gone again', groupSlugs: [family.slug] }));
     ok(await ann.trpc.mutate('wish.delete', { wishId: wish.id }));
     await digestNow();
     await run('digests');
@@ -193,13 +193,12 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(await mails(olive, 'wishlistUpdated'), 'no changes').toHaveLength(1);
     const [first] = ok(await ann.trpc.query('wish.list'));
     ok(await ann.trpc.mutate('wish.move', { wishId: first.id, toIndex: 2 }));
-    const hidden = ok(await ann.trpc.mutate('wish.create', { title: 'Secret wish' }));
-    ok(await ann.trpc.mutate('wish.setHidden', { groupSlug: family.slug, wishId: hidden.id, hidden: true }));
+    ok(await ann.trpc.mutate('wish.create', { title: 'Secret wish' }));
     await digestNow();
     await run('digests');
     await expectBatchTaken();
-    expect(await mails(olive, 'wishlistUpdated'), 'hidden in this group').toHaveLength(1);
-    ok(await ann.trpc.mutate('wish.create', { title: 'Seen it' }));
+    expect(await mails(olive, 'wishlistUpdated'), 'not shown in this group').toHaveLength(1);
+    ok(await ann.trpc.mutate('wish.create', { title: 'Seen it', groupSlugs: [family.slug] }));
     ok(await olive.trpc.query('claim.gifteeWishlist', E1));
     await digestNow();
     await run('digests');
@@ -208,7 +207,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   });
 
   await test.step('wishlist digest: constant editing still sends at the cap', async () => {
-    const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Edited a lot' }));
+    const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Edited a lot', groupSlugs: [family.slug] }));
     await setPending({ firstChangeAt: new Date(Date.now() - 25 * 3600 * 1000) });
     ok(await ann.trpc.mutate('wish.update', { wishId: wish.id, title: 'Edited a lot, again' }));
     await run('digests');

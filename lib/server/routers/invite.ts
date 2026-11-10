@@ -44,7 +44,7 @@ export const inviteRouter = router({
           status: 'invited',
           invitedAt: now,
           invitedBy: ctx.member.id,
-          wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+          wishlistView: { shownWishIds: [] },
         };
         const added = await ctx.db.groups.updateOne(
           { _id: ctx.group._id, [`members.${MAX_MEMBERS - 1}`]: { $exists: false } },

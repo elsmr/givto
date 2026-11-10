@@ -16,7 +16,7 @@ test('one email per week: wishlist + gift combined, got-my-gift stops gift remin
   const group = await drawnGroup([ann, bob, cee], 'Weekly');
   const at = { groupSlug: group.slug, editionNumber: 1 };
   const editionIds = [(await editionOf(db, group.slug))._id];
-  ok(await bob.trpc.mutate('wish.create', { title: 'Socks' }));
+  ok(await bob.trpc.mutate('wish.create', { title: 'Socks', groupSlugs: [group.slug] }));
   ok(await cee.trpc.mutate('gift.set', { ...at, wishIds: [], lines: ['A scarf'] }));
 
   await test.step('14 days before gift day: Ann both parts in one email, Bob the gift part, Cee (got hers) the wishlist part', async () => {
@@ -61,7 +61,7 @@ test('posted: gift reminders before the post-by date, in the Santa’s language'
   const edition = await editionOf(db, group.slug);
   await db.editions.updateOne({ _id: edition._id }, { $set: { exchangeMode: 'byPost', postBy: '2099-12-15' } });
   await db.users.updateOne({ email: bob.email }, { $set: { locale: 'nl' } });
-  for (const user of [ann, bob, cee]) ok(await user.trpc.mutate('wish.create', { title: 'Something' }));
+  for (const user of [ann, bob, cee]) ok(await user.trpc.mutate('wish.create', { title: 'Something', groupSlugs: [group.slug] }));
   await runAt(ann, '2099-12-16T10:00:00.000Z', { editionIds: [edition._id] });
   expect(await count(bob, 'reminderPost'), 'nothing after the post-by date').toBe(0);
   await runAt(ann, '2099-12-01T10:00:00.000Z', { editionIds: [edition._id] });
@@ -72,7 +72,7 @@ test('posted: gift reminders before the post-by date, in the Santa’s language'
 test('ready to draw: once everyone invited by email joined, again 14 days before gift day', async ({ signIn, db }) => {
   const [ann, bob, cee, dee] = await Promise.all(['ann', 'bob', 'cee', 'dee'].map((name) => signIn(name)));
   const group = ok(await ann.trpc.mutate('group.create', { name: 'Ready', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' }));
-  ok(await ann.trpc.mutate('wish.create', { title: 'Tea' }));
+  ok(await ann.trpc.mutate('wish.create', { title: 'Tea', groupSlugs: [group.slug] }));
   for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, name: 'Dee', email: dee.email }));
   const editionIds = [(await editionOf(db, group.slug))._id];

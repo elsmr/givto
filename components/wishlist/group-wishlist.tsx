@@ -17,8 +17,8 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   const trpc = useTRPC();
   const view = useQuery(trpc.wish.groupView.queryOptions({ groupSlug }));
   const wishes = view.data ?? [];
-  const shown = wishes.filter((wish) => !wish.hidden);
-  const hidden = wishes.filter((wish) => wish.hidden);
+  const shown = wishes.filter((wish) => wish.shown);
+  const hidden = wishes.filter((wish) => !wish.shown);
 
   return (
     <Card>
@@ -67,7 +67,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
           </>
         )}
         <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-          <Link href="/wishlist" className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral' })}>
+          <Link href={{ pathname: '/wishlist', query: { group: groupSlug } }} className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral' })}>
             {t(wishes.length === 0 ? 'add' : 'edit')}
           </Link>
           {wishes.length > 0 && <GroupVisibilityDialog groupSlug={groupSlug} wishes={wishes} />}
