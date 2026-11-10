@@ -4,6 +4,9 @@ export type PresenterView = RouterOutputs['giftday']['presenter'];
 export type PresenterOrder = NonNullable<PresenterView['unwrapOrder']>;
 export type PresenterPhase = 'intro' | 'spin' | 'turn' | 'reveal' | 'end';
 
+/** How many gifts the current person gets (63), or null when their Santa marked nothing. */
+export const currentGiftCount = (order: PresenterOrder) => order.people.find((p) => p.memberId === order.current?.memberId)?.gifts ?? null;
+
 export const canRevealIn = (view: PresenterView) =>
   view.reveal.enabled && (view.status === 'giftday' || view.status === 'done');
 

@@ -1,7 +1,7 @@
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { IconTile, type Tone } from '@/components/ui/icon-tile';
-import { ArrowRight, Check, Heart, MessageCircleQuestion, PackageCheck, PartyPopper, Send, Shuffle, UserPlus, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Check, Heart, MessageCircleQuestion, PackageCheck, PartyPopper, Send, ShoppingBag, Shuffle, UserPlus, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { DashboardGroup } from './group-card';
@@ -12,6 +12,7 @@ type Todo = DashboardGroup['todos'][number];
 const kinds: Record<Todo['kind'], { icon: LucideIcon; tone: Tone; hash?: string }> = {
   giftDay: { icon: PartyPopper, tone: 'coral' },
   question: { icon: MessageCircleQuestion, tone: 'yellow' },
+  getGift: { icon: ShoppingBag, tone: 'mint', hash: '#giftee' },
   joinRequests: { icon: UserPlus, tone: 'primary-muted' },
   readyToDraw: { icon: Shuffle, tone: 'yellow' },
   draft: { icon: Send, tone: 'primary-muted' },

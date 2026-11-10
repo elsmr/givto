@@ -80,6 +80,26 @@
     "taken": "Al geclaimd",
     "taken-hint": "Iemand anders koopt deze al."
   },
+  "got-gift": {
+    "title": "Heb je je cadeau?",
+    "private": "Alleen jij ziet dit, {name} nooit. Op pakjesdag weet de presentatie alleen hoeveel cadeaus er uit te pakken zijn.",
+    "not-yet": "Iets gevonden voor {name}? Duid het aan, dan stoppen de herinneringen.",
+    "marked": "{count, plural, one {Je hebt # cadeau} other {Je hebt # cadeaus}}",
+    "open": "Ik heb mijn cadeau",
+    "change": "Aanpassen",
+    "dialog-title": "Wat heb je gekocht?",
+    "dialog-description": "Vink de wensen aan die je hebt (dan zijn ze ook Geclaimd!) en voeg toe wat niet op het lijstje staat. Alles uitvinken maakt het ongedaan.",
+    "wishes": "Van het verlanglijstje van {name}",
+    "no-wishes": "Het verlanglijstje van {name} is leeg.",
+    "taken": "Al geclaimd",
+    "other": "Iets anders",
+    "other-placeholder": "bv. een sjaal",
+    "add-line": "Toevoegen",
+    "remove-line": "“{line}” verwijderen",
+    "save": "Opslaan",
+    "saved": "{count, plural, one {Opgeslagen: # cadeau} other {Opgeslagen: # cadeaus}}",
+    "cleared": "Opgeslagen: nog aan het shoppen"
+  },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",
     "invalid": "Kijk de velden na en probeer het opnieuw.",

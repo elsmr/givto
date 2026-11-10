@@ -35,6 +35,10 @@
       "text": "{count, plural, =1 {Je Santa stelde je een vraag} other {Je Santa stelde je # vragen}}",
       "action": "Antwoorden"
     },
+    "getGift": {
+      "text": "Heb je je cadeau al? Duid het aan als je het hebt",
+      "action": "Ik heb het"
+    },
     "joinRequests": {
       "text": "{count, plural, =1 {1 persoon wil meedoen} other {# mensen willen meedoen}}",
       "action": "Binnenlaten"

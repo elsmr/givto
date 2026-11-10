@@ -1,3 +1,4 @@
+import { StillShoppingStat } from '@/components/gift/still-shopping-stat';
 import { useTRPC } from '@/lib/client/trpc';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useQuery } from '@tanstack/react-query';
@@ -11,7 +12,7 @@ import { RingGauge } from './ring-gauge';
 import { StatCard } from '@/components/ui/stat-card';
 import type { GroupTab } from './use-group-tab';
 
-/** Gift day countdown, my wishes here and who's in (61); the last two open their tab. */
+/** Gift day countdown, my wishes here and who's in (61); the last two open their tab. Organizers: who's still shopping (63). */
 export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (tab: GroupTab) => void }) => {
   const t = useTranslations('group.stats');
   const trpc = useTRPC();
@@ -42,6 +43,9 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
         unit={tooFew ? t('needed', { count: MIN_PARTICIPANTS - people.length }) : t('people-in', { count: people.length })}
         onClick={() => showTab('people')}
       />
+      {edition?.status === 'drawn' && group.organizer && edition.isCurrent && (
+        <StillShoppingStat groupSlug={group.slug} editionNumber={edition.number} className="col-span-2 lg:col-span-1" />
+      )}
     </div>
   );
 };

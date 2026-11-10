@@ -2,7 +2,8 @@
   "hero": {
     "title": "Het is pakjesdag!",
     "description": "Tijd om uit te pakken. Veel plezier, allemaal.",
-    "present": "Presentatieweergave openen"
+    "present": "Presentatieweergave openen",
+    "to-open": "{count, plural, one {# cadeau om uit te pakken} other {# cadeaus om uit te pakken}}"
   },
   "order": {
     "title": "Uitpakvolgorde",
@@ -76,7 +77,10 @@
     "more": "Nog meer uit te pakken",
     "last": "Dat was de laatste",
     "keys-spin": "Spatie of → om te draaien · ← terug",
-    "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug"
+    "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug",
+    "gift-of": "Cadeau {current} van {total}",
+    "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
+    "keys-counted": "→ of spatie: volgende · ← terug"
   },
   "errors": {
     "NOT_DRAWN": "De namen zijn nog niet getrokken.",
