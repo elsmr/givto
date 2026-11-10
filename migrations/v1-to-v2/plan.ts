@@ -98,12 +98,14 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
   const accountOf = new Map<string, string>();
   const accountName = new Map<string, string | null>();
   const users: UserDoc[] = [];
+  // Noted once we know the account is kept (see skippedUnusedAccount).
+  const accountNotes: { accountId: string; kind: string; sample: unknown }[] = [];
   for (const [address, dups] of byEmail) {
     const ids = dups.map((user) => user._id.toHexString());
     const accountId = target.accountIds.get(address) ?? ids[0];
     const name = dups.map((user) => personName(user.name)).find(Boolean) ?? null;
-    if (dups.length > 1) note('mergedDuplicateEmail', { email: maskEmail(address), kept: accountId, merged: ids.filter((id) => id !== accountId) });
-    if (!name) note('nameFallback', { user: accountId, name: short(dups[0].name) });
+    if (dups.length > 1) accountNotes.push({ accountId, kind: 'mergedDuplicateEmail', sample: { email: maskEmail(address), kept: accountId, merged: ids.filter((id) => id !== accountId) } });
+    if (!name) accountNotes.push({ accountId, kind: 'nameFallback', sample: { user: accountId, name: short(dups[0].name) } });
     for (const id of ids) accountOf.set(id, accountId);
     accountName.set(accountId, name);
     if (accountId !== ids[0]) {
@@ -239,6 +241,11 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
   }
 
   const { wishes, wishIdsOf, shownIn, merged } = planWishes(wishSources, target, now, note);
+  // Owner decision (58): no account for someone in no migrated group and without migrated wishes.
+  const usedAccounts = new Set([...groups.flatMap((g) => g.members.flatMap((m) => m.userId ?? [])), ...wishes.map((w) => w.ownerId)]);
+  for (const { accountId, kind, sample } of accountNotes) if (usedAccounts.has(accountId)) note(kind, sample);
+  const keptUsers = users.filter((user) => usedAccounts.has(user._id.toHexString()));
+  for (const user of users) if (!usedAccounts.has(user._id.toHexString())) note('skippedUnusedAccount', { user: user._id.toHexString(), email: maskEmail(user.email) });
   // Each group keeps seeing only what was on its old list: the rest of the merged list is hidden there.
   const withHidden = groups.map((group) => ({
     ...group,
@@ -252,7 +259,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
 
   const countStatus = (status: EditionStatus) => editions.filter((e) => e.status === status).length;
   const planned = {
-    users: users.length,
+    users: keptUsers.length,
     groups: groups.length,
     editionsDone: countStatus('done'),
     editionsDrawn: countStatus('drawn'),
@@ -266,7 +273,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
     wishDuplicatesMerged: merged,
   };
   for (const [owner, ids] of wishIdsOf) if (ids.length > MAX_WISHES) note('tooManyWishes', { owner, count: ids.length });
-  return { users, groups: withHidden, editions, wishes, report: { source: {}, planned, conflicts } };
+  return { users: keptUsers, groups: withHidden, editions, wishes, report: { source: {}, planned, conflicts } };
 };
 
 /** Old exclusions (user ids, both ways in master's draw) → v2 standing exclusions between member ids. */

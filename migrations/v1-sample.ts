@@ -20,6 +20,7 @@ export const edge = {
   exactDuplicateEmail: 'dup.exact@example.com',
   invalidEmail: 'not-an-email',
   lonerEmail: 'loner@example.com',
+  unusedEmail: 'unused@example.com',
   sharedSlug: 'Fam2020xy',
   customSlug: 'family-2021',
   invalidSlug: 'my family',
@@ -149,7 +150,8 @@ export const generateV1 = ({ seed = 58, users: userCount = 60, groups: groupCoun
   ];
   const groups = [...regularOdd, ...edgeGroups];
 
-  const all = [...people, dupA, dupB, dupC, exact1, exact2, invalid, loner, ...oddNames];
+  const unused = user('Una Unused', edge.unusedEmail);
+  const all = [...people, dupA, dupB, dupC, exact1, exact2, invalid, loner, ...oddNames, unused];
   const memberships = (u: V1User) => groups.filter((g) => (g.users as ObjectId[]).some((ref) => ref.equals(u._id))).map((g) => g._id);
   const users = all.map((u) => ({ ...u, groups: u === loner ? [groups[0]._id, objectId(ago(10))] : memberships(u) }));
   const tokens = (length: number, hours: number) => all.filter(() => chance(0.3)).map((u) => ({ userId: u._id, exp: now.getTime() + hours * 3600_000, token: token(length) }));

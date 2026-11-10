@@ -70,8 +70,15 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
         v.parse(Wish, wish);
         expect(Array.isArray((wish as { links?: unknown }).links)).toBe(true);
       }
-      const validEmails = new Set(data.users.map((u) => normalized(u.email)).filter((email) => email.includes('@')));
-      expect(await c.users.countDocuments()).toBe(validEmails.size);
+      const referenced = new Set(data.groups.flatMap((g) => [g.creator, ...(g.users as ObjectId[]), ...Object.keys(g.wishlists as object)].map(String)));
+      const usedEmails = new Set(data.users.filter((u) => referenced.has(u._id.toHexString())).map((u) => normalized(u.email)).filter((email) => email.includes('@')));
+      expect(await c.users.countDocuments()).toBe(usedEmails.size);
+      const groups = await c.groups.find().toArray();
+      const managed = new Set(groups.flatMap((g) => g.members.filter((m) => !m.userId).map((m) => m.id)));
+      const owners = (await c.wishes.distinct('ownerId')).filter((id) => !managed.has(id));
+      const accountIds = (await c.users.find().toArray()).map((u) => u._id.toHexString());
+      expect(accountIds.toSorted()).toEqual([...new Set([...groups.flatMap((g) => g.members.flatMap((m) => m.userId ?? [])), ...owners])].toSorted());
+      expect(result.report!.conflicts.skippedUnusedAccount.count).toBe(new Set(data.users.map((u) => normalized(u.email)).filter((email) => email.includes('@'))).size - usedEmails.size);
       expect(await c.groups.countDocuments()).toBe(data.groups.length - 1); // the one with only deleted users and an invalid email
       expect(await c.editions.countDocuments({ number: 1 })).toBe(await c.groups.countDocuments());
     });
@@ -137,7 +144,7 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       expect(seen.wishes.map((w: { title: string }) => w.title)).toEqual(['BOARD GAME', 'Scarf']);
     });
 
-    await test.step('edge wishes, a user in no group, a wishlist outside the group', async () => {
+    await test.step('edge wishes, a user in no group with and without wishes, a wishlist outside the group', async () => {
       const lists = data.groups.flatMap((g) => Object.entries(g.wishlists as Record<string, { description?: unknown }[]>));
       const [ownerId] = lists.find(([, items]) => items.some((item) => item.description === 'Something nice\nsecond line'))!;
       const wishes = await c.wishes.find({ ownerId }).toArray();
@@ -149,6 +156,7 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       const [lonerGroups, lonerWishes] = callAs(db, loner._id.toHexString(), [{ path: 'account.groups' }, { path: 'wish.list' }]);
       expect(lonerGroups).toEqual([]);
       expect(lonerWishes.map((w: { title: string }) => w.title)).toEqual(['Outside wish']);
+      expect(await c.users.countDocuments({ email: edge.unusedEmail })).toBe(0);
     });
 
     await test.step('re-run is a no-op', async () => {
