@@ -15,8 +15,6 @@ export const phaseOf = (status: EditionStatus, participantCount: number): Phase 
 export const editionPhase = ({ status, participantIds }: Pick<GroupEdition, 'status' | 'participantIds'>): Phase =>
   phaseOf(status, participantIds.length);
 
-export const isBeforeDraw = ({ status }: Pick<GroupEdition, 'status'>) => status === 'draft' || status === 'open';
-
 /** Chip colour per edition status, the same everywhere a status shows. */
 export const statusTone = {
   draft: 'default',

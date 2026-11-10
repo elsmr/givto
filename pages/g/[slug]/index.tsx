@@ -13,7 +13,6 @@ export default function GroupPage() {
     <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <GroupHome key={slug} slug={slug} />
     </AppShell>

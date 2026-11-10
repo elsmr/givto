@@ -24,7 +24,6 @@ export default function AppHomePage() {
     <AppShell app>
       <Head>
         <title>{t('page-title')}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="flex flex-col gap-8">
         <PageHeader

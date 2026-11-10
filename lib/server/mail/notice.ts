@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import type { UnsubscribeCategory } from '../../../emails/ui/categories';
 import type { FooterProps } from '../../../emails/ui/footer';
-import type { Collections } from '../db';
+import { isDuplicateKey, type Collections } from '../db';
 import { sendMail, type Mail } from './index';
 import type { Recipient } from './recipients';
 import { isSuppressed } from './suppression';
@@ -25,8 +25,6 @@ export interface Notice {
 }
 
 export type NoticeResult = 'sent' | 'optedOut' | 'suppressed' | 'duplicate';
-
-const isDuplicateKey = (error: unknown) => (error as { code?: number }).code === 11000;
 
 /**
  * Sends a notification at most once per key (29): the log entry goes in first, so a second

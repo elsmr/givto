@@ -17,7 +17,6 @@ export default function MagicLinkPage() {
     <AppShell>
       <Head>
         <title>{t('link.page-title')}</title>
-        <meta name="robots" content="noindex" />
         <meta name="referrer" content="no-referrer" />
       </Head>
       {failed ? (

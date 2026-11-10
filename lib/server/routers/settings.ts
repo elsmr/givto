@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { GroupName, MAX_MEMBERS } from '../../schema/group';
-import type { Participant } from '../../schema/edition';
+import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
 import { removeMember } from '../remove-member';
 import { organizerProcedure, router } from '../trpc';
@@ -23,7 +23,7 @@ export const settingsRouter = router({
     .input(v.object({ memberIds: v.pipe(v.array(Id), v.maxLength(MAX_MEMBERS)) }))
     .mutation(async ({ ctx, input }) => {
       const { edition } = ctx;
-      if (edition.status !== 'draft' && edition.status !== 'open') throw new AppError('ALREADY_DRAWN');
+      if (!isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
       const joined = new Set(ctx.group.members.filter((m) => m.status === 'joined').map((m) => m.id));
       if (!input.memberIds.every((id) => joined.has(id))) throw new AppError('INVALID_INPUT');
       const ticked = new Set(input.memberIds);

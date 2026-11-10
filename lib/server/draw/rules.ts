@@ -1,13 +1,9 @@
 import { findStuckGivers, type Exclusion } from '../../draw';
 import { toExclusions } from '../../exclusions';
-import type { Edition, EditionStatus } from '../../schema/edition';
+import type { Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
-
-/** Statuses in which `edition.draw` is the live result. */
-export const drawnStatuses: EditionStatus[] = ['drawn', 'giftday'];
-export const isDrawn = (edition: Edition) => drawnStatuses.includes(edition.status);
 
 /** Who's in the draw: ticked, joined for this edition, and still a joined member of the group. */
 export const drawParticipantIds = (group: Group, edition: Edition): string[] => {

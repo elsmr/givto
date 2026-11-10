@@ -23,7 +23,6 @@ export default function SignInPage() {
     <AppShell>
       <Head>
         <title>{t('page-title')}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <AuthCard title={t('title')} intro={t('intro')}>
         <SignInFlow redirect={redirect} />

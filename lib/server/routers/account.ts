@@ -3,14 +3,14 @@ import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
 import { PersonName } from '../../schema/common';
-import type { Edition } from '../../schema/edition';
+import { isDrawn, type Edition } from '../../schema/edition';
 import { daysBetween, todayIn } from '../../local-date';
 import { MIN_PARTICIPANTS } from '../../schema/group';
 import { NotificationPrefs } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
 import { exportAccount } from '../account/export';
 import { getAuth } from '../auth';
-import { isAfterDrawOpen, ownAndManagedIds } from '../between/santa-role';
+import { ownAndManagedIds } from '../between/santa-role';
 import { AppError } from '../errors';
 import { sendMail } from '../mail';
 import { enforceRateLimit } from '../rate-limit';
@@ -50,7 +50,7 @@ export const accountRouter = router({
     });
     // "I've got my gift" (63): the Santas among my editions who marked one for their current giftee.
     const gifted = myGiftees.length === 0 ? [] : await ctx.db.gifts.find({ $or: myGiftees }, { projection: { editionId: 1 } }).toArray();
-    const questionEditions = editions.filter(({ edition }) => isAfterDrawOpen(edition));
+    const questionEditions = editions.filter(({ edition }) => isDrawn(edition));
     // Same filter as question.forMe (delivered only), narrowed to unanswered.
     const questions =
       questionEditions.length === 0
@@ -114,9 +114,7 @@ export const accountRouter = router({
           giftDay: edition.giftDay?.date,
           timeZone: edition.timeZone,
           participantCount,
-          gifteeReady:
-            (edition.status === 'drawn' || edition.status === 'giftday') &&
-            Boolean(edition.draw?.assignments[member.id]),
+          gifteeReady: isDrawn(edition) && Boolean(edition.draw?.assignments[member.id]),
         },
         todos,
       };

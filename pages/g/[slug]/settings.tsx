@@ -14,7 +14,6 @@ export default function GroupSettingsPage() {
     <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <GroupSettings key={slug} slug={slug} />
     </AppShell>

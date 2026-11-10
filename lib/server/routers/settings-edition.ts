@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { findStuckGivers } from '../../draw';
 import { todayIn, zonedInstant } from '../../local-date';
 import { LocalDate, MultiLine, Price } from '../../schema/common';
-import { checkEditionDates, EditionTitle, GiftDay, type Edition } from '../../schema/edition';
+import { checkEditionDates, EditionTitle, GiftDay, isBeforeDraw, type Edition } from '../../schema/edition';
 import { ExchangeMode, MIN_PARTICIPANTS } from '../../schema/group';
 import { allRules, drawParticipantIds, drawRules } from '../draw/rules';
 import { AppError } from '../errors';
@@ -51,7 +51,7 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
     throw new AppError('DATE_IN_PAST');
   }
   if (input.drawOn && input.giftDay && input.drawOn >= input.giftDay.date) throw new AppError('DATES_OUT_OF_ORDER');
-  const beforeDraw = edition.status === 'draft' || edition.status === 'open';
+  const beforeDraw = isBeforeDraw(edition);
   if (!beforeDraw && (input.drawOn !== drawOn || input.avoidPreviousGiftees !== edition.avoidPreviousGiftees)) {
     throw new AppError('ALREADY_DRAWN');
   }

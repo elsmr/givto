@@ -14,7 +14,6 @@ export default function NewSecretSantaPage() {
     <AppShell app={Boolean(user)}>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <CreateFlow />
     </AppShell>

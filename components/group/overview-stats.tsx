@@ -6,7 +6,7 @@ import { Heart, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AvatarStack } from './avatar-stack';
 import { GiftDayStat } from './gift-day-stat';
-import { isBeforeDraw } from './edition-phase';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import type { GroupData } from './group-data';
 import { RingGauge } from './ring-gauge';
 import { StatCard } from '@/components/ui/stat-card';

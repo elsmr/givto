@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { FieldError } from '@/components/ui/field';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { useTRPC } from '@/lib/client/trpc';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -16,7 +17,7 @@ export const PeopleSettings = ({ group, edition }: { group: GroupData; edition: 
   const trpc = useTRPC();
   const refresh = useRefreshEdition(group.slug);
   const setParticipants = useMutation(trpc.settings.setParticipants.mutationOptions({ onSuccess: () => void refresh() }));
-  const beforeDraw = edition.status === 'draft' || edition.status === 'open';
+  const beforeDraw = isBeforeDraw(edition);
   const people = group.members.filter((m) => m.status !== 'requested');
   const tick = (memberId: string, checked: boolean) =>
     setParticipants.mutate({

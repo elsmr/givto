@@ -1,6 +1,6 @@
 import { randomInt } from 'node:crypto';
 import { drawAssignments } from '../../draw';
-import type { Edition } from '../../schema/edition';
+import { isBeforeDraw, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
@@ -10,7 +10,7 @@ import { historyWith, saveDraw } from './save';
 
 /** "Draw names" (34), by the organizer or the scheduler: draft/open → drawn. */
 export const drawEdition = async (db: Collections, group: Group, edition: Edition, now = new Date()) => {
-  if (edition.status !== 'draft' && edition.status !== 'open') throw new AppError('ALREADY_DRAWN');
+  if (!isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
   const ids = drawParticipantIds(group, edition);
   const rules = await drawRules(db, group, edition);
   assertDrawable(ids, rules);

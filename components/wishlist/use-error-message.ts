@@ -1,4 +1,4 @@
-import { TRPCClientError } from '@trpc/client';
+import { appErrorCode } from '@/components/group/app-error-code';
 import { useTranslations } from 'next-intl';
 
 const keyByCode = {
@@ -12,7 +12,7 @@ const keyByCode = {
 export const useErrorMessage = () => {
   const t = useTranslations('wishlist.errors');
   return (error: unknown): string => {
-    const code = error instanceof TRPCClientError ? (error.data?.appCode as string | undefined) : undefined;
-    return t(code && code in keyByCode ? keyByCode[code as keyof typeof keyByCode] : 'generic');
+    const code = appErrorCode(error);
+    return t(code in keyByCode ? keyByCode[code as keyof typeof keyByCode] : 'generic');
   };
 };

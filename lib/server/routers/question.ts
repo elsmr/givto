@@ -1,8 +1,9 @@
 import * as v from 'valibot';
 import { anonymousSendAt } from '../../anonymous-delay';
 import { Id } from '../../schema/common';
+import { isDrawn } from '../../schema/edition';
 import { AnswerFields, QuestionFields, type Question } from '../../schema/question';
-import { isAfterDrawOpen, ownAndManagedIds, santaActionProcedure, santaViewProcedure } from '../between/santa-role';
+import { ownAndManagedIds, santaActionProcedure, santaViewProcedure } from '../between/santa-role';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { enforceRateLimit } from '../rate-limit';
@@ -31,14 +32,14 @@ export const questionRouter = router({
       .toArray();
     return {
       giftee: { name: giftee.name },
-      canAsk: isAfterDrawOpen(ctx.edition) && !answersOwnQuestions,
+      canAsk: isDrawn(ctx.edition) && !answersOwnQuestions,
       answersOwnQuestions,
       questions: questions.map((q) => ({ id: q._id, text: q.text, askedAt: q.createdAt, answer: toAnswerView(q) })),
     };
   }),
 
   ask: santaActionProcedure.input(QuestionFields).mutation(async ({ ctx, input }) => {
-    if (!isAfterDrawOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
+    if (!isDrawn(ctx.edition)) throw new AppError('EDITION_CLOSED');
     if (ctx.answersOwnQuestions) throw new AppError('FORBIDDEN');
     await enforceRateLimit(`question:ask:${ctx.edition._id}:${ctx.santa.id}`, { window: DAY, max: 3 });
     const now = new Date();
@@ -81,7 +82,7 @@ export const questionRouter = router({
   answer: editionProcedure
     .input(v.object({ questionId: Id, ...AnswerFields.entries }))
     .mutation(async ({ ctx, input }) => {
-      if (!isAfterDrawOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
+      if (!isDrawn(ctx.edition)) throw new AppError('EDITION_CLOSED');
       const ownIds = ownAndManagedIds(ctx.group, ctx.member);
       const now = new Date();
       const answer = { text: input.text, answeredAt: now, notifyAfter: now };

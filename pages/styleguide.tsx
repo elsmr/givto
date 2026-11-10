@@ -119,7 +119,6 @@ export default function StyleguidePage() {
     <AppShell app>
       <Head>
         <title>Styleguide · Givto</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="flex flex-col gap-8">
         <PageHeader

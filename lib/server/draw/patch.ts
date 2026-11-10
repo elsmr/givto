@@ -1,11 +1,11 @@
 import { randomInt } from 'node:crypto';
 import { drawAssignments, findStuckGivers } from '../../draw';
 import { slotIn, takeOut } from '../../draw-patch';
-import type { Assignments, Edition } from '../../schema/edition';
+import { isDrawn, type Assignments, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { sendDrawNoticesNow } from '../jobs/draw-notices';
-import { allRules, drawRules, isDrawn } from './rules';
+import { allRules, drawRules } from './rules';
 import { saveDraw } from './save';
 
 const ATTEMPTS = 5;

@@ -1,5 +1,5 @@
-import type { Edition } from '../../schema/edition';
-import { newId } from '../db';
+import { isBeforeDraw, type Edition } from '../../schema/edition';
+import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
 import { organizerProcedure, router } from '../trpc';
@@ -13,7 +13,7 @@ export const editionRouter = router({
    */
   startNext: organizerProcedure.mutation(async ({ ctx }) => {
     const current = await currentEdition(ctx.db, ctx.group._id);
-    if (!current || current.status === 'draft' || current.status === 'open') throw new AppError('EDITION_IN_PROGRESS');
+    if (!current || isBeforeDraw(current)) throw new AppError('EDITION_IN_PROGRESS');
     const now = new Date();
     const year = current.year + 1;
     const hadDraw = Object.keys(current.draw?.assignments ?? {}).length > 0;
@@ -41,7 +41,7 @@ export const editionRouter = router({
       await ctx.db.editions.insertOne(edition);
     } catch (error) {
       // Unique (groupId, number): someone started it a moment ago.
-      if ((error as { code?: number }).code === 11000) throw new AppError('EDITION_IN_PROGRESS');
+      if (isDuplicateKey(error)) throw new AppError('EDITION_IN_PROGRESS');
       throw error;
     }
     return { number: edition.number };

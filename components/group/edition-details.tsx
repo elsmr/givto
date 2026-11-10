@@ -1,4 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { formatBudget } from './format-budget';
@@ -11,8 +12,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
   const { giftDay, budget, timeZone } = edition;
   // Local dates have no time zone: format them as UTC so they never shift a day.
   const localDate = (date: string) => format.dateTime(new Date(`${date}T00:00:00Z`), { dateStyle: 'full', timeZone: 'UTC' });
-  const beforeDraw = edition.status === 'draft' || edition.status === 'open';
-  const draw = !beforeDraw
+  const draw = !isBeforeDraw(edition)
     ? t('drawn')
     : edition.drawAt
       ? t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) })

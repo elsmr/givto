@@ -19,7 +19,6 @@ export const ErrorPage = ({ statusCode }: { statusCode: number }) => {
     <AppShell>
       <Head>
         <title>{`${title} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <FlowPage
         eyebrow={

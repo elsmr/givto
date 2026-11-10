@@ -7,6 +7,11 @@ export const editionStatuses = ['draft', 'open', 'drawn', 'giftday', 'done'] as 
 export const EditionStatus = v.picklist(editionStatuses);
 export type EditionStatus = v.InferOutput<typeof EditionStatus>;
 
+/** People can still join, and the participants and keep-apart rules can change. */
+export const isBeforeDraw = ({ status }: { status: EditionStatus }) => status === 'draft' || status === 'open';
+/** From the draw until gift day is over: `edition.draw` is the live result. */
+export const isDrawn = ({ status }: { status: EditionStatus }) => status === 'drawn' || status === 'giftday';
+
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);
 
