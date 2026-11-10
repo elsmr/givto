@@ -6,11 +6,17 @@ export type SpinStatus = 'idle' | 'spinning' | 'skipped';
 
 /** Long enough to feel like a wheel however few names there are. */
 const MIN_ROWS = 40;
-const SPIN_SECONDS = 5.6;
-/** It drifts this far past the target (in rows) at the end of the slowdown, then settles back. */
-const OVERSHOOT_ROWS = 0.2;
-/** Fast at first, then a long slow tail: the last few names tick by one by one. */
-const slowDown = (t: number) => 1 - (1 - t) ** 3;
+/** Seconds: slowing down onto the target, then a little past it and back, like a wheel clicking into place. */
+const SLOW_SECONDS = 4.8;
+const PAST_SECONDS = 0.3;
+const BACK_SECONDS = 0.35;
+const SPIN_SECONDS = SLOW_SECONDS + PAST_SECONDS + BACK_SECONDS;
+const OVERSHOOT_ROWS = 0.12;
+/**
+ * Fast at first, then a long slow tail where the last few names tick by one by one. A cubic ease-out
+ * cut at 80%: it reaches the target still moving (a click into place), not crawling to a stop.
+ */
+const slowDown = (t: number) => (1 - (1 - 0.8 * t) ** 3) / (1 - 0.2 ** 3);
 const box =
   'h-[1.3em] min-w-[min(80vw,12em)] overflow-hidden bg-surface px-8 text-center font-heading text-[clamp(3rem,9vw,9rem)] leading-[1.3em] font-extrabold text-ink bordered shadow-lg dark:border-control dark:shadow-brand';
 
@@ -78,8 +84,12 @@ export const WhoIsNextReel = ({ names, target, status, onLanded }: WhoIsNextReel
     <div className={box} aria-hidden="true">
       <m.div
         initial={{ y: '0%' }}
-        animate={{ y: ['0%', rowsUp(targetRow + OVERSHOOT_ROWS), rowsUp(targetRow)] }}
-        transition={{ duration: SPIN_SECONDS, times: [0, 0.92, 1], ease: [slowDown, 'easeInOut'] }}
+        animate={{ y: ['0%', rowsUp(targetRow), rowsUp(targetRow + OVERSHOOT_ROWS), rowsUp(targetRow)] }}
+        transition={{
+          duration: SPIN_SECONDS,
+          times: [0, SLOW_SECONDS / SPIN_SECONDS, (SLOW_SECONDS + PAST_SECONDS) / SPIN_SECONDS, 1],
+          ease: [slowDown, 'easeOut', 'easeInOut'],
+        }}
         onAnimationComplete={() => landed.current()}
       >
         {strip.map((name, index) => (

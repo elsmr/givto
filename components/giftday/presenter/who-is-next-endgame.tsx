@@ -5,13 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import type { SpinStatus } from './who-is-next-reel';
 
 const HOPS = 13;
-const FIRST_HOP_MS = 60;
+/** From the first hop to the last one, however many hops. */
+const HOPPING_MS = 2900;
 /** Each hop takes this much longer than the one before: fast, then slowing like a ball between pockets. */
 const SLOWDOWN = 1.2;
 /** Still on the target for a beat (will it hop again?) before the winner pops. */
 const HOLD_MS = 450;
 const POP_MS = 750;
-const hopAt = (hop: number) => (FIRST_HOP_MS * (SLOWDOWN ** hop - 1)) / (SLOWDOWN - 1);
+const hopAt = (hop: number, hops: number) => (HOPPING_MS * (SLOWDOWN ** hop - 1)) / (SLOWDOWN ** (hops - 1) - 1);
 
 /** Back and forth between the cards, ending on `end`; a random length so the first card lit gives nothing away. */
 const hopPath = (count: number, end: number) => {
@@ -47,13 +48,12 @@ export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextE
 
   useEffect(() => {
     if (status === 'idle') return;
-    const last = hopAt(path.length - 1);
     const timers = quick
       ? [setTimeout(() => landed.current(), 400)]
       : [
-          ...path.map((_, i) => setTimeout(() => setHop(i), hopAt(i))),
-          setTimeout(() => setPopped(true), last + HOLD_MS),
-          setTimeout(() => landed.current(), last + HOLD_MS + POP_MS),
+          ...path.map((_, i) => setTimeout(() => setHop(i), hopAt(i, path.length))),
+          setTimeout(() => setPopped(true), HOPPING_MS + HOLD_MS),
+          setTimeout(() => landed.current(), HOPPING_MS + HOLD_MS + POP_MS),
         ];
     return () => timers.forEach(clearTimeout);
   }, [status, quick, path]);
@@ -69,7 +69,7 @@ export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextE
           animate={{ scale: quick || i !== lit ? 1 : won ? 1.15 : 1.05, opacity: won && i !== end ? 0.35 : 1 }}
           transition={won ? { type: 'spring', stiffness: 400, damping: 12, opacity: { duration: 0.3 } } : { duration: 0.08 }}
           className={cn(
-            'max-w-full px-8 py-6 font-heading text-[clamp(2.5rem,7vw,7rem)] leading-none font-extrabold break-words text-ink bordered',
+            'max-w-full px-8 py-6 font-heading text-[clamp(2rem,5vw,5rem)] leading-none font-extrabold break-words text-ink bordered',
             i === lit ? 'bg-yellow shadow-brand' : 'bg-surface shadow-lg dark:border-control dark:shadow-brand'
           )}
         >
