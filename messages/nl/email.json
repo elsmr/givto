@@ -8,7 +8,8 @@
     "category": {
       "reminders": "herinneringen",
       "wishlistUpdates": "updates over verlanglijstjes",
-      "santaMessages": "berichten van je Santa"
+      "santaMessages": "berichten van je Santa",
+      "joins": "wie meedoet in je groepen"
     }
   },
   "sign-in": {
@@ -63,6 +64,14 @@
     "title": "Je doet mee!",
     "body": "De organisator heeft je toegelaten tot “{group}”. Zet een paar wensen op je verlanglijstje, dan weet je Santa wat je wilt.",
     "button": "Naar de groep"
+  },
+  "join-digest": {
+    "subject": "{count, plural, one {{name} doet mee met {group}} other {# mensen doen mee met {group}}}",
+    "preheader": "Nu {count, plural, one {# deelnemer} other {# deelnemers}}.",
+    "title": "{count, plural, one {Iemand doet mee} other {# mensen doen mee}}",
+    "body": "Sinds gisteren via de groepslink bij “{group}”:",
+    "total": "Nu {count, plural, one {doet # persoon} other {doen # mensen}} mee.",
+    "button": "Bekijk wie meedoet"
   },
   "names-drawn": {
     "subject": "De namen zijn getrokken in {group}!",
@@ -121,23 +130,33 @@
     "updated": "{count, plural, one {Gewijzigd:} other {# gewijzigd:}}",
     "button": "Bekijk het verlanglijstje"
   },
-  "reminder-wishlist": {
-    "subject": "Je Santa wacht op je verlanglijstje",
-    "preheader": "Zet een paar wensen klaar voor {group}.",
-    "title": "Je verlanglijstje is leeg",
-    "body": "Je Santa in “{group}” weet nog niet wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
-    "by": "Verlanglijstjes klaar vóór {date}.",
-    "button": "Wens toevoegen"
-  },
-  "reminder-gift": {
-    "subject": "Heb je je cadeau al? {group} komt eraan",
-    "subject-post": "Verstuur je cadeau vóór {date}",
-    "preheader": "Pakjesdag is {date}.",
-    "title": "Heb je je cadeau al?",
-    "title-post": "Tijd om je cadeau te versturen",
-    "body": "Pakjesdag voor “{group}” is {date}. Nog aan het zoeken? Het verlanglijstje van je persoon staat vol ideeën.",
-    "body-post": "Je cadeau voor “{group}” moet vóór {postBy} op de post, zodat het er vóór pakjesdag ({date}) is. Het adres staat in Givto.",
-    "button": "Open het verlanglijstje"
+  "reminder": {
+    "title": "Een paar dingen voor “{group}”",
+    "wishlist": {
+      "subject": "Zet een paar wensen klaar",
+      "title": "Je verlanglijstje is leeg",
+      "body": "Je Santa in “{group}” weet nog niet wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
+      "by": "Verlanglijstjes klaar vóór {date}.",
+      "button": "Wens toevoegen"
+    },
+    "gift": {
+      "subject": "Heb je je cadeau al?",
+      "subject-post": "Verstuur je cadeau vóór {date}",
+      "title": "Heb je je cadeau al?",
+      "title-post": "Tijd om je cadeau te versturen",
+      "body": "Pakjesdag voor “{group}” is {date}. Nog aan het zoeken? Het verlanglijstje van je persoon staat vol ideeën.",
+      "body-post": "Je cadeau voor “{group}” moet vóór {postBy} op de post, zodat het er vóór pakjesdag ({date}) is. Het adres staat in Givto.",
+      "mark": "Heb je het al? Tik in Givto op “Ik heb mijn cadeau”, dan herinneren we je er niet meer aan.",
+      "button": "Open het verlanglijstje"
+    },
+    "ready": {
+      "subject": "Klaar om namen te trekken",
+      "title": "Klaar om namen te trekken",
+      "body": "Iedereen die je per e-mail uitnodigde, doet mee met “{group}”: {count, plural, one {# deelnemer} other {# deelnemers}}. Trek de namen wanneer je wilt.",
+      "body-soon": "Pakjesdag voor “{group}” is {date} en de namen zijn nog niet getrokken. Doe het nu, dan heeft iedereen tijd om te shoppen.",
+      "late": "Wie na de loting nog meedoet, krijgt toch iemand om een cadeau voor te kopen.",
+      "button": "Namen trekken"
+    }
   },
   "reminder-gift-day": {
     "subject": "Het is pakjesdag! {group}",
