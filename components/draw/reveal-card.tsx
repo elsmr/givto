@@ -1,4 +1,4 @@
-import { IconCardTitle } from '@/components/group/icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';

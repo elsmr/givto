@@ -4,7 +4,7 @@ import { History } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
-import { IconCardTitle } from './icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 
 /** Every edition of the group, newest first (33). Only once there's history. */
 export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNumber: number }) => {

@@ -15,7 +15,7 @@ import Head from 'next/head';
 // Dev aid: every UI component in its states. Sample copy is English only.
 export default function StyleguidePage() {
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>Styleguide · Givto</title>
         <meta name="robots" content="noindex" />

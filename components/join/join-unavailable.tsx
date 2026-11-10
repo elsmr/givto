@@ -13,7 +13,7 @@ export const JoinUnavailable = ({ kind }: { kind: 'link' | 'invite' }) => {
       <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
       <p className="text-lg">{t(kind)}</p>
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Link href={user ? '/groups' : '/auth/sign-in'} className={buttonVariants()}>
+        <Link href={user ? '/app' : '/auth/sign-in'} className={buttonVariants()}>
           {user ? t('my-secret-santas') : t('sign-in')}
         </Link>
         <Link href="/new" className={buttonVariants({ variant: 'neutral' })}>

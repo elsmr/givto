@@ -1,11 +1,12 @@
 {
   "skip-to-content": "Skip to content",
   "main-navigation": "Main",
+  "home": "Home",
+  "open-app": "Open Givto",
   "my-secret-santas": "My groups",
   "my-wishlist": "My wishlist",
   "retry": "Try again",
   "sign-in": "Sign in",
-  "account-menu": "Account menu for {name}",
   "account": "Account",
   "sign-out": "Sign out",
   "language": "Language",

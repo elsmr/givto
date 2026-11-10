@@ -1,6 +1,6 @@
 import { Doodle } from '@/components/group/doodle';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
-import { IconCardTitle } from '@/components/group/icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { SharePanel } from '@/components/group/share-panel';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';

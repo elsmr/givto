@@ -2,7 +2,7 @@ import { daysBetween, todayIn } from '@/lib/local-date';
 import { CalendarDays } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { GroupEdition } from './group-data';
-import { StatCard } from './stat-card';
+import { StatCard } from '@/components/ui/stat-card';
 
 /** Days to gift day, with the date (28). */
 export const GiftDayStat = ({ edition }: { edition: GroupEdition }) => {

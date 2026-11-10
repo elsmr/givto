@@ -1,4 +1,4 @@
-import { IconCardTitle } from '@/components/group/icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';

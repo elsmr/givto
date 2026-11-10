@@ -1,33 +1,41 @@
 import { cn } from '@/lib/utils';
 import { Check, Gift, PartyPopper, ShoppingBag, Shuffle, UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { editionPhase, phases } from './edition-phase';
-import type { GroupEdition } from './group-data';
+import { phases, type Phase } from './edition-phase';
 
 const icons = { join: UserPlus, draw: Shuffle, shop: ShoppingBag, giftday: Gift, done: PartyPopper };
 
-/** Where this edition is (61): past phases ticked, the current one raised, the rest muted. A status, not navigation. */
-export const PhaseStepper = ({ edition }: { edition: GroupEdition }) => {
+/**
+ * Where an edition is (61), drawn as a progress track so it doesn't read as tabs: past phases
+ * filled and ticked, the current one raised, the rest dashed. A status, not navigation.
+ */
+export const PhaseStepper = ({ phase, className }: { phase: Phase; className?: string }) => {
   const t = useTranslations('group.phase');
-  const current = phases.indexOf(editionPhase(edition));
+  const current = phases.indexOf(phase);
 
   return (
-    <ol aria-label={t('label')} className="grid grid-cols-5 gap-0.5 bg-surface p-1 text-ink bordered sm:gap-1">
-      {phases.map((phase, index) => {
-        const Icon = index < current ? Check : icons[phase];
+    <ol aria-label={t('label')} className={cn('grid grid-cols-5 gap-1 sm:gap-1.5', className)}>
+      {phases.map((step, index) => {
+        const Icon = index < current ? Check : icons[step];
         return (
           <li
-            key={phase}
+            key={step}
             aria-current={index === current ? 'step' : undefined}
-            className={cn(
-              'flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 border-2 border-transparent px-0 py-1.5 text-center text-xs leading-tight font-bold sm:flex-row sm:gap-2 sm:text-sm',
-              index < current && 'text-ink',
-              index === current && '-translate-x-0.5 -translate-y-0.5 border-outline bg-yellow shadow-sm',
-              index > current && 'font-semibold text-muted'
-            )}
+            className={cn('flex min-w-0 flex-col gap-1.5 text-xs leading-tight font-bold sm:text-sm', index > current && 'font-semibold text-muted')}
           >
-            <Icon aria-hidden="true" className={cn('size-4 shrink-0', index < current && 'bg-mint p-0.5 text-ink outline-2 outline-outline')} />
-            <span className="break-words hyphens-auto">{t(phase)}</span>
+            <span
+              aria-hidden="true"
+              className={cn(
+                'h-3 border-2 border-outline',
+                index < current && 'bg-mint',
+                index === current && 'h-4 bg-yellow shadow-sm',
+                index > current && 'border-dashed border-muted',
+              )}
+            />
+            <span className="flex min-w-0 items-center gap-1">
+              <Icon aria-hidden="true" className="size-4 shrink-0 max-[22rem]:hidden" />
+              <span className="break-words hyphens-auto">{t(step)}</span>
+            </span>
             {index < current && <span className="sr-only">{t('done-state')}</span>}
           </li>
         );

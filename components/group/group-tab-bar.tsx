@@ -5,17 +5,15 @@ import type { GroupTab } from './use-group-tab';
 
 const icons = { overview: LayoutGrid, giftee: Gift, wishlist: Heart, people: Users };
 
-/**
- * The group home's tabs (61). Phones: a bar stuck to the bottom of the screen (last in the page's
- * flex order, so it stays above the footer at the end), the active tab a filled pill. Wider: a row under the stepper.
- */
+/** The group home's tabs (61), a segmented control under the stepper; the app nav owns the bottom of the screen. */
 export const GroupTabBar = ({ tabs }: { tabs: readonly GroupTab[] }) => {
   const t = useTranslations('group.tabs');
 
   return (
     <TabsList
       aria-label={t('label')}
-      className="sticky bottom-0 z-30 order-last -mx-4 h-auto w-auto justify-stretch gap-1 p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] max-sm:border-x-0 max-sm:border-b-0 sm:static sm:order-none sm:mx-0 sm:w-full sm:p-1 sm:shadow-md"
+      variant="segmented"
+      className="h-auto w-full justify-stretch"
     >
       {tabs.map((tab) => {
         const Icon = icons[tab];

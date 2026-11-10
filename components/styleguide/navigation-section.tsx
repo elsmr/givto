@@ -1,14 +1,8 @@
-import { AccountMenu } from '@/components/shell/account-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
-const sampleUser = { name: 'Ann', email: 'ann@example.com' };
-
 export const NavigationSection = () => (
   <StyleguideSection id="navigation" title="Navigation">
-    <StyleguideRow label="Account menu (signed in; the header above shows signed out)">
-      <AccountMenu user={sampleUser} />
-    </StyleguideRow>
     <StyleguideRow label="Tabs">
       <Tabs defaultValue="wishlist" className="max-w-md">
         <TabsList>

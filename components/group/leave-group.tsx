@@ -19,7 +19,7 @@ export const LeaveGroup = ({ slug, groupName }: { slug: string; groupName: strin
   const t = useTranslations('group.leave');
   const trpc = useTRPC();
   const router = useRouter();
-  const leave = useMutation(trpc.membership.leave.mutationOptions({ onSuccess: () => void router.push('/groups') }));
+  const leave = useMutation(trpc.membership.leave.mutationOptions({ onSuccess: () => void router.push('/app') }));
 
   return (
     <Dialog>

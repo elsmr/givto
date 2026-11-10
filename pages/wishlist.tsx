@@ -9,7 +9,7 @@ import Head from 'next/head';
 export default function WishlistPage() {
   const t = useTranslations('wishlist');
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
         <meta name="robots" content="noindex" />

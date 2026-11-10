@@ -25,7 +25,7 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
     trpc.settings.deleteGroup.mutationOptions({
       onSuccess: async () => {
         await queryClient.invalidateQueries(trpc.account.groups.pathFilter());
-        await router.push('/groups');
+        await router.push('/app');
       },
     })
   );

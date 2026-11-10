@@ -1,4 +1,4 @@
-import { CardTitle } from '@/components/ui/card';
+import { CardTitle } from './card';
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { IconTile, type Tone } from './icon-tile';

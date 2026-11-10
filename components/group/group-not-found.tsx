@@ -18,7 +18,7 @@ export const GroupNotFound = () => {
       <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
       <p className="text-lg">{t('description')}</p>
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Link href="/groups" className={buttonVariants()}>
+        <Link href="/app" className={buttonVariants()}>
           {t('my-secret-santas')}
         </Link>
         <Button variant="neutral" onClick={() => void switchAccount()}>

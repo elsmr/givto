@@ -16,6 +16,7 @@ import { CreatedShare } from './created-share';
 import { toCreateInput } from './create-input';
 import { DetailsStep } from './details-step';
 import { useCreateDraft } from './use-create-draft';
+import { PageHeader } from '@/components/ui/page-header';
 
 type Step = 'details' | 'organizer' | 'code';
 
@@ -75,12 +76,11 @@ export const CreateFlow = () => {
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <p className="font-semibold text-muted">{t('step', { step: stepNumber, total: signedInEmail ? 2 : 3 })}</p>
-        <h1 ref={heading} tabIndex={-1} className="text-4xl font-extrabold outline-none sm:text-5xl">
-          {t(`titles.${step}`)}
-        </h1>
-      </div>
+      <PageHeader
+        eyebrow={t('step', { step: stepNumber, total: signedInEmail ? 2 : 3 })}
+        title={t(`titles.${step}`)}
+        headingRef={heading}
+      />
       {errorCode && (
         <Alert variant="danger">
           <AlertDescription>{t(`errors.${errorCode}`)}</AlertDescription>

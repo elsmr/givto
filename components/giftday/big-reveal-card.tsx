@@ -1,4 +1,4 @@
-import { IconTile } from '@/components/group/icon-tile';
+import { IconTile } from '@/components/ui/icon-tile';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';

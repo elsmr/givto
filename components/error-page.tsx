@@ -46,7 +46,7 @@ export const ErrorPage = ({ statusCode }: { statusCode: number }) => {
               <Button onClick={() => router.reload()}>{t('try-again')}</Button>
             )}
             {user ? (
-              <Link href="/groups" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
+              <Link href="/app" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
               {t('my-secret-santas')}
             </Link>
             ) : (

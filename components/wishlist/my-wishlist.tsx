@@ -1,4 +1,5 @@
 import { LoadFailed } from '@/components/shell/load-failed';
+import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
@@ -12,10 +13,7 @@ export const MyWishlist = () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-extrabold sm:text-5xl">{t('page-title')}</h1>
-        <p className="max-w-prose text-muted">{t('intro')}</p>
-      </div>
+      <PageHeader title={t('page-title')} description={t('intro')} />
       {wishes.isPending || wishes.signedOut ? (
         <div aria-busy="true" aria-label={t('loading')} className="flex flex-col gap-4">
           <Skeleton className="h-40" />

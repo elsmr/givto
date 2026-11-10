@@ -1,7 +1,7 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { GroupWishlist } from '@/components/wishlist/group-wishlist';
 import { useRef } from 'react';
-import { isBeforeDraw } from './edition-phase';
+import { editionPhase, isBeforeDraw } from './edition-phase';
 import type { GroupData } from './group-data';
 import { GifteePanel } from './giftee-panel';
 import { GroupHeader } from './group-header';
@@ -29,7 +29,7 @@ export const GroupView = ({ group }: { group: GroupData }) => {
       <div ref={top} className="flex scroll-mt-4 flex-col gap-6">
         <GroupHeader group={group} />
         {edition && !edition.isCurrent && <PastEditionNotice slug={group.slug} title={edition.title} />}
-        {edition && <PhaseStepper edition={edition} />}
+        {edition && <PhaseStepper phase={editionPhase(edition)} />}
       </div>
       <GroupTabBar tabs={tabs} />
       <TabsContent value="overview" className="mt-0">

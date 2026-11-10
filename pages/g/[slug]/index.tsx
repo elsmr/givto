@@ -10,7 +10,7 @@ export default function GroupPage() {
   const t = useTranslations('group');
   const slug = String(useRouter().query.slug ?? '');
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
         <meta name="robots" content="noindex" />

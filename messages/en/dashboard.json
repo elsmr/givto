@@ -1,13 +1,12 @@
 {
-  "title": "My groups",
-  "page-title": "My groups · Givto",
+  "title": "Home",
+  "page-title": "Home · Givto",
   "start": "Start a Secret Santa",
   "load-failed": "We couldn't load your groups.",
   "empty": {
     "title": "No groups yet",
     "body": "Start a Secret Santa for your family, friends or colleagues. Invited by someone? Open the link from your group chat or email."
   },
-  "current": "Now",
   "past": "Earlier",
   "organizer": "You organize this",
   "no-edition": "No Secret Santa yet",
@@ -25,5 +24,52 @@
     "past": "Gift day was {date}",
     "none": "No gift day set yet"
   },
-  "giftee-ready": "Your giftee is ready"
+  "giftee-ready": "Your giftee is ready",
+  "hi": "Hi {name}",
+  "todo": {
+    "title": "To do",
+    "all-done": "Nothing to do right now. We'll show it here when something needs you.",
+    "giftDay": {
+      "text": "It's gift day!",
+      "action": "Open"
+    },
+    "question": {
+      "text": "{count, plural, =1 {Your Santa asked you a question} other {Your Santa asked you # questions}}",
+      "action": "Answer"
+    },
+    "joinRequests": {
+      "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}",
+      "action": "Let in"
+    },
+    "readyToDraw": {
+      "text": "Everyone's in: ready to draw names",
+      "action": "Draw"
+    },
+    "draft": {
+      "text": "Your next Secret Santa isn't sent yet",
+      "action": "Open"
+    },
+    "noWishes": {
+      "text": "Add a few wishes for your Santa",
+      "action": "Add wishes"
+    },
+    "markReceived": {
+      "text": "Tick off the gifts you got",
+      "action": "Tick off"
+    }
+  },
+  "up-next": "Coming up",
+  "your-groups": "Your groups",
+  "open-group": "Open group",
+  "see-giftee": "Your giftee",
+  "giftee-known": "You know who you're buying for.",
+  "countdown": {
+    "days": "{days, plural, =1 {day to gift day} other {days to gift day}}",
+    "today": "Today!",
+    "today-label": "it's gift day"
+  },
+  "wishlist-stat": {
+    "title": "My wishlist",
+    "unit": "{count, plural, =1 {wish} other {wishes}}"
+  }
 }

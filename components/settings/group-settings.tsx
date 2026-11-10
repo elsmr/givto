@@ -18,6 +18,7 @@ import { EditionForm } from './edition-form';
 import { GroupNameForm } from './group-name-form';
 import { PeopleSettings } from './people-settings';
 import { RedrawSection } from './redraw-section';
+import { PageHeader } from '@/components/ui/page-header';
 
 /** /g/[slug]/settings (27): the organizer's place for the group and its current edition. Members are sent back to the group; others get not-found. */
 export const GroupSettings = ({ slug }: { slug: string }) => {
@@ -35,8 +36,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   if (group.data && !organizer) {
     return (
       <div className="flex flex-col gap-4">
-        <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
-        <p className="text-lg">{t('only-organizer', { group: group.data.name })}</p>
+        <PageHeader title={t('title')} description={t('only-organizer', { group: group.data.name })} />
         <Link href={`/g/${slug}`} className={buttonVariants({ className: 'self-start' })}>
           {t('back', { group: group.data.name })}
         </Link>
@@ -50,13 +50,15 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const beforeDraw = edition && (edition.status === 'draft' || edition.status === 'open');
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-2">
-        <Link href={`/g/${slug}`} className="inline-flex min-h-11 items-center gap-1 self-start font-semibold">
-          <ArrowLeft aria-hidden="true" className="size-4" />
-          {t('back', { group: data.name })}
-        </Link>
-        <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
-      </div>
+      <PageHeader
+        eyebrow={
+          <Link href={`/g/${slug}`} className="inline-flex min-h-11 items-center gap-1 font-semibold">
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            {t('back', { group: data.name })}
+          </Link>
+        }
+        title={t('title')}
+      />
       <GroupNameForm slug={slug} name={data.name} />
       {edition && <EditionForm key={edition.number} groupSlug={slug} edition={edition} />}
       <PendingRequests group={data} />
