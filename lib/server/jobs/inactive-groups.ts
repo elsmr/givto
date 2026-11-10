@@ -1,5 +1,5 @@
 import { GroupDeletionEmail, groupDeletionSubject } from '../../../emails/group-deletion';
-import { formatLocalDate } from '../../../emails/ui/format-date';
+import { formatLocalDate } from '../../local-date';
 import { retention } from '../../privacy';
 import type { Group } from '../../schema/group';
 import { deleteGroup } from '../account/delete';

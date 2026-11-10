@@ -1,8 +1,7 @@
 import { ReminderGiftDayEmail, reminderGiftDaySubject } from '../../../emails/reminder-gift-day';
 import { ReminderEmail, reminderSubject, type ReminderParts } from '../../../emails/reminder';
-import { formatLocalDate } from '../../../emails/ui/format-date';
 import { siteUrl } from '../../../emails/ui/site';
-import { daysBetween, hourIn, todayIn } from '../../local-date';
+import { daysBetween, formatLocalDate, hourIn, todayIn } from '../../local-date';
 import { dueReminder, type DueReminder, type ReminderPart } from '../../reminder-schedule';
 import { isDrawn, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';

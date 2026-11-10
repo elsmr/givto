@@ -37,6 +37,10 @@ export const zonedInstant = (date: string, time: string, timeZone: string): Date
   return new Date(wall - offsetAt(guess, timeZone));
 };
 
+/** A local date (YYYY-MM-DD) for people, e.g. "Friday 18 December 2026". Formatted in UTC so it never shifts a day. */
+export const formatLocalDate = (date: string, locale: string, options: Intl.DateTimeFormatOptions = { dateStyle: 'full' }): string =>
+  new Intl.DateTimeFormat(locale, { ...options, timeZone: 'UTC' }).format(new Date(`${date}T12:00:00Z`));
+
 /** `date` (YYYY-MM-DD) plus `days`. */
 export const addDays = (date: string, days: number): string =>
   new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);

@@ -1,7 +1,7 @@
 import { GifteeChangedEmail, gifteeChangedSubject } from '../../../emails/giftee-changed';
 import { NamesDrawnEmail, namesDrawnSubject } from '../../../emails/names-drawn';
-import { formatLocalDate } from '../../../emails/ui/format-date';
 import { formatPrice } from '../../../components/wishlist/format-price';
+import { formatLocalDate } from '../../local-date';
 import type { Edition } from '../../schema/edition';
 import type { Collections } from '../db';
 import { log } from '../log';

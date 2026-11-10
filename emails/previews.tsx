@@ -1,5 +1,6 @@
 /** @jsxImportSource react */
 import type { ReactElement } from 'react';
+import { formatLocalDate } from '../lib/local-date';
 import type { Locale } from '../lib/schema/common';
 import { AnswerEmail, answerSubject } from './answer';
 import { DeleteAccountEmail, deleteAccountSubject } from './delete-account';
@@ -18,7 +19,6 @@ import { ReminderGiftDayEmail, reminderGiftDaySubject } from './reminder-gift-da
 import { ReminderEmail, reminderSubject, type ReminderParts } from './reminder';
 import { SignInEmail, signInSubject } from './sign-in';
 import type { UnsubscribeCategory } from './ui/categories';
-import { formatLocalDate } from './ui/format-date';
 import { WishlistUpdatedEmail, wishlistUpdatedSubject } from './wishlist-updated';
 
 export interface EmailPreview {
