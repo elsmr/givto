@@ -13,9 +13,11 @@
     "start": "Start een Secret Santa"
   },
   "intro": {
-    "title": "{organizer} nodigt je uit voor {group}",
+    "title": "Je bent uitgenodigd!",
     "description": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt.",
-    "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt."
+    "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt.",
+    "organizer": "Organisator: {name}",
+    "gift-day": "Pakjesdag {date}"
   },
   "requested": {
     "title": "Bijna!",
@@ -61,6 +63,7 @@
     "sign-out": "Uitloggen",
     "decline": "Nee, bedankt",
     "declined-title": "Geen probleem!",
-    "declined": "{organizer} ziet dat je deze keer niet meedoet."
+    "declined": "{organizer} ziet dat je deze keer niet meedoet.",
+    "home": "Naar de startpagina"
   }
 }

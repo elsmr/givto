@@ -1,10 +1,12 @@
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { FieldError } from '@/components/ui/field';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { useTRPC } from '@/lib/client/trpc';
 import { isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
+import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PersonRow } from './person-row';
 import { settingsErrorKey } from './settings-error';
@@ -27,15 +29,15 @@ export const PeopleSettings = ({ group, edition }: { group: GroupData; edition: 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('people.title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Users} tone="primary-muted">
+          {t('people.title')}
+        </IconCardTitle>
         <CardDescription>{t('people.in-edition', { count: edition.participantIds.length })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {!beforeDraw && <p className="text-muted">{t('people.drawn')}</p>}
         {setParticipants.error && <FieldError>{t(`errors.${settingsErrorKey(setParticipants.error)}`)}</FieldError>}
-        <ul className="flex flex-col divide-y-2 divide-ink/10">
+        <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
           {people.map((person) => (
             <PersonRow
               key={person.id}

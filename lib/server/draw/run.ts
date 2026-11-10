@@ -4,6 +4,7 @@ import { isBeforeDraw, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
+import { sendDrawNoticesNow } from '../jobs/draw-notices';
 import { allRules, assertDrawable, drawParticipantIds, drawRules } from './rules';
 import { historyWith, saveDraw } from './save';
 
@@ -21,11 +22,13 @@ export const drawEdition = async (db: Collections, group: Group, edition: Editio
         status: 'drawn',
         'statusChangedAt.drawn': now,
         draw: { assignments, drawnAt: now, history: historyWith(edition.draw, now) },
+        drawNoticesPendingAt: now,
         updatedAt: now,
       },
     }
   );
   if (drawn.matchedCount === 0) throw new AppError('ALREADY_DRAWN');
+  await sendDrawNoticesNow(db, edition._id);
 };
 
 /** Organizer re-draw before gift day (27): a fresh draw of everyone in; the old one goes to history. */
@@ -37,4 +40,5 @@ export const redrawEdition = async (db: Collections, group: Group, edition: Edit
   const assignments = drawAssignments(ids, allRules(rules), randomInt);
   const saved = await saveDraw(db, { ...edition, draw: edition.draw }, assignments, now, { redraw: true });
   if (!saved) throw new AppError('EDITION_CHANGED');
+  await sendDrawNoticesNow(db, edition._id);
 };

@@ -1,14 +1,15 @@
 {
   "before": {
-    "title": "The draw",
+    "title": "Get everyone in",
     "who": "{count, plural, =0 {Nobody's in yet.} one {# person is in:} other {# people are in:}}",
     "scheduled": "Names will be drawn on {date}.",
     "manual": "The organizer draws the names when everyone's in.",
     "too-few": "The draw needs at least {min} people. Share the join link to get more people in.",
-    "change": "Change who's in or schedule the draw",
+    "change": "Invites and settings",
     "draw": "Draw names",
     "confirm-title": "Draw names now?",
     "confirm-description": "Everyone gets their giftee right away. People who join later are slotted in.",
+    "left-out": "Not in this draw: {names}.",
     "confirm": "Draw names",
     "cancel": "Not yet",
     "drawn": "Names drawn!"
@@ -29,7 +30,8 @@
     "hide": "Hide",
     "changed": "Your giftee changed on {date}: someone joined or left.",
     "not-in": "You're not in this draw.",
-    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you."
+    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you.",
+    "show": "Show"
   },
   "next": {
     "title": "Same again next year?",

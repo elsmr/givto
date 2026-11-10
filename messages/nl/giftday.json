@@ -85,5 +85,9 @@
     "EDITION_CLOSED": "Deze editie is voorbij.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  },
+  "panel": {
+    "order": "Uitpakvolgorde",
+    "with-reveal": "Pakjesdag: uitpakvolgorde en de grote onthulling"
   }
 }

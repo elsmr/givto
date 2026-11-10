@@ -1,14 +1,15 @@
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
+import { AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { appErrorCode } from '../../group/app-error-code';
 import { GroupNotFound } from '../../group/group-not-found';
-import { useRequireSession } from '../../group/use-require-session';
+import { useRequireSession } from '@/components/auth/use-require-session';
 import { ShuffleButton } from '../shuffle-button';
 import { PresenterFrame } from './presenter-frame';
+import { PresenterLoading } from './presenter-loading';
 import { PresenterStage } from './presenter-stage';
 
 const notice = (text: string) => (
@@ -47,8 +48,7 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
   if (group.error || view.error) return frame(notice(t('errors.INTERNAL')));
   if (group.data && !isOrganizer) return frame(notice(t('present.only-organizer')));
   if (group.data && !editionNumber) return frame(notice(t('present.no-order')));
-  if (!view.data) return frame(<LogoAnimation variant="loading" className="size-24" />);
-  if (!view.data.unwrapOrder) {
+  if (view.data && !view.data.unwrapOrder) {
     return frame(
       <div className="flex flex-col items-center gap-6 px-6 py-16 text-center">
         <p className="text-2xl font-semibold">{t('present.no-order')}</p>
@@ -58,5 +58,16 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
       </div>
     );
   }
-  return frame(<PresenterStage groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} order={view.data.unwrapOrder} />);
+  // Loader and stage share one cell, so they cross-fade in place.
+  return frame(
+    <div className="grid flex-1 *:col-start-1 *:row-start-1">
+      <AnimatePresence>
+        {view.data?.unwrapOrder ? (
+          <PresenterStage key="stage" groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} order={view.data.unwrapOrder} />
+        ) : (
+          <PresenterLoading key="loading" />
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };

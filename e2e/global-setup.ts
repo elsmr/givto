@@ -1,4 +1,4 @@
-// Mongo in Docker as a single-node replica set (Better Auth uses transactions), like tests/env.sh.
+// Mongo in Docker as a single-node replica set (Better Auth uses transactions).
 // Runs after the webServers are up: the app only connects to Mongo on its first request.
 import { execFileSync } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';

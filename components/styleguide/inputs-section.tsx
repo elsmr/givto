@@ -23,7 +23,11 @@ import { StyleguideSection } from './styleguide-section';
 const budgets = { '10': '€10', '20': '€20', '50': '€50' };
 
 export const InputsSection = () => (
-  <StyleguideSection id="inputs" title="Inputs and fields">
+  <StyleguideSection
+    id="inputs"
+    title="Inputs and fields"
+    description="Always a visible label; help text and errors under the field, tied to the input with aria-describedby."
+  >
     <FieldGroup className="max-w-md">
       <Field>
         <FieldLabel htmlFor="sg-name">Your name</FieldLabel>

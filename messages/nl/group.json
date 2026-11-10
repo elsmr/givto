@@ -9,8 +9,6 @@
     "done": "Afgelopen"
   },
   "summary": {
-    "no-gift-day": "Nog geen pakjesdag",
-    "countdown": "{when, select, past {Pakjesdag is voorbij} today {Het is pakjesdag!} other {{days, plural, one {Morgen is het pakjesdag} other {Nog # dagen tot pakjesdag}}}}",
     "gift-day": "Pakjesdag",
     "exchange": "Cadeaus",
     "exchange-modes": {
@@ -20,7 +18,7 @@
     },
     "budget": "Budget",
     "no-budget": "Geen budget",
-    "draw": "Trekking",
+    "draw": "Loting",
     "draw-on": "De namen worden getrokken op {date}",
     "draw-manual": "De organisator trekt de namen",
     "drawn": "De namen zijn getrokken",
@@ -38,7 +36,8 @@
       "declined": "Doet deze keer niet mee",
       "removed": "Vertrokken"
     },
-    "bounced": "E-mail kwam niet aan: check het adres"
+    "bounced": "E-mail kwam niet aan: check het adres",
+    "manage": "Mensen uitnodigen en beheren"
   },
   "requests": {
     "title": "{count, plural, one {# persoon wil} other {# mensen willen}} meedoen",
@@ -146,5 +145,39 @@
     "past": "Dit is {edition}, een eerdere editie.",
     "go-current": "Naar de huidige editie",
     "not-found": "Deze editie bestaat niet."
+  },
+  "hi": "Hoi {name}",
+  "budget-chip": "Budget {budget}",
+  "phase": {
+    "label": "Waar deze Secret Santa staat",
+    "join": "Meedoen",
+    "draw": "Trekken",
+    "shop": "Shoppen",
+    "giftday": "Pakjesdag",
+    "done": "Klaar",
+    "done-state": "afgerond"
+  },
+  "tabs": {
+    "label": "Deze Secret Santa",
+    "overview": "Overzicht",
+    "giftee": "Mijn persoon",
+    "wishlist": "Mijn verlanglijstje",
+    "people": "Deelnemers"
+  },
+  "stats": {
+    "gift-day": "Pakjesdag",
+    "no-gift-day": "Nog niet gekozen",
+    "days-to-go": "{count, plural, one {dag te gaan} other {dagen te gaan}} · {date}",
+    "today": "Vandaag!",
+    "over": "Voorbij",
+    "wishes": "Mijn wensen",
+    "wishes-unit": "{count, plural, one {hier zichtbaar} other {hier zichtbaar}}",
+    "people": "Deelnemers",
+    "people-in": "{count, plural, one {doet mee} other {doen mee}}",
+    "needed": "{count, plural, one {nog # nodig om te trekken} other {nog # nodig om te trekken}}"
+  },
+  "overview": {
+    "details": "Data, budget en notities",
+    "to-giftee": "Hun verlanglijstje en tips"
   }
 }

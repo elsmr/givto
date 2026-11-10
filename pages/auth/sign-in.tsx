@@ -12,7 +12,7 @@ import { useEffect } from 'react';
 export default function SignInPage() {
   const t = useTranslations('auth');
   const router = useRouter();
-  const redirect = safeRedirect(router.query.redirect, '/groups');
+  const redirect = safeRedirect(router.query.redirect, '/app');
   const signedIn = Boolean(authClient.useSession().data);
 
   useEffect(() => {

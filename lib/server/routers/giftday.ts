@@ -98,9 +98,9 @@ export const giftdayRouter = router({
 
   /** Tests only (lib/server/test-hooks.ts): what the scheduled job does, optionally at a given time. */
   runDue: publicProcedure
-    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())) }))
+    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())), editionIds: v.optional(v.array(Id)) }))
     .mutation(async ({ ctx, input }) => {
       if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
-      return runGiftDayTransitions(ctx.db, input.now ? new Date(input.now) : new Date());
+      return runGiftDayTransitions(ctx.db, input.now ? new Date(input.now) : new Date(), input.editionIds);
     }),
 });

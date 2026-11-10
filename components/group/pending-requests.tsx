@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
+import { UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { GroupData } from './group-data';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { useInvalidateGroup } from './use-invalidate-group';
 
 /** People who joined via a link that needs approval (45). Organizer only. */
@@ -20,9 +22,9 @@ export const PendingRequests = ({ group }: { group: GroupData }) => {
   return (
     <Card className="bg-yellow">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title', { count: requested.length })}</h2>
-        </CardTitle>
+        <IconCardTitle icon={UserPlus} tone="mint">
+          {t('title', { count: requested.length })}
+        </IconCardTitle>
       </CardHeader>
       <CardContent>
         <ul className="flex flex-col gap-4">

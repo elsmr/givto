@@ -2,7 +2,11 @@
   "page-title": "My wishlist",
   "intro": "One list for all your Secret Santas. Your Santa sees it, and you'll never see what's been claimed.",
   "loading": "Loading your wishlist…",
-  "empty": "Your wishlist is empty. Add a few ideas so your Santa has something to go on.",
+  "empty-title": "Your wishlist is empty",
+  "empty": "Start with one wish: a title is enough. Got a link to a shop? Paste it under “Add a wish” and we'll fill in the rest.",
+  "count": "{count, plural, =0 {No wishes yet} one {# wish} other {# wishes}}",
+  "list-title": "Your wishes",
+  "hide-hint": "Want a group not to see a wish? Hide it in that group, on its “My wishlist” tab.",
   "add-title": "Add a wish",
   "import": {
     "label": "Got a link? Paste it and we'll fill in the rest",
@@ -58,7 +62,11 @@
     "show": "Show in this group",
     "shown": "Show “{title}” in this group",
     "hidden-badge": "Hidden here",
-    "edit": "Edit my wishlist"
+    "edit": "Edit my wishlist",
+    "add": "Add wishes",
+    "visibility": "Choose what this group sees",
+    "visibility-description": "Switch a wish off to hide it from this group only. Your other groups still see it.",
+    "done": "Done"
   },
   "giftee": {
     "title": "{name}'s wishlist",

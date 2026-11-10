@@ -158,6 +158,8 @@ export const Edition = v.object({
   participants: v.array(Participant),
   previousEditionId: v.optional(Id),
   draw: v.optional(Draw),
+  /** Set when the draw changes, unset once its notices are out: the deliveries job only retries these. */
+  drawNoticesPendingAt: v.optional(v.date()),
   unwrapOrder: v.optional(UnwrapOrder),
   /** Organizer setting; absent = allAtOnce. */
   unwrapMode: v.optional(UnwrapMode),

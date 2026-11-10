@@ -2,7 +2,11 @@
   "page-title": "Mijn verlanglijstje",
   "intro": "Eén lijstje voor al je Secret Santa's. Je Santa ziet het, en jij ziet nooit wat er geclaimd is.",
   "loading": "Je verlanglijstje laden…",
-  "empty": "Je verlanglijstje is nog leeg. Zet er een paar ideeën op, dan weet je Santa waar te beginnen.",
+  "empty-title": "Je verlanglijstje is nog leeg",
+  "empty": "Begin met één wens: een titel is genoeg. Heb je een link naar een winkel? Plak hem bij “Wens toevoegen”, dan vullen wij de rest in.",
+  "count": "{count, plural, =0 {Nog geen wensen} one {# wens} other {# wensen}}",
+  "list-title": "Je wensen",
+  "hide-hint": "Moet een groep een wens niet zien? Verberg hem in die groep, op het tabblad “Mijn verlanglijstje”.",
   "add-title": "Wens toevoegen",
   "import": {
     "label": "Heb je een link? Plak hem en wij vullen de rest in",
@@ -58,7 +62,11 @@
     "show": "Tonen in deze groep",
     "shown": "“{title}” tonen in deze groep",
     "hidden-badge": "Hier verborgen",
-    "edit": "Mijn verlanglijstje bewerken"
+    "edit": "Mijn verlanglijstje bewerken",
+    "add": "Wensen toevoegen",
+    "visibility": "Kies wat deze groep ziet",
+    "visibility-description": "Zet een wens uit om hem alleen voor deze groep te verbergen. Je andere groepen zien hem nog wel.",
+    "done": "Klaar"
   },
   "giftee": {
     "title": "Verlanglijstje van {name}",

@@ -10,7 +10,7 @@ export default function GroupPage() {
   const t = useTranslations('group');
   const slug = String(useRouter().query.slug ?? '');
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
         <meta name="robots" content="noindex" />
@@ -25,5 +25,5 @@ export default function GroupPage() {
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['group', 'wishlist', 'between', 'draw', 'giftday']) },
+  props: { messages: await loadMessages(locale, ['group', 'wishlist', 'between', 'draw', 'giftday', 'manage']) },
 });

@@ -1,0 +1,38 @@
+# Local development services; the app runs on the host (`pnpm dev:local`, see README).
+services:
+  mongo:
+    # Major version pinned: the data volume doesn't survive a jump of more than one major.
+    image: mongo:8
+    # Single-node replica set: Better Auth uses transactions.
+    command: ['--replSet', 'rs0']
+    ports: ['127.0.0.1:27017:27017']
+    volumes: ['mongo-data:/data/db']
+    # Initiates the replica set on the first check; healthy once it's the writable primary.
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - >-
+          try { rs.status() } catch { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }) }
+          db.hello().isWritablePrimary || quit(1)
+      interval: 10s
+      start_period: 30s
+      start_interval: 1s
+
+  mail:
+    image: node:24-alpine
+    init: true
+    command: ['node', '/app/mail-mock.mjs']
+    environment: { MAIL_PORT: '3091' }
+    ports: ['127.0.0.1:3091:3091']
+    volumes: ['./tests/mail-mock.mjs:/app/mail-mock.mjs:ro']
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://localhost:3091/messages']
+      interval: 10s
+      start_period: 10s
+      start_interval: 1s
+
+volumes:
+  mongo-data:

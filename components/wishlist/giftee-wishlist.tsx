@@ -1,8 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useGifteeRevealed } from '@/components/draw/use-giftee-revealed';
+import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ClaimButton } from './claim-button';
 import { isInBudget } from './format-price';
@@ -28,9 +30,9 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title', { name: giftee.name })}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Heart} tone="coral">
+          {t('title', { name: giftee.name })}
+        </IconCardTitle>
         <CardDescription>{t('intro', { name: giftee.name })}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -39,7 +41,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
         ) : (
           <ul className="flex flex-col gap-3">
             {wishes.map((wish) => (
-              <li key={wish.id} className="flex flex-col gap-3 border-b-2 border-ink pb-3 last:border-b-0">
+              <li key={wish.id} className="flex flex-col gap-3 border-b-2 border-outline pb-3 last:border-b-0">
                 <WishSummary wish={wish} inBudget={isInBudget(wish.price, budget)} />
                 <ClaimButton
                   input={{ groupSlug, editionNumber, wishId: wish.id }}

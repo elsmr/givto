@@ -14,14 +14,14 @@ export const useMagicLinkSignIn = () => {
   const router = useRouter();
   const started = useRef(false);
   const [failed, setFailed] = useState(false);
-  const [callbackURL, setCallbackURL] = useState('/groups');
+  const [callbackURL, setCallbackURL] = useState('/app');
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
     const params = new URLSearchParams(location.hash.slice(1));
     const token = params.get('token');
-    const target = safeRedirect(params.get('callbackURL'), '/groups');
+    const target = safeRedirect(params.get('callbackURL'), '/app');
     setCallbackURL(target);
     if (!token) {
       setFailed(true);

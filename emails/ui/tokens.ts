@@ -13,6 +13,16 @@ export const color = {
   textMuted: '#5C5C66',
 };
 
+// Dark mode (53, G2): outlines and hard shadows stay black, warm purple page and card, cream text
+// only; colour fills (button, code box) keep their light look with their own text colour.
+export const darkColor = {
+  page: '#2B1C3B',
+  surface: '#3C2D51',
+  ink: '#FFF8EC',
+  textMuted: '#C7BFD8',
+  outline: '#111111',
+};
+
 export const font = {
   heading: '"Bricolage Grotesque", "Arial Black", Arial, Helvetica, sans-serif',
   body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',

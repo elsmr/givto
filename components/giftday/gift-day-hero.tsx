@@ -3,9 +3,12 @@ import { buttonVariants } from '@/components/ui/button';
 import { Presentation } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
-/** Gift day itself: a celebration, and the presenter view for the organizer. */
-export const GiftDayHero = ({ groupSlug, canPresent }: { groupSlug: string; canPresent: boolean }) => {
+type GiftDayHeroProps = { groupSlug: string; canPresent: boolean; children?: ReactNode };
+
+/** Gift day itself: a celebration, and the presenter view for the organizer. `children`: what's happening now. */
+export const GiftDayHero = ({ groupSlug, canPresent, children }: GiftDayHeroProps) => {
   const t = useTranslations('giftday.hero');
 
   return (
@@ -13,6 +16,7 @@ export const GiftDayHero = ({ groupSlug, canPresent }: { groupSlug: string; canP
       <LogoAnimation variant="celebrate" className="size-24 sm:size-28" />
       <h2 className="text-4xl font-extrabold sm:text-6xl">{t('title')}</h2>
       <p className="text-lg">{t('description')}</p>
+      {children}
       {canPresent && (
         <Link href={`/g/${groupSlug}/present`} className={buttonVariants({ size: 'lg' })}>
           <Presentation aria-hidden="true" />

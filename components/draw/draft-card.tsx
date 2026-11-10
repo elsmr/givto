@@ -1,8 +1,10 @@
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
+import { NotebookPen } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData, GroupEdition } from '../group/group-data';
@@ -26,9 +28,9 @@ export const DraftCard = ({ group, edition }: { group: GroupData; edition: Group
   return (
     <Card className="bg-yellow">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={NotebookPen} tone="mint">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription className="text-ink">{group.me.isOrganizer ? t('description') : t('member')}</CardDescription>
       </CardHeader>
       {group.me.isOrganizer && (

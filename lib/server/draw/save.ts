@@ -44,6 +44,7 @@ export const saveDraw = async (
         'draw.assignments': next,
         ...(redraw && { 'draw.drawnAt': now, 'draw.history': historyWith(edition.draw, now) }),
         'participants.$[changed].gifteeChangedAt': now,
+        drawNoticesPendingAt: now,
         updatedAt: now,
       },
     },

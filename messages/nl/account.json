@@ -2,7 +2,7 @@
   "title": "Account",
   "page-title": "Account · Givto",
   "profile": {
-    "title": "Je naam",
+    "title": "Profiel",
     "description": "Zo zien de mensen in je groepen je.",
     "name-label": "Naam",
     "email-label": "E-mailadres",
@@ -10,13 +10,17 @@
     "saved": "Naam opgeslagen",
     "invalid": "Gebruik 1 tot 50 tekens, zonder links of @."
   },
+  "security": {
+    "title": "Inloggen & beveiliging"
+  },
+  "preferences": {
+    "title": "Voorkeuren"
+  },
   "language": {
-    "title": "Taal",
     "description": "Voor deze site en de e-mails die we je sturen.",
     "label": "Taal"
   },
   "theme": {
-    "title": "Weergave",
     "description": "Wordt op dit apparaat bewaard.",
     "label": "Thema",
     "system": "Zoals mijn apparaat",

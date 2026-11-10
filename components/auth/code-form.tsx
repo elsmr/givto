@@ -67,7 +67,7 @@ export const CodeForm = ({
             maxLength={6}
             required
             autoFocus
-            className="max-w-48 font-mono text-2xl tracking-[0.3em]"
+            className="max-w-48 text-2xl tracking-[0.3em]"
             value={otp}
             aria-invalid={error ? true : undefined}
             aria-describedby="sign-in-code-hint"

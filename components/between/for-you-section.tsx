@@ -1,6 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
+import { MessageCircleQuestion } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { EditionInput } from './edition-input';
 import { PsstNotice } from './psst-notice';
@@ -25,9 +27,9 @@ export const ForYouSection = ({ input }: { input: EditionInput }) => {
       {questionList.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>
-              <h2>{t('questions-title')}</h2>
-            </CardTitle>
+            <IconCardTitle icon={MessageCircleQuestion} tone="primary-muted">
+              {t('questions-title')}
+            </IconCardTitle>
             <CardDescription>{t('questions-intro')}</CardDescription>
           </CardHeader>
           <CardContent>

@@ -7,7 +7,11 @@ import { CircleAlert, Info } from 'lucide-react';
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
 export const FeedbackSection = () => (
-  <StyleguideSection id="feedback" title="Alerts, toasts and loading">
+  <StyleguideSection
+    id="feedback"
+    title="Alerts, toasts and loading"
+    description="Alerts stay on the page while something is true; toasts confirm what just happened; skeletons hold the layout while data loads."
+  >
     <div className="flex max-w-xl flex-col gap-4">
       <Alert>
         <Info aria-hidden="true" />

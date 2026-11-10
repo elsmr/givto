@@ -17,7 +17,7 @@ export const JoinQrCode = ({ url, label }: { url: string; label: string }) => {
       aria-label={label}
       viewBox={`0 0 ${size} ${size}`}
       shapeRendering="crispEdges"
-      className="size-44 border-2 border-ink bg-white"
+      className="size-44 border-2 border-outline bg-white"
     >
       <path d={path} fill="#111111" />
     </svg>

@@ -4,6 +4,7 @@ import { slotIn, takeOut } from '../../draw-patch';
 import { isDrawn, type Assignments, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
+import { sendDrawNoticesNow } from '../jobs/draw-notices';
 import { allRules, drawRules } from './rules';
 import { saveDraw } from './save';
 
@@ -21,7 +22,10 @@ const patchDraw = async (db: Collections, groupId: string, editionId: string, pl
     if (!group || !edition?.draw || !isDrawn(edition)) return;
     const next = await plan(group, edition, edition.draw.assignments);
     if (next === 'skip') return;
-    if (await saveDraw(db, { ...edition, draw: edition.draw }, next, new Date())) return;
+    if (await saveDraw(db, { ...edition, draw: edition.draw }, next, new Date())) {
+      await sendDrawNoticesNow(db, editionId);
+      return;
+    }
   }
   throw new Error(`Draw of edition ${editionId} kept changing`);
 };

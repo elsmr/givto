@@ -60,6 +60,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     ),
     c.editions.createIndex({ groupId: 1, number: 1 }, { unique: true }),
     c.editions.createIndex({ status: 1, drawAt: 1 }),
+    c.editions.createIndex({ drawNoticesPendingAt: 1 }, { sparse: true }),
     c.wishes.createIndex({ ownerId: 1, position: 1 }),
     c.claims.createIndex({ wishId: 1 }, { unique: true }),
     c.claims.createIndex({ ownerId: 1 }),

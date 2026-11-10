@@ -2,7 +2,7 @@
   "title": "Account",
   "page-title": "Account · Givto",
   "profile": {
-    "title": "Your name",
+    "title": "Profile",
     "description": "This is how people in your groups see you.",
     "name-label": "Name",
     "email-label": "Email",
@@ -10,13 +10,17 @@
     "saved": "Name saved",
     "invalid": "Use 1 to 50 characters, without links or @."
   },
+  "security": {
+    "title": "Sign-in & security"
+  },
+  "preferences": {
+    "title": "Preferences"
+  },
   "language": {
-    "title": "Language",
     "description": "For this site and the emails we send you.",
     "label": "Language"
   },
   "theme": {
-    "title": "Appearance",
     "description": "Saved on this device.",
     "label": "Theme",
     "system": "Same as my device",
