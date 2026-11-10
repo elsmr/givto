@@ -1,4 +1,5 @@
 import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { IconTile } from '@/components/ui/icon-tile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -6,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Gift } from 'lucide-react';
+import { EyeOff, Gift } from 'lucide-react';
 import * as m from 'motion/react-m';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useEffect, useRef, type ReactNode } from 'react';
@@ -51,8 +52,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
     if (changedAt) seenChange.mutate({ groupSlug, editionNumber });
   };
   return (
-    // Card sets shadow-md; the brand shadow must win (tailwind-merge doesn't know `shadow-brand` is a shadow size).
-    <Card className="shadow-brand!">
+    <Card>
       <CardHeader>
         <IconCardTitle icon={Gift} tone="primary-muted">
           {t('title')}
@@ -75,7 +75,8 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
             <p className="font-semibold text-muted">{t('buying-for')}</p>
             <p className="font-heading text-4xl font-extrabold break-words sm:text-5xl">{shown ? giftee.name : '\u00a0'}</p>
             {children}
-            <Button ref={shown ? toggleButton : undefined} variant="ghost" onClick={() => toggle(false)}>
+            <Button ref={shown ? toggleButton : undefined} variant="neutral" size="sm" onClick={() => toggle(false)}>
+              <EyeOff aria-hidden="true" />
               {t('hide')}
             </Button>
           </m.div>
@@ -85,13 +86,13 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
             inert={shown}
             onClick={reveal}
             className={cn(
-              'flex min-h-40 flex-col items-center justify-center gap-2 bg-primary p-6 text-center text-white bordered shadow-md pressable',
+              'flex min-h-40 flex-col items-center justify-center gap-2 border-2 border-dashed border-control bg-page p-6 text-center text-ink transition-colors hover:bg-primary-muted',
               shown && 'invisible'
             )}
           >
-            <Gift aria-hidden="true" className="size-10" />
+            <IconTile icon={Gift} tone="yellow" className="mb-1 size-12" />
             <span className="text-xl font-bold">{t('tap')}</span>
-            <span className="text-sm">{t('hint')}</span>
+            <span className="text-sm text-muted">{t('hint')}</span>
           </button>
         </div>
         <p aria-live="polite" className="sr-only">

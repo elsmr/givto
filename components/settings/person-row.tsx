@@ -1,4 +1,5 @@
 import type { GroupMember } from '@/components/group/group-data';
+import { PersonAvatar } from '@/components/group/person-avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -33,15 +34,16 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, ticked, drawn
   );
 
   return (
-    <li className="flex flex-col gap-2 py-3">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-        <span className="font-semibold break-all">{person.name}</span>
-        {person.role === 'organizer' && <Badge variant="yellow">{tGroup('organizer')}</Badge>}
-        {isMe && <Badge>{tGroup('you')}</Badge>}
-        {person.status !== 'joined' && <Badge variant="coral">{tGroup(`status.${person.status}`)}</Badge>}
-      </div>
-      {person.email && <span className="text-sm text-muted break-all">{person.email}</span>}
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+    <li className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
+      <PersonAvatar id={person.id} name={person.name} />
+      <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="font-semibold break-all">{person.name}</span>
+          {person.role === 'organizer' && <Badge variant="yellow">{tGroup('organizer')}</Badge>}
+          {isMe && <Badge>{tGroup('you')}</Badge>}
+          {person.status !== 'joined' && <Badge variant="coral">{tGroup(`status.${person.status}`)}</Badge>}
+        </div>
+        {person.email && <span className="text-sm text-muted break-all">{person.email}</span>}
         {ticked && (
           <Field orientation="horizontal" className="w-auto">
             <Checkbox
@@ -54,6 +56,8 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, ticked, drawn
             <FieldLabel htmlFor={`ticked-${person.id}`}>{t('ticked', { edition: editionTitle })}</FieldLabel>
           </Field>
         )}
+      </div>
+      <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
         {person.status === 'invited' && person.email && (
           <Button
             variant="neutral"

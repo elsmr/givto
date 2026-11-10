@@ -35,7 +35,7 @@ export const RemovePersonDialog = ({ groupSlug, person, drawn }: RemovePersonDia
 
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="ghost" size="sm" />}>{t('people.remove')}</DialogTrigger>
+      <DialogTrigger render={<Button variant="neutral" size="sm" />}>{t('people.remove')}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('people.remove-title', { name: person.name })}</DialogTitle>
