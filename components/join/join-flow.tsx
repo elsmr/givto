@@ -56,8 +56,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
   const errorCode = accept.error && knownAppError(accept.error, knownErrors);
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-8">
-      <JoinIntro preview={preview} />
+    <JoinIntro preview={preview}>
       {errorCode && (
         <Alert variant="danger">
           <AlertDescription>{t(`errors.${errorCode}`)}</AlertDescription>
@@ -99,6 +98,6 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
           <AlertDescription>{t(`code.errors.${emailCode.error}`)}</AlertDescription>
         </Alert>
       )}
-    </div>
+    </JoinIntro>
   );
 };

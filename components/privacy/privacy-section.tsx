@@ -1,18 +1,26 @@
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
+import type { Tone } from '@/components/ui/icon-tile';
+import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export const PrivacySection = ({
-  id,
+  icon,
+  tone,
   title,
   children,
 }: {
-  id: string;
+  icon: LucideIcon;
+  tone: Tone;
   title: string;
   children: ReactNode;
 }) => (
-  <section aria-labelledby={id} className="flex flex-col gap-4">
-    <h2 id={id} className="text-2xl font-extrabold sm:text-3xl">
-      {title}
-    </h2>
-    {children}
-  </section>
+  <Card>
+    <CardHeader>
+      <IconCardTitle icon={icon} tone={tone}>
+        {title}
+      </IconCardTitle>
+    </CardHeader>
+    <CardContent className="flex flex-col gap-4">{children}</CardContent>
+  </Card>
 );

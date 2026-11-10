@@ -1,4 +1,5 @@
 import { privacyContact } from '@/lib/privacy';
+import { Mail, Scale } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { PrivacySection } from './privacy-section';
@@ -8,7 +9,7 @@ export const PrivacyRights = () => {
 
   return (
     <>
-      <PrivacySection id="privacy-rights" title={t('rights.title')}>
+      <PrivacySection icon={Scale} tone="coral" title={t('rights.title')}>
         <p>
           {t.rich('rights.account', {
             link: (chunks) => <Link href="/account">{chunks}</Link>,
@@ -16,7 +17,7 @@ export const PrivacyRights = () => {
         </p>
         <p>{t('rights.other')}</p>
       </PrivacySection>
-      <PrivacySection id="privacy-contact" title={t('contact.title')}>
+      <PrivacySection icon={Mail} tone="primary-muted" title={t('contact.title')}>
         <p>
           {t.rich('contact.text', {
             controller: privacyContact.controller,

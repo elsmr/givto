@@ -1,5 +1,6 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { FlowPage, MessageCard } from '@/components/shell/flow-page';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
 import { signOut } from '@/lib/client/session';
@@ -7,6 +8,7 @@ import { useTRPC } from '@/lib/client/trpc';
 import type { JoinPreview } from '@/lib/server/join-preview';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { knownAppError } from '../group/app-error-code';
@@ -40,10 +42,17 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   if (session.isPending) return <LogoAnimation variant="loading" />;
   if (decline.isSuccess) {
     return (
-      <div className="mx-auto flex max-w-xl flex-col gap-4">
-        <h1 className="text-4xl font-extrabold sm:text-5xl">{t('invite.declined-title')}</h1>
-        <p className="text-lg">{t('invite.declined', { organizer: preview.organizerFirstName })}</p>
-      </div>
+      <FlowPage title={t('invite.declined-title')}>
+        <MessageCard
+          actions={
+            <Link href={session.data ? '/app' : '/'} className={buttonVariants()}>
+              {t('invite.home')}
+            </Link>
+          }
+        >
+          <p>{t('invite.declined', { organizer: preview.organizerFirstName })}</p>
+        </MessageCard>
+      </FlowPage>
     );
   }
 
@@ -58,8 +67,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   const busy = emailCode.busy || accept.isPending || accept.isSuccess || decline.isPending;
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-8">
-      <JoinIntro preview={preview} />
+    <JoinIntro preview={preview}>
       {errorCode && (
         <Alert variant="danger">
           <AlertDescription>{t(`errors.${errorCode}`)}</AlertDescription>
@@ -95,6 +103,6 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
           </div>
         </div>
       )}
-    </div>
+    </JoinIntro>
   );
 };

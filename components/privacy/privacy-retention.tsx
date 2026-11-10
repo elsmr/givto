@@ -1,4 +1,5 @@
 import { retention } from '@/lib/privacy';
+import { Clock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PrivacyList } from './privacy-list';
 import { PrivacySection } from './privacy-section';
@@ -7,7 +8,7 @@ export const PrivacyRetention = () => {
   const t = useTranslations('privacy.retention');
 
   return (
-    <PrivacySection id="privacy-retention" title={t('title')}>
+    <PrivacySection icon={Clock} tone="yellow" title={t('title')}>
       <PrivacyList
         items={[
           t('sign-in', { minutes: retention.signInCodeMinutes }),

@@ -8,11 +8,8 @@
     "title": "Something went wrong",
     "description": "It's not you, it's us. Try again in a moment."
   },
-  "next-steps": "What now?",
   "invite-hint": "Got a link from your organizer? Open it again from the email or group chat, or sign in to see your Secret Santas.",
   "try-again": "Try again",
   "sign-in": "Sign in",
-  "my-secret-santas": "Go to my groups",
-  "start": "Start a Secret Santa",
   "home": "Go to the home page"
 }

@@ -1,3 +1,4 @@
+import { FlowPage, MessageCard } from '@/components/shell/flow-page';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { signOut } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
@@ -14,17 +15,21 @@ export const GroupNotFound = () => {
   };
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col gap-6">
-      <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
-      <p className="text-lg">{t('description')}</p>
-      <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Link href="/app" className={buttonVariants()}>
-          {t('my-secret-santas')}
-        </Link>
-        <Button variant="neutral" onClick={() => void switchAccount()}>
-          {t('switch-account')}
-        </Button>
-      </div>
-    </div>
+    <FlowPage title={t('title')}>
+      <MessageCard
+        actions={
+          <>
+            <Link href="/app" className={buttonVariants()}>
+              {t('my-secret-santas')}
+            </Link>
+            <Button variant="neutral" onClick={() => void switchAccount()}>
+              {t('switch-account')}
+            </Button>
+          </>
+        }
+      >
+        <p>{t('description')}</p>
+      </MessageCard>
+    </FlowPage>
   );
 };
