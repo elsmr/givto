@@ -281,11 +281,8 @@ const toV2Exclusions = (rules: unknown, memberIdOf: Map<string, string>, dropped
   return [...new Map(toExclusions([], pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
 };
 
-/** Ticket 73's wish link. Until 73 is merged, lib/schema/wish.ts doesn't know `links` (the schema check strips it unvalidated). */
-type WishLink = { url: string };
-
-/** One cleaned old wish list item → a v2 wish document (73's shape: `links` always present). */
-const toV2Wish = ({ description, url, now, ...wish }: Pick<Wish, '_id' | 'ownerId' | 'title' | 'position' | 'createdAt'> & { description: string | null; url: string | null; now: Date }): Wish & { links: WishLink[] } => ({
+/** One cleaned old wish list item → a v2 wish document. */
+const toV2Wish = ({ description, url, now, ...wish }: Pick<Wish, '_id' | 'ownerId' | 'title' | 'position' | 'createdAt'> & { description: string | null; url: string | null; now: Date }): Wish => ({
   ...wish,
   kind: 'wish',
   ...(description && { description }),
