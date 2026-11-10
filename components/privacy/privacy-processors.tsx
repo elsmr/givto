@@ -15,6 +15,7 @@ export const PrivacyProcessors = () => {
       <PrivacyList
         items={processors.map((processor) => t.rich(processor, { b: bold }))}
       />
+      <p>{t('own-logs')}</p>
     </PrivacySection>
   );
 };

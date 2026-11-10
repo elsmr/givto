@@ -32,7 +32,8 @@
     "vercel": "<b>Vercel:</b> hosting and server logs.",
     "mongodb": "<b>MongoDB Atlas:</b> the database.",
     "mailgun": "<b>Mailgun:</b> sending emails.",
-    "sentry": "<b>Sentry:</b> error reports, so we can fix bugs."
+    "sentry": "<b>Sentry:</b> error reports, so we can fix bugs.",
+    "own-logs": "Mailgun, our hosting and the database backups keep their own logs and backups for a limited time, under their own terms."
   },
   "rights": {
     "title": "Your rights",
