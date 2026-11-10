@@ -195,14 +195,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
       } else assignments[from] = to;
     }
 
-    const pairs = asArray(old.exclusions).flatMap((rule): KeepApartPair[] => {
-      const from = isRecord(rule) ? memberIdOf.get(hexId(rule.from) ?? '') : undefined;
-      const to = isRecord(rule) ? memberIdOf.get(hexId(rule.to) ?? '') : undefined;
-      if (from && to && from !== to) return [[from, to]];
-      note('exclusionDropped', { group: groupId, rule: isRecord(rule) ? { from: short(rule.from), to: short(rule.to) } : short(rule) });
-      return [];
-    });
-    const exclusions = [...new Map(toExclusions([], pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
+    const exclusions = toV2Exclusions(old.exclusions, memberIdOf, (rule) => note('exclusionDropped', { group: groupId, rule }));
 
     const hasDraw = Object.keys(assignments).length > 0;
     const assignedAt = old.assignedAt === null || old.assignedAt === undefined ? null : timestamp(old.assignedAt, now);
@@ -276,6 +269,27 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
   return { users, groups: withHidden, editions, wishes, report: { source: {}, planned, conflicts } };
 };
 
+/** Old exclusions (user ids, both ways in master's draw) → v2 standing exclusions between member ids. */
+const toV2Exclusions = (rules: unknown, memberIdOf: Map<string, string>, dropped: (rule: unknown) => void): Exclusion[] => {
+  const pairs = asArray(rules).flatMap((rule): KeepApartPair[] => {
+    const from = isRecord(rule) ? memberIdOf.get(hexId(rule.from) ?? '') : undefined;
+    const to = isRecord(rule) ? memberIdOf.get(hexId(rule.to) ?? '') : undefined;
+    if (from && to && from !== to) return [[from, to]];
+    dropped(isRecord(rule) ? { from: short(rule.from), to: short(rule.to) } : short(rule));
+    return [];
+  });
+  return [...new Map(toExclusions([], pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
+};
+
+/** One cleaned old wish list item → a v2 wish document. */
+const toV2Wish = ({ description, now, ...wish }: Pick<Wish, '_id' | 'ownerId' | 'title' | 'position' | 'createdAt'> & { description: string | null; now: Date }): Wish => ({
+  ...wish,
+  kind: 'wish',
+  ...(description && { description }),
+  reallyWant: false,
+  updatedAt: now,
+});
+
 const freeSlug = (groupId: string, taken: Map<string, string>) => {
   const attempt = (n: number): string => (taken.has(derivedSlug(groupId, n)) ? attempt(n + 1) : derivedSlug(groupId, n));
   return attempt(0);
@@ -307,17 +321,7 @@ const planWishes = (sources: WishSource[], target: Target, now: Date, note: (kin
       else {
         const ids = wishIdsOf.get(owner) ?? [];
         const _id = derivedId('wish', key);
-        wishes.push({
-          _id,
-          ownerId: owner,
-          kind: 'wish',
-          title,
-          ...(description && { description }),
-          reallyWant: false,
-          position: (target.wishCounts.get(owner) ?? 0) + ids.length,
-          createdAt,
-          updatedAt: now,
-        });
+        wishes.push(toV2Wish({ _id, ownerId: owner, title, description, position: (target.wishCounts.get(owner) ?? 0) + ids.length, createdAt, now }));
         wishIdsOf.set(owner, [...ids, _id]);
         idByKey.set(key, _id);
       }
