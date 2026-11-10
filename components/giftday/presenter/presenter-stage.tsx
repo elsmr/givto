@@ -25,9 +25,10 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order }: Presen
   return (
     <div className="flex flex-1 flex-col">
       <div aria-live="polite" className="flex flex-1 items-center justify-center overflow-hidden px-6 py-10">
-        <AnimatePresence mode="wait" initial={false}>
+        {/* No initial={false}: it would stop every animation inside the first slide for as long as it's shown. */}
+        <AnimatePresence mode="wait">
           <m.div
-            key={`${phase}-${order.turn}`}
+            key={`${phase}-${order.turn}-${phase === 'reveal' && actions.revealed}`}
             initial={{ opacity: 0, y: 48 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -48 }}

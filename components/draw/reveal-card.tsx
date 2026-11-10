@@ -3,6 +3,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Gift } from 'lucide-react';
@@ -63,31 +64,36 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
             <AlertDescription>{t('changed', { date: format.dateTime(changedAt, { dateStyle: 'long', timeZone }) })}</AlertDescription>
           </Alert>
         )}
-        {shown ? (
+        {/* Both states in one cell, so revealing doesn't change the card's height. The name is only in the page once shown. */}
+        <div className="grid *:col-start-1 *:row-start-1">
           <m.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center gap-2 py-4 text-center"
+            inert={!shown}
+            initial={false}
+            animate={shown ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            className={cn('flex flex-col items-center gap-2 py-4 text-center', !shown && 'invisible')}
           >
             <p className="font-semibold text-muted">{t('buying-for')}</p>
-            <p className="font-heading text-4xl font-extrabold break-words sm:text-5xl">{giftee.name}</p>
+            <p className="font-heading text-4xl font-extrabold break-words sm:text-5xl">{shown ? giftee.name : '\u00a0'}</p>
             {children}
-            <Button ref={toggleButton} variant="ghost" onClick={() => toggle(false)}>
+            <Button ref={shown ? toggleButton : undefined} variant="ghost" onClick={() => toggle(false)}>
               {t('hide')}
             </Button>
           </m.div>
-        ) : (
           <button
-            ref={toggleButton}
+            ref={shown ? undefined : toggleButton}
             type="button"
+            inert={shown}
             onClick={reveal}
-            className="flex min-h-40 flex-col items-center justify-center gap-2 bg-primary p-6 text-center text-white bordered shadow-md pressable"
+            className={cn(
+              'flex min-h-40 flex-col items-center justify-center gap-2 bg-primary p-6 text-center text-white bordered shadow-md pressable',
+              shown && 'invisible'
+            )}
           >
             <Gift aria-hidden="true" className="size-10" />
             <span className="text-xl font-bold">{t('tap')}</span>
             <span className="text-sm">{t('hint')}</span>
           </button>
-        )}
+        </div>
         <p aria-live="polite" className="sr-only">
           {shown ? `${t('buying-for')} ${giftee.name}` : ''}
         </p>

@@ -7,7 +7,7 @@ export type SpinStatus = 'idle' | 'spinning' | 'skipped';
 const LAPS = 6;
 const SPIN_SECONDS = 2.6;
 const box =
-  'h-[1.3em] min-w-[min(80vw,12em)] overflow-hidden bg-surface px-8 text-center font-heading text-[clamp(3rem,9vw,9rem)] leading-[1.3em] font-extrabold text-ink bordered shadow-lg';
+  'h-[1.3em] min-w-[min(80vw,12em)] overflow-hidden bg-surface px-8 text-center font-heading text-[clamp(3rem,9vw,9rem)] leading-[1.3em] font-extrabold text-ink bordered shadow-lg dark:border-control dark:shadow-brand';
 
 type WhoIsNextReelProps = { names: string[]; target: string; status: SpinStatus; onLanded: () => void };
 
