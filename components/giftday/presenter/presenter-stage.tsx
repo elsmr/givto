@@ -10,6 +10,7 @@ import { PresenterTitleSlide } from './presenter-title-slide';
 import { PresenterTurnSlide } from './presenter-turn-slide';
 import { usePresenterActions } from './use-presenter-actions';
 import { usePresenterKeys } from './use-presenter-keys';
+import { WhoIsNextEndgame } from './who-is-next-endgame';
 import { WhoIsNextReel } from './who-is-next-reel';
 
 type PresenterStageProps = { groupSlug: string; editionNumber: number; view: PresenterView; order: PresenterOrder };
@@ -42,7 +43,11 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order }: Presen
             {phase === 'spin' && (
               <>
                 <h2 className="text-5xl font-extrabold sm:text-7xl">{t('present.whos-next')}</h2>
-                <WhoIsNextReel names={rotation} target={order.current?.name ?? ''} status={actions.spinStatus} onLanded={actions.onLanded} />
+                {rotation.length > 3 ? (
+                  <WhoIsNextReel names={rotation} target={order.current?.name ?? ''} status={actions.spinStatus} onLanded={actions.onLanded} />
+                ) : (
+                  <WhoIsNextEndgame names={rotation} target={order.current?.name ?? ''} status={actions.spinStatus} onLanded={actions.onLanded} />
+                )}
               </>
             )}
             {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} />}

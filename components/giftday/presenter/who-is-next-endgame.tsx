@@ -1,0 +1,81 @@
+import { cn } from '@/lib/utils';
+import { useReducedMotion } from 'motion/react';
+import * as m from 'motion/react-m';
+import { useEffect, useRef, useState } from 'react';
+import type { SpinStatus } from './who-is-next-reel';
+
+const HOPS = 13;
+const FIRST_HOP_MS = 60;
+/** Each hop takes this much longer than the one before: fast, then slowing like a ball between pockets. */
+const SLOWDOWN = 1.2;
+/** Still on the target for a beat (will it hop again?) before the winner pops. */
+const HOLD_MS = 450;
+const POP_MS = 750;
+const hopAt = (hop: number) => (FIRST_HOP_MS * (SLOWDOWN ** hop - 1)) / (SLOWDOWN - 1);
+
+/** Back and forth between the cards, ending on `end`; a random length so the first card lit gives nothing away. */
+const hopPath = (count: number, end: number) => {
+  const length = HOPS + Math.floor(Math.random() * count);
+  const path = [end];
+  let direction = end === 0 ? 1 : -1;
+  while (path.length < length) {
+    if (path[0] + direction < 0 || path[0] + direction >= count) direction = -direction;
+    path.unshift(path[0] + direction);
+  }
+  return path;
+};
+
+type WhoIsNextEndgameProps = { names: string[]; target: string; status: SpinStatus; onLanded: () => void };
+
+/**
+ * "Who's next?" with 2 or 3 people left: their names as cards, a highlight hops between them and
+ * settles on `target` (decided by the server, 32), which pops. Skipped or reduced motion: the
+ * target lights up straight away. Cards in name order: the unwrap order stays a surprise.
+ */
+export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextEndgameProps) => {
+  const reduced = useReducedMotion();
+  const [cards] = useState(() => names.toSorted((a, b) => a.localeCompare(b)));
+  const end = cards.indexOf(target);
+  const [path] = useState(() => hopPath(cards.length, end));
+  const [hop, setHop] = useState(-1);
+  const [popped, setPopped] = useState(false);
+  const quick = status === 'skipped' || (status === 'spinning' && reduced);
+  const landed = useRef(onLanded);
+  useEffect(() => {
+    landed.current = onLanded;
+  });
+
+  useEffect(() => {
+    if (status === 'idle') return;
+    const last = hopAt(path.length - 1);
+    const timers = quick
+      ? [setTimeout(() => landed.current(), 400)]
+      : [
+          ...path.map((_, i) => setTimeout(() => setHop(i), hopAt(i))),
+          setTimeout(() => setPopped(true), last + HOLD_MS),
+          setTimeout(() => landed.current(), last + HOLD_MS + POP_MS),
+        ];
+    return () => timers.forEach(clearTimeout);
+  }, [status, quick, path]);
+
+  const lit = quick ? end : (path[hop] ?? -1);
+  const won = quick || popped;
+  return (
+    <ul aria-hidden="true" className="flex w-full flex-wrap items-center justify-center gap-6 sm:gap-12">
+      {cards.map((name, i) => (
+        <m.li
+          key={i}
+          initial={false}
+          animate={{ scale: quick || i !== lit ? 1 : won ? 1.15 : 1.05, opacity: won && i !== end ? 0.35 : 1 }}
+          transition={won ? { type: 'spring', stiffness: 400, damping: 12, opacity: { duration: 0.3 } } : { duration: 0.08 }}
+          className={cn(
+            'max-w-full px-8 py-6 font-heading text-[clamp(2.5rem,7vw,7rem)] leading-none font-extrabold break-words text-ink bordered',
+            i === lit ? 'bg-yellow shadow-brand' : 'bg-surface shadow-lg dark:border-control dark:shadow-brand'
+          )}
+        >
+          {name}
+        </m.li>
+      ))}
+    </ul>
+  );
+};
