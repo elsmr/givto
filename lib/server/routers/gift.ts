@@ -1,3 +1,4 @@
+import { isDrawn } from '../../schema/edition';
 import { GiftFields } from '../../schema/gift';
 import { santaActionProcedure } from '../between/santa-role';
 import { newId } from '../db';
@@ -63,7 +64,7 @@ export const giftRouter = router({
   /** Organizer: the names of Santas who haven't marked a gift yet. Never what anyone got, or for whom. */
   stillShopping: organizerEditionProcedure.query(async ({ ctx }) => {
     const { edition, group } = ctx;
-    if (edition.status !== 'drawn' && edition.status !== 'giftday') return null;
+    if (!isDrawn(edition)) return null;
     const santas = Object.keys(edition.draw?.assignments ?? {});
     const gifts = await currentGifts(ctx.db, edition);
     const names = santas

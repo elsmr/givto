@@ -1,14 +1,12 @@
 import { guessResults, type Guesses } from '../../guess-results';
-import type { Edition } from '../../schema/edition';
+import { isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
 import { guessingOn, santaStepOn } from '../guess/guesses';
 
 /** The big reveal (31) is out once the organizer turned it on and revealed it, from gift day on. */
 export const isRevealed = (edition: Edition) =>
-  edition.reveal.enabled &&
-  Boolean(edition.reveal.revealedAt) &&
-  (edition.status === 'giftday' || edition.status === 'done');
+  edition.reveal.enabled && Boolean(edition.reveal.revealedAt) && isFromGiftDay(edition);
 
 /**
  * The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed.

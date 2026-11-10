@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto';
 import { shuffle } from '../../draw';
 import { todayIn } from '../../local-date';
-import type { Edition, EditionStatus } from '../../schema/edition';
+import { isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
 import { log } from '../log';
 
@@ -13,7 +13,7 @@ const FURTHEST_AHEAD_ZONE = 'Pacific/Kiritimati';
  * zone). drawn → giftday on the gift day, → done from the day after (also when a day was missed).
  */
 export const giftDayStatus = (status: EditionStatus, giftDay: string, today: string): EditionStatus => {
-  if ((status !== 'drawn' && status !== 'giftday') || today < giftDay) return status;
+  if (!isDrawn({ status }) || today < giftDay) return status;
   return today === giftDay ? 'giftday' : 'done';
 };
 

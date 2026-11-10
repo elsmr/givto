@@ -11,6 +11,8 @@ export type EditionStatus = v.InferOutput<typeof EditionStatus>;
 export const isBeforeDraw = ({ status }: { status: EditionStatus }) => status === 'draft' || status === 'open';
 /** From the draw until gift day is over: `edition.draw` is the live result. */
 export const isDrawn = ({ status }: { status: EditionStatus }) => status === 'drawn' || status === 'giftday';
+/** Gift day has started (by date or by hand), also once it's over. */
+export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status === 'giftday' || status === 'done';
 
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);

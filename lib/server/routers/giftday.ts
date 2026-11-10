@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { UnwrapMode, type Edition } from '../../schema/edition';
+import { isBeforeDraw, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
@@ -12,8 +12,6 @@ import { authedProcedure, editionProcedure, publicProcedure, router } from '../t
 import { organizerEditionProcedure } from './draw';
 import { giftDayView, presenterGiftDayView } from './giftday-view';
 import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
-
-const fromGiftDay = (edition: Edition) => edition.status === 'giftday' || edition.status === 'done';
 
 const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
   groupName: group.name,
@@ -37,7 +35,7 @@ export const giftdayRouter = router({
     const { edition } = ctx;
     if (edition.status === 'done') throw new AppError('EDITION_CLOSED');
     const inDraw = Object.keys(edition.draw?.assignments ?? {});
-    if ((edition.status !== 'drawn' && edition.status !== 'giftday') || inDraw.length < 2) throw new AppError('NOT_DRAWN');
+    if (!isDrawn(edition) || inDraw.length < 2) throw new AppError('NOT_DRAWN');
     const now = new Date();
     const saved = await ctx.db.editions.updateOne(
       { _id: edition._id, status: edition.status },
@@ -65,7 +63,7 @@ export const giftdayRouter = router({
 
   /** The big reveal on or off (off by default). Off again hides it from everyone. */
   setReveal: organizerEditionProcedure.input(v.object({ enabled: v.boolean() })).mutation(async ({ ctx, input }) => {
-    if (!ctx.edition.draw || ctx.edition.status === 'draft' || ctx.edition.status === 'open') throw new AppError('NOT_DRAWN');
+    if (!ctx.edition.draw || isBeforeDraw(ctx.edition)) throw new AppError('NOT_DRAWN');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
       input.enabled
@@ -77,7 +75,7 @@ export const giftdayRouter = router({
 
   /** "Who was whose Santa": from gift day on, when the reveal is on. Everyone sees it from now. */
   reveal: organizerEditionProcedure.mutation(async ({ ctx }) => {
-    if (!fromGiftDay(ctx.edition)) throw new AppError('NOT_GIFT_DAY');
+    if (!isFromGiftDay(ctx.edition)) throw new AppError('NOT_GIFT_DAY');
     if (!ctx.edition.reveal.enabled) throw new AppError('REVEAL_OFF');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id, 'reveal.enabled': true, 'reveal.revealedAt': { $exists: false } },

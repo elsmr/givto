@@ -1,4 +1,4 @@
-import type { Edition } from '../../schema/edition';
+import { isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Gift } from '../../schema/gift';
 import type { GiftCounts } from '../../unwrap-turns';
 import type { Collections } from '../db';
@@ -12,7 +12,7 @@ export const currentGifts = async (db: Collections, edition: Edition): Promise<M
 
 /** How many gifts each person gets, from what their Santa marked. Only from gift day on (63): empty before. */
 export const giftCounts = async (db: Collections, edition: Edition): Promise<GiftCounts> => {
-  if (edition.status !== 'giftday' && edition.status !== 'done') return {};
+  if (!isFromGiftDay(edition)) return {};
   const counts: GiftCounts = {};
   for (const gift of (await currentGifts(db, edition)).values()) {
     counts[gift.gifteeMemberId] = (counts[gift.gifteeMemberId] ?? 0) + gift.wishIds.length + gift.lines.length;
