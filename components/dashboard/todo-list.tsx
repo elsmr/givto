@@ -16,7 +16,7 @@ const kinds: Record<Todo['kind'], { icon: LucideIcon; tone: Tone; hash?: string 
   readyToDraw: { icon: Shuffle, tone: 'yellow' },
   draft: { icon: Send, tone: 'primary-muted' },
   noWishes: { icon: Heart, tone: 'coral', hash: '#wishlist' },
-  markReceived: { icon: PackageCheck, tone: 'mint', hash: '#wishlist' },
+  markReceived: { icon: PackageCheck, tone: 'mint' },
 };
 const order = Object.keys(kinds);
 

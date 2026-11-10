@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { AppNav } from './app-nav';
@@ -30,34 +31,28 @@ const Main = ({ children }: { children: ReactNode }) => (
 
 /**
  * `app`: a signed-in page, with the app navigation. It doesn't depend on the session, so it
- * renders before the session loads. Otherwise the public header and footer.
+ * renders before the session loads. Otherwise the public header and footer. One tree for both, so
+ * a page that switches (signing in on /new) keeps its state.
  */
 export const AppShell = ({ app = false, children }: { app?: boolean; children: ReactNode }) => {
   usePreferredLocale();
 
-  if (!app) {
-    return (
-      <div className="flex min-h-dvh flex-col">
-        <SkipLink />
-        <Header />
-        <Main>{children}</Main>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="flex min-h-dvh flex-col md:flex-row">
+    <div className={cn('flex min-h-dvh flex-col', app && 'md:flex-row')}>
       <SkipLink />
-      <header className="border-b-(length:--border-width) border-outline bg-surface px-4 md:hidden">
-        <div className="flex h-14 items-center">
-          <LogoLink href="/app" />
-        </div>
-      </header>
-      <AppNav className="order-last md:order-first" />
+      {app ? (
+        <header className="border-b-(length:--border-width) border-outline bg-surface px-4 md:hidden">
+          <div className="flex h-14 items-center">
+            <LogoLink href="/app" />
+          </div>
+        </header>
+      ) : (
+        <Header />
+      )}
+      {app && <AppNav className="order-last md:order-first" />}
       <div className="flex min-w-0 flex-1 flex-col">
         <Main>{children}</Main>
-        <Footer language={false} />
+        <Footer language={!app} />
       </div>
     </div>
   );

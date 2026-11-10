@@ -50,7 +50,7 @@ const trpc = async (path, input, { cookie, mutation = false } = {}) => {
 const mailsTo = async (email) => (await fetch(`${MAIL}/messages?to=${encodeURIComponent(email)}`)).json();
 
 const requestSignIn = async (email, headers) => {
-  const res = await auth('/sign-in/magic-link', { email, callbackURL: '/groups' }, { headers });
+  const res = await auth('/sign-in/magic-link', { email, callbackURL: '/app' }, { headers });
   assert.equal(res.status, 200, await res.text());
   const mail = (await mailsTo(email)).at(-1);
   const otp = mail.text.match(/\b(\d{6})\b/)[1];
@@ -59,7 +59,7 @@ const requestSignIn = async (email, headers) => {
   assert.equal(url.pathname, '/auth/link');
   assert.equal(url.search, '', 'no token in the query string');
   const fragment = new URLSearchParams(url.hash.slice(1));
-  assert.equal(fragment.get('callbackURL'), '/groups');
+  assert.equal(fragment.get('callbackURL'), '/app');
   tokens.push(fragment.get('token'));
   return { otp, token: fragment.get('token'), mail };
 };

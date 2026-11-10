@@ -36,7 +36,7 @@ export const AppNav = ({ className }: { className?: string }) => {
             <li key={href}>
               <Link
                 href={href}
-                aria-current={active ? 'page' : undefined}
+                aria-current={pathname === href ? 'page' : active ? 'true' : undefined}
                 className={cn(
                   'flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold break-words hyphens-auto text-ink no-underline',
                   active ? '-translate-x-0.5 -translate-y-0.5 border-outline bg-yellow shadow-sm' : 'hover:bg-page',

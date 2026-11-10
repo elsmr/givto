@@ -19,8 +19,6 @@
     "archived": "Archived"
   },
   "gift-day": {
-    "in-days": "{days, plural, =1 {Gift day is tomorrow} other {Gift day in # days}}",
-    "today": "Gift day is today!",
     "past": "Gift day was {date}",
     "none": "No gift day set yet"
   },
@@ -50,7 +48,7 @@
       "action": "Open"
     },
     "noWishes": {
-      "text": "Add a few wishes for your Santa",
+      "text": "Your Santa can't see any wishes here yet",
       "action": "Add wishes"
     },
     "markReceived": {

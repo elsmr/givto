@@ -13,7 +13,7 @@ export const AppHead = () => {
       <HeadingFont />
       <Head>
         <title>Givto</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         {!isPublicPath(pathname) && <meta name="robots" content="noindex" />}
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

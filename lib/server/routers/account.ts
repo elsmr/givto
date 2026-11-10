@@ -42,17 +42,20 @@ export const accountRouter = router({
     const ownIdsByGroup = new Map(groups.map((group) => [group._id, ownAndManagedIds(group, memberOf(group))]));
     const questionEditions = editions.filter(({ edition }) => isAfterDrawOpen(edition));
     // Same filter as question.forMe (delivered only), narrowed to unanswered.
-    const questions = await ctx.db.questions
-      .find(
-        {
-          editionId: { $in: questionEditions.map(({ edition }) => edition._id) },
-          gifteeMemberId: { $in: questionEditions.flatMap(({ _id }) => ownIdsByGroup.get(_id) ?? []) },
-          notifyAfter: { $lte: new Date() },
-          answer: { $exists: false },
-        },
-        { projection: { editionId: 1, askerMemberId: 1 } }
-      )
-      .toArray();
+    const questions =
+      questionEditions.length === 0
+        ? []
+        : await ctx.db.questions
+          .find(
+            {
+              editionId: { $in: questionEditions.map(({ edition }) => edition._id) },
+              gifteeMemberId: { $in: questionEditions.flatMap(({ _id }) => ownIdsByGroup.get(_id) ?? []) },
+              notifyAfter: { $lte: new Date() },
+              answer: { $exists: false },
+            },
+            { projection: { editionId: 1, askerMemberId: 1 } }
+          )
+          .toArray();
     return groups.map((group) => {
       const member = memberOf(group);
       const edition = latest.get(group._id);

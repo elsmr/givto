@@ -1,3 +1,4 @@
+import { statusTone } from './edition-phase';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { History } from 'lucide-react';
@@ -29,7 +30,7 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
               >
                 {edition.title}
               </Link>
-              <Badge>{t(`status.${edition.status}`)}</Badge>
+              <Badge variant={statusTone[edition.status]}>{t(`status.${edition.status}`)}</Badge>
               {index === 0 && <Badge variant="mint">{t('editions.current')}</Badge>}
             </li>
           ))}

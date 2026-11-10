@@ -17,7 +17,7 @@ type AccountSectionProps = {
 };
 
 export const AccountSection = ({ title, icon, tone, description, danger, children }: AccountSectionProps) => (
-  <Card role="region" aria-label={title} className={cn(danger && 'bg-coral')}>
+  <Card className={cn(danger && 'bg-coral')}>
     <CardHeader>
       <IconCardTitle icon={icon} tone={tone}>
         {title}

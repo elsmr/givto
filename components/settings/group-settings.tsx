@@ -1,7 +1,7 @@
 import { appErrorCode } from '@/components/group/app-error-code';
 import { GroupNotFound } from '@/components/group/group-not-found';
 import { PendingRequests } from '@/components/group/pending-requests';
-import { useRequireSession } from '@/components/group/use-require-session';
+import { useRequireSession } from '@/components/auth/use-require-session';
 import { LoadFailed } from '@/components/shell/load-failed';
 import { buttonVariants } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';

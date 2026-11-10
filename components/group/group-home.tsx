@@ -7,7 +7,7 @@ import { appErrorCode } from './app-error-code';
 import { GroupNotFound } from './group-not-found';
 import { GroupView } from './group-view';
 import { PastEditionNotice } from './past-edition-notice';
-import { useRequireSession } from './use-require-session';
+import { useRequireSession } from '@/components/auth/use-require-session';
 
 /**
  * /g/[slug]: the current edition, shaped by its phase (61); /g/[slug]/[edition] shows an earlier one

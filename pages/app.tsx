@@ -18,7 +18,7 @@ import Link from 'next/link';
 export default function AppHomePage() {
   const t = useTranslations('dashboard');
   const user = useRequireSession();
-  const groups = useQuery({ ...useTRPC().account.groups.queryOptions(), enabled: Boolean(user) });
+  const groups = useQuery({ ...useTRPC().account.groups.queryOptions(), enabled: Boolean(user), staleTime: 0 });
 
   return (
     <AppShell app>

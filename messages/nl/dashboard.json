@@ -19,8 +19,6 @@
     "archived": "Gearchiveerd"
   },
   "gift-day": {
-    "in-days": "{days, plural, =1 {Morgen is het pakjesdag} other {Nog # dagen tot pakjesdag}}",
-    "today": "Vandaag is het pakjesdag!",
     "past": "Pakjesdag was op {date}",
     "none": "Nog geen pakjesdag gekozen"
   },
@@ -50,7 +48,7 @@
       "action": "Openen"
     },
     "noWishes": {
-      "text": "Zet een paar wensen klaar voor je Santa",
+      "text": "Je Santa ziet hier nog geen wensen",
       "action": "Wensen toevoegen"
     },
     "markReceived": {

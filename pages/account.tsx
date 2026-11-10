@@ -12,12 +12,10 @@ import type { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
 import { LogOut } from 'lucide-react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 
 export default function AccountPage() {
   const t = useTranslations('account');
   const tShell = useTranslations('shell');
-  const router = useRouter();
   const user = useRequireSession();
   const me = useMe(Boolean(user));
 
@@ -34,9 +32,9 @@ export default function AccountPage() {
             <Button
               variant="neutral"
               onClick={async () => {
-                // Leave first: signed out on this page, its sign-in redirect would win the race.
-                await router.push('/');
                 await signOut();
+                // A full load: drops the cached data and beats this page's sign-in redirect.
+                location.assign('/');
               }}
             >
               <LogOut aria-hidden="true" />
