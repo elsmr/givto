@@ -19,7 +19,7 @@ export const GifteeTips = ({ input, view }: { input: EditionInput; view: GifteeT
       ) : (
         <ul className="flex flex-col gap-3">
           {view.tips.map((tip) => (
-            <li key={tip.id} className="flex flex-col gap-2 border-b-2 border-ink pb-3 last:border-b-0">
+            <li key={tip.id} className="flex flex-col gap-2 border-b-2 border-outline pb-3 last:border-b-0">
               <p id={`tip-${tip.id}`} className={tip.used ? 'break-words whitespace-pre-line text-muted line-through' : 'break-words whitespace-pre-line'}>
                 {tip.text}
               </p>

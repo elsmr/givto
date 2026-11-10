@@ -41,7 +41,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
         ) : (
           <ul className="flex flex-col gap-3">
             {wishes.map((wish) => (
-              <li key={wish.id} className="flex flex-col gap-3 border-b-2 border-ink pb-3 last:border-b-0">
+              <li key={wish.id} className="flex flex-col gap-3 border-b-2 border-outline pb-3 last:border-b-0">
                 <WishSummary wish={wish} inBudget={isInBudget(wish.price, budget)} />
                 <ClaimButton
                   input={{ groupSlug, editionNumber, wishId: wish.id }}

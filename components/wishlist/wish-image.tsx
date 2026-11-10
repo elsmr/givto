@@ -7,7 +7,7 @@ export const WishImage = ({ imageId, alt, size = 72 }: { imageId: string; alt: s
     alt={alt}
     width={size}
     height={size}
-    className="shrink-0 border-2 border-ink bg-surface object-contain"
+    className="shrink-0 border-2 border-outline bg-surface object-contain"
     style={{ width: size, height: size }}
   />
 );
