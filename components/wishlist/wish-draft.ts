@@ -1,5 +1,5 @@
 import type { RouterInputs, RouterOutputs } from '@/lib/client/trpc';
-import type { WishKind } from '@/lib/schema/wish';
+import type { WishKind, WishLink } from '@/lib/schema/wish';
 
 export type WishView = RouterOutputs['wish']['list'][number];
 export type WishInput = RouterInputs['wish']['create'];
@@ -10,8 +10,7 @@ export interface WishDraft {
   kind: WishKind;
   title: string;
   description: string;
-  url: string;
-  imageId?: string;
+  links: WishLink[];
   priceFrom: string;
   priceTo: string;
   currency: string;
@@ -23,7 +22,7 @@ export const emptyDraft: WishDraft = {
   kind: 'wish',
   title: '',
   description: '',
-  url: '',
+  links: [],
   priceFrom: '',
   priceTo: '',
   currency: 'EUR',
@@ -34,19 +33,32 @@ export const emptyDraft: WishDraft = {
 const toMajor = (cents: number | undefined) => (cents === undefined ? '' : String(cents / 100));
 const toCents = (major: string) => (major.trim() === '' ? undefined : Math.round(Number(major) * 100));
 
-export const draftFromWish = (wish: Partial<WishView & ImportedWish>): WishDraft => ({
+export const draftFromWish = (wish: WishView): WishDraft => ({
   ...emptyDraft,
-  ...(wish.kind && { kind: wish.kind }),
-  title: wish.title ?? '',
+  kind: wish.kind,
+  title: wish.title,
   description: wish.description ?? '',
-  url: wish.url ?? '',
-  imageId: wish.imageId,
+  links: wish.links,
   priceFrom: toMajor(wish.price?.amount),
   priceTo: toMajor(wish.price?.maxAmount),
   currency: wish.price?.currency ?? emptyDraft.currency,
   variant: wish.variant ?? '',
   reallyWant: wish.reallyWant ?? false,
 });
+
+/** A pasted link as read by the server; when the wish has no title yet, it takes the product's title, notes and price. */
+export const addImportedLink = (draft: WishDraft, { url, title, description, price, imageId }: ImportedWish): WishDraft => {
+  const link: WishLink = { url, ...(title && { title }), ...(price && { price }), ...(imageId && { imageId }) };
+  const links = [...draft.links, link];
+  if (draft.title.trim()) return { ...draft, links };
+  return {
+    ...draft,
+    links,
+    title: title ?? '',
+    description: draft.description || description || '',
+    ...(price && { priceFrom: toMajor(price.amount), priceTo: toMajor(price.maxAmount), currency: price.currency }),
+  };
+};
 
 const optional = (text: string) => text.trim() || undefined;
 
@@ -57,8 +69,7 @@ export const draftToInput = (draft: WishDraft): WishInput => {
     kind: draft.kind,
     title: draft.title,
     description: optional(draft.description),
-    url: optional(draft.url),
-    imageId: draft.imageId,
+    links: draft.links,
     price:
       amount === undefined
         ? undefined

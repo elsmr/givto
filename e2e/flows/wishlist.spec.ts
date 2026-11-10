@@ -1,5 +1,6 @@
-// The personal wishlist on /wishlist (38): add, edit, import, reorder by drag and by keyboard, delete.
+// The personal wishlist on /wishlist (38, 73): add, edit, links, reorder by drag and by keyboard, delete.
 import type { Page } from '@playwright/test';
+import { Binary, ObjectId } from 'mongodb';
 import superjson from 'superjson';
 import { expect, test, type TrpcOutput } from '../fixtures';
 
@@ -73,39 +74,80 @@ test('add, edit, reorder by drag and by keyboard, delete', async ({ page, signIn
   });
 });
 
-test('import: a pasted link fills in the form; a blocked address leaves it for typing', async ({ page, signIn, signInPage }) => {
-  await signInPage(page, await signIn('olive'));
+test('links: paste links, the first one fills in the wish; a walled shop keeps its link; remove a link', async ({ page, signIn, signInPage, db }) => {
+  const olive = await signIn('olive');
+  await signInPage(page, olive);
+  // The imported picture: stored for Olive, as the server's import would.
+  const imageId = new ObjectId();
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+  await db.raw.collection('wishImages.files').insertOne({
+    _id: imageId, length: png.length, chunkSize: 261120, uploadDate: new Date(), filename: 'wish-image', metadata: { ownerId: olive.id, contentType: 'image/png' },
+  });
+  await db.raw.collection('wishImages.chunks').insertOne({ files_id: imageId, n: 0, data: new Binary(png) });
+  const socks = 'https://shop.example/products/wool-socks';
+  const walled = 'https://www.zalando.nl/falke-wollen-sokken-fa112c0bt-a11.html';
   const imported: TrpcOutput<'import.fromUrl'> = {
-    url: 'https://shop.example/products/wool-socks',
+    url: socks,
     title: 'Merino wool socks',
     description: 'Warm socks, size 42',
     price: { currency: 'EUR', amount: 1995 },
+    imageId: imageId.toHexString(),
   };
+  const failed = { reason: 'bot_wall', url: walled, title: 'Falke wollen sokken' };
   // The server fetches the pasted page itself and only from public addresses (SSRF guard, 39), so a
-  // page this test serves is out of its reach. The browser gets a canned answer in the tRPC wire
+  // page this test serves is out of its reach. The browser gets canned answers in the tRPC wire
   // format instead; extraction is covered by tests/import.check.mjs and api/s2-wishes.
-  await page.route('**/api/trpc/import.fromUrl?*', (route) => route.fulfill({ json: [{ result: { data: superjson.serialize(imported) } }] }));
+  await page.route('**/api/trpc/import.fromUrl?*', (route) => {
+    const { url } = superjson.deserialize<{ url: string }>(route.request().postDataJSON()[0]);
+    if (url === socks) return route.fulfill({ json: [{ result: { data: superjson.serialize(imported) } }] });
+    const error = { message: 'IMPORT_FAILED', code: -32022, data: { code: 'UNPROCESSABLE_CONTENT', httpStatus: 422, appCode: 'IMPORT_FAILED', details: failed } };
+    return route.fulfill({ status: 422, json: [{ error: superjson.serialize(error) }] });
+  });
   await page.goto('/wishlist');
-  const link = page.getByLabel("Got a link? Paste it and we'll fill in the rest");
+  const link = page.getByLabel('Paste a link to a shop');
 
-  await test.step('paste a link: the form is prefilled, check and save', async () => {
-    await link.fill(imported.url);
-    await page.getByRole('button', { name: 'Fill in from link' }).click();
-    await expect(page.getByText('We filled in what we found. Check it before you save.')).toBeVisible();
+  await test.step('paste a link: the wish is filled in, with the picture', async () => {
+    await link.fill(socks);
+    await page.getByRole('button', { name: 'Add link' }).click();
+    await expect(page.getByText('Link added with what we found. Check the wish before you save.')).toBeVisible();
     await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
     await expect(page.getByLabel('Notes')).toHaveValue('Warm socks, size 42');
-    await expect(page.getByLabel('Link', { exact: true })).toHaveValue(imported.url);
     await expect(page.getByLabel('Price', { exact: true })).toHaveValue('19.95');
+    await expect(page.getByRole('img', { name: 'Picture of Merino wool socks' })).toBeVisible();
+    await expect(link).toHaveValue('');
+  });
+
+  await test.step('a second link from a shop that walls us off: kept, the wish stays as it is', async () => {
+    await link.fill(walled);
+    await link.press('Enter');
+    await expect(page.getByText("zalando.nl doesn't let us read its pages.", { exact: false })).toBeVisible();
+    await expect(page.getByText('2 links')).toBeVisible();
+    await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
     await page.getByRole('button', { name: 'Add wish' }).click();
-    const wish = wishItem(page, 'Merino wool socks');
+  });
+
+  const wish = wishItem(page, 'Merino wool socks');
+  await test.step('the card: picture, price, a "Buy at" link per shop that tells shops nothing', async () => {
     await expect(wish).toContainText('Warm socks, size 42');
-    await expect(wish.getByRole('link', { name: /Open link/ })).toHaveAttribute('href', imported.url);
+    await expect(wish.getByRole('img', { name: 'Picture of Merino wool socks' })).toBeVisible();
+    const buyAt = wish.getByRole('link', { name: /^Buy at / });
+    await expect(buyAt).toHaveText([/^Buy at shop\.example\s*€\s?19[.,]95/, /^Buy at zalando\.nl/]);
+    await expect(buyAt.first()).toHaveAttribute('href', socks);
+    await expect(buyAt.first()).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
+    await expect(buyAt.nth(1)).toHaveAttribute('href', walled);
+  });
+
+  await test.step('edit: remove a link', async () => {
+    await page.getByRole('button', { name: 'Edit “Merino wool socks”' }).click();
+    await page.getByRole('button', { name: 'Remove the link to zalando.nl' }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(wish.getByRole('link', { name: /^Buy at / })).toHaveCount(1);
   });
 
   await test.step('a blocked address (the real server answer): say so, type the wish yourself', async () => {
     await page.unroute('**/api/trpc/import.fromUrl?*');
     await link.fill('http://127.0.0.1/admin');
-    await page.getByRole('button', { name: 'Fill in from link' }).click();
+    await page.getByRole('button', { name: 'Add link' }).click();
     await expect(page.getByText("That address can't be used. Try a link to a shop or web page.")).toBeVisible();
     await addWish(page, 'Typed by hand');
     await expect(wishTitles(page)).toHaveText(['Merino wool socks', 'Typed by hand']);

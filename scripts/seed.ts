@@ -58,6 +58,7 @@ await db.wishes.insertMany(
       ownerId: userIds[key],
       kind: 'wish' as const,
       reallyWant: false,
+      links: [],
       ...wish,
       position,
       createdAt: daysAgo(30 - position),

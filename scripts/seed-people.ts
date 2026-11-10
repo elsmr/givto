@@ -31,42 +31,42 @@ type SeedWish = Partial<WishFields> & Pick<WishFields, 'title'>;
 /** Dries has none: his Santa sees an empty wishlist and can send a Psst!. */
 export const wishlists: Record<string, SeedWish[]> = {
   you: [
-    { title: 'Moka pot, 6 cups', price: eur(35), url: shop('moka-pot'), reallyWant: true },
+    { title: 'Moka pot, 6 cups', price: eur(35), links: [{ url: shop('moka-pot') }], reallyWant: true },
     { title: 'Wool socks', variant: 'Size 43-46', price: eur(15) },
-    { title: 'Kafka on the Shore', description: 'Paperback is fine.', price: eur(12), url: shop('kafka-on-the-shore') },
+    { title: 'Kafka on the Shore', description: 'Paperback is fine.', price: eur(12), links: [{ url: shop('kafka-on-the-shore') }] },
     { kind: 'surpriseMe', title: 'Surprise me: something for the garden' },
   ],
   ann: [
-    { title: 'Pottery workshop voucher', price: eur(40, 60), url: shop('pottery-workshop'), reallyWant: true },
+    { title: 'Pottery workshop voucher', price: eur(40, 60), links: [{ url: shop('pottery-workshop') }], reallyWant: true },
     { title: 'Linen apron', variant: 'Sage green', price: eur(29) },
   ],
   bram: [
-    { title: 'Board game: Cascadia', price: eur(35), url: shop('cascadia') },
+    { title: 'Board game: Cascadia', price: eur(35), links: [{ url: shop('cascadia') }] },
     { title: 'Rechargeable bike lights', price: eur(25) },
   ],
   chloe: [
     { title: 'Monstera plant', description: 'A small one, my flat is tiny.', price: eur(20) },
-    { title: 'Scented candle', variant: 'Fig or cedar', price: eur(18), url: shop('candle') },
-    { kind: 'donation', title: 'A donation to the animal shelter', url: shop('animal-shelter') },
+    { title: 'Scented candle', variant: 'Fig or cedar', price: eur(18), links: [{ url: shop('candle') }] },
+    { kind: 'donation', title: 'A donation to the animal shelter', links: [{ url: shop('animal-shelter') }] },
   ],
   eva: [
-    { title: 'Fountain pen', price: eur(30), url: shop('fountain-pen'), reallyWant: true },
+    { title: 'Fountain pen', price: eur(30), links: [{ url: shop('fountain-pen') }], reallyWant: true },
     { title: 'Dotted A5 notebook', price: eur(14) },
   ],
   femke: [
-    { title: 'Yoga mat', variant: 'Not purple', price: eur(45), url: shop('yoga-mat') },
+    { title: 'Yoga mat', variant: 'Not purple', price: eur(45), links: [{ url: shop('yoga-mat') }] },
     { title: 'Loose-leaf tea sampler', price: eur(22) },
   ],
   gilles: [
-    { title: 'Hot sauce gift set', price: eur(28), url: shop('hot-sauce') },
+    { title: 'Hot sauce gift set', price: eur(28), links: [{ url: shop('hot-sauce') }] },
     { title: 'Kind of Blue on vinyl', price: eur(25) },
   ],
   hanne: [
     { title: '1000-piece puzzle', description: 'Landscapes, no cats please.', price: eur(19) },
-    { title: 'Ottolenghi cookbook', price: eur(30), url: shop('cookbook') },
+    { title: 'Ottolenghi cookbook', price: eur(30), links: [{ url: shop('cookbook') }] },
   ],
   jonas: [
     { title: 'Headphone case', price: eur(15) },
-    { title: 'Climbing chalk bag', variant: 'Any colour', price: eur(20), url: shop('chalk-bag') },
+    { title: 'Climbing chalk bag', variant: 'Any colour', price: eur(20), links: [{ url: shop('chalk-bag') }] },
   ],
 };

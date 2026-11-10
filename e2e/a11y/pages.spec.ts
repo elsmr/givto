@@ -68,7 +68,7 @@ const seedGroup = async (phase: Phase, people: User[], db: TestDb) => {
     ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   }
   ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks', price: { currency: 'EUR', amount: 1500 } }));
-  ok(await bob.trpc.mutate('wish.create', { title: 'Cookbook', url: 'https://shop.example/cookbook', reallyWant: true }));
+  ok(await bob.trpc.mutate('wish.create', { title: 'Cookbook', links: [{ url: 'https://shop.example/cookbook', title: 'The vegetarian cookbook', price: { currency: 'EUR', amount: 2495 } }], reallyWant: true }));
   ok(await cee.trpc.mutate('wish.create', { title: 'Scarf' }));
   if (phase === 'open') {
     ok(await ann.trpc.mutate('join.updateLink', { groupSlug: group.slug, requiresApproval: true, maxMembers: null }));

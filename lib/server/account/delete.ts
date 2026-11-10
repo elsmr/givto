@@ -3,6 +3,7 @@ import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { deletePendingSignIns } from '../auth';
 import { getMongoDb, type Collections } from '../db';
+import { deleteWishImagesOf } from '../import/wish-images';
 
 // Shown to the others in place of the person's name; draws keep pointing at the member.
 const removedName = { en: 'Deleted account', nl: 'Verwijderd account' } as const;
@@ -93,6 +94,7 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
     db.sentNotifications.deleteMany({ $or: [{ userId: user.id }, { memberId: mine }] }),
     db.invites.deleteMany({ $or: [{ email: user.email }, { memberId: mine }] }),
     db.emailSuppressions.deleteOne({ _id: user.email.toLowerCase() }),
+    deleteWishImagesOf(user.id),
     db.editions.updateMany(
       { 'participants.memberId': mine },
       { $unset: { 'participants.$[p].address': '', 'participants.$[p].gifteeWishlistSeenAt': '' } },

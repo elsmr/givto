@@ -70,7 +70,7 @@ const deleteOrphanImages = async (now: Date) => {
         $lookup: {
           from: 'wishes',
           let: { id: { $toString: '$_id' } },
-          pipeline: [{ $match: { $expr: { $eq: ['$imageId', '$$id'] } } }, { $limit: 1 }],
+          pipeline: [{ $match: { $expr: { $in: ['$$id', { $ifNull: ['$links.imageId', []] }] } } }, { $limit: 1 }],
           as: 'wishes',
         },
       },

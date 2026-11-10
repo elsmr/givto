@@ -1,6 +1,7 @@
 // Seed for s5-account.spec.ts: "family" (Ann organizer, Bob, Cee, Kid managed by Ann; drawn), "solo"
 // (Ann alone + an invitee without an account; open), "other" (Bob and Cee only). Every text that
 // the deletion checks look for carries the test's `tag`, so parallel runs never see each other's.
+import { ObjectId } from 'mongodb';
 import { newId } from '@/lib/server/db';
 import type { Edition, Participant } from '@/lib/schema/edition';
 import type { Group } from '@/lib/schema/group';
@@ -53,9 +54,15 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     edition(e.other, g.other, 'open', [participant(m.ob), participant(m.oc)]),
   ]);
   const wish = (ownerId: string, title: string) => ({
-    _id: newId(), ownerId, kind: 'wish' as const, title, reallyWant: false, position: 1, createdAt: now, updatedAt: now,
+    _id: newId(), ownerId, kind: 'wish' as const, title, links: [], reallyWant: false, position: 1, createdAt: now, updatedAt: now,
   });
-  const w = { ann: wish(ann.id, `Ann wish ${tag}`), bob: wish(bob.id, `Bob wish ${tag}`), kid: wish(m.kid, `Kid wish ${tag}`) };
+  // Ann's wish links a product with an imported picture (73): deletion removes both.
+  const annImage = new ObjectId();
+  await db.raw.collection('wishImages.files').insertOne({
+    _id: annImage, length: 0, chunkSize: 261120, uploadDate: now, filename: 'wish-image', metadata: { ownerId: ann.id, contentType: 'image/png' },
+  });
+  const annLink = { url: `https://shop.test/ann-${tag}`, title: `Ann product ${tag}`, imageId: annImage.toHexString() };
+  const w = { ann: { ...wish(ann.id, `Ann wish ${tag}`), links: [annLink] }, bob: wish(bob.id, `Bob wish ${tag}`), kid: wish(m.kid, `Kid wish ${tag}`) };
   await db.wishes.insertMany(Object.values(w));
   await db.claims.insertMany([
     { _id: newId(), wishId: w.ann._id, ownerId: ann.id, editionId: e.family, santaMemberId: m.kid, createdAt: now },

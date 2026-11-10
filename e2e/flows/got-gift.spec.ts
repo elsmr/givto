@@ -10,7 +10,7 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   const { draw } = (await db.editions.findOne({ groupId, number: 1 }))!;
   const gifteeId = draw!.assignments[members.find((m) => m.userId === ann.id)!.id];
   const giftee = people.find((p) => members.find((m) => m.id === gifteeId)?.userId === p.id)!;
-  const mug = ok(await giftee.trpc.mutate('wish.create', { title: 'Moomin mug' }));
+  const mug = ok(await giftee.trpc.mutate('wish.create', { title: 'Moomin mug', links: [{ url: 'https://www.bol.com/nl/nl/p/moomin-mok/9300000012345678/' }] }));
   ok(await giftee.trpc.mutate('wish.create', { title: 'Green socks' }));
   ok(await ann.trpc.mutate('claim.add', { ...at, wishId: mug.id }));
 
@@ -27,6 +27,9 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   await dialog.getByRole('button', { name: 'Save' }).click();
   await expect(dialog).toBeHidden();
   await expect(page.getByText("You've got 2 gifts")).toBeVisible();
+  const mugCard = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'Moomin mug' }) });
+  await expect(mugCard.getByText('Bought'), 'the same card, marked bought (73)').toBeVisible();
+  await expect(mugCard.getByRole('link', { name: /^Buy at bol\.com/ })).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
 
   await page.goto(`/g/${group.slug}`);
   const others = members.filter((m) => m.userId !== ann.id).map((m) => m.name).toSorted();

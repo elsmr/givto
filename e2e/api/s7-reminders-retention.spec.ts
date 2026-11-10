@@ -114,7 +114,7 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
       metadata: { ownerId: ann.id, contentType: 'image/png' },
     }))
   );
-  await db.wishes.updateOne({ _id: wish.id }, { $set: { imageId: used.toHexString() } });
+  await db.wishes.updateOne({ _id: wish.id }, { $set: { links: [{ url: 'https://shop.test/lamp' }, { url: 'https://shop.test/lamp-2', imageId: used.toHexString() }] } });
   const result = await run('retention');
   // Counts cover the whole database (a parallel run may have done ours): the shape here, our documents below.
   for (const key of ['addresses', 'editionMessages', 'draws', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
