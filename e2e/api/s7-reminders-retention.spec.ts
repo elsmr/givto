@@ -127,6 +127,20 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);
 });
 
+test('retention: a draw without a gift day goes after 24 months', async ({ signIn, db }) => {
+  const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
+  const people = trio(olive, ann, bob);
+  const [oldGroup, liveGroup] = [groupDoc(olive, 'Old, no gift day', people), groupDoc(olive, 'Live, no gift day', people)];
+  const old = editionDoc(oldGroup, 1, 'done', people, { draw: { ...circle(people), drawnAt: new Date(Date.now() - 25 * 30 * DAY) } });
+  const live = editionDoc(liveGroup, 1, 'drawn', people, { draw: { ...circle(people), drawnAt: new Date(Date.now() - 30 * DAY) } });
+  await db.groups.insertMany([oldGroup, liveGroup]);
+  await db.editions.insertMany([old, live]);
+  await run('retention');
+  const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
+  expect((await after(old)).draw).toBeUndefined();
+  expect((await after(live)).draw).toBeTruthy();
+});
+
 test('retention: bounce records go once no account or pending invite uses the address', async ({ signIn, db, secrets }) => {
   const [olive, dan] = await Promise.all([signIn('olive'), signIn('dan')]);
   const group = groupDoc(olive, 'Bounces', [member(olive, 'Olive', { role: 'organizer' })]);

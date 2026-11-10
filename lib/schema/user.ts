@@ -31,10 +31,12 @@ export const UserFields = v.object({
  * `users` collection. Better Auth owns the document and its `_id` (an ObjectId; `id` hex
  * string in sessions); `locale` is a Better Auth additional field, the rest is ours.
  * `name` is '' until the person enters one (sign-in by email doesn't ask for it).
+ * `locale` is absent on accounts migrated from the old app (58): the browser decides.
  */
 export const User = v.object({
   ...UserFields.entries,
   name: v.string(),
+  locale: v.optional(Locale),
   notifications: v.optional(NotificationPrefs),
   email: Email,
   emailVerified: v.boolean(),

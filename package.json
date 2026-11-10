@@ -13,6 +13,8 @@
     "dev:local": "docker compose up -d --wait && next dev",
     "cron": "node --env-file=.env.development scripts/cron.mjs",
     "seed": "node --env-file=.env.development --import ./tests/ts-hooks.mjs scripts/seed.ts",
+    "migrate": "node --import ./tests/ts-hooks.mjs migrations/run.ts",
+    "migrate:sample": "node --import ./tests/ts-hooks.mjs migrations/generate-v1.ts",
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",

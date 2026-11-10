@@ -19,18 +19,19 @@ export interface Recipient {
 
 const defaults = v.parse(NotificationPrefs, {});
 
-const accountRecipient = async (db: Collections, userId: string): Promise<Omit<Recipient, 'forName'> | null> => {
+/** `fallbackLocale` for accounts without a language setting (migrated from the old app, 58). */
+const accountRecipient = async (db: Collections, userId: string, fallbackLocale: Locale): Promise<Omit<Recipient, 'forName'> | null> => {
   const user = await db.users.findOne({ _id: new ObjectId(userId) }, { projection: { email: 1, locale: 1, notifications: 1 } });
-  return user && { email: user.email, locale: user.locale, userId, prefs: v.parse(NotificationPrefs, user.notifications ?? {}) };
+  return user && { email: user.email, locale: user.locale ?? fallbackLocale, userId, prefs: v.parse(NotificationPrefs, user.notifications ?? {}) };
 };
 
 /** Who reads email for this member: their account, their manager's, or the address they were invited at. */
 export const memberRecipient = async (db: Collections, group: Group, member: Member): Promise<Recipient | null> => {
   if (member.status === 'removed' || member.status === 'declined') return null;
-  if (member.userId) return accountRecipient(db, member.userId);
+  if (member.userId) return accountRecipient(db, member.userId, member.locale ?? group.locale);
   const manager = member.managedBy ? group.members.find((m) => m.id === member.managedBy) : undefined;
   if (manager?.userId) {
-    const recipient = await accountRecipient(db, manager.userId);
+    const recipient = await accountRecipient(db, manager.userId, manager.locale ?? group.locale);
     return recipient && { ...recipient, forName: member.name };
   }
   const invite = await db.invites.findOne({ memberId: member.id }, { sort: { createdAt: -1 }, projection: { email: 1 } });

@@ -1,6 +1,7 @@
 // Lets node run the app's TypeScript directly, as the bundler does: extensionless relative imports
 // resolve to `.ts` then `.tsx`, `.tsx` (the email templates) compiles with Next's SWC (already
-// installed), and `.json` (messages) imports without import attributes. Node strips `.ts` types itself.
+// installed), `.json` (messages) imports without import attributes, and directory imports resolve to
+// their `index.ts`. Node strips `.ts` types itself.
 // Use: node --import ./tests/ts-hooks.mjs <script>
 import { readFileSync } from 'node:fs';
 import { createRequire, registerHooks } from 'node:module';
@@ -15,7 +16,9 @@ registerHooks({
     try {
       return nextResolve(specifier, context);
     } catch (error) {
-      if (!specifier.startsWith('.') || error?.code !== 'ERR_MODULE_NOT_FOUND') throw error;
+      if (!specifier.startsWith('.')) throw error;
+      if (error?.code === 'ERR_UNSUPPORTED_DIR_IMPORT') return nextResolve(`${specifier}/index.ts`, context);
+      if (error?.code !== 'ERR_MODULE_NOT_FOUND') throw error;
       try {
         return nextResolve(`${specifier}.ts`, context);
       } catch {
