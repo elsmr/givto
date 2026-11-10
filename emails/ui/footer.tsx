@@ -16,22 +16,17 @@ export interface FooterProps {
 const link = { color: color.textMuted, textDecoration: 'underline' };
 
 export const Footer = ({ locale, member = false, unsubscribe }: FooterProps) => {
+  if (!member && !unsubscribe) return null;
   const t = emailTranslator(locale);
   return (
     <p
       className="text-muted"
       style={{ margin: 0, padding: '20px 4px 0', fontFamily: font.body, fontSize: 13, lineHeight: '20px', color: color.textMuted }}
     >
-      <strong>Givto</strong> · {t('layout.tagline')}
-      {member && (
-        <>
-          <br />
-          {t('layout.why')}
-        </>
-      )}
+      {member && t('layout.why')}
+      {member && unsubscribe && <br />}
       {unsubscribe && (
         <>
-          <br />
           <a href={siteUrl(locale, '/account')} className="text-muted" style={link}>
             {t('layout.manage')}
           </a>
