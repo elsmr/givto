@@ -9,6 +9,7 @@ import { buttonVariants } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -47,7 +48,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
 
   const { data } = group;
   const { edition } = data;
-  const beforeDraw = edition && (edition.status === 'draft' || edition.status === 'open');
+  const beforeDraw = edition && isBeforeDraw(edition);
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">

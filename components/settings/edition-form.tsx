@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
-import { EditionTitle, GiftDay } from '@/lib/schema/edition';
+import { EditionTitle, GiftDay, isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
@@ -37,7 +37,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
     })
   );
   const update = (patch: Partial<EditionDraft>) => setDraft((current) => ({ ...current, ...patch }));
-  const beforeDraw = edition.status === 'draft' || edition.status === 'open';
+  const beforeDraw = isBeforeDraw(edition);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

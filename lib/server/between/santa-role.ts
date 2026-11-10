@@ -55,6 +55,3 @@ export const ownAndManagedIds = (group: Group, caller: Member): string[] => [
   caller.id,
   ...group.members.filter((m) => m.managedBy === caller.id).map((m) => m.id),
 ];
-
-/** Questions and Psst! go out from drawn until gift day is over. */
-export const isAfterDrawOpen = (edition: Edition) => edition.status === 'drawn' || edition.status === 'giftday';

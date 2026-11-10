@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
 import { PersonName } from '../../schema/common';
-import type { Edition } from '../../schema/edition';
+import { isDrawn, type Edition } from '../../schema/edition';
 import { NotificationPrefs } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
 import { exportAccount } from '../account/export';
@@ -46,9 +46,7 @@ export const accountRouter = router({
           status: edition.status,
           giftDay: edition.giftDay?.date,
           timeZone: edition.timeZone,
-          gifteeReady:
-            (edition.status === 'drawn' || edition.status === 'giftday') &&
-            Boolean(edition.draw?.assignments[member.id]),
+          gifteeReady: isDrawn(edition) && Boolean(edition.draw?.assignments[member.id]),
         },
       };
     });

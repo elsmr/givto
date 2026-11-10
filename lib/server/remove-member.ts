@@ -1,7 +1,7 @@
+import { isDrawn } from '../schema/edition';
 import type { Group } from '../schema/group';
 import type { Collections } from './db';
 import { takeOutOfDraw } from './draw/patch';
-import { isDrawn } from './draw/rules';
 import { currentEdition } from './membership';
 
 /**

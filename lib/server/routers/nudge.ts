@@ -1,7 +1,8 @@
 import * as v from 'valibot';
 import { anonymousSendAt } from '../../anonymous-delay';
+import { isDrawn } from '../../schema/edition';
 import { NudgeKind, type Nudge } from '../../schema/nudge';
-import { isAfterDrawOpen, ownAndManagedIds, santaActionProcedure, santaViewProcedure } from '../between/santa-role';
+import { ownAndManagedIds, santaActionProcedure, santaViewProcedure } from '../between/santa-role';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { enforceRateLimit } from '../rate-limit';
@@ -36,14 +37,14 @@ export const nudgeRouter = router({
     return {
       giftee: { name: giftee.name },
       kind: kindFor(wishes.length),
-      canNudge: isAfterDrawOpen(ctx.edition) && !answersOwnQuestions && !nextAt,
+      canNudge: isDrawn(ctx.edition) && !answersOwnQuestions && !nextAt,
       answersOwnQuestions,
       nextAt,
     };
   }),
 
   send: santaActionProcedure.input(v.object({ kind: NudgeKind })).mutation(async ({ ctx, input }) => {
-    if (!isAfterDrawOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
+    if (!isDrawn(ctx.edition)) throw new AppError('EDITION_CLOSED');
     if (ctx.answersOwnQuestions) throw new AppError('FORBIDDEN');
     const wishes = await visibleWishes(ctx.db, ctx.giftee);
     if (input.kind !== kindFor(wishes.length)) throw new AppError('WRONG_NUDGE_KIND');

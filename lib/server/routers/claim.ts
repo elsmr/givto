@@ -1,14 +1,11 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import type { Edition } from '../../schema/edition';
+import { isDrawn } from '../../schema/edition';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
 import { toWishView, visibleWishes } from '../wishlist/wish-view';
-
-/** Dibs! can be called and dropped from the draw until gift day is over. */
-const claimsOpen = (edition: Edition) => edition.status === 'drawn' || edition.status === 'giftday';
 
 const WishInput = v.object({ wishId: Id });
 
@@ -35,13 +32,13 @@ export const claimRouter = router({
     return {
       giftee: { name: giftee.name },
       budget: ctx.edition.budget,
-      canClaim: claimsOpen(ctx.edition),
+      canClaim: isDrawn(ctx.edition),
       wishes: wishes.map((wish) => ({ ...toWishView(wish), claim: claimState(wish._id) })),
     };
   }),
 
   add: santaOfProcedure.input(WishInput).mutation(async ({ ctx, input }) => {
-    if (!claimsOpen(ctx.edition)) throw new AppError('FORBIDDEN');
+    if (!isDrawn(ctx.edition)) throw new AppError('FORBIDDEN');
     const wish = (await visibleWishes(ctx.db, ctx.giftee)).find((w) => w._id === input.wishId);
     if (!wish) throw new AppError('NOT_FOUND');
     try {
@@ -61,7 +58,7 @@ export const claimRouter = router({
   }),
 
   remove: santaOfProcedure.input(WishInput).mutation(async ({ ctx, input }) => {
-    if (!claimsOpen(ctx.edition)) throw new AppError('FORBIDDEN');
+    if (!isDrawn(ctx.edition)) throw new AppError('FORBIDDEN');
     const { deletedCount } = await ctx.db.claims.deleteOne({
       wishId: input.wishId,
       editionId: ctx.edition._id,

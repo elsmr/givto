@@ -4,7 +4,7 @@ import { ReminderWishlistEmail, reminderWishlistSubject } from '../../../emails/
 import { formatLocalDate } from '../../../emails/ui/format-date';
 import { siteUrl } from '../../../emails/ui/site';
 import { daysBetween, todayIn } from '../../local-date';
-import type { Edition } from '../../schema/edition';
+import { isDrawn, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
@@ -68,7 +68,7 @@ const editionReminders = async (db: Collections, group: Group, edition: Edition 
   }
 
   const hour = localHour(now, edition.timeZone);
-  if ((edition.status === 'drawn' || edition.status === 'giftday') && toGiftDay === 0 && hour >= GIFT_DAY_HOURS.from && hour < GIFT_DAY_HOURS.to) {
+  if (isDrawn(edition) && toGiftDay === 0 && hour >= GIFT_DAY_HOURS.from && hour < GIFT_DAY_HOURS.to) {
     // Managers hear it once, for themselves: not again per managed member.
     const people = members(participants.map((p) => p.memberId)).filter((m) => m.userId);
     counts.push(await remind('giftday', people, (member, to, key) =>

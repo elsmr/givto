@@ -3,7 +3,7 @@ import { findStuckGivers } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { todayIn } from '../../local-date';
 import { Id, PersonName, Price, TimeZone } from '../../schema/common';
-import { GiftDay, type Edition } from '../../schema/edition';
+import { GiftDay, isDrawn, type Edition } from '../../schema/edition';
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
@@ -40,8 +40,6 @@ export const compactPrice = ({ currency, amount, maxAmount }: Price): Price => (
   amount,
   ...(maxAmount !== undefined && { maxAmount }),
 });
-
-const isDrawn = (edition: Edition | null) => edition?.status === 'drawn' || edition?.status === 'giftday';
 
 export const groupRouter = router({
   /** Group + first edition (open), organizer joined. Needs a verified session (no open relay, 43). */
@@ -117,7 +115,7 @@ export const groupRouter = router({
   /** Households + keep-apart pairs (26). Before the draw; refuses sets that make the draw impossible. */
   setKeepApart: organizerProcedure.input(KeepApartInput).mutation(async ({ ctx, input }) => {
     const edition = await currentEdition(ctx.db, ctx.group._id);
-    if (isDrawn(edition)) throw new AppError('ALREADY_DRAWN');
+    if (edition && isDrawn(edition)) throw new AppError('ALREADY_DRAWN');
     const joined = new Set(ctx.group.members.filter((m) => m.status === 'joined').map((m) => m.id));
     const ids = [...input.households.flat(), ...input.pairs.flat()];
     const inOneHousehold = new Set(input.households.flat()).size === input.households.flat().length;

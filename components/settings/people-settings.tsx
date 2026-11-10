@@ -3,6 +3,7 @@ import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FieldError } from '@/components/ui/field';
 import { useTRPC } from '@/lib/client/trpc';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { PersonRow } from './person-row';
@@ -14,7 +15,7 @@ export const PeopleSettings = ({ group, edition }: { group: GroupData; edition: 
   const trpc = useTRPC();
   const refresh = useRefreshEdition(group.slug);
   const setParticipants = useMutation(trpc.settings.setParticipants.mutationOptions({ onSuccess: () => void refresh() }));
-  const beforeDraw = edition.status === 'draft' || edition.status === 'open';
+  const beforeDraw = isBeforeDraw(edition);
   const people = group.members.filter((m) => m.status !== 'requested');
   const tick = (memberId: string, checked: boolean) =>
     setParticipants.mutate({

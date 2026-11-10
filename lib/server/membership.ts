@@ -1,10 +1,10 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { ObjectId } from 'mongodb';
+import { isDrawn } from '../schema/edition';
 import type { Group } from '../schema/group';
 import type { Member } from '../schema/member';
 import type { Collections } from './db';
 import { slotInLateJoiner } from './draw/patch';
-import { isDrawn } from './draw/rules';
 
 /** URL-safe random token; 18 bytes = 24 chars. */
 export const randomToken = (bytes = 18): string => randomBytes(bytes).toString('base64url');

@@ -2,8 +2,8 @@ import { AnswerEmail, answerSubject } from '../../../emails/answer';
 import { PsstEmail, psstSubject } from '../../../emails/psst';
 import { QuestionEmail, questionSubject } from '../../../emails/question';
 import { siteUrl } from '../../../emails/ui/site';
+import { isDrawn } from '../../schema/edition';
 import type { Collections } from '../db';
-import { isAfterDrawOpen } from '../between/santa-role';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { groupUrl } from '../mail/urls';
@@ -25,7 +25,7 @@ export const deliverAnonymousMessages = async (db: Collections, now: Date) => {
   const psst = await runEach('psst', nudges, async (nudge) => {
     const found = await context(nudge.editionId);
     const giftee = found?.group.members.find((m) => m.id === nudge.gifteeMemberId);
-    const to = found && giftee && isAfterDrawOpen(found.edition) && (await memberRecipient(db, found.group, giftee));
+    const to = found && giftee && isDrawn(found.edition) && (await memberRecipient(db, found.group, giftee));
     // "Add some ideas" is moot once there are wishes; the in-app notice drops it too.
     const moot = nudge.kind === 'emptyWishlist' && giftee && (await visibleWishes(db, giftee)).length > 0;
     const result = to && !moot
@@ -51,7 +51,7 @@ export const deliverAnonymousMessages = async (db: Collections, now: Date) => {
   const questions = await runEach('question', asked, async (question) => {
     const found = await context(question.editionId);
     const giftee = found?.group.members.find((m) => m.id === question.gifteeMemberId);
-    const to = found && giftee && isAfterDrawOpen(found.edition) && (await memberRecipient(db, found.group, giftee));
+    const to = found && giftee && isDrawn(found.edition) && (await memberRecipient(db, found.group, giftee));
     const result = to
       ? await sendNotice(db, {
           key: `question:${question._id}`,

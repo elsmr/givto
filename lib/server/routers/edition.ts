@@ -1,4 +1,4 @@
-import type { Edition } from '../../schema/edition';
+import { isBeforeDraw, type Edition } from '../../schema/edition';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
@@ -13,7 +13,7 @@ export const editionRouter = router({
    */
   startNext: organizerProcedure.mutation(async ({ ctx }) => {
     const current = await currentEdition(ctx.db, ctx.group._id);
-    if (!current || current.status === 'draft' || current.status === 'open') throw new AppError('EDITION_IN_PROGRESS');
+    if (!current || isBeforeDraw(current)) throw new AppError('EDITION_IN_PROGRESS');
     const now = new Date();
     const year = current.year + 1;
     const hadDraw = Object.keys(current.draw?.assignments ?? {}).length > 0;
