@@ -10,7 +10,7 @@ import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { GroupVisibilityDialog } from './group-visibility-dialog';
-import { WishSummary } from './wish-summary';
+import { WishCard } from './wish-card';
 
 /** "My wishlist in this group" (61): what this group sees, hidden wishes marked; editing on /wishlist, hiding in a dialog. */
 export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
@@ -36,13 +36,14 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             <p>{t('empty')}</p>
           </div>
         ) : (
-          <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
+          <ul className="flex flex-col gap-4">
             {wishes.map((wish) => (
-              <li key={wish.id} className="flex flex-col gap-2 py-3">
-                <div className={wish.hidden ? 'opacity-60' : undefined}>
-                  <WishSummary wish={wish} />
-                </div>
-                {wish.hidden && <Badge>{t('hidden-badge')}</Badge>}
+              <li key={wish.id}>
+                <WishCard
+                  wish={wish}
+                  className={wish.hidden ? 'border-dashed! shadow-none' : undefined}
+                  status={wish.hidden && <Badge>{t('hidden-badge')}</Badge>}
+                />
               </li>
             ))}
           </ul>

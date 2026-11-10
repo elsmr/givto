@@ -68,6 +68,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     const text = JSON.stringify(data);
     expect(data.account.email).toBe(ann.email);
     expect(data.wishes.map((w) => w.title)).toEqual([`Ann wish ${tag}`]);
+    expect(data.wishes[0].links.map((link) => link.title)).toEqual([`Ann product ${tag}`]);
     expect(data.tipsWritten.map((t) => t.text)).toEqual([`Tip by Ann ${tag}`]);
     expect(data.groups).toHaveLength(2);
     expect(data.passkeys).toHaveLength(1);
@@ -96,7 +97,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
   });
 
   await test.step('deletion leaves no personal data in any collection', async () => {
-    const needles = [ann.id, ann.email, `Annabel ${tag}`, `Ann wish ${tag}`, `Tip about Ann ${tag}`, `Tip by Ann ${tag}`, `Question to Ann ${tag}`, `Annstraat ${tag}`];
+    const needles = [ann.id, ann.email, `Annabel ${tag}`, `Ann wish ${tag}`, `Ann product ${tag}`, `Tip about Ann ${tag}`, `Tip by Ann ${tag}`, `Question to Ann ${tag}`, `Annstraat ${tag}`];
     const hits: string[] = [];
     for (const { name } of await db.raw.listCollections({}, { nameOnly: true }).toArray()) {
       for (const doc of await db.raw.collection(name).find().toArray()) {

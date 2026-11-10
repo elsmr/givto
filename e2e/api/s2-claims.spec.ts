@@ -11,7 +11,7 @@ test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ sig
   const [olive, sam, cee, nina, ben] = await Promise.all(['olive', 'sam', 'cee', 'nina', 'ben'].map((name) => signIn(name)));
   // Olive's wishes.
   const socks = ok(await olive.trpc.mutate('wish.create', { title: 'Wool socks' }));
-  const book = ok(await olive.trpc.mutate('wish.create', { title: 'A great novel', url: 'https://shop.test/book' }));
+  const book = ok(await olive.trpc.mutate('wish.create', { title: 'A great novel', links: [{ url: 'https://shop.test/book' }] }));
   const scarf = ok(await olive.trpc.mutate('wish.create', { title: 'Surprise me: something cosy', kind: 'surpriseMe' }));
   ok(await olive.trpc.mutate('wish.create', { title: XSS, description: XSS }));
 

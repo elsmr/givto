@@ -10,17 +10,20 @@ import { moveWish } from '../wishlist/positions';
 import { listWishes, toWishView } from '../wishlist/wish-view';
 
 const MAX_WISHES = 200;
-const OPTIONAL_FIELDS = ['description', 'url', 'imageId', 'price', 'variant'] as const;
+const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
 
 const WishInput = v.object({ wishId: Id });
 
 // superjson keeps explicit `undefined`s (also inside `price`), and the driver would store them as null.
-const withoutUndefined = (value: object): object =>
-  Object.fromEntries(
+const withoutUndefined = (value: unknown): unknown => {
+  if (Array.isArray(value)) return value.map(withoutUndefined);
+  if (!value || typeof value !== 'object') return value;
+  return Object.fromEntries(
     Object.entries(value)
       .filter(([, entry]) => entry !== undefined)
-      .map(([key, entry]) => [key, entry && typeof entry === 'object' ? withoutUndefined(entry) : entry])
+      .map(([key, entry]) => [key, withoutUndefined(entry)])
   );
+};
 const definedFields = (fields: WishFields) => withoutUndefined(fields) as WishFields;
 
 const findOwnWish = async (ctx: { db: Collections; user: { id: string } }, wishId: string): Promise<Wish> => {
@@ -29,10 +32,14 @@ const findOwnWish = async (ctx: { db: Collections; user: { id: string } }, wishI
   return wish;
 };
 
+const imageIds = (wish: Pick<WishFields, 'links'>) => wish.links.flatMap((link) => (link.imageId ? [link.imageId] : []));
+
 /** Only images this person imported can be attached. */
-const checkImage = async (imageId: string | undefined, userId: string) => {
-  if (imageId && (await findWishImage(imageId))?.metadata.ownerId !== userId) {
-    throw new AppError('INVALID_INPUT', { details: { field: 'imageId' } });
+const checkImages = async (ids: string[], userId: string) => {
+  for (const imageId of ids) {
+    if ((await findWishImage(imageId))?.metadata.ownerId !== userId) {
+      throw new AppError('INVALID_INPUT', { details: { field: 'imageId' } });
+    }
   }
 };
 
@@ -43,7 +50,7 @@ export const wishRouter = router({
   create: authedProcedure.input(WishFields).mutation(async ({ ctx, input }) => {
     const existing = await listWishes(ctx.db, ctx.user.id);
     if (existing.length >= MAX_WISHES) throw new AppError('WISHLIST_FULL', { details: { max: MAX_WISHES } });
-    await checkImage(input.imageId, ctx.user.id);
+    await checkImages(imageIds(input), ctx.user.id);
     const now = new Date();
     const wish: Wish = {
       _id: newId(),
@@ -69,7 +76,9 @@ export const wishRouter = router({
     .input(v.object({ ...WishInput.entries, ...WishFields.entries }))
     .mutation(async ({ ctx, input: { wishId, ...fields } }) => {
       const wish = await findOwnWish(ctx, wishId);
-      if (fields.imageId !== wish.imageId) await checkImage(fields.imageId, ctx.user.id);
+      const before = imageIds(wish);
+      const after = imageIds(fields);
+      await checkImages(after.filter((id) => !before.includes(id)), ctx.user.id);
       const cleared = OPTIONAL_FIELDS.filter((key) => fields[key] === undefined);
       const unset = Object.fromEntries(cleared.map((key) => [key, true as const]));
       const updated = await ctx.db.wishes.findOneAndUpdate(
@@ -78,7 +87,7 @@ export const wishRouter = router({
         { returnDocument: 'after' }
       );
       if (!updated) throw new AppError('NOT_FOUND');
-      if (wish.imageId && wish.imageId !== fields.imageId) await deleteWishImage(wish.imageId);
+      await Promise.all(before.filter((id) => !after.includes(id)).map(deleteWishImage));
       await markWishlistChanged(ctx.db, ctx.user.id);
       return toWishView(updated);
     }),
@@ -92,7 +101,7 @@ export const wishRouter = router({
         { 'members.userId': ctx.user.id },
         { $pull: { 'members.$[].wishlistView.hiddenWishIds': wish._id } }
       ),
-      wish.imageId && deleteWishImage(wish.imageId),
+      ...imageIds(wish).map(deleteWishImage),
       markWishlistChanged(ctx.db, ctx.user.id),
     ]);
     return { wishId: wish._id };

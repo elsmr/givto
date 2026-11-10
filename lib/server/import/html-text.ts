@@ -79,6 +79,32 @@ export const metaValues = (html: string): Map<string, string> => {
 
 export const titleTag = (html: string): string | undefined => html.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i)?.[1];
 
+/** The text inside the first `<tagName id="id">…</tagName>`, tags and all. */
+export const elementById = (html: string, tagName: string, id: string): string | undefined =>
+  html.match(new RegExp(`<${tagName}\\b[^>]*\\sid=["']${id}["'][^>]*>([\\s\\S]*?)</${tagName}>`, 'i'))?.[1];
+
+/**
+ * Microdata of the first schema.org Product: `itemprop` values (lower-cased names, first one
+ * wins) from the Product's start tag on. A value is the `content`, an image's `src`, a link's
+ * `href`, or the element's text.
+ */
+export const microdataProduct = (html: string): Map<string, string> => {
+  const values = new Map<string, string>();
+  const start = html.search(/itemtype\s*=\s*["']?https?:\/\/schema\.org\/Product\b/i);
+  if (start < 0) return values;
+  const scope = html.slice(start);
+  for (const match of scope.matchAll(/<([a-z0-9]+)\b[^>]*\bitemprop\s*=[^>]*>/gi)) {
+    const [tag, tagName] = match;
+    const attributes = tagAttributes(tag);
+    const key = attributes.itemprop?.toLowerCase();
+    if (!key || values.has(key)) continue;
+    const inner = () => scope.slice(match.index + tag.length).match(new RegExp(`^([\\s\\S]*?)</${tagName}>`, 'i'))?.[1];
+    const value = attributes.content ?? attributes.src ?? attributes.href ?? inner();
+    if (value?.trim()) values.set(key, value);
+  }
+  return values;
+};
+
 /** An absolute http(s) URL resolved against the page, or nothing. */
 export const absoluteHttpUrl = (value: unknown, base: string): string | undefined => {
   if (typeof value !== 'string' || !value.trim()) return undefined;

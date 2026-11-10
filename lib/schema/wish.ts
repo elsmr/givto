@@ -5,14 +5,28 @@ import { HttpUrl, Id, MultiLine, Price, SingleLine } from './common';
 export const WishKind = v.picklist(['wish', 'surpriseMe', 'donation']);
 export type WishKind = v.InferOutput<typeof WishKind>;
 
-/** Fields the owner edits (38, 46). The add form is `title` plus "more". */
+export const MAX_WISH_LINKS = 10;
+
+/**
+ * A product page for a wish (73). A wish's links are alternatives: any of them will do. The
+ * link's title and price describe that listing; the wish keeps its own. The shop shown is the
+ * URL's host.
+ */
+export const WishLink = v.object({
+  url: HttpUrl,
+  title: v.optional(SingleLine(200)),
+  price: v.optional(Price),
+  /** Image downloaded once by the URL import and served by us (39: no hotlinking). GridFS file id. */
+  imageId: v.optional(Id),
+});
+export type WishLink = v.InferOutput<typeof WishLink>;
+
+/** Fields the owner edits (38, 46, 73). Cards show the first link's image. */
 export const WishFields = v.object({
   kind: v.optional(WishKind, 'wish'),
   title: SingleLine(200),
   description: v.optional(MultiLine(2000)),
-  url: v.optional(HttpUrl),
-  /** Image downloaded once by the URL import and served by us (39: no hotlinking). GridFS file id. */
-  imageId: v.optional(Id),
+  links: v.optional(v.pipe(v.array(WishLink), v.maxLength(MAX_WISH_LINKS)), []),
   price: v.optional(Price),
   /** Size, colour, variant. */
   variant: v.optional(SingleLine(200)),
