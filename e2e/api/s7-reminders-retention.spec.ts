@@ -141,6 +141,40 @@ test('retention: a draw without a gift day goes after 24 months', async ({ signI
   expect((await after(live)).draw).toBeTruthy();
 });
 
+test('retention without a gift day: counted from done or the next edition; the live one keeps its data', async ({ signIn, db }) => {
+  const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
+  const people = trio(olive, ann, bob);
+  const [nextGroup, doneGroup] = [groupDoc(olive, 'Superseded, no gift day', people), groupDoc(olive, 'Done, no gift day', people)];
+  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' };
+  const seeded = (group: ReturnType<typeof groupDoc>, number: number, status: 'drawn' | 'done', extra: Partial<ReturnType<typeof editionDoc>>) => {
+    const edition = editionDoc(group, number, status, people, { draw: circle(people), ...extra });
+    return { ...edition, participants: edition.participants.map((p) => ({ ...p, address })) };
+  };
+  const monthsAgo = (months: number) => new Date(Date.now() - months * 30 * DAY);
+  const superseded = seeded(nextGroup, 1, 'drawn', { createdAt: monthsAgo(6) });
+  const live = seeded(nextGroup, 2, 'drawn', { createdAt: monthsAgo(4) });
+  const doneLongAgo = seeded(doneGroup, 1, 'done', { statusChangedAt: { done: monthsAgo(4) } });
+  const doneRecently = seeded(doneGroup, 2, 'done', { statusChangedAt: { done: monthsAgo(1) } });
+  const editions = [superseded, live, doneLongAgo, doneRecently];
+  await db.groups.insertMany([nextGroup, doneGroup]);
+  await db.editions.insertMany(editions);
+  for (const edition of editions) {
+    const base = { _id: newId(), editionId: edition._id, createdAt: monthsAgo(5) };
+    await db.claims.insertOne({ ...base, wishId: newId(), ownerId: ann.id, santaMemberId: people[0].id });
+    await db.tips.insertOne({ ...base, _id: newId(), authorMemberId: people[0].id, aboutMemberId: people[1].id, text: 'Tip', anonymous: false, updatedAt: base.createdAt });
+    await db.guesses.insertOne({ ...base, _id: newId(), guesserMemberId: people[1].id, guessedMemberId: people[2].id });
+  }
+  await run('retention');
+  const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
+  const hasAddresses = async (edition: { _id: string }) => (await after(edition)).participants.some((p) => p.address);
+  expect(await Promise.all(editions.map(hasAddresses)), 'only the live edition keeps addresses').toEqual([false, true, false, false]);
+  const kept = async ({ _id: editionId }: { _id: string }) =>
+    (await db.claims.countDocuments({ editionId })) + (await db.tips.countDocuments({ editionId })) + (await db.guesses.countDocuments({ editionId }));
+  expect(await Promise.all(editions.map(kept)), 'claims, tips and guesses: 3 months after the end').toEqual([0, 3, 0, 3]);
+  expect((await after(superseded)).draw, "replaced by edition 2's draw").toBeUndefined();
+  expect((await after(live)).draw).toBeTruthy();
+});
+
 test('retention: bounce records go once no account or pending invite uses the address', async ({ signIn, db, secrets }) => {
   const [olive, dan] = await Promise.all([signIn('olive'), signIn('dan')]);
   const group = groupDoc(olive, 'Bounces', [member(olive, 'Olive', { role: 'organizer' })]);
