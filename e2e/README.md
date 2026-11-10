@@ -41,6 +41,7 @@ Import `test`, `expect` and helpers from `../fixtures`, never from `@playwright/
 | `user.trpc.query(path, input)` / `.mutate(path, input)` | tRPC call, superjson like the app's client. Paths, inputs and outputs typed from `AppRouter`. Returns `{ status, data, error }`; `error.data` has `appCode`, `requestId`, `issues`, `details`. Invalid input on purpose: `{ … } as never`. |
 | `ok(result)` | `data` of a 200, or fails with the error. |
 | `trpcClient(request)` | The same client for any `APIRequestContext`. |
+| `newPage()` | Another person's page: a new browser context with the project's device and its own IP, closed after the test. |
 | `signInPage(page, user)` | Copies the user's session cookie into the browser context (fast; for flows that aren't about signing in). |
 | `signInWithUi(page, email)` | Fills the sign-in form on the current page: email → code from the mail mock → Sign in. |
 | `mailsTo(to, kind?)` | Mails to an address (oldest first); `kind` = Mailgun tag (`reminderGift`, `psst`, …; sign-in mails have none). |
@@ -92,7 +93,7 @@ test('a member sees the group', async ({ page, signIn, signInPage }) => {
 ```
 
 - Locators by role and accessible name (the English messages in `messages/en`), not CSS.
-- Several people at once: `browser.newContext()` per person, `signInPage(otherPage, user)`.
+- Several people at once: `const bobPage = await newPage()` per person (same device, own IP), `signInPage(bobPage, bob)`.
 - Steps that build on each other belong in one test with `test.step(…)`, not in serial tests.
 - Mobile-only or desktop-only: `test.skip(testInfo.project.name === 'mobile', 'why')`.
 - WebAuthn: CDP virtual authenticator, see `flows/sign-in.spec.ts`.

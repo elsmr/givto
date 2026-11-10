@@ -1,6 +1,6 @@
 // Shared fixtures for e2e specs. Import `test` and `expect` from here, not from @playwright/test.
 // See e2e/README.md for the patterns.
-import { test as base, expect, type APIRequestContext, type Page } from '@playwright/test';
+import { test as base, expect, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test';
 import { MongoClient, type Db } from 'mongodb';
 import { collections, type Collections } from '@/lib/server/db';
 import { BASE_URL, MONGODB_DB, MONGODB_URI } from './env';
@@ -38,6 +38,8 @@ interface TestFixtures {
   newClient: (options?: { storageState?: StorageState }) => Promise<Client>;
   /** A new account (unique email `e2e-<name>-…`), signed in through the emailed code. */
   signIn: (name: string, options?: AuthOptions) => Promise<User>;
+  /** Another person's browser: a new context with the project's device and its own IP, closed after the test. */
+  newPage: () => Promise<Page>;
   /** Puts the user's session cookie into the page's browser context. */
   signInPage: (page: Page, user: User) => Promise<void>;
   /** Signs in through the real form on the current page (email → code from the mail mock). */
@@ -83,6 +85,19 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       const me = ok(await client.trpc.query('me.get'));
       return { ...client, id: me.id, email };
     });
+  },
+
+  newPage: async ({ browser, baseURL, viewport, userAgent, deviceScaleFactor, isMobile, hasTouch, locale }, use) => {
+    const contexts: BrowserContext[] = [];
+    await use(async () => {
+      const context = await browser.newContext({
+        baseURL, viewport, userAgent, deviceScaleFactor, isMobile, hasTouch, locale,
+        extraHTTPHeaders: { 'x-forwarded-for': randomIp() },
+      });
+      contexts.push(context);
+      return context.newPage();
+    });
+    await Promise.all(contexts.map((context) => context.close()));
   },
 
   signInPage: async ({}, use) => {
