@@ -6,12 +6,24 @@
 import { randomBytes } from 'node:crypto';
 import nlEmail from '@/messages/nl/email.json' with { type: 'json' };
 import { expect, latestMail, ok, runCron, test, type SentMail } from '../fixtures';
-import { drawOf, editionDoc, expectMails, groupDoc, mails, member, run, today } from './s7-seed';
+import { circle, drawOf, editionDoc, expectMails, groupDoc, mails, member, run, today } from './s7-seed';
 
 test('cron: secret required, unknown jobs 404', async () => {
   expect((await runCron('deliveries', { authorization: null })).status).toBe(401);
   expect((await runCron('deliveries', { authorization: 'Bearer nope' })).status).toBe(401);
   expect((await runCron('nope')).status).toBe(404);
+});
+
+test('deliveries leaves a drawn edition without pending notices alone', async ({ signIn, db }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const people = [member(ann, 'Ann', { role: 'organizer' }), member(bob, 'Bob'), member(cee, 'Cee')];
+  const quiet = groupDoc(ann, 'Quiet', people);
+  const edition = editionDoc(quiet, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: circle(people) });
+  await db.groups.insertOne(quiet);
+  await db.editions.insertOne(edition);
+  await run('deliveries');
+  for (const user of [ann, bob, cee]) expect(await mails(user, 'namesDrawn')).toHaveLength(0);
+  expect(await db.sentNotifications.countDocuments({ _id: { $regex: `^drawn:${edition._id}:` } })).toBe(0);
 });
 
 test('a family edition: join request, draw notices, Psst!, questions, unsubscribe, digests, handover', async ({ signIn, db }) => {
@@ -25,15 +37,18 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     locale: 'nl',
     joinLink: { token: linkToken, revoked: false, requiresApproval: true, createdAt: new Date() },
   });
+  // Drawn with its notices still pending (as when sending right after the draw failed): the deliveries job catches up.
   const e1 = editionDoc(family, 1, 'drawn', [...Object.values(m), kid], {
     giftDay: { date: today('Europe/Brussels', 10) },
     draw: drawOf([[m.olive, m.ann], [m.ann, m.bob], [m.bob, m.cee], [m.cee, kid], [kid, m.olive]]),
+    drawNoticesPendingAt: new Date(),
   });
   await db.groups.insertOne(family);
   await db.editions.insertOne(e1);
   const E1 = { groupSlug: family.slug, editionNumber: 1 };
   await db.users.updateOne({ email: dan.email }, { $set: { locale: 'nl' } });
   const drawNotices = () => db.sentNotifications.countDocuments({ _id: { $regex: `^drawn:${e1._id}:` } });
+  const noticesPending = async () => (await db.editions.findOne({ _id: e1._id }))!.drawNoticesPendingAt;
   let danId = '';
 
   await test.step('join request emails the organizer', async () => {
@@ -48,6 +63,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     await expectMails(olive, 'namesDrawn', 2, 'Family');
     for (const user of [ann, bob, cee]) await expectMails(user, 'namesDrawn', 1, 'Family');
     expect(await drawNotices(), 'five Santas, five notices').toBe(5);
+    await expect.poll(noticesPending, { message: 'caught up' }).toBeUndefined();
     await run('deliveries');
     expect(await drawNotices(), 'second tick sends nothing').toBe(5);
     for (const [user, giftee] of [[ann, 'Bob'], [bob, 'Cee'], [cee, 'Kid']] as const) {
@@ -61,10 +77,10 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(oliveMails.some((mail) => mail.text.includes('For Kid'))).toBe(true);
   });
 
-  await test.step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email', async () => {
+  await test.step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email, without a cron run', async () => {
     // Approval after the draw slots Dan in at a random place where the exclusions allow it (S4).
     // Only Ann may give to Dan, so the place is Ann → Dan → Bob and later steps can rely on it.
-    // Set before approving: a parallel deliveries run would otherwise mail a random place.
+    // Set before approving: the approval itself mails the place.
     const exclusions = [m.olive, m.bob, m.cee, kid].map((santa) => ({ from: santa.id, to: danId }));
     await db.groups.updateOne({ _id: family._id }, { $set: { exclusions } });
     ok(await olive.trpc.mutate('membership.approve', { groupSlug: family.slug, memberId: danId }));
@@ -74,10 +90,11 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect((await db.editions.findOne({ _id: e1._id }))!.draw!.assignments).toEqual(
       drawOf([[m.olive, m.ann], [m.ann, { id: danId }], [{ id: danId }, m.bob], [m.bob, m.cee], [m.cee, kid], [kid, m.olive]]).assignments
     );
-    await run('deliveries');
+    // Sent within the approval (68). Polled: a parallel deliveries run may have logged one first and still be sending it.
     await expectMails(ann, 'gifteeChanged', 1);
     await expectMails(dan, 'namesDrawn', 1);
     expect(await drawNotices(), 'two more: Ann (new giftee) and Dan').toBe(7);
+    await expect.poll(noticesPending, { message: 'nothing left for the cron' }).toBeUndefined();
     expect((await mails(dan, 'namesDrawn'))[0].subject).toBe(nlEmail['names-drawn'].subject.replace('{group}', 'Family'));
     for (const user of [olive, bob, cee]) expect(await mails(user, 'gifteeChanged')).toHaveLength(0);
   });
