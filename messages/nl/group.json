@@ -118,7 +118,6 @@
     },
     "feasibility": {
       "too-few": "Om namen te trekken zijn minstens {min} mensen nodig.",
-      "possible": "De namen kunnen getrokken worden.",
       "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal een regel weg."
     }
   },

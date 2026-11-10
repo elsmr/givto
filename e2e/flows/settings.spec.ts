@@ -84,7 +84,7 @@ test('keep apart: a household and a pair, and the draw follows them', async ({ p
     await keepApart.getByLabel('…and someone').selectOption('Dan');
     await keepApart.getByRole('button', { name: 'Add' }).click();
     await expect(keepApart.getByText('Cee ↔ Dan')).toBeVisible();
-    await expect(keepApart.getByRole('status')).toHaveText('A draw is possible.');
+    await expect(keepApart.getByRole('status')).toBeEmpty();
     await keepApart.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Saved', { exact: true })).toBeVisible();
   });
