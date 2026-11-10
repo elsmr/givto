@@ -10,6 +10,8 @@
   },
   "scripts": {
     "dev": "next dev",
+    "dev:local": "docker compose up -d --wait && next dev",
+    "cron": "node --env-file=.env.development scripts/cron.mjs",
     "build": "next build",
     "start": "next start",
     "tsc": "tsc --noEmit",
