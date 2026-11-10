@@ -42,11 +42,20 @@ const deleteEditionMessages = async (db: Collections, now: Date) => {
   return results.reduce((sum, result) => sum + result.deletedCount, 0);
 };
 
-/** A past draw stays until the group's next edition is drawn (to avoid repeats), at most `drawMaxMonths`. */
+/**
+ * A past draw stays until the group's next edition is drawn (to avoid repeats), at most `drawMaxMonths`.
+ * Editions without a gift day (all migrated ones, 58) have no "past", so their draws are capped by age only.
+ */
 const deleteOldDraws = async (db: Collections, now: Date) => {
   const tooOld = monthsBefore(now, retention.drawMaxMonths);
   const editions = await db.editions
-    .find({ draw: { $exists: true }, 'giftDay.date': { $lt: isoDate(now) } }, { projection: { groupId: 1, number: 1, 'draw.drawnAt': 1 } })
+    .find(
+      {
+        draw: { $exists: true },
+        $or: [{ 'giftDay.date': { $lt: isoDate(now) } }, { giftDay: { $exists: false }, 'draw.drawnAt': { $lte: tooOld } }],
+      },
+      { projection: { groupId: 1, number: 1, 'draw.drawnAt': 1 } }
+    )
     .toArray();
   let deleted = 0;
   for (const edition of editions) {
