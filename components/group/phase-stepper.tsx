@@ -22,11 +22,11 @@ export const PhaseStepper = ({ edition }: { edition: GroupEdition }) => {
             className={cn(
               'flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 border-2 border-transparent px-0 py-1.5 text-center text-xs leading-tight font-bold sm:flex-row sm:gap-2 sm:text-sm',
               index < current && 'text-ink',
-              index === current && '-translate-x-0.5 -translate-y-0.5 border-ink bg-yellow shadow-sm',
+              index === current && '-translate-x-0.5 -translate-y-0.5 border-outline bg-yellow shadow-sm',
               index > current && 'font-semibold text-muted'
             )}
           >
-            <Icon aria-hidden="true" className={cn('size-4 shrink-0', index < current && 'bg-mint p-0.5 text-ink outline-2 outline-ink')} />
+            <Icon aria-hidden="true" className={cn('size-4 shrink-0', index < current && 'bg-mint p-0.5 text-ink outline-2 outline-outline')} />
             <span className="break-words hyphens-auto">{t(phase)}</span>
             {index < current && <span className="sr-only">{t('done-state')}</span>}
           </li>

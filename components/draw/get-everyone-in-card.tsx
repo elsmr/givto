@@ -39,7 +39,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
         <p className="font-semibold">{t('who', { count: people.length })}</p>
         <ul className="flex flex-wrap gap-2">
           {people.map((person) => (
-            <li key={person.id} className="border-2 border-ink bg-primary-muted px-2 py-0.5 font-semibold break-all">
+            <li key={person.id} className="border-2 border-outline bg-primary-muted px-2 py-0.5 font-semibold break-all">
               {person.name}
             </li>
           ))}
