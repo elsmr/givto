@@ -4,7 +4,7 @@
   "intro": "Givto is een kleine, open-source Secret Santa-app. We bewaren alleen wat je Secret Santa nodig heeft, we verkopen niets en we volgen je niet.",
   "stored": {
     "title": "Wat we bewaren en waarom",
-    "account": "<b>Je account:</b> je naam, e-mailadres, taal en e-mailinstellingen. Om je in te loggen en je de mails te sturen die je nodig hebt, zoals die over de trekking en herinneringen.",
+    "account": "<b>Je account:</b> je naam, e-mailadres, taal en e-mailinstellingen. Om je in te loggen en je de mails te sturen die je nodig hebt, zoals die over de loting en herinneringen.",
     "sign-in": "<b>Inloggen:</b> inlogcodes en -links (alleen versleuteld, nooit leesbaar), je passkeys (alleen het publieke deel) en je sessies met het IP-adres en de browser van je toestel. Om je account veilig te houden.",
     "groups": "<b>Groepen en Secret Santa's:</b> groepsnamen, namen van deelnemers, huishoudens en Niet samen-paren, data, budget en de loting. De organisator ziet ook ieders e-mailadres. Om je Secret Santa te laten draaien.",
     "wishes": "<b>Verlanglijstjes:</b> je wensen met de links, afbeeldingen en prijzen die je toevoegt, en ook Geclaimd!, tips, vragen en Psst!-berichten. Zodat je Santa weet wat je wil.",
