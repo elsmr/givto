@@ -14,6 +14,9 @@
     "start": "next start",
     "tsc": "tsc --noEmit",
     "test": "node tests/run.mjs check",
+    "e2e": "playwright test -c e2e/playwright.config.ts",
+    "e2e:api": "playwright test -c e2e/playwright.config.ts api/",
+    "e2e:ui": "playwright test -c e2e/playwright.config.ts flows/ a11y/",
     "test:smoke": "node tests/run.mjs smoke",
     "test:smoke:s1": "node tests/smoke-s1.mjs",
     "test:smoke:s2": "node --import ./tests/ts-hooks.mjs tests/smoke-s2.mjs",
@@ -60,6 +63,8 @@
     "valibot": "^1.5.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@playwright/test": "^1.65.0",
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

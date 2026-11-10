@@ -1,5 +1,5 @@
 // S4 smoke (draw & settings: 27, 28, 33, 34, 47, 48) against a running `next dev` app
-// (tests/env.sh s4 4401 27055 4491). The scheduled draw uses the dev-only `draw.runDue` trigger.
+// (tests/env.sh s4 4401 27055 4491). The scheduled draw uses the test-only `draw.runDue` trigger.
 // Run: BASE_URL=… MAIL_URL=… MONGO_CONTAINER=… pnpm test:smoke:s4
 import assert from 'node:assert/strict';
 import { editionCalendarEvents, toIcs } from '../lib/calendar.ts';
@@ -225,10 +225,10 @@ await step('"not the same as last year" that makes the draw impossible is refuse
   assert.deepEqual(reopened.draw.assignments, {});
 });
 
-// `draw.runDue` is closed in production builds (`next start`): there the step only checks that.
+// `draw.runDue` is closed without E2E_TEST_HOOKS=1 (tests/env.sh sets it): there the step only checks that.
 const probe = await trpc('draw.runDue', { now: '2000-01-01T00:00:00.000Z' }, { mutation: true });
 const devTrigger = code(probe) !== 'NOT_FOUND';
-if (!devTrigger) console.log('ok  draw.runDue is closed in this production build; scheduled draw step skipped (run against next dev)');
+if (!devTrigger) console.log('ok  draw.runDue is closed (no E2E_TEST_HOOKS=1); scheduled draw step skipped');
 if (devTrigger) await step('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async () => {
   const scheduled = await createGroup('Scheduled');
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']]) await join(person, scheduled, name);

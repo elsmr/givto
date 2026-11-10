@@ -1,5 +1,5 @@
 // S6 smoke (gift day: 31, 32, 38 received) against a running `next dev` app
-// (tests/env.sh s6 4601 27056 4691). Status transitions use the dev-only `giftday.runDue` trigger.
+// (tests/env.sh s6 4601 27056 4691). Status transitions use the test-only `giftday.runDue` trigger.
 // Run: BASE_URL=… MAIL_URL=… MONGO_CONTAINER=… pnpm test:smoke:s6
 import assert from 'node:assert/strict';
 
@@ -228,10 +228,10 @@ await step('the cron endpoint runs the gift day job', async () => {
   assert.ok(Array.isArray(body.result.giftday) && Array.isArray(body.result.done), JSON.stringify(body));
 });
 
-// `giftday.runDue` is closed in production builds (`next start`): there the step only checks that.
+// `giftday.runDue` is closed without E2E_TEST_HOOKS=1 (tests/env.sh sets it): there the step only checks that.
 const probe = await trpc('giftday.runDue', { now: '2000-01-01T00:00:00.000Z' }, { mutation: true });
 if (code(probe) === 'NOT_FOUND') {
-  console.log('ok  giftday.runDue is closed in this production build; transition step skipped (run against next dev)');
+  console.log('ok  giftday.runDue is closed (no E2E_TEST_HOOKS=1); transition step skipped');
 } else {
   await step('status follows the local date: Auckland (ahead of UTC) and Los Angeles (behind)', async () => {
     // 2098-12-24 is gift day in both. Auckland is UTC+13 in December, Los Angeles UTC−8.
