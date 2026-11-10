@@ -42,6 +42,7 @@ registerHooks({
 process.env.BETTER_AUTH_URL ??= 'https://givto.example';
 const { render } = await import('@react-email/render');
 const { emailPreviews } = await import('../emails/previews.tsx');
+const { emailTranslator } = await import('../emails/ui/translator.ts');
 
 const MAX_HTML_BYTES = 102 * 1024;
 const previewDir = process.env.EMAIL_PREVIEW_DIR;
@@ -61,6 +62,10 @@ for (const locale of ['en', 'nl']) {
     // Dutch copy says "namen trekken" and "je persoon"; "lootjes" is only for search metadata.
     assert.ok(!/lootje/i.test(`${preview.subject} ${text}`), `${label}: says lootje`);
     if (preview.url) assert.ok(text.includes(preview.url), `${label}: link in plain text`);
+    // Account emails end with "Givto · givto.app"; notifications say why they come and how to stop them.
+    const account = ['sign-in', 'delete-account', 'invite', 'join-reminder'].includes(preview.name);
+    assert.equal(text.includes('Givto · givto.example'), account, `${label}: site footer line`);
+    assert.equal(text.includes(emailTranslator(locale)('layout.why')), !account, `${label}: why footer line`);
     for (const secret of preview.mustNotContain ?? []) {
       assert.ok(!html.includes(secret) && !text.includes(secret) && !preview.subject.includes(secret), `${label}: leaks ${secret}`);
     }
