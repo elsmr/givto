@@ -20,6 +20,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
   const format = useFormatter();
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
   const tooFew = people.length < MIN_PARTICIPANTS;
+  const leftOut = group.members.filter((m) => m.status !== 'removed' && !edition.participantIds.includes(m.id)).map((m) => m.name);
   const joinLink = group.organizer?.joinLink;
 
   return (
@@ -54,7 +55,13 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
               <p>{tShare('revoked')}</p>
             )}
             <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
-              <DrawNamesButton groupSlug={group.slug} editionNumber={edition.number} members={group.members} primary={!tooFew} />
+              <DrawNamesButton
+                groupSlug={group.slug}
+                editionNumber={edition.number}
+                members={group.members}
+                leftOut={leftOut}
+                primary={!tooFew}
+              />
               <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
                 {t('change')}
               </Link>

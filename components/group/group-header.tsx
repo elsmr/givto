@@ -1,3 +1,4 @@
+import { ManageMenu } from '@/components/manage/manage-menu';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
@@ -7,7 +8,7 @@ import Link from 'next/link';
 import { formatBudget } from './format-budget';
 import type { GroupData } from './group-data';
 
-/** Greeting, group name, the edition with its budget and exchange chips, and Settings for the organizer (61). */
+/** Greeting, group name, the edition with its budget and exchange chips, and Settings + Manage for the organizer (61, 64). */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
   const format = useFormatter();
@@ -20,10 +21,13 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
       title={group.name}
       actions={
         group.me.isOrganizer && (
-          <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
-            <Settings aria-hidden="true" />
-            {t('settings-link')}
-          </Link>
+          <>
+            <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
+              <Settings aria-hidden="true" />
+              {t('settings-link')}
+            </Link>
+            {edition?.isCurrent && <ManageMenu groupSlug={group.slug} edition={edition} />}
+          </>
         )
       }
     >
