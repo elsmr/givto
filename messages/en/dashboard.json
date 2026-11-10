@@ -71,7 +71,6 @@
     "today-label": "it's gift day"
   },
   "wishlist-stat": {
-    "title": "My wishlist",
-    "unit": "{count, plural, =1 {wish} other {wishes}}"
+    "title": "My wishlist"
   }
 }

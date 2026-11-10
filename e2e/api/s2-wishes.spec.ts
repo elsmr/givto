@@ -48,7 +48,7 @@ test('wish CRUD, update, reorder; someone else can’t touch your wishes', async
     ]) {
       expect(codeOf(await olive.trpc.mutate('wish.create', bad)), JSON.stringify(bad)).toBe('INVALID_INPUT');
     }
-    expect(titles(ok(await olive.trpc.query('wish.list')))).toEqual(['Wool socks', 'A good novel', 'Surprise me: something cosy', XSS]);
+    expect(titles(ok(await olive.trpc.query('wish.list'))), 'newest on top').toEqual([XSS, 'Surprise me: something cosy', 'A good novel', 'Wool socks']);
     expect(readServerLog(), 'procedure lines are logged').toMatch(/wish\.create/);
     return { socks, book, scarf };
   });
@@ -66,12 +66,12 @@ test('wish CRUD, update, reorder; someone else can’t touch your wishes', async
 
   await test.step('reorder (drag and keyboard both use wish.move)', async () => {
     let order = ok(await olive.trpc.mutate('wish.move', { wishId: scarf.id, toIndex: 0 }));
-    expect(titles(order)).toEqual(['Surprise me: something cosy', 'Wool socks', 'A great novel', XSS]);
+    expect(titles(order)).toEqual(['Surprise me: something cosy', XSS, 'A great novel', 'Wool socks']);
     order = ok(await olive.trpc.mutate('wish.move', { wishId: scarf.id, toIndex: 99 }));
-    expect(titles(order)).toEqual(['Wool socks', 'A great novel', XSS, 'Surprise me: something cosy']);
+    expect(titles(order)).toEqual([XSS, 'A great novel', 'Wool socks', 'Surprise me: something cosy']);
     for (let i = 0; i < 60; i++) await olive.trpc.mutate('wish.move', { wishId: i % 2 ? socks.id : book.id, toIndex: 1 });
     order = ok(await olive.trpc.query('wish.list'));
-    expect(titles(order).slice(0, 2), 'positions renumber when gaps shrink').toEqual(['A great novel', 'Wool socks']);
+    expect(titles(order).slice(0, 3), 'positions renumber when gaps shrink').toEqual([XSS, 'Wool socks', 'A great novel']);
   });
 
   await test.step('someone else can’t touch your wishes', async () => {

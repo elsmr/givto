@@ -1,71 +1,71 @@
 {
   "hero": {
     "eyebrow": "Secret Santa voor familie en vrienden",
-    "title": "Secret Santa, geregeld met één link",
-    "lead": "Start een Secret Santa, deel de link met je familie of vrienden en laat iedereen meedoen. Givto loot, bewaart de verlanglijstjes en telt af naar pakjesdag.",
+    "title": "Organiseer een Secret Santa met één link",
+    "lead": "Deel een link met je familie of vrienden, zodat iedereen kan meedoen. Givto loot en bewaart de verlanglijstjes.",
     "cta": "Start een Secret Santa",
     "how-it-works": "Zo werkt het",
-    "note": "Gratis. Geen wachtwoorden, geen app nodig."
+    "note": "Gratis. Geen wachtwoorden en geen app nodig."
   },
   "steps": {
     "title": "Zo werkt het",
     "create": {
       "title": "Start een Secret Santa",
-      "description": "Geef hem een naam en kies als je wil een pakjesdag en een budget. Klaar in een minuut."
+      "description": "Geef hem een naam. Kies als je wil een pakjesdag en een budget."
     },
     "share": {
-      "title": "Deel één link",
-      "description": "Deel de link met je familie of vrienden. Je hebt niemands e-mailadres nodig."
+      "title": "Deel de link",
+      "description": "Stuur de link naar je familie of vrienden. Je hebt hun e-mailadressen niet nodig."
     },
     "join": {
       "title": "Iedereen doet mee",
-      "description": "Iedereen tikt op de link, vult naam en e-mailadres in en bevestigt met een code die we mailen."
+      "description": "Iedereen opent de link, vult naam en e-mailadres in en bevestigt met een code."
     },
     "draw": {
       "title": "Loten",
-      "description": "Is iedereen erbij? Dan loot je. Je ziet alleen voor wie jij koopt, en koppels hou je makkelijk uit elkaar."
+      "description": "Is iedereen erbij? Dan loot je. Je ziet alleen voor wie jij koopt."
     },
     "wishlists": {
       "title": "Vul je verlanglijstje",
-      "description": "Zet een paar wensen op je lijstje, dan weet je Santa wat je wil. Santa's claimen een wens, zodat niemand twee keer hetzelfde koopt."
+      "description": "Zet een paar wensen op je lijstje, dan weet je Santa wat je wil."
     },
     "gift-day": {
       "title": "Pakjesdag",
-      "description": "Pak om de beurt uit met de uitpakvolgorde en sluit af met de grote onthulling als je dat wil."
+      "description": "Pak om de beurt uit en sluit af met de grote onthulling als je wil."
     }
   },
   "features": {
-    "title": "Alles voor je Secret Santa",
+    "title": "Ook in Givto",
     "wishlist": {
-      "title": "Eén verlanglijstje voor elke groep",
-      "description": "Hou één persoonlijk verlanglijstje bij en gebruik het in al je groepen. Verberg wensen voor een groep die ze niet hoeft te zien."
+      "title": "Eén verlanglijstje voor al je groepen",
+      "description": "Hou één verlanglijstje bij voor al je groepen. Verberg wensen voor een groep als je wil."
     },
     "dibs": {
       "title": "Geclaimd!",
-      "description": "Santa's claimen een wens, zodat niemand dubbel koopt. Op je eigen lijstje zie je nooit wat er geclaimd is."
+      "description": "Santa's claimen wat ze kopen, zodat je uit twee groepen niet hetzelfde cadeau krijgt."
     },
     "tips": {
       "title": "Tips voor Santa",
-      "description": "Weet je wat iemand echt graag wil? Geef hun Santa een tip, met je naam of anoniem."
+      "description": "Geef iemands Santa een tip, met je naam of anoniem."
     },
     "editions": {
       "title": "Volgend jaar weer",
-      "description": "Je groep blijft bestaan: start op elk moment een nieuwe editie met iedereen aangevinkt, en niemand krijgt dezelfde persoon als vorige keer."
+      "description": "Begin volgend jaar opnieuw met dezelfde groep. Givto kan ervoor zorgen dat niemand dezelfde persoon krijgt als vorige keer."
     }
   },
   "faq": {
     "title": "Vragen",
     "account": {
       "question": "Heeft iedereen een account nodig?",
-      "answer": "Geen wachtwoorden en niets te installeren. Iedereen doet mee via de link met naam en e-mailadres en bevestigt met een code die we mailen."
+      "answer": "Alleen een e-mailadres. Geen wachtwoord en geen app."
     },
     "secret": {
       "question": "Wie ziet wie voor wie koopt?",
-      "answer": "Niemand. Je ziet alleen voor wie jij zelf koopt. Wil je toch alles weten? Sluit pakjesdag af met de grote onthulling."
+      "answer": "Niemand, ook de organisator niet. Als je wil, sluit je pakjesdag af met de grote onthulling."
     },
     "apart": {
       "question": "Kan ik koppels uit elkaar houden?",
-      "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan krijgen ze elkaar nooit."
+      "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan loten ze elkaar niet."
     },
     "cost": {
       "question": "Wat kost het?",
@@ -73,11 +73,11 @@
     },
     "data": {
       "question": "Wat gebeurt er met mijn gegevens?",
-      "answer": "We bewaren alleen wat je Secret Santa nodig heeft en ruimen op na pakjesdag. Lees de <link>privacyverklaring</link>."
+      "answer": "We bewaren alleen wat je Secret Santa nodig heeft en verwijderen het als het niet meer nodig is. Lees de <link>privacyverklaring</link>."
     }
   },
   "closing": {
-    "title": "Klaar? Het duurt maar een minuut.",
+    "title": "Klaar om te beginnen?",
     "cta": "Start een Secret Santa"
   }
 }

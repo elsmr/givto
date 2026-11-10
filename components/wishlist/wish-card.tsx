@@ -26,7 +26,7 @@ interface WishCardProps {
 
 /**
  * One wish, read-only, the same for the owner and for Santas (73): the first link's picture,
- * title, badges, price, notes and a "Buy at …" chip per link. Everything renders as text (03 XSS).
+ * title, badges, price, notes and a shop chip per link. Everything renders as text (03 XSS).
  */
 export const WishCard = ({ wish, inBudget, position, status, children, className }: WishCardProps) => {
   const t = useTranslations('wishlist');

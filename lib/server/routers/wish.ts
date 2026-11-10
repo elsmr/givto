@@ -56,7 +56,7 @@ export const wishRouter = router({
       _id: newId(),
       ownerId: ctx.user.id,
       ...definedFields(input),
-      position: (existing.at(-1)?.position ?? -1) + 1,
+      position: (existing[0]?.position ?? 1) - 1,
       createdAt: now,
       updatedAt: now,
     };

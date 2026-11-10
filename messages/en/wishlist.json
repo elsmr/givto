@@ -28,8 +28,7 @@
     "kind-surpriseMe-hint": "Describe what you like; your Santa picks something.",
     "kind-donation-hint": "No gift, a donation to a cause. Add a link to it.",
     "description": "Notes",
-    "price-from": "Price",
-    "price-to": "Up to (optional)",
+    "price": "Price",
     "currency": "Currency",
     "variant": "Size, colour or variant",
     "really-want": "I really want this",
@@ -55,8 +54,7 @@
     "surprise-me": "Surprise me",
     "donation": "Donate instead",
     "in-budget": "In budget",
-    "links": "Where to buy it",
-    "buy-at": "Buy at {shop}",
+    "links": "Links",
     "new-tab": "(opens in a new tab)"
   },
   "archive": {

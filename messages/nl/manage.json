@@ -9,7 +9,7 @@
       "date": "Pakjesdag is vandaag, {today}.",
       "order": "De uitpakvolgorde wordt geschud, want dat heeft nog niemand gedaan.",
       "open": "Geclaimd!, tips en vragen blijven open tot het eind van de dag. Daarna is het voorbij.",
-      "secret": "Voor wie iedereen kocht, blijft geheim, tenzij je de grote onthulling doet."
+      "secret": "Voor wie iedereen kocht, blijft geheim, tenzij je de Santa's onthult."
     },
     "confirm": "Pakjesdag starten",
     "done": "Pakjesdag is begonnen"
@@ -49,7 +49,7 @@
     "points": {
       "open": "Geclaimd!, tips, vragen, de uitpakvolgorde en de instellingen gaan weer open.",
       "date": "De datum van pakjesdag wordt vandaag.",
-      "secret": "De grote onthulling blijft zoals hij is."
+      "secret": "Of de Santa's onthuld worden, blijft zoals het is."
     },
     "confirm": "Pakjesdag heropenen",
     "done": "Pakjesdag is weer open"

@@ -2,6 +2,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId, useRef, useState, type FormEvent } from 'react';
@@ -23,10 +24,10 @@ interface WishFormProps {
 
 const hasDetails = (draft: WishDraft) =>
   (Object.keys(emptyDraft) as (keyof WishDraft)[]).some(
-    (key) => key !== 'title' && key !== 'currency' && key !== 'links' && draft[key] !== emptyDraft[key]
+    (key) => key !== 'title' && key !== 'description' && key !== 'currency' && key !== 'links' && draft[key] !== emptyDraft[key]
   );
 
-/** Add or edit a wish (46, 73): paste links first, or just type the wish; the rest under "More details". */
+/** Add or edit a wish (46, 73): paste links first, or just type the wish and notes; the rest under "More details". */
 export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel, autoFocus }: WishFormProps) => {
   const t = useTranslations('wishlist.form');
   const id = useId();
@@ -73,11 +74,20 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
           ref={importLink}
           onImported={(product) => {
             setDraft((current) => addImportedLink(current, product));
-            if (product.description || product.price) setShowMore(true);
+            if (product.price) setShowMore(true);
           }}
         />
       )}
       <WishFormLinks links={draft.links} onChange={(links) => update({ links })} />
+      <Field>
+        <FieldLabel htmlFor={`${id}-description`}>{t('description')}</FieldLabel>
+        <Textarea
+          id={`${id}-description`}
+          maxLength={2000}
+          value={draft.description}
+          onChange={(event) => update({ description: event.target.value })}
+        />
+      </Field>
       <Button
         type="button"
         variant="ghost"
