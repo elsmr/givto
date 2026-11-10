@@ -61,6 +61,7 @@
     "only-organizer": "Only the organizer can open the presenter view.",
     "intro-hint": "Press → or space for the first person.",
     "next-up": "Next to unwrap",
+    "last-one": "Last but not least",
     "step": "{current} of {total}",
     "reveal-hint": "Press → or space to reveal who was whose Santa.",
     "end-title": "That's everyone!",

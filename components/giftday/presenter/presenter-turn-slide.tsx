@@ -15,12 +15,15 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa }: PresenterTurnSlid
   const t = useTranslations('giftday.present');
   const number = order.people.findIndex((p) => p.memberId === order.current?.memberId) + 1;
   const gifts = currentGiftCount(order);
+  // Nobody left to spin between: no reel before this turn.
+  const lastOne = order.people.filter((p) => !p.done).length === 1;
 
   return (
     <>
       <Confetti />
       <LogoAnimation variant="celebrate" className="size-24 sm:size-32" />
-      <p className="text-2xl font-semibold sm:text-4xl">{oneByOne ? t('round', { round: order.round }) : t('next-up')}</p>
+      {lastOne && oneByOne && <p className="text-2xl font-semibold sm:text-4xl">{t('last-one')}</p>}
+      <p className="text-2xl font-semibold sm:text-4xl">{oneByOne ? t('round', { round: order.round }) : t(lastOne ? 'last-one' : 'next-up')}</p>
       <m.p
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
