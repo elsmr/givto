@@ -52,8 +52,7 @@
     "got-it": "Gekregen",
     "got-it-label": "{title} gekregen",
     "marked": "Gekregen: {title}",
-    "undo": "Ongedaan maken",
-    "empty": "Er staat niets meer op je verlanglijstje voor deze groep."
+    "undo": "Ongedaan maken"
   },
   "present": {
     "page-title": "Presentatieweergave",

@@ -52,8 +52,7 @@
     "got-it": "I got this",
     "got-it-label": "I got this: {title}",
     "marked": "Marked as received: {title}",
-    "undo": "Undo",
-    "empty": "Nothing left on your wishlist for this group."
+    "undo": "Undo"
   },
   "present": {
     "page-title": "Presenter view",
