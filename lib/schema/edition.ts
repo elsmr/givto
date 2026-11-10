@@ -87,6 +87,8 @@ export const UnwrapOrder = v.object({
       turns: v.array(UnwrapTurn),
       /** The presenter's "Who's next?" reel has landed on the current person (until then members don't see who). */
       currentShown: v.boolean(),
+      /** Guess your Santa (62): people whose Santa (and guess) the presenter showed at their turn, in that order. */
+      santaShownIds: v.optional(v.array(Id)),
     })
   ),
 });
@@ -159,6 +161,8 @@ export const Edition = v.object({
   /** Organizer setting; absent = allAtOnce. */
   unwrapMode: v.optional(UnwrapMode),
   reveal: Reveal,
+  /** Guess your Santa (62): organizer setting, absent = on. Off hides all guessing (the guesses stay stored). */
+  guessing: v.optional(v.boolean()),
   /** iCalendar SEQUENCE (47), absent = 0: bumped when the calendar events change, so re-imports update instead of duplicating. */
   calendarSequence: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0))),
   createdAt: v.date(),

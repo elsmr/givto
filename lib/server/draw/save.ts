@@ -14,6 +14,8 @@ export const historyWith = (draw: Draw | undefined, now: Date): Draw['history'] 
  * (`gifteeChangedAt`) and lose their Dibs! in this edition: those were for their old giftee.
  * `next: null` = nobody can be matched any more: the edition goes back to open and the
  * organizer draws again. `redraw`: a whole new draw, the old one goes to history.
+ * Guesses (62) go with a whole new draw or no draw; a slot change keeps them: dropping only the
+ * guesses of people whose Santa changed would tell them so.
  */
 export const saveDraw = async (
   db: Collections,
@@ -34,7 +36,8 @@ export const saveDraw = async (
       },
     });
     if (reopened.matchedCount > 0) {
-      await Promise.all([db.claims.deleteMany({ editionId: edition._id }), db.gifts.deleteMany({ editionId: edition._id })]);
+      const inEdition = { editionId: edition._id };
+      await Promise.all([db.claims.deleteMany(inEdition), db.gifts.deleteMany(inEdition), db.guesses.deleteMany(inEdition)]);
     }
     return reopened.matchedCount > 0;
   }
@@ -53,6 +56,7 @@ export const saveDraw = async (
     { arrayFilters: [{ 'changed.memberId': { $in: changed } }] }
   );
   if (saved.matchedCount === 0) return false;
+  if (redraw) await db.guesses.deleteMany({ editionId: edition._id });
   if (changed.length > 0) {
     const ofChanged = { editionId: edition._id, santaMemberId: { $in: changed } };
     await Promise.all([db.claims.deleteMany(ofChanged), db.gifts.deleteMany(ofChanged)]);

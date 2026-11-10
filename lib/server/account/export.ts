@@ -3,7 +3,7 @@ import { getMongoDb, type Collections } from '../db';
 
 /**
  * Everything stored about one person (55), as JSON. Leaves out what they may not see
- * (claims, gifts and tips about them, who their Santa is, who sent a nudge or question) and
+ * (claims, gifts, tips and guesses about them, who their Santa is, who sent a nudge or question) and
  * other people's data (the draw, other members).
  */
 export const exportAccount = async (db: Collections, userId: string) => {
@@ -19,15 +19,17 @@ export const exportAccount = async (db: Collections, userId: string) => {
   }));
   const memberIds = memberships.map(({ member }) => member.id);
   const slugOf = new Map(groups.map((group) => [group._id, group.slug]));
+  const nameOf = (memberId: string) => groups.flatMap((group) => group.members).find((member) => member.id === memberId)?.name;
   const mine = { $in: memberIds };
   const raw = getMongoDb();
 
-  const [editions, wishes, claims, gifts, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
+  const [editions, wishes, claims, gifts, guesses, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
     await Promise.all([
       db.editions.find({ 'participants.memberId': mine }).toArray(),
       db.wishes.find({ ownerId: userId }).sort({ position: 1 }).toArray(),
       db.claims.find({ santaMemberId: mine }).toArray(),
       db.gifts.find({ santaMemberId: mine }).toArray(),
+      db.guesses.find({ guesserMemberId: mine }).toArray(),
       db.tips.find({ authorMemberId: mine }).toArray(),
       db.questions.find({ askerMemberId: mine }).toArray(),
       db.questions.find({ gifteeMemberId: mine }).toArray(),
@@ -74,6 +76,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
     })),
     wishes: wishes.map(({ ownerId: _ownerId, ...wish }) => wish),
     claims: claims.map(({ wishId, editionId, createdAt }) => ({ wishId, editionId, createdAt })),
+    guessesMade: guesses.map(({ editionId, guessedMemberId, createdAt }) => ({ editionId, guessed: nameOf(guessedMemberId), createdAt })),
     giftsMarked: gifts.map(({ editionId, wishIds, lines, createdAt, updatedAt }) => ({ editionId, wishIds, lines, createdAt, updatedAt })),
     tipsWritten: tips.map(({ text, anonymous, createdAt, updatedAt }) => ({ text, anonymous, createdAt, updatedAt })),
     questionsAsked: asked.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),

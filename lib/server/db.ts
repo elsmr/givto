@@ -3,6 +3,7 @@ import type { Claim } from '../schema/claim';
 import type { Edition } from '../schema/edition';
 import type { Gift } from '../schema/gift';
 import type { Group } from '../schema/group';
+import type { Guess } from '../schema/guess';
 import type { Invite } from '../schema/invite';
 import type { EmailSuppression, SentNotification, WishlistNotification } from '../schema/notification';
 import type { Nudge } from '../schema/nudge';
@@ -28,6 +29,7 @@ export const collections = (db: Db) => ({
   wishes: db.collection<Wish>('wishes'),
   claims: db.collection<Claim>('claims'),
   gifts: db.collection<Gift>('gifts'),
+  guesses: db.collection<Guess>('guesses'),
   tips: db.collection<Tip>('tips'),
   questions: db.collection<Question>('questions'),
   nudges: db.collection<Nudge>('nudges'),
@@ -66,6 +68,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.claims.createIndex({ ownerId: 1 }),
     c.claims.createIndex({ editionId: 1 }),
     c.gifts.createIndex({ editionId: 1, santaMemberId: 1 }, { unique: true }),
+    c.guesses.createIndex({ editionId: 1, guesserMemberId: 1 }, { unique: true }),
     c.tips.createIndex({ editionId: 1, aboutMemberId: 1 }),
     c.tips.createIndex({ editionId: 1, authorMemberId: 1 }),
     c.questions.createIndex({ editionId: 1, gifteeMemberId: 1 }),

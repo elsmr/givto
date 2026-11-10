@@ -1,6 +1,6 @@
 // Run: pnpm test (or node --import ./tests/ts-hooks.mjs tests/unwrap-turns.check.mjs)
 import assert from 'node:assert/strict';
-import { isLastGift, unwrapState } from '../lib/unwrap-turns.ts';
+import { backHidesSanta, isLastGift, santaStillHidden, unwrapState } from '../lib/unwrap-turns.ts';
 
 const order = ['ann', 'bob', 'cee'];
 
@@ -67,4 +67,16 @@ assert.equal(isLastGift('oneByOne', [], 'ann', { ann: 3 }), false);
 assert.equal(isLastGift('oneByOne', [{ memberId: 'ann', last: false }, { memberId: 'ann', last: false }], 'ann', { ann: 3 }), true);
 assert.equal(isLastGift('oneByOne', [], 'ann'), false, 'unknown count: the presenter decides');
 
-console.log('ok  unwrap-turns: more / last by hand, gift counts, skips, rounds, allAtOnce');
+// Guess your Santa (62): the Santa is shown once per person, on their first turn; back hides it again there only.
+const first = unwrapState(order, 'oneByOne', true, []);
+assert.equal(santaStillHidden(first, []), true, "Ann's Santa still to show");
+assert.equal(santaStillHidden(first, ['ann']), false);
+assert.equal(backHidesSanta(first, [], ['ann']), true, 'back on her first turn hides her Santa');
+assert.equal(backHidesSanta(first, [], []), false, 'nothing shown: back undoes as usual');
+const annAgain = unwrapState(order, 'oneByOne', true, [{ memberId: 'ann', last: false }, { memberId: 'bob', last: true }, { memberId: 'cee', last: false }]);
+assert.equal(annAgain.current, 'ann');
+assert.equal(santaStillHidden(annAgain, ['ann', 'bob', 'cee']), false, 'second gift: her Santa is already out');
+assert.equal(backHidesSanta(annAgain, [{ memberId: 'ann', last: false }], ['ann']), false, 'later turn: back undoes the turn');
+assert.equal(santaStillHidden(unwrapState(order, 'allAtOnce', true, order.map((memberId) => ({ memberId, last: true }))), []), false, 'finished');
+
+console.log('ok  unwrap-turns: more / last by hand, gift counts, skips, rounds, allAtOnce, Santa shown at the turn');

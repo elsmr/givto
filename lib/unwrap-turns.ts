@@ -73,3 +73,14 @@ export const unwrapState = (
     finished: started && current === null,
   };
 };
+
+/** Guess your Santa (62): the current person's Santa still has to be shown before their turn can end. */
+export const santaStillHidden = (state: UnwrapState, santaShownIds: string[]) =>
+  state.current !== null && !santaShownIds.includes(state.current);
+
+/**
+ * "Back" on the turn where the current person's Santa was shown (their first turn) hides the Santa
+ * again; on any later turn it undoes the last turn as usual.
+ */
+export const backHidesSanta = (state: UnwrapState, turns: UnwrapTurn[], santaShownIds: string[]) =>
+  state.current !== null && santaShownIds.includes(state.current) && !turns.some((t) => t.memberId === state.current);

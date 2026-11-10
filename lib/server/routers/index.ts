@@ -12,6 +12,7 @@ import { drawRouters } from './draw-routers';
 import { giftdayRouter } from './giftday';
 import { manageRouter } from './manage';
 import { giftRouter } from './gift';
+import { guessRouter } from './guess';
 import { remindersRouter } from './reminders';
 
 /** Slices add their router here: `<domain>: <domain>Router` from `./<domain>`. */
@@ -32,6 +33,7 @@ export const appRouter = router({
   giftday: giftdayRouter,
   manage: manageRouter,
   gift: giftRouter,
+  guess: guessRouter,
   reminders: remindersRouter,
 });
 
