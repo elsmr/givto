@@ -11,7 +11,7 @@ export const HowDidItGoCard = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('giftday.after');
   const trpc = useTRPC();
   const view = useQuery(trpc.wish.groupView.queryOptions({ groupSlug }));
-  const wishes = view.data?.filter((wish) => !wish.hidden) ?? [];
+  const wishes = view.data?.filter((wish) => wish.shown) ?? [];
   if (wishes.length === 0) return null;
 
   return (

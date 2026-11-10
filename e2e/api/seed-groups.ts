@@ -13,7 +13,7 @@ export const newMember = (user: User | null, name: string, extra: Partial<Member
   name,
   role: 'member',
   status: 'joined',
-  wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+  wishlistView: { shownWishIds: [] },
   ...extra,
 });
 

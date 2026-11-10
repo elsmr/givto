@@ -38,7 +38,7 @@ export const member = (user: User | null, name: string, extra: Partial<Member> =
   role: 'member',
   status: 'joined',
   joinedAt: new Date(),
-  wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+  wishlistView: { shownWishIds: [] },
   ...extra,
 });
 

@@ -14,7 +14,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
   const g = { family: newId(), solo: newId(), other: newId() };
   const e = { family: newId(), solo: newId(), other: newId() };
   const member = (id: string, name: string, extra: Partial<Member> = {}): Member => ({
-    id, name, role: 'member', status: 'joined', joinedAt: now, wishlistView: { includeNewWishes: true, hiddenWishIds: [] }, ...extra,
+    id, name, role: 'member', status: 'joined', joinedAt: now, wishlistView: { shownWishIds: [] }, ...extra,
   });
   const group = (_id: string, slug: string, name: string, members: Member[]): Group => ({
     _id, slug, name, locale: 'en', timeZone: 'Europe/Brussels', defaults: { exchangeMode: 'inPerson' }, createdBy: members[0].userId!,

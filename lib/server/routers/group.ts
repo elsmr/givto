@@ -61,7 +61,7 @@ export const groupRouter = router({
       role: 'organizer',
       status: 'joined',
       joinedAt: now,
-      wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+      wishlistView: { shownWishIds: [] },
     };
     const group: Group = {
       _id: newId(),

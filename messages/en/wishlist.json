@@ -1,11 +1,11 @@
 {
   "page-title": "My wishlist",
-  "intro": "One list for all your Secret Santas. Your Santa sees it, and you'll never see what's been claimed.",
+  "intro": "One list for all your Secret Santas. You pick which groups see each wish, and you'll never see what's been claimed.",
   "loading": "Loading your wishlist…",
   "empty-title": "Your wishlist is empty",
   "count": "{count, plural, =0 {No wishes yet} one {# wish} other {# wishes}}",
   "list-title": "Your wishes",
-  "hide-hint": "Want a group not to see a wish? Hide it in that group, on its “My wishlist” tab.",
+  "hide-hint": "Want a group to see more or less? Choose in that group, on its “My wishlist” tab.",
   "add-title": "Add a wish",
   "import": {
     "label": "Link to a shop (optional)",
@@ -37,6 +37,9 @@
     "add": "Add wish",
     "save": "Save",
     "cancel": "Cancel",
+    "show-in": "Show in",
+    "show-in-hint": "Only the groups you tick see this wish. You can change it later in each group.",
+    "show-in-duplicate": "This wish will show in more than one active group, so two Santas might buy it.",
     "links": "{count, plural, one {# link} other {# links}}",
     "remove-link": "Remove the link to {shop}"
   },
@@ -70,17 +73,21 @@
   },
   "group": {
     "title": "My wishlist in this group",
-    "intro": "Everything on your wishlist shows here, unless you hide it from this group.",
+    "intro": "Only the wishes you pick show here. A new wish shows in no group until you choose one.",
     "empty": "Your wishlist is empty.",
     "show": "Show in this group",
     "shown": "Show “{title}” in this group",
     "edit": "Edit my wishlist",
     "add": "Add wishes",
     "visibility": "Choose what this group sees",
-    "visibility-description": "Switch a wish off to hide it from this group only. Your other groups still see it.",
+    "visibility-description": "Switch a wish on to show it in this group. Your other groups don't change.",
     "done": "Done",
     "hidden-summary": "{count, plural, one {# wish hidden here} other {# wishes hidden here}}",
-    "all-hidden": "Nothing on your wishlist shows in this group."
+    "all-hidden": "Nothing on your wishlist shows in this group.",
+    "duplicate-title": "Already shown in {groups}",
+    "duplicate-description": "When more than one group sees a wish, two Santas might buy it. Show it here too?",
+    "duplicate-confirm": "Show here too",
+    "duplicate-cancel": "Cancel"
   },
   "giftee": {
     "title": "{name}'s wishlist",

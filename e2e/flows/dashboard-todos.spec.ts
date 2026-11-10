@@ -22,12 +22,11 @@ const followTodo = async (page: Page, text: string, groupName: string) => {
 
 test('each to-do links to where it gets done', async ({ page, signIn, signInPage, db }) => {
   const [ann, bob, cee, dee] = await Promise.all(['ann', 'bob', 'cee', 'dee'].map((name) => signIn(name)));
-  // Waiting: open, three in, Dee asks to join; Ann's only wish is hidden here.
+  // Waiting: open, three in, Dee asks to join; Ann's only wish isn't shown here.
   const waiting = await createGroup(ann, 'Waiting', 'Ann', [[bob, 'Bob'], [cee, 'Cee']]);
   ok(await ann.trpc.mutate('join.updateLink', { groupSlug: waiting.slug, requiresApproval: true, maxMembers: null }));
   ok(await dee.trpc.mutate('join.accept', { groupSlug: waiting.slug, token: waiting.joinToken, name: 'Dee' }));
-  const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks' }));
-  ok(await ann.trpc.mutate('wish.setHidden', { groupSlug: waiting.slug, wishId: wish.id, hidden: true }));
+  ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks' }));
   // Next year: drawn, then a draft next edition.
   const nextYear = await createGroup(ann, 'Next year', 'Ann', [[bob, 'Bob'], [cee, 'Cee']]);
   ok(await ann.trpc.mutate('draw.run', { groupSlug: nextYear.slug, editionNumber: 1 }));

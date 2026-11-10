@@ -36,7 +36,7 @@ export type WishFields = v.InferOutput<typeof WishFields>;
 
 /**
  * `wishes` collection: one personal list per person, shared by all their groups (38).
- * Groups hide wishes via the member's `wishlistView`; there is one global order.
+ * Each group shows the wishes picked in the member's `wishlistView`; there is one global order.
  */
 export const Wish = v.object({
   _id: Id,

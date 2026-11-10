@@ -14,7 +14,7 @@ const anonymized = (member: Member, group: Group, now: Date): Member => ({
   role: 'member',
   status: 'removed',
   removedAt: now,
-  wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+  wishlistView: { shownWishIds: [] },
 });
 
 /**

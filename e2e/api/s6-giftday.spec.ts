@@ -112,7 +112,7 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
   });
 
   await test.step('received wishes: owner only, hidden from Santas and lists', async () => {
-    const wish = ok(await bob.trpc.mutate('wish.create', { title: 'Board game' }));
+    const wish = ok(await bob.trpc.mutate('wish.create', { title: 'Board game', groupSlugs: [slug] }));
     const bobId = await memberIdOf(db, slug, bob);
     const santaId = Object.entries((await editionOf(db, slug)).draw!.assignments).find(([, giftee]) => giftee === bobId)![0];
     const santaIds = await Promise.all([ann, cee, dan, eve].map((person) => memberIdOf(db, slug, person)));

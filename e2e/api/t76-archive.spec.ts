@@ -21,9 +21,11 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
   const mug = ok(await olive.trpc.mutate('wish.create', { title: 'Moomin mug' }));
 
   // Group A: Sam → Olive → Cee → Sam. Group B: Ben → Olive → Ben.
-  const [aOlive, aSam, aCee] = [newMember(olive, 'Olive', { role: 'organizer' }), newMember(sam, 'Sam'), newMember(cee, 'Cee')];
+  const shows = (wishes: { id: string }[]) => ({ wishlistView: { shownWishIds: wishes.map((wish) => wish.id) } });
+  const [aOlive, aSam, aCee] = [newMember(olive, 'Olive', { role: 'organizer', ...shows([socks, book, mug]) }), newMember(sam, 'Sam'), newMember(cee, 'Cee')];
   const a = await seedGroup(db, 'arca', olive, [aOlive, aSam, aCee]);
-  const [bBen, bOlive] = [newMember(ben, 'Ben', { role: 'organizer' }), newMember(olive, 'Olive')];
+  // Socks not shown in B.
+  const [bBen, bOlive] = [newMember(ben, 'Ben', { role: 'organizer' }), newMember(olive, 'Olive', shows([book, mug]))];
   const b = await seedGroup(db, 'arcb', olive, [bBen, bOlive]);
   await seedEdition(db, a, 1, 'drawn', { draw: assignments([[aSam, aOlive], [aOlive, aCee], [aCee, aSam]]) });
   await seedEdition(db, b, 1, 'drawn', { draw: assignments([[bBen, bOlive], [bOlive, bBen]]) });
@@ -32,7 +34,6 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
   const samSees = async () => ok(await sam.trpc.query('claim.gifteeWishlist', A1))!.wishes;
 
   await test.step('archived wishes leave every list and every Santa, except their own Dibs!', async () => {
-    ok(await olive.trpc.mutate('wish.setHidden', { groupSlug: b.slug, wishId: socks.id, hidden: true }));
     ok(await sam.trpc.mutate('gift.set', { ...A1, wishIds: [book.id], lines: [] }));
     ok(await olive.trpc.mutate('wish.archive', { wishId: book.id }));
     ok(await olive.trpc.mutate('wish.archive', { wishId: socks.id }));
@@ -59,12 +60,12 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
     expect(codeOf(await sam.trpc.mutate('wish.restore', { wishId: book.id }))).toBe('NOT_FOUND');
   });
 
-  await test.step('restore: back at the end, hidden where it was hidden, Dibs! kept', async () => {
+  await test.step('restore: back at the end, shown only where it was shown, Dibs! kept', async () => {
     expect(ok(await olive.trpc.mutate('wish.restore', { wishId: socks.id })).title).toBe('Wool socks');
     expect(codeOf(await olive.trpc.mutate('wish.restore', { wishId: socks.id })), 'not archived').toBe('NOT_FOUND');
     expect(titles(ok(await olive.trpc.query('wish.list')))).toEqual(['Moomin mug', 'Wool socks']);
     const inB = ok(await olive.trpc.query('wish.groupView', { groupSlug: b.slug }));
-    expect(inB.find((wish) => wish.id === socks.id)?.hidden).toBe(true);
+    expect(inB.find((wish) => wish.id === socks.id)?.shown).toBe(false);
     ok(await olive.trpc.mutate('wish.restore', { wishId: book.id }));
     expect((await samSees()).find((wish) => wish.id === book.id)).toMatchObject({ archived: false, claim: 'mine' });
   });

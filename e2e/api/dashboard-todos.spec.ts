@@ -29,11 +29,10 @@ test('account.groups lists to-dos per group', async ({ signIn, db }) => {
   });
 
   const wish = ok(await bob.trpc.mutate('wish.create', { title: 'Socks' }));
-  await test.step('a wish hidden in this group still counts as none', async () => {
-    expect(await todosOf(bob, group.slug)).toEqual([]);
-    ok(await bob.trpc.mutate('wish.setHidden', { groupSlug: group.slug, wishId: wish.id, hidden: true }));
+  await test.step('a wish not shown in this group still counts as none', async () => {
     expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'noWishes' }]);
-    ok(await bob.trpc.mutate('wish.setHidden', { groupSlug: group.slug, wishId: wish.id, hidden: false }));
+    ok(await bob.trpc.mutate('wish.setShown', { groupSlug: group.slug, wishId: wish.id, shown: true }));
+    expect(await todosOf(bob, group.slug)).toEqual([]);
   });
 
   ok(await ann.trpc.mutate('draw.run', edition));

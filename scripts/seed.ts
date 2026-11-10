@@ -51,21 +51,20 @@ await db.users.insertMany(
     updatedAt: daysAgo(400),
   }))
 );
-await db.wishes.insertMany(
-  Object.entries(wishlists).flatMap(([key, wishes]) =>
-    wishes.map((wish, position) => ({
-      _id: newId(),
-      ownerId: userIds[key],
-      kind: 'wish' as const,
-      reallyWant: false,
-      links: [],
-      ...wish,
-      position,
-      createdAt: daysAgo(30 - position),
-      updatedAt: daysAgo(30 - position),
-    }))
-  )
+const seededWishes = Object.entries(wishlists).flatMap(([key, wishes]) =>
+  wishes.map((wish, position) => ({
+    _id: newId(),
+    ownerId: userIds[key],
+    kind: 'wish' as const,
+    reallyWant: false,
+    links: [],
+    ...wish,
+    position,
+    createdAt: daysAgo(30 - position),
+    updatedAt: daysAgo(30 - position),
+  }))
 );
+await db.wishes.insertMany(seededWishes);
 
 type GroupSpec = { name: string; organizer: string; members: string[]; requested?: string[]; households?: string[][] };
 
@@ -78,7 +77,8 @@ const createGroup = async ({ name, organizer, members, requested = [], household
     role: key === organizer ? 'organizer' : 'member',
     status,
     ...(status === 'joined' && { joinedAt }),
-    wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
+    // Demo groups show each person's whole list, as if they had picked every wish there.
+    wishlistView: { shownWishIds: seededWishes.filter((wish) => wish.ownerId === userIds[key]).map((wish) => wish._id) },
   });
   const all = [...[organizer, ...members].map((key) => member(key, 'joined')), ...requested.map((key) => member(key, 'requested'))];
   const idOf = (key: string) => all.find((m) => m.userId === userIds[key])!.id;

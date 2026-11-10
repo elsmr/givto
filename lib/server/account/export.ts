@@ -62,7 +62,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
       invitedAt: member.invitedAt,
       joinedAt: member.joinedAt,
       removedAt: member.removedAt,
-      hiddenWishIds: member.wishlistView.hiddenWishIds,
+      shownWishIds: member.wishlistView.shownWishIds,
     })),
     editions: editions.map((edition) => ({
       group: slugOf.get(edition.groupId),

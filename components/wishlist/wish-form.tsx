@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { MAX_WISH_LINKS } from '@/lib/schema/wish';
 import { ImportLink, type ImportLinkHandle } from './import-link';
 import { addImportedLink, draftToInput, emptyDraft, type WishDraft, type WishInput } from './wish-draft';
@@ -20,6 +20,8 @@ interface WishFormProps {
   onSubmit: (input: WishInput) => void;
   onCancel?: () => void;
   autoFocus?: boolean;
+  /** Extra fields above the error and the buttons. */
+  children?: ReactNode;
 }
 
 const hasDetails = (draft: WishDraft) =>
@@ -28,7 +30,7 @@ const hasDetails = (draft: WishDraft) =>
   );
 
 /** Add or edit a wish (46, 73): paste links first, or just type the wish and notes; the rest under "More details". */
-export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel, autoFocus }: WishFormProps) => {
+export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel, autoFocus, children }: WishFormProps) => {
   const t = useTranslations('wishlist.form');
   const id = useId();
   const [draft, setDraft] = useState(initial);
@@ -103,6 +105,7 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
       <div id={`${id}-more`} hidden={!showMore}>
         {showMore && <WishMoreFields id={id} draft={draft} update={update} />}
       </div>
+      {children}
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" disabled={busy}>

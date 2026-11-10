@@ -23,7 +23,7 @@ test('mark what I got: ticks claim, Dibs! pre-checked, lines, undo; giftee and o
   const giftee = people.find((p) => idOf(p) === gifteeId)!;
   const santaName = doc.members.find((m) => m.id === santaId)!.name;
   const wishIds: string[] = [];
-  for (const title of ['Moomin mug', 'Green socks', 'A good novel']) wishIds.push(ok(await giftee.trpc.mutate('wish.create', { title })).id);
+  for (const title of ['Moomin mug', 'Green socks', 'A good novel']) wishIds.push(ok(await giftee.trpc.mutate('wish.create', { title, groupSlugs: [group.slug] })).id);
   const [w1, w2, w3] = wishIds;
   // Someone in another group has Dibs! on the socks.
   await db.claims.insertOne({ _id: newId(), wishId: w2, ownerId: giftee.id, editionId: newId(), santaMemberId: newId(), createdAt: new Date() });

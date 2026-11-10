@@ -15,7 +15,7 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
   const wishes = useQuery(trpc.wish.groupView.queryOptions({ groupSlug: group.slug }));
   const { edition } = group;
   const people = edition ? group.members.filter((m) => edition.participantIds.includes(m.id)) : group.members.filter((m) => m.status === 'joined');
-  const wishCount = wishes.data?.filter((wish) => !wish.hidden).length;
+  const wishCount = wishes.data?.filter((wish) => wish.shown).length;
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-1">

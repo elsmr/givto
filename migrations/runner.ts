@@ -1,8 +1,9 @@
 // Runs the migrations not yet recorded in the `migrations` collection, in order (58).
 import type { Db } from 'mongodb';
 import * as v1ToV2 from './001-v1-to-v2';
+import * as shownWishIds from './002-shown-wish-ids';
 
-const migrations = [v1ToV2];
+const migrations = [v1ToV2, shownWishIds];
 
 export type MigrationResult = { id: string; status: 'applied before' | 'dry run' | 'applied'; report?: Awaited<ReturnType<typeof v1ToV2.up>> };
 

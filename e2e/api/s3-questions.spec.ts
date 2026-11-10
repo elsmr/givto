@@ -95,7 +95,7 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
     const after = ok(await dan.trpc.query('nudge.status', E1))!;
     expect(after.canNudge).toBe(false);
     expect(after.nextAt!.getTime() - Date.now()).toBeGreaterThan(2.9 * 24 * 3600_000);
-    ok(await dan.trpc.mutate('wish.create', { title: 'Dan wants a kite' }));
+    ok(await dan.trpc.mutate('wish.create', { title: 'Dan wants a kite', groupSlugs: [E1.groupSlug] }));
     expect(ok(await cee.trpc.query('nudge.status', E1))!.kind, 'Dan has wishes').toBe('moreDetails');
     expect(codeOf(await cee.trpc.mutate('nudge.send', { ...E1, kind: 'emptyWishlist' }))).toBe('WRONG_NUDGE_KIND');
     ok(await cee.trpc.mutate('nudge.send', { ...E1, kind: 'moreDetails' }));
@@ -111,7 +111,7 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
     expect(Object.keys(forAnn[0]).sort()).toEqual(['forName', 'id', 'kind']);
     expect(ok(await dan.trpc.query('nudge.forMe', E1)).map((n) => n.kind)).toEqual(['moreDetails']);
     expect(ok(await olive.trpc.query('nudge.forMe', E1)), 'the organizer sees no one else’s').toEqual([]);
-    ok(await ann.trpc.mutate('wish.create', { title: 'Ann wants a mug' }));
+    ok(await ann.trpc.mutate('wish.create', { title: 'Ann wants a mug', groupSlugs: [E1.groupSlug] }));
     expect(ok(await ann.trpc.query('nudge.forMe', E1))).toEqual([]);
   });
 
