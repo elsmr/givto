@@ -1,4 +1,4 @@
-// S1 create & join (was tests/smoke-s1.mjs, first half): creating a group, the join link,
+// S1 create & join (first half): creating a group, the join link,
 // approval, the member cap, revoking and regenerating the link. Every test has its own group.
 import { expect, mailsTo, ok, readServerLog, test, uniqueEmail, type MutationPath } from '../fixtures';
 import { codeOf, createFamily, createInput, joinAll, memberByEmail, signInEmail } from './s1-group';

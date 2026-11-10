@@ -1,4 +1,4 @@
-// S2 wishlist (was tests/smoke-s2.mjs, second half): per-group views, Dibs! claims and who may
+// S2 wishlist (second half): per-group views, Dibs! claims and who may
 // see them. Groups, editions and draws are seeded in Mongo (seed-groups.ts).
 import { expect, ok, test, type TrpcError, type User } from '../fixtures';
 import { newId } from '@/lib/server/db';
@@ -9,7 +9,7 @@ const codeOf = (result: { error?: TrpcError }) => result.error?.data.appCode;
 
 test('group views and Dibs!: hidden wishes, claims, who sees what', async ({ signIn, db }) => {
   const [olive, sam, cee, nina, ben] = await Promise.all(['olive', 'sam', 'cee', 'nina', 'ben'].map((name) => signIn(name)));
-  // Olive's wishes (tests/smoke-s2.mjs carried these over from its wish CRUD steps).
+  // Olive's wishes.
   const socks = ok(await olive.trpc.mutate('wish.create', { title: 'Wool socks' }));
   const book = ok(await olive.trpc.mutate('wish.create', { title: 'A great novel', url: 'https://shop.test/book' }));
   const scarf = ok(await olive.trpc.mutate('wish.create', { title: 'Surprise me: something cosy', kind: 'surpriseMe' }));

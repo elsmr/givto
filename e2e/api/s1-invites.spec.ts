@@ -1,4 +1,4 @@
-// S1 create & join (was tests/smoke-s1.mjs, second half): email invites, keep apart, leaving,
+// S1 create & join (second half): email invites, keep apart, leaving,
 // the invite rate limit. Every test has its own group.
 import { expect, latestMail, mailsTo, ok, test, uniqueEmail } from '../fixtures';
 import { codeOf, createFamily, inviteTokenFrom, joinAll, memberByEmail, signInEmail } from './s1-group';
@@ -85,7 +85,7 @@ test('leave before the draw; organizer can’t leave; leaving after the draw wor
 test('invites rate limited per organizer', async ({ signIn, secrets }) => {
   const ann = await signIn('ann');
   const { slug } = await createFamily(ann);
-  // 30 a day per organizer: the 31st is refused (tests/smoke-s1.mjs sent 30 after 4 earlier invites).
+  // 30 a day per organizer: the 31st is refused.
   const guests = Array.from({ length: 31 }, (_, i) => uniqueEmail(`guest${i}`));
   secrets.push(...guests);
   const codes = [];

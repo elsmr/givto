@@ -1,4 +1,4 @@
-// Account (was tests/smoke-s5.mjs, part 2): passkeys, name and notification preferences, dashboard,
+// Account (part 2): passkeys, name and notification preferences, dashboard,
 // export, deletion. Part 1 (sign-in details, locale): s5-sign-in.spec.ts.
 import { randomBytes } from 'node:crypto';
 import { ObjectId, BSON } from 'mongodb';

@@ -1,4 +1,4 @@
-// SEO (was tests/smoke-s8.mjs, 37): meta tags, robots/sitemap, noindex, icons.
+// SEO (37): meta tags, robots/sitemap, noindex, icons.
 import type { APIRequestContext } from '@playwright/test';
 import { expect, test } from '../fixtures';
 

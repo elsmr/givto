@@ -1,4 +1,4 @@
-// S3 between people (was tests/smoke-s3.mjs, tips): who may write and read tips, before and
+// S3 between people (tips): who may write and read tips, before and
 // after the draw, and that nothing about them reaches the subject or the organizer.
 import { expect, ok, test, type TrpcError } from '../fixtures';
 import { seedBetween, type People } from './s3-seed';
@@ -93,7 +93,7 @@ test('tips: before and after the draw, who sees what', async ({ signIn, db }) =>
     expect(ok(await dan.trpc.query('tip.forGiftee', E1))!.tips).toHaveLength(1);
   });
 
-  // tests/smoke-s3.mjs ran this last over every response Ann got; s3-questions.spec.ts checks the rest.
+  // Covers Ann's tip responses; s3-questions.spec.ts checks her Q&A and Psst! responses.
   await test.step('Ann’s responses never name her Santa', async () => {
     // tip.authored lists everyone Ann can leave a tip about, Dan included, so it's not checked here.
     for (const [path, text] of annResponses.filter(([path]) => path !== 'tip.authored')) {

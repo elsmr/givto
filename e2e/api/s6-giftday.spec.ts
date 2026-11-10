@@ -1,4 +1,4 @@
-// Gift day (was tests/smoke-s6.mjs, part 1; 31, 32, 38): unwrap order, presenter view, the big
+// Gift day (part 1; 31, 32, 38): unwrap order, presenter view, the big
 // reveal, received wishes. Part 2 (turns, status by local date): s6-giftday-turns.spec.ts.
 import { expect, ok, test } from '../fixtures';
 import { code, drawnGroup, editionOf, memberIdOf } from './s6-helpers';

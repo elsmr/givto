@@ -1,4 +1,4 @@
-// S4 draw & settings (was tests/smoke-s4.mjs, other groups): "not the same as last year" that
+// S4 draw & settings (other groups): "not the same as last year" that
 // can't be met, the scheduled draw (test-only `draw.runDue`, scoped to its editions), deleting a group.
 import { expect, ok, test } from '../fixtures';
 import { codeOf, createGroup, editionOf, expectValidDraw, join, memberIdOf } from './s4-group';
@@ -35,8 +35,7 @@ test('"not the same as last year" that makes the draw impossible is refused with
   expect(reopened.draw?.assignments).toEqual({});
 });
 
-// tests/smoke-s4.mjs skipped this without E2E_TEST_HOOKS=1; the e2e server always sets it (api/test-hooks.spec.ts).
-// Draw dates in 2099 (was tomorrow) and `editionIds` on every runDue: it never draws another test's edition.
+// Draw dates in 2099 and `editionIds` on every runDue: it never draws another test's edition.
 test('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async ({ signIn, newClient, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const { trpc } = await newClient();

@@ -1,4 +1,4 @@
-// The unwrap order stays a surprise (was tests/smoke-z2.mjs, 32): on gift day members only learn
+// The unwrap order stays a surprise (32): on gift day members only learn
 // who's unwrapping now and who already went; the organizer's presenter view keeps the full order.
 import { expect, ok, test, type User } from '../fixtures';
 

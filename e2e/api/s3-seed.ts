@@ -1,4 +1,4 @@
-// The S3 specs' group (was tests/smoke-s3.mjs): Olive organizes and manages Kid (no account),
+// The S3 specs' group: Olive organizes and manages Kid (no account),
 // Nina is a member who sits out, Eve isn't in the group. Edition 1 starts open (no draw yet),
 // edition 2 is drawn with Olive as Kid's Santa, edition 3 is open.
 import { ok, type QueryPath, type TestDb, type User } from '../fixtures';

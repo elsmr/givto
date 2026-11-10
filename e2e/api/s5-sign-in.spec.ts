@@ -1,4 +1,4 @@
-// Sign-in details and locale (was tests/smoke-s5.mjs, part 1). Part 2 (passkeys, preferences,
+// Sign-in details and locale (part 1). Part 2 (passkeys, preferences,
 // dashboard, export, deletion): s5-account.spec.ts.
 import type { APIRequestContext } from '@playwright/test';
 import { daysUntil } from '@/components/dashboard/days-until';

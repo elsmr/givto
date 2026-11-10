@@ -1,4 +1,4 @@
-// S3 between people (was tests/smoke-s3.mjs, anonymous Q&A and Psst!): delivery times, who
+// S3 between people (anonymous Q&A and Psst!): delivery times, who
 // reads what, rate limits, and that Ann (the giftee) never learns who her Santa is.
 import { newId } from '@/lib/server/db';
 import { expect, ok, test, type TrpcError } from '../fixtures';
@@ -13,7 +13,7 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
   const { m, e2, E1, E2, E3, drawE1, deliverQuestions, deliverNudges, annQueries } = await seedBetween(db, people);
   /** Every response Ann (the subject) gets, as [path, json], for the leak checks. */
   const annResponses: [string, string][] = [];
-  // tests/smoke-s3.mjs drew edition 1 after its tip steps (s3-tips.spec.ts); Q&A and Psst! start drawn.
+  // Q&A and Psst! start from a drawn edition.
   await drawE1();
 
   const question = await test.step('Q&A: the giftee sees the question only at the delivery time, with no asker identity', async () => {

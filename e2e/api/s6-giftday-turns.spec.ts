@@ -1,4 +1,4 @@
-// Gift day (was tests/smoke-s6.mjs, part 2; 31, 32): turns one by one, the gift day job, status by
+// Gift day (part 2; 31, 32): turns one by one, the gift day job, status by
 // the edition's local date. Part 1: s6-giftday.spec.ts.
 import { expect, ok, runCron, test } from '../fixtures';
 import { code, drawnGroup, editionOf } from './s6-helpers';

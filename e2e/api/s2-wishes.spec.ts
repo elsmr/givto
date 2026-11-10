@@ -1,6 +1,5 @@
-// S2 wishlist (was tests/smoke-s2.mjs, first half): wish CRUD, reorder, ownership, imported
+// S2 wishlist (first half): wish CRUD, reorder, ownership, imported
 // images and the import guard. Group views and claims: s2-claims.spec.ts.
-// (The smoke suite also ran tests/import.check.mjs; that's a unit check in `pnpm test`.)
 import { Binary, ObjectId } from 'mongodb';
 import { newId } from '@/lib/server/db';
 import { BASE_URL } from '../env';

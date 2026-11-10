@@ -1,4 +1,4 @@
-// Notifications (was tests/smoke-s7.mjs, part 2; 29, 54, 55): reminders, the Mailgun webhook,
+// Notifications (part 2; 29, 54, 55): reminders, the Mailgun webhook,
 // retention. Seeded relative to today: the jobs run at real time through the cron endpoint, on the
 // whole database, so every check is on this test's own people, groups and editions. Part 1:
 // s7-notifications.spec.ts.

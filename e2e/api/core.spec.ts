@@ -1,4 +1,4 @@
-// Core API (was tests/smoke.mjs): health, error shape, sign-in by code and link, sign-out,
+// Core API: health, error shape, sign-in by code and link, sign-out,
 // rate limits, closed Better Auth endpoints, no secrets in the server log.
 import { createHash } from 'node:crypto';
 import {
@@ -17,7 +17,7 @@ import {
 
 const dutch = { 'accept-language': 'nl-NL,nl;q=0.9,en;q=0.8' };
 
-// Every core test: no address of any test so far is in the log (tests/smoke.mjs checked this at the end).
+// Every core test: no address of any test so far is in the log.
 test.afterEach(() => {
   expect(readServerLog()).not.toMatch(/@example\.test/);
 });

@@ -1,4 +1,4 @@
-// S4 draw & settings (was tests/smoke-s4.mjs, the Family group): organizer-only settings, date
+// S4 draw & settings (the Family group): organizer-only settings, date
 // and budget validation, refused and valid draws, late joiners, leaving, re-draw, the next
 // edition and the .ics file. One group whose steps build on each other.
 import { editionCalendarEvents, toIcs } from '@/lib/calendar';

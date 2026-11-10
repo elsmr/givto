@@ -1,4 +1,4 @@
-// Notifications (was tests/smoke-s7.mjs, part 1; 14, 29, 30, 35, 55): cron auth, join request, draw
+// Notifications (part 1; 14, 29, 30, 35, 55): cron auth, join request, draw
 // notices, Psst!, questions, one-click unsubscribe, wishlist digests, organizer handover. Seeded in
 // Mongo, jobs through the cron endpoint, mails from the mail mock. The jobs act on the whole
 // database (and parallel tests run them too), so every check is on this test's own people and
@@ -64,8 +64,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   await test.step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email', async () => {
     // Approval after the draw slots Dan in at a random place where the exclusions allow it (S4).
     // Only Ann may give to Dan, so the place is Ann → Dan → Bob and later steps can rely on it.
-    // (The smoke test overwrote the draw after approving; a parallel deliveries run in between
-    // would mail the random place.)
+    // Set before approving: a parallel deliveries run would otherwise mail a random place.
     const exclusions = [m.olive, m.bob, m.cee, kid].map((santa) => ({ from: santa.id, to: danId }));
     await db.groups.updateOne({ _id: family._id }, { $set: { exclusions } });
     ok(await olive.trpc.mutate('membership.approve', { groupSlug: family.slug, memberId: danId }));
