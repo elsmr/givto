@@ -33,12 +33,8 @@
   },
   "next": {
     "title": "Volgend jaar weer?",
-    "description": "Begin de editie van {year} met iedereen van deze keer. Er wordt niets verstuurd tot je hem opent.",
-    "start": "Editie {year} beginnen",
-    "errors": {
-      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is.",
-      "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
-    }
+    "description": "Begin een nieuwe editie met iedereen van deze keer.",
+    "start": "Nieuwe editie starten"
   },
   "errors": {
     "TOO_FEW_PEOPLE": "Om te loten zijn er minstens {min} mensen nodig.",

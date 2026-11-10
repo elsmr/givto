@@ -21,7 +21,7 @@
     "points": {
       "closed": "Geclaimd!, tips, vragen en de instellingen gaan dicht.",
       "received": "Iedereen kan de gekregen wensen afvinken.",
-      "next": "Je kunt de editie van volgend jaar starten.",
+      "next": "Je kunt een nieuwe editie starten.",
       "undo": "Toch niet? Heropen pakjesdag via dit menu."
     },
     "confirm": "Pakjesdag afsluiten",
@@ -54,6 +54,14 @@
     "confirm": "Pakjesdag heropenen",
     "done": "Pakjesdag is weer open"
   },
+  "newEdition": {
+    "item": "Nieuwe editie starten",
+    "title": "Nieuwe editie starten?",
+    "description": "Een concept met dezelfde deelnemers en hetzelfde budget als {title}, zonder data. Er wordt niets verstuurd tot je hem opent.",
+    "finish": "{title} wordt eerst afgesloten, want er loopt er maar één tegelijk: pakjesdag is voorbij en Geclaimd!, tips, vragen en de instellingen gaan dicht.",
+    "name": "Naam",
+    "confirm": "Nieuwe editie starten"
+  },
   "errors": {
     "NOT_DRAWN": "Er is nog niet geloot.",
     "NOT_GIFT_DAY": "Het is nog geen pakjesdag.",
@@ -61,6 +69,7 @@
     "DATE_IN_PAST": "Kies een dag na vandaag.",
     "EDITION_CLOSED": "Alleen de nieuwste editie kan weer open.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   }
 }

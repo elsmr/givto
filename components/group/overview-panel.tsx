@@ -33,7 +33,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
         {input && <ForYouSection input={input} />}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
         {edition?.guessing && !isBeforeDraw(edition) && <GuessCard group={group} edition={edition} />}
-        {manage && edition && !isBeforeDraw(edition) && <NextEditionCard groupSlug={slug} edition={edition} />}
+        {manage && edition && !isBeforeDraw(edition) && <NextEditionCard group={group} edition={edition} />}
       </div>
       <div className="min-w-0 lg:row-span-2">
         <OverviewStats group={group} showTab={showTab} />

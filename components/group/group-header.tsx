@@ -26,7 +26,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
               <Settings aria-hidden="true" />
               {t('settings-link')}
             </Link>
-            {edition?.isCurrent && <ManageMenu groupSlug={group.slug} edition={edition} />}
+            {edition?.isCurrent && <ManageMenu group={group} edition={edition} />}
           </>
         )
       }

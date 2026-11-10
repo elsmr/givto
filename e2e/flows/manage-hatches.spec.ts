@@ -73,3 +73,47 @@ test('the draw dialog says who is not in the draw', async ({ page, signIn, signI
   await page.getByRole('button', { name: 'Draw names' }).click();
   await expect(page.getByRole('dialog', { name: 'Draw names now?' })).toContainText('Not in this draw: Dan and Eve.');
 });
+
+test('organizer: a new edition from the Manage menu, while shopping (renamed) and once done', async ({ page, signIn, signInPage, db }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const year = todayIn('Europe/Brussels').slice(0, 4);
+  const newEdition = async (finishes: string | null, title?: string) => {
+    await page.getByRole('button', { name: 'Manage' }).click();
+    await page.getByRole('menuitem', { name: 'Start a new edition' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Start a new edition?' });
+    await expect(dialog.getByLabel('Name')).toHaveValue(`Secret Santa ${year}`);
+    if (finishes) await expect(dialog).toContainText(`${finishes} is finished first`);
+    else await expect(dialog.getByText('is finished first')).toHaveCount(0);
+    if (title) await dialog.getByLabel('Name').fill(title);
+    await dialog.getByRole('button', { name: 'Start new edition' }).click();
+    await expect(page).toHaveURL(/\/settings$/);
+  };
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Again', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' })
+  );
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
+  await signInPage(page, ann);
+
+  await test.step('while shopping: this one is finished first', async () => {
+    await page.goto(`/g/${group.slug}`);
+    await expect(currentStep(page)).toContainText('Shop');
+    await newEdition('Secret Santa 2099', 'Summer swap');
+    await expect(page.getByRole('heading', { level: 2, name: 'Summer swap', exact: true })).toBeVisible();
+    await page.goto(`/g/${group.slug}/1`);
+    await expect(currentStep(page)).toContainText('Done');
+  });
+
+  await test.step('once done: nothing to finish', async () => {
+    const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;
+    ok(await ann.trpc.mutate('edition.open', { groupSlug: group.slug, editionNumber: 2 }));
+    ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 2 }));
+    await db.editions.updateOne({ groupId, number: 2 }, { $set: { status: 'done' } });
+    await page.goto(`/g/${group.slug}`);
+    await expect(currentStep(page)).toContainText('Done');
+    await newEdition(null);
+    await expect(page.getByRole('heading', { level: 2, name: `Secret Santa ${year}`, exact: true })).toBeVisible();
+  });
+});

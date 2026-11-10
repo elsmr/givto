@@ -21,7 +21,7 @@
     "points": {
       "closed": "Dibs!, tips, questions and the settings close.",
       "received": "Everyone can tick off what they got.",
-      "next": "You can start next year's edition.",
+      "next": "You can start a new edition.",
       "undo": "Changed your mind? Reopen gift day from this menu."
     },
     "confirm": "Finish gift day",
@@ -54,6 +54,14 @@
     "confirm": "Reopen gift day",
     "done": "Gift day is open again"
   },
+  "newEdition": {
+    "item": "Start a new edition",
+    "title": "Start a new edition?",
+    "description": "A draft with the same people and budget as {title}, without dates. Nothing is sent until you open it.",
+    "finish": "{title} is finished first, as only one runs at a time: gift day is over and Dibs!, tips, questions and its settings close.",
+    "name": "Name",
+    "confirm": "Start new edition"
+  },
   "errors": {
     "NOT_DRAWN": "The names aren't drawn yet.",
     "NOT_GIFT_DAY": "It isn't gift day yet.",
@@ -61,6 +69,7 @@
     "DATE_IN_PAST": "Pick a day after today.",
     "EDITION_CLOSED": "Only the latest edition can be reopened.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn yet.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   }
 }

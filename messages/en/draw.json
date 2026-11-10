@@ -33,12 +33,8 @@
   },
   "next": {
     "title": "Same again next year?",
-    "description": "Start the {year} edition with everyone from this one. Nothing gets sent until you open it.",
-    "start": "Start the {year} edition",
-    "errors": {
-      "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn yet.",
-      "INTERNAL": "Something went wrong on our side. Try again in a moment."
-    }
+    "description": "Start a new edition with everyone from this one.",
+    "start": "Start a new edition"
   },
   "errors": {
     "TOO_FEW_PEOPLE": "The draw needs at least {min} people.",

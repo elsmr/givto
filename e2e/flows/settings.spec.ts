@@ -1,5 +1,6 @@
 // The organizer's settings (27, 28, 26, 45, 48, 33): rename, dates and budget, keep apart, the join
 // link, removing someone after the draw, and the next edition after gift day.
+import { todayIn } from '@/lib/local-date';
 import type { Page } from '@playwright/test';
 import { expect, ok, test, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
@@ -210,10 +211,15 @@ test('after gift day: same again next year, then open the new edition', async ({
 
   await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'done' } });
   await page.reload();
-  await test.step('start the 2100 edition: a draft, in the settings', async () => {
-    await page.getByRole('button', { name: 'Start the 2100 edition' }).click();
+  const title = `Secret Santa ${todayIn('Europe/Brussels').slice(0, 4)}`;
+  await test.step("start a new edition: this year's, a draft, in the settings", async () => {
+    await page.getByRole('button', { name: 'Start a new edition' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Start a new edition?' });
+    await expect(dialog.getByLabel('Name')).toHaveValue(title);
+    await expect(dialog.getByText('is finished first'), 'done already').toHaveCount(0);
+    await dialog.getByRole('button', { name: 'Start new edition' }).click();
     await expect(page).toHaveURL(`/g/${group.slug}/settings`);
-    await expect(card(page, 'Secret Santa 2100')).toBeVisible();
+    await expect(card(page, title)).toBeVisible();
     await expect(card(page, 'People')).toContainText('3 people in this edition');
   });
 
@@ -221,7 +227,7 @@ test('after gift day: same again next year, then open the new edition', async ({
     await page.getByRole('link', { name: 'Back to Yearly' }).click();
     await expect(page.getByRole('link', { name: 'Secret Santa 2099' }), 'editions start collapsed').toBeHidden();
     await page.getByRole('heading', { name: 'Editions' }).click();
-    await expect(page.getByRole('link', { name: 'Secret Santa 2100' })).toHaveAttribute('aria-current', 'page');
+    await expect(page.getByRole('link', { name: title })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('link', { name: 'Secret Santa 2099' })).toBeVisible();
     await expect(page.getByRole('heading', { name: "Nothing's sent yet" })).toBeVisible();
     await page.getByRole('button', { name: 'Open this edition' }).click();
