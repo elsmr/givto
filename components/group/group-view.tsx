@@ -1,7 +1,8 @@
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { GroupWishlist } from '@/components/wishlist/group-wishlist';
 import { useRef } from 'react';
-import { editionPhase, isBeforeDraw } from './edition-phase';
+import { isBeforeDraw } from '@/lib/schema/edition';
+import { editionPhase } from './edition-phase';
 import type { GroupData } from './group-data';
 import { GifteePanel } from './giftee-panel';
 import { GroupHeader } from './group-header';

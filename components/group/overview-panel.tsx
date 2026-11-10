@@ -5,7 +5,7 @@ import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
 import { NotebookText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
-import { isBeforeDraw } from './edition-phase';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
 import type { GroupData } from './group-data';

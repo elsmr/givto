@@ -1,5 +1,4 @@
 import { appErrorCode } from '@/components/group/app-error-code';
-import { isBeforeDraw } from '@/components/group/edition-phase';
 import { FeasibilityNote } from '@/components/group/feasibility-note';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { HouseholdsEditor } from '@/components/group/households-editor';
@@ -11,6 +10,7 @@ import { FieldError } from '@/components/ui/field';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { toast } from '@/components/ui/toast';
 import { toExclusions, type KeepApartPair } from '@/lib/exclusions';
+import { isBeforeDraw } from '@/lib/schema/edition';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { Split } from 'lucide-react';

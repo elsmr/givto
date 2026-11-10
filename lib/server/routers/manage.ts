@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { todayIn } from '../../local-date';
 import { LocalDate } from '../../schema/common';
-import type { Edition, EditionStatus } from '../../schema/edition';
+import { isBeforeDraw, type Edition, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
 import { newUnwrapOrder } from '../jobs/giftday';
@@ -11,7 +11,7 @@ import { organizerEditionProcedure } from './draw';
 
 /** Each action is only offered in its status: another one means it isn't there yet, or it just changed. */
 const wrongStatus = ({ status }: Edition) =>
-  new AppError(status === 'draft' || status === 'open' ? 'NOT_DRAWN' : status === 'drawn' ? 'NOT_GIFT_DAY' : 'EDITION_CHANGED');
+  new AppError(isBeforeDraw({ status }) ? 'NOT_DRAWN' : status === 'drawn' ? 'NOT_GIFT_DAY' : 'EDITION_CHANGED');
 
 /** Gift day today: a time set for another day no longer applies, the place still does. */
 const giftDayToday = (edition: Edition, today: string): Edition['giftDay'] =>
