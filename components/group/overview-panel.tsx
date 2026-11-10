@@ -10,7 +10,6 @@ import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
 import type { GroupData } from './group-data';
 import { OverviewStats } from './overview-stats';
-import { PastEditionNotice } from './past-edition-notice';
 import { PendingRequests } from './pending-requests';
 import { PhaseMainCard } from './phase-main-card';
 import type { GroupTab } from './use-group-tab';
@@ -29,7 +28,6 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-6">
-        {edition && !current && <PastEditionNotice slug={slug} title={edition.title} />}
         {manage && <PendingRequests group={group} />}
         {input && <ForYouSection input={input} />}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}

@@ -7,6 +7,7 @@ import { GifteePanel } from './giftee-panel';
 import { GroupHeader } from './group-header';
 import { GroupTabBar } from './group-tab-bar';
 import { OverviewPanel } from './overview-panel';
+import { PastEditionNotice } from './past-edition-notice';
 import { PeoplePanel } from './people-panel';
 import { PhaseStepper } from './phase-stepper';
 import { groupTabs, useGroupTab, type GroupTab } from './use-group-tab';
@@ -27,6 +28,7 @@ export const GroupView = ({ group }: { group: GroupData }) => {
     <Tabs value={tab} onValueChange={(value) => setTab(value as GroupTab)} className="flex flex-col gap-6">
       <div ref={top} className="flex scroll-mt-4 flex-col gap-6">
         <GroupHeader group={group} />
+        {edition && !edition.isCurrent && <PastEditionNotice slug={group.slug} title={edition.title} />}
         {edition && <PhaseStepper edition={edition} />}
       </div>
       <GroupTabBar tabs={tabs} />
