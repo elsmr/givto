@@ -9,6 +9,7 @@
     "draw": "Draw names",
     "confirm-title": "Draw names now?",
     "confirm-description": "Everyone gets their giftee right away. People who join later are slotted in.",
+    "left-out": "Not in this draw: {names}.",
     "confirm": "Draw names",
     "cancel": "Not yet",
     "drawn": "Names drawn!"

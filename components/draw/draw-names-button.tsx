@@ -13,17 +13,25 @@ import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
 import { Shuffle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import type { GroupMember } from '../group/group-data';
 import { DrawError } from './draw-error';
 import { useRefreshEdition } from './use-refresh-edition';
 
-type DrawNamesButtonProps = { groupSlug: string; editionNumber: number; members: GroupMember[]; primary: boolean };
+type DrawNamesButtonProps = {
+  groupSlug: string;
+  editionNumber: number;
+  members: GroupMember[];
+  /** Names of people in the group but not in this draw (invited, asking to join, sitting out): the draw doesn't wait for them. */
+  leftOut: string[];
+  primary: boolean;
+};
 
-/** Organizer: "Draw names" now, after a confirmation (34). */
-export const DrawNamesButton = ({ groupSlug, editionNumber, members, primary }: DrawNamesButtonProps) => {
+/** Organizer: "Draw names" now, after a confirmation that says who's not in (34, 64). */
+export const DrawNamesButton = ({ groupSlug, editionNumber, members, leftOut, primary }: DrawNamesButtonProps) => {
   const t = useTranslations('draw.before');
+  const format = useFormatter();
   const trpc = useTRPC();
   const refresh = useRefreshEdition(groupSlug);
   const [open, setOpen] = useState(false);
@@ -54,6 +62,7 @@ export const DrawNamesButton = ({ groupSlug, editionNumber, members, primary }: 
           <DialogTitle>{t('confirm-title')}</DialogTitle>
           <DialogDescription>{t('confirm-description')}</DialogDescription>
         </DialogHeader>
+        {leftOut.length > 0 && <p>{t('left-out', { names: format.list(leftOut) })}</p>}
         {run.error && <DrawError error={run.error} members={members} />}
         <DialogFooter>
           <DialogClose render={<Button variant="neutral" />}>{t('cancel')}</DialogClose>

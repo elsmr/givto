@@ -9,6 +9,7 @@
     "draw": "Namen trekken",
     "confirm-title": "Nu namen trekken?",
     "confirm-description": "Iedereen krijgt meteen een naam. Wie later meedoet, schuift er tussen.",
+    "left-out": "Niet in deze loting: {names}.",
     "confirm": "Namen trekken",
     "cancel": "Nog niet",
     "drawn": "De namen zijn getrokken!"
