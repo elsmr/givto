@@ -88,6 +88,7 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
     db.wishlistNotifications.deleteMany({ gifteeMemberId: mine }),
     db.sentNotifications.deleteMany({ $or: [{ userId: user.id }, { memberId: mine }] }),
     db.invites.deleteMany({ $or: [{ email: user.email }, { memberId: mine }] }),
+    db.emailSuppressions.deleteOne({ _id: user.email.toLowerCase() }),
     db.editions.updateMany(
       { 'participants.memberId': mine },
       { $unset: { 'participants.$[p].address': '', 'participants.$[p].gifteeWishlistSeenAt': '' } },

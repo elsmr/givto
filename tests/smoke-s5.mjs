@@ -257,6 +257,7 @@ await step('deletion needs the emailed code', async () => {
   assert.equal((await mailsTo(ann.email)).length, before + 1);
   assert.equal(mail.subject, 'Bevestig het verwijderen van je Givto-account');
   const code = mail.text.match(/\b(\d{6})\b/)[1];
+  mongo(`db.emailSuppressions.insertOne({ _id: '${ann.email.toLowerCase()}', reason: 'bounce', at: new Date() })`);
   const wrong = String((Number(code) + 1) % 1e6).padStart(6, '0');
   assert.equal((await trpc('account.delete', { code: wrong }, { cookie: ann.cookie, mutation: true })).error.data.appCode, 'INVALID_CODE');
   const done = await trpc('account.delete', { code }, { cookie: ann.cookie, mutation: true });
