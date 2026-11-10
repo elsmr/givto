@@ -3,6 +3,7 @@ import { Id } from '../../schema/common';
 import type { Edition } from '../../schema/edition';
 import { newId } from '../db';
 import { AppError } from '../errors';
+import { dropGiftWish } from '../gift/marks';
 import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
 import { toWishView, visibleWishes } from '../wishlist/wish-view';
@@ -68,6 +69,7 @@ export const claimRouter = router({
       santaMemberId: ctx.santa.id,
     });
     if (deletedCount === 0) throw new AppError('NOT_FOUND');
+    await dropGiftWish(ctx.db, ctx.edition._id, ctx.santa.id, input.wishId);
     return { wishId: input.wishId, claim: null };
   }),
 });

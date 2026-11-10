@@ -2,7 +2,9 @@ import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
+import type { Collections } from '../db';
 import { AppError } from '../errors';
+import { giftCounts } from '../gift/marks';
 import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
 import { testHooksEnabled } from '../test-hooks';
 import { authedProcedure, editionProcedure, publicProcedure, router } from '../trpc';
@@ -12,20 +14,20 @@ import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
 const fromGiftDay = (edition: Edition) => edition.status === 'giftday' || edition.status === 'done';
 
-const presenterView = (group: Group, edition: Edition) => ({
+const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
   groupName: group.name,
   title: edition.title,
   status: edition.status,
-  ...presenterGiftDayView(group, edition),
+  ...presenterGiftDayView(group, edition, await giftCounts(db, edition)),
 });
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
   /** Unwrap order and reveal state for the group home; Santas only once revealed. */
-  get: editionProcedure.query(({ ctx }) => giftDayView(ctx.group, ctx.edition)),
+  get: editionProcedure.query(async ({ ctx }) => giftDayView(ctx.group, ctx.edition, await giftCounts(ctx.db, ctx.edition))),
 
   /** The presenter view (/g/[slug]/present) is the organizer's (PLAN-v2). */
-  presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.group, ctx.edition)),
+  presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition)),
 
   /** Shuffle (or reshuffle) the unwrap order: everyone sees the same stored order. Starts the unwrapping over. */
   shuffle: organizerEditionProcedure.mutation(async ({ ctx }) => {
@@ -55,7 +57,7 @@ export const giftdayRouter = router({
   /** The presenter's next step (organizer only); see `advanceUnwrapping`. Returns the new presenter view. */
   advance: organizerEditionProcedure.input(AdvanceInput).mutation(async ({ ctx, input }) => {
     const edition = await advanceUnwrapping(ctx.db, ctx.group, ctx.edition, input);
-    return presenterView(ctx.group, edition);
+    return presenterView(ctx.db, ctx.group, edition);
   }),
 
   /** The big reveal on or off (off by default). Off again hides it from everyone. */

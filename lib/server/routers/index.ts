@@ -10,6 +10,7 @@ import { wishlistRouters } from './wishlist';
 import { membershipRouter } from './membership';
 import { drawRouters } from './draw-routers';
 import { giftdayRouter } from './giftday';
+import { giftRouter } from './gift';
 
 /** Slices add their router here: `<domain>: <domain>Router` from `./<domain>`. */
 export const appRouter = router({
@@ -27,6 +28,7 @@ export const appRouter = router({
   ...betweenRouters,
   ...drawRouters,
   giftday: giftdayRouter,
+  gift: giftRouter,
 });
 
 export type AppRouter = typeof appRouter;

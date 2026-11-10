@@ -25,13 +25,14 @@ const deleteAddresses = async (db: Collections, now: Date) => {
   return past.length;
 };
 
-/** Claims, tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day. */
+/** Claims, gifts marked (63), tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day. */
 const deleteEditionMessages = async (db: Collections, now: Date) => {
   const cutoff = isoDate(monthsBefore(now, retention.editionMessagesMonths));
   const ids = (await db.editions.find({ 'giftDay.date': { $lt: cutoff } }, { projection: { _id: 1 } }).toArray()).map((e) => e._id);
   const inEditions = { editionId: { $in: ids } };
   const results = await Promise.all([
     db.claims.deleteMany(inEditions),
+    db.gifts.deleteMany(inEditions),
     db.tips.deleteMany(inEditions),
     db.questions.deleteMany(inEditions),
     db.nudges.deleteMany(inEditions),
