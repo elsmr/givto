@@ -138,7 +138,7 @@ for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
 }
 // drawn: three or more people
 ok(await ann.trpc.mutate('draw.run', edition));
-// draft: the next edition after a drawn one (`edition.open` opens it)
+// draft: the next edition; the drawn one is finished first (`edition.open` opens the draft)
 ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
 ```
 

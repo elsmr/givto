@@ -17,6 +17,12 @@ export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status =
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);
 
+/** "Secret Santa 2026", or "Secret Santa 2026 (2)", "(3)" … when the group has that title already (77). */
+export const defaultEditionTitle = (year: number, takenTitles: string[]): string => {
+  const numbered = (n: number) => (n === 1 ? `Secret Santa ${year}` : `Secret Santa ${year} (${n})`);
+  return Array.from({ length: takenTitles.length + 1 }, (_, i) => numbered(i + 1)).find((title) => !takenTitles.includes(title))!;
+};
+
 /** Local date + optional time in the edition's time zone, not a UTC instant: all-day events must not shift a day (28). */
 export const GiftDay = v.object({
   date: LocalDate,

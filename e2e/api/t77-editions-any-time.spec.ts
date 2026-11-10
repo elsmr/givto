@@ -1,7 +1,7 @@
 // New editions any time (77): from drawn, gift day or done; the current one is finished first.
 import { todayIn } from '@/lib/local-date';
 import { expect, ok, test } from '../fixtures';
-import { codeOf, editionOf, join, memberIdOf } from './s4-group';
+import { codeOf, createGroup, editionOf, join, memberIdOf } from './s4-group';
 
 const TZ = 'Europe/Brussels';
 
@@ -60,4 +60,22 @@ test('two editions in the same year: titles, year, finished first, not the same 
     ]);
     expect(ok(await ann.trpc.query('group.get', edition(2))).edition?.title).toBe(`Secret Santa ${year} (2)`);
   });
+});
+
+test('finished early: a gift day still ahead becomes today, so retention follows the real end', async ({ signIn, db }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = await createGroup(ann, 'Early');
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) await join(person, group, name);
+  ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
+  await db.editions.updateOne({ _id: (await editionOf(db, group.slug, 1))._id }, { $set: { wishlistBy: '2099-12-01', postBy: '2099-12-20' } });
+  ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
+  const today = todayIn(TZ);
+  expect(await editionOf(db, group.slug, 1)).toMatchObject({
+    status: 'done',
+    giftDay: { date: today, place: 'Grandma’s' },
+    wishlistBy: today,
+    postBy: today,
+    calendarSequence: 1,
+  });
+  expect((await editionOf(db, group.slug, 2)).giftDay).toBeUndefined();
 });

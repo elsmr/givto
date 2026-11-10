@@ -1,27 +1,33 @@
-import { isBeforeDraw, type Edition } from '../../schema/edition';
+import * as v from 'valibot';
+import { todayIn } from '../../local-date';
+import { defaultEditionTitle, EditionTitle, isBeforeDraw, type Edition } from '../../schema/edition';
 import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
 import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
+import { finishEdition } from './manage';
 
-/** Editions (33): "Same again next year" as a draft, opened once the organizer is happy. */
+/** Editions (33, 77): a new one as a draft any time after the draw, opened once the organizer is happy. */
 export const editionRouter = router({
   /**
-   * The next edition as a draft: every joined member ticked, last year's settings, "not the
-   * same as last year" on when there was a draw. Nothing is sent until it opens.
+   * The next edition as a draft: every joined member ticked, the last one's settings but no dates,
+   * "not the same as last time" on when there was a draw. One runs at a time: a drawn or gift day
+   * edition is finished first. Labelled with this year; the title gets a number when it's taken.
+   * Nothing is sent until it opens.
    */
-  startNext: organizerProcedure.mutation(async ({ ctx }) => {
+  startNext: organizerProcedure.input(v.object({ title: v.optional(EditionTitle) })).mutation(async ({ ctx, input }) => {
     const current = await currentEdition(ctx.db, ctx.group._id);
     if (!current || isBeforeDraw(current)) throw new AppError('EDITION_IN_PROGRESS');
+    if (current.status !== 'done') await finishEdition(ctx.db, current);
     const now = new Date();
-    const year = current.year + 1;
+    const year = Number(todayIn(current.timeZone, now).slice(0, 4));
     const hadDraw = Object.keys(current.draw?.assignments ?? {}).length > 0;
     const edition: Edition = {
       _id: newId(),
       groupId: ctx.group._id,
       number: current.number + 1,
       year,
-      title: `Secret Santa ${year}`,
+      title: input.title ?? defaultEditionTitle(year, await ctx.db.editions.distinct('title', { groupId: ctx.group._id })),
       timeZone: current.timeZone,
       exchangeMode: current.exchangeMode,
       ...(current.budget && { budget: current.budget }),

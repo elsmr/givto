@@ -1,11 +1,11 @@
 // S4 draw & settings (the Family group): organizer-only settings, date
-// and budget validation, refused and valid draws, late joiners, leaving, re-draw, the next
-// edition and the .ics file. One group whose steps build on each other.
+// and budget validation, refused and valid draws, late joiners, leaving, re-draw, the .ics
+// file and the next edition. One group whose steps build on each other.
 import { editionCalendarEvents, toIcs } from '@/lib/calendar';
 import { expect, ok, test, type MutationPath } from '../fixtures';
 import { codeOf, createGroup, editionOf, expectValidDraw, groupOf, join, memberIdOf, rulesOf } from './s4-group';
 
-test('Family: settings, draw, changes after the draw, next edition, .ics', async ({ signIn, db }) => {
+test('Family: settings, draw, changes after the draw, .ics, next edition', async ({ signIn, db }) => {
   const [ann, bob, cee, dan, eve, fay, zed] = await Promise.all(['ann', 'bob', 'cee', 'dan', 'eve', 'fay', 'zed'].map((name) => signIn(name)));
   const family = await createGroup(ann, 'Family');
   const slug = family.slug;
@@ -141,9 +141,34 @@ test('Family: settings, draw, changes after the draw, next edition, .ics', async
     expect(draw?.history).toHaveLength(1);
   });
 
-  await test.step('next edition: draft with everyone ticked, untick, open; not the same as last year, never exposed', async () => {
+  await test.step('.ics is valid: stable UID, SEQUENCE bumps when gift day changes', async () => {
+    const texts = { giftDay: 'Gift day', postBy: 'Post your gift', description: 'https://givto.app/g/x' };
+    const icsFor = async () => {
+      const { edition } = ok(await bob.trpc.query('group.get', edition1));
+      return toIcs(editionCalendarEvents({ groupSlug: slug, editionNumber: 1, ...edition! }, texts), new Date('2099-01-01T00:00:00Z'));
+    };
+    const first = await icsFor();
+    const lines = first.split('\r\n');
+    expect(lines[0]).toBe('BEGIN:VCALENDAR');
+    expect(lines.at(-2)).toBe('END:VCALENDAR');
+    expect(lines.at(-1)).toBe('');
+    expect(lines.every((line) => new TextEncoder().encode(line).length <= 75)).toBe(true);
+    expect(lines.filter((line) => line === 'BEGIN:VEVENT')).toHaveLength(2);
+    expect(lines, first).toContain('DTSTART:20991224T170000Z');
+    expect(lines.includes('DTSTART;VALUE=DATE:20991219') && lines.includes('DTEND;VALUE=DATE:20991220'), first).toBe(true);
+    const uids = (ics: string) => ics.split('\r\n').filter((line) => line.startsWith('UID:'));
+    const sequence = (ics: string) => Number(ics.split('\r\n').find((line) => line.startsWith('SEQUENCE:'))!.slice(9));
+    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', avoidPreviousGiftees: false, postBy: '2099-12-19' } as const;
+    ok(await ann.trpc.mutate('settings.updateEdition', { ...base, giftDay: { date: '2099-12-23' } }));
+    const second = await icsFor();
+    expect(uids(second)).toEqual(uids(first));
+    expect(sequence(second)).toBe(sequence(first) + 1);
+    expect(second).toContain('DTSTART;VALUE=DATE:20991223');
+  });
+  await test.step('next edition: this one finished, draft with everyone ticked, untick, open; not the same as last time, never exposed', async () => {
     expect(codeOf(await ann.trpc.mutate('edition.open', edition1))).toBe('EDITION_CHANGED');
     expect(ok(await ann.trpc.mutate('edition.startNext', { groupSlug: slug }))).toEqual({ number: 2 });
+    expect((await editionOf(db, slug, 1)).status).toBe('done');
     expect(codeOf(await ann.trpc.mutate('edition.startNext', { groupSlug: slug }))).toBe('EDITION_IN_PROGRESS');
     const draft = await editionOf(db, slug, 2);
     expect(draft.status).toBe('draft');
@@ -172,30 +197,5 @@ test('Family: settings, draw, changes after the draw, next edition, .ics', async
     const past = ok(await bob.trpc.query('group.get', edition1));
     expect(past.edition?.isCurrent).toBe(false);
     expect(codeOf(await bob.trpc.query('group.get', { groupSlug: slug, editionNumber: 9 }))).toBe('EDITION_NOT_FOUND');
-  });
-
-  await test.step('.ics is valid: stable UID, SEQUENCE bumps when gift day changes', async () => {
-    const texts = { giftDay: 'Gift day', postBy: 'Post your gift', description: 'https://givto.app/g/x' };
-    const icsFor = async () => {
-      const { edition } = ok(await bob.trpc.query('group.get', edition1));
-      return toIcs(editionCalendarEvents({ groupSlug: slug, editionNumber: 1, ...edition! }, texts), new Date('2099-01-01T00:00:00Z'));
-    };
-    const first = await icsFor();
-    const lines = first.split('\r\n');
-    expect(lines[0]).toBe('BEGIN:VCALENDAR');
-    expect(lines.at(-2)).toBe('END:VCALENDAR');
-    expect(lines.at(-1)).toBe('');
-    expect(lines.every((line) => new TextEncoder().encode(line).length <= 75)).toBe(true);
-    expect(lines.filter((line) => line === 'BEGIN:VEVENT')).toHaveLength(2);
-    expect(lines, first).toContain('DTSTART:20991224T170000Z');
-    expect(lines.includes('DTSTART;VALUE=DATE:20991219') && lines.includes('DTEND;VALUE=DATE:20991220'), first).toBe(true);
-    const uids = (ics: string) => ics.split('\r\n').filter((line) => line.startsWith('UID:'));
-    const sequence = (ics: string) => Number(ics.split('\r\n').find((line) => line.startsWith('SEQUENCE:'))!.slice(9));
-    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', avoidPreviousGiftees: false, postBy: '2099-12-19' } as const;
-    ok(await ann.trpc.mutate('settings.updateEdition', { ...base, giftDay: { date: '2099-12-23' } }));
-    const second = await icsFor();
-    expect(uids(second)).toEqual(uids(first));
-    expect(sequence(second)).toBe(sequence(first) + 1);
-    expect(second).toContain('DTSTART;VALUE=DATE:20991223');
   });
 });
