@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Dialog,
   DialogClose,
@@ -10,8 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 
@@ -31,16 +33,16 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
   );
 
   return (
-    <Card>
+    <Card className="bg-coral">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('danger.title')}</h2>
-        </CardTitle>
-        <CardDescription>{t('danger.description')}</CardDescription>
+        <IconCardTitle icon={TriangleAlert} tone="yellow">
+          {t('danger.title')}
+        </IconCardTitle>
+        <CardDescription className="text-base text-ink">{t('danger.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Dialog>
-          <DialogTrigger render={<Button variant="danger" />}>{t('danger.button')}</DialogTrigger>
+          <DialogTrigger render={<Button variant="neutral" />}>{t('danger.button')}</DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{t('danger.confirm-title', { group: groupName })}</DialogTitle>

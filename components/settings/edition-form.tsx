@@ -4,8 +4,9 @@ import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import type { GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,6 +15,7 @@ import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
 import { EditionTitle, GiftDay } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
+import { CalendarDays } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-draft';
@@ -52,9 +54,9 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('edition.title', { edition: edition.title })}</h2>
-        </CardTitle>
+        <IconCardTitle icon={CalendarDays} tone="mint">
+          {t('edition.title', { edition: edition.title })}
+        </IconCardTitle>
       </CardHeader>
       <CardContent>
         {edition.status === 'done' ? (
