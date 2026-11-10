@@ -2,7 +2,8 @@
   "hero": {
     "title": "It's gift day!",
     "description": "Time to unwrap. Have fun, everyone.",
-    "present": "Open the presenter view"
+    "present": "Open the presenter view",
+    "to-open": "{count, plural, one {# gift to open} other {# gifts to open}}"
   },
   "order": {
     "title": "Unwrap order",
@@ -76,7 +77,10 @@
     "more": "More to open",
     "last": "That was the last one",
     "keys-spin": "Space or → to spin · ← back",
-    "keys-one-by-one": "→ or space: more to open · L: that was the last one · ← back"
+    "keys-one-by-one": "→ or space: more to open · L: that was the last one · ← back",
+    "gift-of": "Gift {current} of {total}",
+    "gifts": "{count, plural, one {# gift} other {# gifts}}",
+    "keys-counted": "→ or space: next · ← back"
   },
   "errors": {
     "NOT_DRAWN": "Names aren't drawn yet.",

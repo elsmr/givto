@@ -18,6 +18,8 @@ export interface Notice {
   groupId?: string;
   editionId?: string;
   memberId?: string;
+  /** Reminders (63): the schedule slots this email covers, logged with it. */
+  slots?: string[];
   render: (unsubscribe: FooterProps['unsubscribe']) => { subject: string; body: ReactElement };
   calendar?: Mail['calendar'];
 }
@@ -41,6 +43,7 @@ export const sendNotice = async (db: Collections, notice: Notice): Promise<Notic
       ...(notice.editionId && { editionId: notice.editionId }),
       ...(to.userId && { userId: to.userId }),
       ...(notice.memberId && { memberId: notice.memberId }),
+      ...(notice.slots && { slots: notice.slots }),
       sentAt: new Date(),
     });
   } catch (error) {

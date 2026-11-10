@@ -8,7 +8,8 @@
     "category": {
       "reminders": "reminders",
       "wishlistUpdates": "wishlist updates",
-      "santaMessages": "messages from your Santa"
+      "santaMessages": "messages from your Santa",
+      "joins": "who joined your groups"
     }
   },
   "sign-in": {
@@ -63,6 +64,14 @@
     "title": "You're in!",
     "body": "The organizer let you into “{group}”. Add a few wishes so your Santa knows what to get you.",
     "button": "Go to the group"
+  },
+  "join-digest": {
+    "subject": "{count, plural, one {{name} joined {group}} other {# people joined {group}}}",
+    "preheader": "{count, plural, one {# person is} other {# people are}} in now.",
+    "title": "{count, plural, one {Someone joined} other {# people joined}}",
+    "body": "Joined “{group}” through the group link yesterday:",
+    "total": "{count, plural, one {# person is} other {# people are}} in now.",
+    "button": "See who's in"
   },
   "names-drawn": {
     "subject": "Names are drawn in {group}!",
@@ -121,23 +130,33 @@
     "updated": "{count, plural, one {Changed:} other {# changed:}}",
     "button": "See the wishlist"
   },
-  "reminder-wishlist": {
-    "subject": "Your Santa is waiting for your wishlist",
-    "preheader": "Add a few wishes for {group}.",
-    "title": "Your wishlist is empty",
-    "body": "Your Santa in “{group}” doesn't know what to get you yet. Add a few wishes: big or small, a link or just an idea.",
-    "by": "Wishlists ready by {date}.",
-    "button": "Add a wish"
-  },
-  "reminder-gift": {
-    "subject": "Got your gift yet? {group} is coming up",
-    "subject-post": "Post your gift by {date}",
-    "preheader": "Gift day is {date}.",
-    "title": "Got your gift yet?",
-    "title-post": "Time to post your gift",
-    "body": "Gift day for “{group}” is {date}. Still shopping? Your giftee's wishlist has ideas.",
-    "body-post": "Your gift for “{group}” should be in the post by {postBy}, so it arrives before gift day ({date}). Their address is in Givto.",
-    "button": "Open my giftee's wishlist"
+  "reminder": {
+    "title": "A few things for “{group}”",
+    "wishlist": {
+      "subject": "Add a few wishes",
+      "title": "Your wishlist is empty",
+      "body": "Your Santa in “{group}” doesn't know what to get you yet. Add a few wishes: big or small, a link or just an idea.",
+      "by": "Wishlists ready by {date}.",
+      "button": "Add a wish"
+    },
+    "gift": {
+      "subject": "Got your gift yet?",
+      "subject-post": "Post your gift by {date}",
+      "title": "Got your gift yet?",
+      "title-post": "Time to post your gift",
+      "body": "Gift day for “{group}” is {date}. Still shopping? Your giftee's wishlist has ideas.",
+      "body-post": "Your gift for “{group}” should be in the post by {postBy}, so it arrives before gift day ({date}). Their address is in Givto.",
+      "mark": "Got it already? Tap “I've got my gift” in Givto and we'll stop reminding you.",
+      "button": "Open my giftee's wishlist"
+    },
+    "ready": {
+      "subject": "Ready to draw names",
+      "title": "Ready to draw names",
+      "body": "Everyone you invited by email has joined “{group}”: {count, plural, one {# person is} other {# people are}} in. Draw names whenever you're ready.",
+      "body-soon": "Gift day for “{group}” is {date} and names aren't drawn yet. Draw them now, so everyone has time to shop.",
+      "late": "Anyone who joins after the draw still gets someone to buy for.",
+      "button": "Draw names"
+    }
   },
   "reminder-gift-day": {
     "subject": "It's gift day! {group}",

@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useGiftDayError } from '../use-gift-day-error';
 import { useRefreshGiftDay } from '../use-refresh-gift-day';
-import { canRevealIn, presenterPhase, type PresenterOrder, type PresenterView } from './presenter-phase';
+import { canRevealIn, currentGiftCount, presenterPhase, type PresenterOrder, type PresenterView } from './presenter-phase';
 import { useAdvance } from './use-advance';
 import type { SpinStatus } from './who-is-next-reel';
 
@@ -24,6 +24,8 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const step = (action: Parameters<typeof advance>[0]) => advance(action, order.turnsTaken);
   const onLanded = () => advance('spin', order.turnsTaken);
   const oneByOne = view.unwrapMode === 'oneByOne';
+  // A known gift count (63) decides when they're done: no "that was the last one".
+  const counted = currentGiftCount(order) !== null;
 
   const next = () => {
     if (phase === 'intro') step('start');
@@ -36,6 +38,6 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
     if (phase === 'end' && showEnd && canRevealIn(view)) setShowEnd(false);
     else if (phase !== 'intro') step('back');
   };
-  const last = oneByOne && phase === 'turn' ? () => step('last') : undefined;
-  return { phase, spinStatus, onLanded, next, previous, last, revealed: view.reveal.revealed, busy: isPending || reveal.isPending };
+  const last = oneByOne && phase === 'turn' && !counted ? () => step('last') : undefined;
+  return { phase, spinStatus, onLanded, next, previous, last, counted, revealed: view.reveal.revealed, busy: isPending || reveal.isPending };
 };

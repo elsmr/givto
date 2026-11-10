@@ -7,6 +7,7 @@ import { GifteeChangedEmail, gifteeChangedSubject } from './giftee-changed';
 import { GroupDeletionEmail, groupDeletionSubject } from './group-deletion';
 import { InviteEmail, inviteSubject } from './invite';
 import { JoinReminderEmail, joinReminderSubject } from './join-reminder';
+import { JoinDigestEmail, joinDigestSubject } from './join-digest';
 import { JoinRequestEmail, joinRequestSubject } from './join-request';
 import { JoinedEmail, joinedSubject } from './joined';
 import { NamesDrawnEmail, namesDrawnSubject } from './names-drawn';
@@ -14,9 +15,9 @@ import { OrganizerHandoverEmail, organizerHandoverSubject } from './organizer-ha
 import { PsstEmail, psstSubject } from './psst';
 import { QuestionEmail, questionSubject } from './question';
 import { ReminderGiftDayEmail, reminderGiftDaySubject } from './reminder-gift-day';
-import { ReminderGiftEmail, reminderGiftSubject } from './reminder-gift';
-import { ReminderWishlistEmail, reminderWishlistSubject } from './reminder-wishlist';
+import { ReminderEmail, reminderSubject, type ReminderParts } from './reminder';
 import { SignInEmail, signInSubject } from './sign-in';
+import type { UnsubscribeCategory } from './ui/categories';
 import { formatLocalDate } from './ui/format-date';
 import { WishlistUpdatedEmail, wishlistUpdatedSubject } from './wishlist-updated';
 
@@ -34,7 +35,7 @@ export interface EmailPreview {
 export const emailPreviews = (locale: Locale): EmailPreview[] => {
   const group = 'Family';
   const url = 'https://givto.example/g/family123';
-  const unsubscribe = (category: 'reminders' | 'wishlistUpdates' | 'santaMessages') => ({
+  const unsubscribe = (category: UnsubscribeCategory) => ({
     url: `https://givto.example/unsubscribe?t=sample-${category}`,
     category,
   });
@@ -42,6 +43,12 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
   const giftDay = formatLocalDate('2026-12-18', locale);
   const postBy = formatLocalDate('2026-12-12', locale);
   const santa = ['Olive', 'olive@example.com'];
+  const wishlist = { url: 'https://givto.example/wishlist', by: formatLocalDate('2026-12-04', locale) };
+  const gift = { url: `${url}#giftee`, giftDay };
+  const reminder = (name: string, parts: ReminderParts, forName?: string): EmailPreview => {
+    const props = { ...base, ...parts, forName, unsubscribe: unsubscribe('reminders') };
+    return { name, subject: reminderSubject(props), body: <ReminderEmail {...props} />, url: Object.values(parts)[0].url };
+  };
   return [
     { name: 'sign-in', subject: signInSubject(locale), body: <SignInEmail locale={locale} otp="482913" url="https://givto.example/auth/link#t=abc" />, url: 'https://givto.example/auth/link#t=abc' },
     { name: 'delete-account', subject: deleteAccountSubject(locale), body: <DeleteAccountEmail locale={locale} code="771204" /> },
@@ -63,9 +70,20 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
       body: <WishlistUpdatedEmail {...base} added={['Moomin mug', 'Green socks', 'A good novel']} updated={['Headphones']} unsubscribe={unsubscribe('wishlistUpdates')} />,
       url,
     },
-    { name: 'reminder-wishlist', subject: reminderWishlistSubject(base), body: <ReminderWishlistEmail {...base} by={formatLocalDate('2026-12-04', locale)} unsubscribe={unsubscribe('reminders')} />, url },
-    { name: 'reminder-gift', subject: reminderGiftSubject(base), body: <ReminderGiftEmail {...base} giftDay={giftDay} unsubscribe={unsubscribe('reminders')} />, url },
-    { name: 'reminder-post', subject: reminderGiftSubject({ ...base, postBy }), body: <ReminderGiftEmail {...base} giftDay={giftDay} postBy={postBy} unsubscribe={unsubscribe('reminders')} />, url },
+    reminder('reminder-wishlist', { wishlist }),
+    reminder('reminder-wishlist-managed', { wishlist: { url } }, 'Kid'),
+    reminder('reminder-gift', { gift }),
+    reminder('reminder-post', { gift: { ...gift, postBy } }),
+    reminder('reminder-combined', { wishlist, gift }),
+    reminder('reminder-ready', { readyToDraw: { url, people: 6, giftDay, soon: false } }),
+    reminder('reminder-ready-soon', { wishlist, readyToDraw: { url, people: 6, giftDay, soon: true } }),
+    {
+      name: 'join-digest',
+      subject: joinDigestSubject({ ...base, names: ['Bob', 'Cee'] }),
+      body: <JoinDigestEmail {...base} url={`${url}#people`} names={['Bob', 'Cee']} people={7} unsubscribe={unsubscribe('joins')} />,
+      url: `${url}#people`,
+    },
+    { name: 'join-digest-one', subject: joinDigestSubject({ ...base, names: ['Bob'] }), body: <JoinDigestEmail {...base} names={['Bob']} people={4} unsubscribe={unsubscribe('joins')} />, url },
     { name: 'reminder-gift-day', subject: reminderGiftDaySubject(base), body: <ReminderGiftDayEmail {...base} time="19:30" place="Grandma's place" unsubscribe={unsubscribe('reminders')} />, url },
     { name: 'group-deletion', subject: groupDeletionSubject({ ...base, date: giftDay }), body: <GroupDeletionEmail {...base} date={giftDay} months={24} />, url },
   ];

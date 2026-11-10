@@ -1,6 +1,7 @@
 import { MongoClient, ObjectId, type Db } from 'mongodb';
 import type { Claim } from '../schema/claim';
 import type { Edition } from '../schema/edition';
+import type { Gift } from '../schema/gift';
 import type { Group } from '../schema/group';
 import type { Invite } from '../schema/invite';
 import type { EmailSuppression, SentNotification, WishlistNotification } from '../schema/notification';
@@ -28,6 +29,7 @@ export const collections = (db: Db) => ({
   editions: db.collection<Edition>('editions'),
   wishes: db.collection<Wish>('wishes'),
   claims: db.collection<Claim>('claims'),
+  gifts: db.collection<Gift>('gifts'),
   tips: db.collection<Tip>('tips'),
   questions: db.collection<Question>('questions'),
   nudges: db.collection<Nudge>('nudges'),
@@ -65,6 +67,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.claims.createIndex({ wishId: 1 }, { unique: true }),
     c.claims.createIndex({ ownerId: 1 }),
     c.claims.createIndex({ editionId: 1 }),
+    c.gifts.createIndex({ editionId: 1, santaMemberId: 1 }, { unique: true }),
     c.tips.createIndex({ editionId: 1, aboutMemberId: 1 }),
     c.tips.createIndex({ editionId: 1, authorMemberId: 1 }),
     c.questions.createIndex({ editionId: 1, gifteeMemberId: 1 }),
@@ -76,6 +79,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.invites.createIndex({ groupId: 1 }),
     c.invites.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
     c.sentNotifications.createIndex({ sentAt: 1 }, { expireAfterSeconds: retention.sentEmailsDays * DAY }),
+    c.sentNotifications.createIndex({ groupId: 1, memberId: 1 }),
     c.wishlistNotifications.createIndex({ editionId: 1, gifteeMemberId: 1 }, { unique: true }),
     c.wishlistNotifications.createIndex({ notifyAfter: 1 }, { sparse: true }),
     c.rateLimits.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),

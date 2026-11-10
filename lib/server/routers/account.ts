@@ -43,6 +43,13 @@ export const accountRouter = router({
     const latest = new Map(editions.map(({ _id, edition }) => [_id, edition]));
     const memberOf = (group: (typeof groups)[number]) => group.members.find((m) => m.userId === ctx.user.id)!;
     const ownIdsByGroup = new Map(groups.map((group) => [group._id, ownAndManagedIds(group, memberOf(group))]));
+    const myGiftees = editions.flatMap(({ _id, edition }) => {
+      const santaId = memberOf(groups.find((group) => group._id === _id)!).id;
+      const gifteeId = edition.status === 'drawn' && edition.draw?.assignments[santaId];
+      return gifteeId ? [{ editionId: edition._id, santaMemberId: santaId, gifteeMemberId: gifteeId }] : [];
+    });
+    // "I've got my gift" (63): the Santas among my editions who marked one for their current giftee.
+    const gifted = myGiftees.length === 0 ? [] : await ctx.db.gifts.find({ $or: myGiftees }, { projection: { editionId: 1 } }).toArray();
     const questionEditions = editions.filter(({ edition }) => isDrawn(edition));
     // Same filter as question.forMe (delivered only), narrowed to unanswered.
     const questions =
@@ -84,6 +91,8 @@ export const accountRouter = router({
               !edition?.drawAt && { kind: 'readyToDraw' as const },
             unanswered > 0 && { kind: 'question' as const, count: unanswered },
             (status === 'open' || status === 'drawn') && visibleWishCount === 0 && { kind: 'noWishes' as const },
+            myGiftees.some((g) => g.editionId === edition?._id) &&
+              !gifted.some((g) => g.editionId === edition?._id) && { kind: 'getGift' as const },
             status === 'giftday' && { kind: 'giftDay' as const },
             status === 'done' &&
               visibleWishCount > 0 &&

@@ -53,6 +53,7 @@ export const deleteGroup = async (db: Collections, group: Group) => {
   const managedIds = group.members.filter((member) => !member.userId).map((member) => member.id);
   await Promise.all([
     db.claims.deleteMany(inEditions),
+    db.gifts.deleteMany(inEditions),
     db.tips.deleteMany(inEditions),
     db.questions.deleteMany(inEditions),
     db.nudges.deleteMany(inEditions),
@@ -82,6 +83,7 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
 
   await Promise.all([
     db.claims.deleteMany({ $or: [{ wishId: { $in: wishIds } }, { santaMemberId: mine }] }),
+    db.gifts.deleteMany({ $or: [{ santaMemberId: mine }, { gifteeMemberId: mine }] }),
     db.tips.deleteMany({ $or: [{ authorMemberId: mine }, { aboutMemberId: mine }] }),
     db.questions.deleteMany({ $or: [{ askerMemberId: mine }, { gifteeMemberId: mine }] }),
     db.nudges.deleteMany({ $or: [{ santaMemberId: mine }, { gifteeMemberId: mine }] }),

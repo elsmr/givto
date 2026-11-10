@@ -18,6 +18,7 @@ export const removeMember = async (db: Collections, group: Group, memberId: stri
       { $pull: { participants: { memberId } }, $set: { updatedAt: now } }
     );
     await db.claims.deleteMany({ editionId: edition._id, santaMemberId: memberId });
+    await db.gifts.deleteMany({ editionId: edition._id, $or: [{ santaMemberId: memberId }, { gifteeMemberId: memberId }] });
   }
   await db.invites.deleteMany({ memberId, usedAt: { $exists: false } });
   await db.groups.updateOne(
