@@ -20,9 +20,12 @@ test('names-drawn email arrives right after draw.run, without any cron call', as
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = await createGroup(ann, 'Notices');
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) await join(person, group, name);
+  await db.editions.updateOne({ _id: (await editionOf(db, group.slug, 1))._id }, { $set: { budget: { currency: 'EUR', amount: 2000, maxAmount: 3000 } } });
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   for (const user of [ann, bob, cee]) await expectMails(user, 'namesDrawn', 1);
   await expectAllNotified(db, group.slug);
+  // Formatted like the group page's budget chip.
+  expect((await mailsTo(bob.email, 'namesDrawn'))[0].text).toContain('Budget: €20–€30.');
 });
 
 test('late joiner, leaver and re-draw: changed Santas hear it right away', async ({ signIn, db }) => {

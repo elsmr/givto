@@ -1,9 +1,9 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { formatBudget } from '@/lib/format-budget';
 import { formatLocalDate } from '@/lib/local-date';
 import { isBeforeDraw } from '@/lib/schema/edition';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { formatBudget } from './format-budget';
 import type { GroupEdition } from './group-data';
 
 /** Gift day, the draw, deadlines, exchange mode, budget and notes (28, 51). `children`: actions below. */
@@ -51,7 +51,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
             </>
           )}
           <dt className="font-semibold">{t('budget')}</dt>
-          <dd>{budget ? formatBudget(format, budget) : t('no-budget')}</dd>
+          <dd>{budget ? formatBudget(budget, locale) : t('no-budget')}</dd>
           {edition.notes && (
             <>
               <dt className="font-semibold">{t('notes')}</dt>
