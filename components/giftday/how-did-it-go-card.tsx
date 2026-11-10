@@ -1,7 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/group/icon-card-title';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
+import { PartyPopper } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { ReceivedButton } from './received-button';
 
@@ -15,9 +17,9 @@ export const HowDidItGoCard = ({ groupSlug }: { groupSlug: string }) => {
   return (
     <Card className="bg-mint">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={PartyPopper} tone="yellow">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription className="text-ink">{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>

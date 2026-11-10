@@ -1,7 +1,8 @@
+import { IconCardTitle } from '@/components/group/icon-card-title';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import { Check, Presentation } from 'lucide-react';
+import { Check, Presentation, Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ShuffleButton } from './shuffle-button';
@@ -27,9 +28,9 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, c
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Shuffle} tone="yellow">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>{order ? t('intro') : canShuffle ? t('none-organizer') : t('none')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

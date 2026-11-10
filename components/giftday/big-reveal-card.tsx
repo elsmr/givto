@@ -1,7 +1,9 @@
+import { IconTile } from '@/components/group/icon-tile';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
 import type { EditionStatus } from '@/lib/schema/edition';
+import { Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { RevealButton } from './reveal-button';
 import { RevealPairs } from './reveal-pairs';
@@ -35,7 +37,11 @@ export const BigRevealCard = ({ groupSlug, editionNumber, reveal, status, manage
     <Card>
       <CardHeader>
         <div className="flex items-center gap-3">
-          {reveal.revealed && <LogoAnimation variant="celebrate" className="size-12 shrink-0" />}
+          {reveal.revealed ? (
+            <LogoAnimation variant="celebrate" className="size-12 shrink-0" />
+          ) : (
+            <IconTile icon={Sparkles} tone="primary-muted" />
+          )}
           <CardTitle>
             <h2>{t('title')}</h2>
           </CardTitle>
