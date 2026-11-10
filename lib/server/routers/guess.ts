@@ -1,13 +1,11 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { newId } from '../db';
+import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { guessingOn, guessingOpen } from '../guess/guesses';
 import { editionProcedure, router } from '../trpc';
 import { organizerEditionProcedure } from './draw';
 import { giftDayView } from './giftday-view';
-
-const isDuplicateKey = (error: unknown) => (error as { code?: number }).code === 11000;
 
 /**
  * Guess your Santa (62): one locked guess per person while shopping. Nothing here says who anyone's

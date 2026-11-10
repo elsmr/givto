@@ -1,14 +1,12 @@
 import { isDrawn } from '../../schema/edition';
 import { GiftFields } from '../../schema/gift';
 import { santaActionProcedure } from '../between/santa-role';
-import { newId } from '../db';
+import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentGifts, giftCounts } from '../gift/marks';
 import { editionProcedure, router } from '../trpc';
 import { visibleWishes } from '../wishlist/wish-view';
 import { organizerEditionProcedure } from './draw';
-
-const isDuplicateKey = (error: unknown) => (error as { code?: number }).code === 11000;
 
 /**
  * "I've got my gift" (63): the Santa ticks wishes they bought and adds things that aren't on the
