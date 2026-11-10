@@ -16,21 +16,31 @@ export type ImportFailure =
   | 'too_large'
   | 'unsupported_type'
   | 'http_error'
+  | 'bot_wall'
   | 'network';
 
 export class ImportError extends Error {
   readonly reason: ImportFailure;
+  /** The address the fetch got to (after redirects), when it got an answer. */
+  readonly url?: string;
 
-  constructor(reason: ImportFailure) {
+  constructor(reason: ImportFailure, url?: string) {
     super(reason);
     this.reason = reason;
+    this.url = url;
   }
 }
+
+/** Statuses shops answer bots with (Cloudflare, Akamai, DataDome): the page exists, we're just not let in. */
+const BOT_WALL_STATUSES = new Set([403, 429, 503]);
 
 export type FetchKind = 'page' | 'image';
 
 const accepted: Record<FetchKind, { types: string[]; header: string }> = {
-  page: { types: ['text/html', 'application/xhtml+xml'], header: 'text/html,application/xhtml+xml' },
+  page: {
+    types: ['text/html', 'application/xhtml+xml'],
+    header: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  },
   // No SVG: it can carry scripts.
   image: {
     types: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'],
@@ -74,28 +84,38 @@ const decompressor = (encoding: string | undefined) => {
   return null;
 };
 
-/** Reads at most `maxBytes` after decompression, so a small gzip bomb can't blow up memory. */
-const readBody = async (response: PinnedResponse): Promise<Buffer> => {
+/**
+ * Reads at most `maxBytes` after decompression, so a small gzip bomb can't blow up memory. A
+ * longer page is cut off there (big shop pages carry their product data near the top); a
+ * longer image fails.
+ */
+const readBody = async (response: PinnedResponse, kind: FetchKind): Promise<Buffer> => {
   const unzip = decompressor(response.headers['content-encoding']?.toLowerCase());
   const stream: Readable = unzip ? pipeline(response.body, unzip, () => {}) : response.body;
   const chunks: Buffer[] = [];
   let size = 0;
-  for await (const chunk of stream) {
-    size += (chunk as Buffer).length;
-    if (size > FETCH_LIMITS.maxBytes) {
+  for await (const chunk of stream as AsyncIterable<Buffer>) {
+    const room = FETCH_LIMITS.maxBytes - size;
+    if (chunk.length > room) {
       response.body.destroy();
-      throw new ImportError('too_large');
+      if (kind === 'image') throw new ImportError('too_large');
+      chunks.push(chunk.subarray(0, room));
+      break;
     }
-    chunks.push(chunk as Buffer);
+    size += chunk.length;
+    chunks.push(chunk);
   }
   return Buffer.concat(chunks);
 };
 
+// A browser's headers: several shops answer anything else with a bot wall or an empty page.
 const requestHeaders = (kind: FetchKind): Record<string, string> => ({
   accept: accepted[kind].header,
   'accept-encoding': 'gzip, deflate, br',
-  'accept-language': 'nl,en;q=0.8',
-  'user-agent': 'Mozilla/5.0 (compatible; Givto/1.0; +https://givto.app)',
+  'accept-language': 'nl-NL,nl;q=0.9,en;q=0.8',
+  'user-agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+  ...(kind === 'page' && { 'upgrade-insecure-requests': '1' }),
 });
 
 const fetchFollowingRedirects = async (start: URL, kind: FetchKind, transport: FetchTransport, signal: AbortSignal) => {
@@ -112,25 +132,27 @@ const fetchFollowingRedirects = async (start: URL, kind: FetchKind, transport: F
     }
     if (response.status < 200 || response.status >= 300) {
       response.body.destroy();
-      throw new ImportError('http_error');
+      throw new ImportError(BOT_WALL_STATUSES.has(response.status) ? 'bot_wall' : 'http_error', url.toString());
     }
     const contentType = (response.headers['content-type'] ?? '').split(';')[0].trim().toLowerCase();
     if (!accepted[kind].types.includes(contentType)) {
       response.body.destroy();
-      throw new ImportError('unsupported_type');
+      throw new ImportError('unsupported_type', url.toString());
     }
-    if (Number(response.headers['content-length'] ?? 0) > FETCH_LIMITS.maxBytes) {
+    if (kind === 'image' && Number(response.headers['content-length'] ?? 0) > FETCH_LIMITS.maxBytes) {
       response.body.destroy();
       throw new ImportError('too_large');
     }
-    return { url: url.toString(), contentType: response.headers['content-type'] ?? contentType, body: await readBody(response) };
+    const body = await readBody(response, kind);
+    return { url: url.toString(), contentType: response.headers['content-type'] ?? contentType, body };
   }
 };
 
 /**
  * GET a user-supplied URL: validated scheme/port, DNS resolved and checked before connecting
  * to that same address, every redirect re-validated (max 3), 5 s for everything, 2 MB cap
- * after decompression, only HTML pages or raster images. Throws ImportError.
+ * after decompression (pages cut off, images rejected), only HTML pages or raster images.
+ * Throws ImportError.
  */
 export const safeFetch = async (rawUrl: string, kind: FetchKind, transport: FetchTransport = defaultTransport) => {
   const signal = AbortSignal.timeout(FETCH_LIMITS.timeoutMs);
