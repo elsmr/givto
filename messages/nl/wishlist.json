@@ -8,15 +8,13 @@
   "hide-hint": "Moet een groep een wens niet zien? Verberg hem in die groep, op het tabblad “Mijn verlanglijstje”.",
   "add-title": "Wens toevoegen",
   "import": {
-    "label": "Plak een link naar een winkel",
+    "label": "Link naar een winkel (optioneel)",
     "placeholder": "https://…",
     "hint": "Voeg er zoveel toe als je wilt: elk ervan is goed.",
     "submit": "Link toevoegen",
     "busy": "Pagina lezen…",
-    "done": "Link toegevoegd met wat we vonden. Kijk de wens na voor je opslaat.",
-    "failed": "We konden die pagina niet lezen. De link hebben we bewaard; vul de rest zelf in.",
-    "bot-wall": "{shop} laat ons zijn pagina's niet lezen. De link hebben we bewaard en we raadden een titel; vul de rest zelf in.",
-    "blocked": "Dat adres kan niet. Probeer een link naar een winkel of webpagina."
+    "blocked": "Dat adres kan niet. Probeer een link naar een winkel of webpagina.",
+    "added": "Link toegevoegd"
   },
   "form": {
     "title": "Wens",

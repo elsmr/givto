@@ -107,12 +107,22 @@ test('links: paste links, the first one fills in the wish; a walled shop keeps i
     return route.fulfill({ status: 422, json: [{ error: superjson.serialize(error) }] });
   });
   await page.goto('/wishlist');
-  const link = page.getByLabel('Paste a link to a shop');
+  const link = page.getByLabel('Link to a shop (optional)');
 
-  await test.step('paste a link: the wish is filled in, with the picture', async () => {
-    await link.fill(socks);
-    await page.getByRole('button', { name: 'Add link' }).click();
-    await expect(page.getByText('Link added with what we found. Check the wish before you save.')).toBeVisible();
+  await test.step('the wish comes first, the link field is optional', async () => {
+    const fields = page.locator('form').first().getByRole('textbox');
+    await expect(fields.first()).toHaveAccessibleName('Wish');
+  });
+
+  await test.step('paste a link into the wish field: it is filled in from the page, with the picture', async () => {
+    const wishField = page.getByLabel('Wish', { exact: true });
+    await wishField.focus();
+    await page.evaluate((text) => {
+      const data = new DataTransfer();
+      data.setData('text/plain', text);
+      document.activeElement?.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    }, socks);
+    await expect(page.getByRole('status').filter({ hasText: 'Link added' })).toBeAttached();
     await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
     await expect(page.getByLabel('Notes')).toHaveValue('Warm socks, size 42');
     await expect(page.getByLabel('Price', { exact: true })).toHaveValue('19.95');
@@ -120,11 +130,11 @@ test('links: paste links, the first one fills in the wish; a walled shop keeps i
     await expect(link).toHaveValue('');
   });
 
-  await test.step('a second link from a shop that walls us off: kept, the wish stays as it is', async () => {
+  await test.step('a second link from a shop that walls us off: kept quietly, the wish stays as it is', async () => {
     await link.fill(walled);
     await link.press('Enter');
-    await expect(page.getByText("zalando.nl doesn't let us read its pages.", { exact: false })).toBeVisible();
     await expect(page.getByText('2 links')).toBeVisible();
+    await expect(page.getByText("doesn't let us read", { exact: false })).toHaveCount(0);
     await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
     await page.getByRole('button', { name: 'Add wish' }).click();
   });

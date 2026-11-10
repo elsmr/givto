@@ -115,3 +115,12 @@ export const absoluteHttpUrl = (value: unknown, base: string): string | undefine
     return undefined;
   }
 };
+
+/** The first sentence, at most `max` characters (cut at a word, with "…"): enough to say what it is. */
+export const firstSentence = (text: string | undefined, max: number): string | undefined => {
+  if (!text) return undefined;
+  const sentence = text.match(/^.+?[.!?](?=\s|$)/s)?.[0] ?? text;
+  if (sentence.length <= max) return sentence;
+  const cut = sentence.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(' ') > max / 2 ? cut.lastIndexOf(' ') : cut.length).trimEnd()}…`;
+};

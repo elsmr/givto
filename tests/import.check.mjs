@@ -8,6 +8,7 @@ import { gzipSync } from 'node:zlib';
 import { isBlockedAddress } from '../lib/server/import/blocked-address.ts';
 import { cleanProductUrl, titleFromUrl } from '../lib/server/import/clean-url.ts';
 import { extractProduct } from '../lib/server/import/extract-product.ts';
+import { firstSentence } from '../lib/server/import/html-text.ts';
 import { importProduct } from '../lib/server/import/import-product.ts';
 import { parseAmount } from '../lib/server/import/parse-price.ts';
 import { sendPinned } from '../lib/server/import/pinned-request.ts';
@@ -301,4 +302,15 @@ await check('import: bot walls (403 or a challenge page with a 200) are "bot_wal
   ]) {
     await rejectsBotWall(importProduct(url, '0123456789abcdef01234567', shops), url);
   }
+});
+
+await check('import: only the first sentence of a shop description, at most 200 characters', () => {
+  assert.equal(firstSentence('Warm socks. Machine washable. Made in Portugal.', 200), 'Warm socks.');
+  assert.equal(firstSentence('Version 2.0 is here! Order now.', 200), 'Version 2.0 is here!');
+  assert.equal(firstSentence('No full stop at all', 200), 'No full stop at all');
+  const long = firstSentence(extractProduct(fixture('bol'), 'https://www.bol.com/nl/nl/p/x/9300000031853451/').description, 200);
+  assert.ok(long && long.length <= 200, `bol: ${long?.length}`);
+  const cut = firstSentence('word '.repeat(60), 200);
+  assert.ok(cut.endsWith('…') && !cut.endsWith(' …') && cut.length <= 200, cut);
+  assert.equal(firstSentence(undefined, 200), undefined);
 });

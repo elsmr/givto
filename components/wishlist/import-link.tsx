@@ -7,13 +7,14 @@ import { TRPCClientError } from '@trpc/client';
 import { Link2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useImperativeHandle, useState, type ClipboardEvent, type Ref } from 'react';
-import { shopName } from './shop-name';
 import { useErrorMessage } from './use-error-message';
 import type { ImportedWish } from './wish-draft';
 
 /** Imports what's still typed in the field (when the wish is saved): `false` if it couldn't, with the reason shown. */
 export interface ImportLinkHandle {
   importTyped: () => Promise<ImportedWish | false | undefined>;
+  /** A link pasted somewhere else in the form (the wish field): import it here. */
+  importFrom: (text: string) => void;
 }
 
 interface ImportLinkProps {
@@ -25,8 +26,9 @@ interface ImportLinkProps {
 const isHttpUrl = (text: string) => /^https?:\/\/\S+$/i.test(text) && URL.canParse(text);
 
 /**
- * "Paste a link" at the top of the wish form (39, 73): the server reads the page and the link
- * joins the wish. Pasting imports right away. Not a form of its own: it sits inside the wish form.
+ * Optional links under the wish (39, 73): the server reads the page and the link joins the wish.
+ * Pasting imports right away. A page we can't read (many shops block servers) still adds the link,
+ * titled from its URL. Not a form of its own: it sits inside the wish form.
  */
 export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
   const t = useTranslations('wishlist.import');
@@ -43,15 +45,15 @@ export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
     try {
       const product = await importUrl.mutateAsync({ url: trimmed });
       setUrl('');
-      setNotice(t('done'));
+      setNotice(t('added'));
       return product;
     } catch (error) {
       const data = error instanceof TRPCClientError ? error.data : undefined;
       if (data?.appCode === 'IMPORT_BLOCKED' || data?.appCode === 'INVALID_INPUT') return void setNotice(t('blocked'));
       if (data?.appCode !== 'IMPORT_FAILED') return void setNotice(errorMessage(error));
-      const { url: kept = trimmed, title, reason } = (data.details ?? {}) as { url?: string; title?: string; reason?: string };
+      const { url: kept = trimmed, title } = (data.details ?? {}) as { url?: string; title?: string };
       setUrl('');
-      setNotice(reason === 'bot_wall' ? t('bot-wall', { shop: shopName(kept) }) : t('failed'));
+      setNotice(t('added'));
       return { url: kept, ...(title && { title }) };
     }
   };
@@ -67,6 +69,10 @@ export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
       if (!url.trim()) return undefined;
       if (importUrl.isPending) return false;
       return (await read(url)) ?? false;
+    },
+    importFrom: (text) => {
+      setUrl(text);
+      void run(text);
     },
   }));
 
@@ -106,7 +112,7 @@ export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
         </Button>
       </div>
       <FieldDescription id={`${id}-link-hint`}>{t('hint')}</FieldDescription>
-      <p role="status" className="text-sm font-semibold empty:hidden">
+      <p role="status" className={notice === t('added') ? 'sr-only' : 'text-sm font-semibold empty:hidden'}>
         {notice}
       </p>
     </div>

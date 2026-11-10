@@ -47,6 +47,26 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
+      <Field>
+        <FieldLabel htmlFor={`${id}-title`}>{t('title')}</FieldLabel>
+        <Input
+          id={`${id}-title`}
+          required
+          maxLength={200}
+          autoFocus={autoFocus}
+          className="h-12 text-lg font-semibold"
+          placeholder={t('title-placeholder')}
+          value={draft.title}
+          onChange={(event) => update({ title: event.target.value })}
+          onPaste={(event) => {
+            // A shop link pasted as the wish fills it in from the page, like the link field does.
+            const text = event.clipboardData.getData('text').trim();
+            if (draft.title.trim() || !/^https?:\/\/\S+$/i.test(text) || draft.links.length >= MAX_WISH_LINKS) return;
+            event.preventDefault();
+            importLink.current?.importFrom(text);
+          }}
+        />
+      </Field>
       {draft.links.length < MAX_WISH_LINKS && (
         <ImportLink
           id={id}
@@ -58,18 +78,6 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
         />
       )}
       <WishFormLinks links={draft.links} onChange={(links) => update({ links })} />
-      <Field>
-        <FieldLabel htmlFor={`${id}-title`}>{t('title')}</FieldLabel>
-        <Input
-          id={`${id}-title`}
-          required
-          maxLength={200}
-          autoFocus={autoFocus}
-          placeholder={t('title-placeholder')}
-          value={draft.title}
-          onChange={(event) => update({ title: event.target.value })}
-        />
-      </Field>
       <Button
         type="button"
         variant="ghost"

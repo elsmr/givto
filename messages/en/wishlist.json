@@ -8,15 +8,13 @@
   "hide-hint": "Want a group not to see a wish? Hide it in that group, on its “My wishlist” tab.",
   "add-title": "Add a wish",
   "import": {
-    "label": "Paste a link to a shop",
+    "label": "Link to a shop (optional)",
     "placeholder": "https://…",
     "hint": "Add as many as you like: any of them will do.",
     "submit": "Add link",
     "busy": "Reading the page…",
-    "done": "Link added with what we found. Check the wish before you save.",
-    "failed": "We couldn't read that page. We kept the link; fill in the rest yourself.",
-    "bot-wall": "{shop} doesn't let us read its pages. We kept the link and guessed a title from it; fill in the rest yourself.",
-    "blocked": "That address can't be used. Try a link to a shop or web page."
+    "blocked": "That address can't be used. Try a link to a shop or web page.",
+    "added": "Link added"
   },
   "form": {
     "title": "Wish",

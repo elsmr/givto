@@ -2,6 +2,10 @@ import { cleanProductUrl } from './clean-url';
 import { extractProduct, type ProductFields } from './extract-product';
 import { ImportError, safeFetch, type FetchTransport } from './safe-fetch';
 import { sniffImageType, storeWishImage } from './wish-images';
+import { firstSentence } from './html-text';
+
+/** Shop descriptions are marketing copy: the first sentence is enough for the wish's notes. */
+const DESCRIPTION_MAX = 200;
 
 /** Charset from the Content-Type header or a `<meta charset>` near the top; UTF-8 otherwise. */
 const decodeHtml = (body: Buffer, contentType: string): string => {
@@ -35,10 +39,11 @@ export type ImportedProduct = Omit<ProductFields, 'imageUrl'> & { url: string; i
 export const importProduct = async (rawUrl: string, ownerId: string, transport?: FetchTransport): Promise<ImportedProduct> => {
   const page = await safeFetch(rawUrl, 'page', transport);
   const html = decodeHtml(page.body, page.contentType);
-  const { imageUrl, ...fields } = extractProduct(html, page.url);
+  const { imageUrl, description: pageText, ...fields } = extractProduct(html, page.url);
   if (!fields.price && !imageUrl && BOT_WALL_MARKERS.some((marker) => html.includes(marker))) {
     throw new ImportError('bot_wall', page.url);
   }
   const imageId = imageUrl ? await importImage(imageUrl, ownerId, transport) : undefined;
-  return { url: cleanProductUrl(page.url), ...fields, ...(imageId && { imageId }) };
+  const description = firstSentence(pageText, DESCRIPTION_MAX);
+  return { url: cleanProductUrl(page.url), ...fields, ...(description && { description }), ...(imageId && { imageId }) };
 };
