@@ -66,7 +66,10 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       for (const user of await c.users.find().toArray()) v.parse(User, user);
       for (const group of await c.groups.find().toArray()) v.parse(Group, group);
       for (const edition of await c.editions.find().toArray()) v.parse(Edition, edition);
-      for (const wish of await c.wishes.find().toArray()) v.parse(Wish, wish);
+      for (const wish of await c.wishes.find().toArray()) {
+        v.parse(Wish, wish);
+        expect(Array.isArray((wish as { links?: unknown }).links)).toBe(true);
+      }
       const validEmails = new Set(data.users.map((u) => normalized(u.email)).filter((email) => email.includes('@')));
       expect(await c.users.countDocuments()).toBe(validEmails.size);
       expect(await c.groups.countDocuments()).toBe(data.groups.length - 1); // the one with only deleted users and an invalid email
@@ -137,12 +140,15 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
     await test.step('edge wishes, a user in no group, a wishlist outside the group', async () => {
       const lists = data.groups.flatMap((g) => Object.entries(g.wishlists as Record<string, { description?: unknown }[]>));
       const [ownerId] = lists.find(([, items]) => items.some((item) => item.description === 'Something nice\nsecond line'))!;
-      const titles = (await c.wishes.find({ ownerId }).toArray()).map((w) => w.title);
-      expect(titles).toEqual(expect.arrayContaining(['Something nice', 'x'.repeat(200), 'Line break']));
+      const wishes = await c.wishes.find({ ownerId }).toArray();
+      expect(wishes.map((w) => w.title)).toEqual(expect.arrayContaining(['Something nice', 'x'.repeat(200), 'Line break', 'Kite', 'Not a link']));
+      const linksOf = (title: string) => (wishes.find((w) => w.title === title) as { links?: unknown }).links;
+      expect(linksOf('Kite')).toEqual([{ url: 'https://shop.example.com/kite?id=3' }]);
+      expect(linksOf('Not a link')).toEqual([]);
       const loner = (await c.users.findOne({ email: edge.lonerEmail }))!;
-      const [groups, wishes] = callAs(db, loner._id.toHexString(), [{ path: 'account.groups' }, { path: 'wish.list' }]);
-      expect(groups).toEqual([]);
-      expect(wishes.map((w: { title: string }) => w.title)).toEqual(['Outside wish']);
+      const [lonerGroups, lonerWishes] = callAs(db, loner._id.toHexString(), [{ path: 'account.groups' }, { path: 'wish.list' }]);
+      expect(lonerGroups).toEqual([]);
+      expect(lonerWishes.map((w: { title: string }) => w.title)).toEqual(['Outside wish']);
     });
 
     await test.step('re-run is a no-op', async () => {

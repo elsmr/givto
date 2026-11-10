@@ -139,6 +139,9 @@ export const generateV1 = ({ seed = 58, users: userCount = 60, groups: groupCoun
           { id: token(21), title: '   ', description: '' },
           { id: token(21), title: 'x'.repeat(250), description: 'y'.repeat(2500) },
           { id: token(21), title: 'Line\nbreak', description: '' },
+          // master never wrote `url`; unvalidated production data might have one.
+          { id: token(21), title: 'Kite', description: '', url: 'https://shop.example.com/kite?utm_source=mail&id=3#reviews' },
+          { id: token(21), title: 'Not a link', description: '', url: 'javascript:alert(1)' },
           { id: token(21), title: null, description: null },
         ],
       },

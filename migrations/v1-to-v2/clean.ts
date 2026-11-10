@@ -3,8 +3,9 @@
 import { createHash } from 'node:crypto';
 import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
-import { Email, MultiLine, PersonName, SingleLine } from '../../lib/schema/common';
+import { Email, HttpUrl, MultiLine, PersonName, SingleLine } from '../../lib/schema/common';
 import { GroupName, Slug } from '../../lib/schema/group';
+import { cleanProductUrl } from '../../lib/server/import/clean-url';
 
 /** Hex id of an ObjectId or a 24-char hex string (old code mixed both), else null. */
 export const hexId = (id: unknown): string | null => {
@@ -44,6 +45,12 @@ export const wishDescription = (raw: unknown) => {
     .slice(0, 2000)
     .trim();
   return valid(MultiLine(2000), text);
+};
+
+/** master never wrote a wish `url`; production data is unvalidated, so one is kept if it's a valid link (tracking stripped, like imports). */
+export const wishUrl = (raw: unknown) => {
+  const parsed = v.safeParse(HttpUrl, raw);
+  return parsed.success ? valid(HttpUrl, cleanProductUrl(parsed.output)) : null;
 };
 
 /** Dedupe key for wishes: case, width and spacing don't make a different wish. */

@@ -8,7 +8,7 @@ import type { Wish } from '../../lib/schema/wish';
 import type { UserDoc } from '../../lib/server/db';
 import { monthsBefore } from '../../lib/server/jobs/dates';
 import {
-  derivedId, derivedSlug, email, groupName, hexId, isSlug, maskEmail, personName, timestamp, titleKey, wishDescription, wishTitle,
+  derivedId, derivedSlug, email, groupName, hexId, isSlug, maskEmail, personName, timestamp, titleKey, wishDescription, wishTitle, wishUrl,
 } from './clean';
 
 export const TIME_ZONE = 'Europe/Brussels';
@@ -63,7 +63,7 @@ export interface Plan {
   report: Report;
 }
 
-type V1Item = { title?: unknown; description?: unknown };
+type V1Item = { title?: unknown; description?: unknown; url?: unknown };
 interface WishSource {
   owner: string;
   groupId: string;
@@ -281,11 +281,15 @@ const toV2Exclusions = (rules: unknown, memberIdOf: Map<string, string>, dropped
   return [...new Map(toExclusions([], pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
 };
 
-/** One cleaned old wish list item → a v2 wish document. */
-const toV2Wish = ({ description, now, ...wish }: Pick<Wish, '_id' | 'ownerId' | 'title' | 'position' | 'createdAt'> & { description: string | null; now: Date }): Wish => ({
+/** Ticket 73's wish link. Until 73 is merged, lib/schema/wish.ts doesn't know `links` (the schema check strips it unvalidated). */
+type WishLink = { url: string };
+
+/** One cleaned old wish list item → a v2 wish document (73's shape: `links` always present). */
+const toV2Wish = ({ description, url, now, ...wish }: Pick<Wish, '_id' | 'ownerId' | 'title' | 'position' | 'createdAt'> & { description: string | null; url: string | null; now: Date }): Wish & { links: WishLink[] } => ({
   ...wish,
   kind: 'wish',
   ...(description && { description }),
+  links: url ? [{ url }] : [],
   reallyWant: false,
   updatedAt: now,
 });
@@ -321,7 +325,7 @@ const planWishes = (sources: WishSource[], target: Target, now: Date, note: (kin
       else {
         const ids = wishIdsOf.get(owner) ?? [];
         const _id = derivedId('wish', key);
-        wishes.push(toV2Wish({ _id, ownerId: owner, title, description, position: (target.wishCounts.get(owner) ?? 0) + ids.length, createdAt, now }));
+        wishes.push(toV2Wish({ _id, ownerId: owner, title, description, url: wishUrl(item.url), position: (target.wishCounts.get(owner) ?? 0) + ids.length, createdAt, now }));
         wishIdsOf.set(owner, [...ids, _id]);
         idByKey.set(key, _id);
       }
