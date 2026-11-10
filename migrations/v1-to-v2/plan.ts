@@ -299,6 +299,8 @@ const planWishes = (sources: WishSource[], target: Target, now: Date, note: (kin
         note('wishDropped', { group: groupId, owner, title: short(item.title) });
         continue;
       }
+      const longer = [[item.title, 200], [item.description, 2000]] as const;
+      if (longer.some(([text, max]) => typeof text === 'string' && text.trim().length > max)) note('wishTextShortened', { group: groupId, owner, title });
       const key = `${owner}:${titleKey(title)}`;
       const existing = idByKey.get(key);
       if (existing) merged++;
