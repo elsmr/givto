@@ -1,12 +1,24 @@
 import { StyleguideSection } from './styleguide-section';
 
-// Text colour on each fill and its WCAG contrast (see .scratch/07 Findings).
+// Light-theme hex, text colour on each fill and its WCAG contrast (.scratch/07 Findings; dark: .scratch/53).
 const swatches = [
   {
     name: 'ink',
-    className: 'bg-ink text-white',
+    className: 'bg-ink text-page',
     hex: '#111111',
-    text: 'white',
+    text: 'page 17.9:1, text',
+  },
+  {
+    name: 'outline',
+    className: 'bg-outline text-white',
+    hex: '#111111',
+    text: 'white 18.9:1, borders and shadows',
+  },
+  {
+    name: 'control',
+    className: 'bg-control text-page',
+    hex: '#111111',
+    text: 'page 17.9:1, form control borders',
   },
   {
     name: 'page',

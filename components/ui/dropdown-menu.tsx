@@ -69,7 +69,7 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        'flex cursor-default select-none items-center border-2 border-transparent min-h-11 px-2 py-1.5 text-base outline-hidden hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-popup-open:bg-primary data-popup-open:text-white data-popup-open:border-ink gap-2 data-inset:pl-8 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0',
+        'flex cursor-default select-none items-center border-2 border-transparent min-h-11 px-2 py-1.5 text-base outline-hidden hover:bg-primary hover:text-white hover:border-outline focus:bg-primary focus:text-white focus:border-outline data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-outline data-popup-open:bg-primary data-popup-open:text-white data-popup-open:border-outline gap-2 data-inset:pl-8 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0',
         className,
       )}
       {...props}
@@ -81,7 +81,7 @@ function DropdownMenuSubTrigger({
 }
 
 const dropdownMenuPopupClassName =
-  'z-50 min-w-[8rem] overflow-hidden border-2 border-ink bg-surface p-1 shadow-md text-ink outline-none origin-(--transform-origin) data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2';
+  'z-50 min-w-[8rem] overflow-hidden border-2 border-outline bg-surface p-1 shadow-md text-ink outline-none origin-(--transform-origin) data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2';
 
 function DropdownMenuSubContent({
   className,
@@ -146,7 +146,7 @@ function DropdownMenuContent({
 }
 
 const dropdownMenuItemClassName =
-  'relative gap-2 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0 flex cursor-default select-none items-center border-2 border-transparent data-inset:pl-8 min-h-11 px-2 py-1.5 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-disabled:pointer-events-none data-disabled:opacity-50';
+  'relative gap-2 [&_svg]:pointer-events-none [&_svg]:w-4 [&_svg]:h-4 [&_svg]:shrink-0 flex cursor-default select-none items-center border-2 border-transparent data-inset:pl-8 min-h-11 px-2 py-1.5 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-outline focus:bg-primary focus:text-white focus:border-outline data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-outline data-disabled:pointer-events-none data-disabled:opacity-50';
 
 function DropdownMenuItem({
   className,
@@ -192,7 +192,7 @@ function DropdownMenuCheckboxItem({
     <MenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
-        "relative flex cursor-default select-none items-center border-2 border-transparent gap-2 min-h-11 py-1.5 pl-8 pr-2 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex cursor-default select-none items-center border-2 border-transparent gap-2 min-h-11 py-1.5 pl-8 pr-2 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-outline focus:bg-primary focus:text-white focus:border-outline data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-outline data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       checked={checked}
@@ -217,7 +217,7 @@ function DropdownMenuRadioItem({
     <MenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        'relative flex cursor-default select-none items-center border-2 border-transparent gap-2 min-h-11 py-1.5 pl-8 pr-2 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-ink focus:bg-primary focus:text-white focus:border-ink data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-ink data-disabled:pointer-events-none data-disabled:opacity-50',
+        'relative flex cursor-default select-none items-center border-2 border-transparent gap-2 min-h-11 py-1.5 pl-8 pr-2 text-base outline-hidden transition-colors hover:bg-primary hover:text-white hover:border-outline focus:bg-primary focus:text-white focus:border-outline data-highlighted:bg-primary data-highlighted:text-white data-highlighted:border-outline data-disabled:pointer-events-none data-disabled:opacity-50',
         className,
       )}
       {...props}
@@ -275,7 +275,7 @@ function DropdownMenuSeparator({
   return (
     <MenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
-      className={cn('-mx-1 my-1 h-0.5 bg-ink', className)}
+      className={cn('-mx-1 my-1 h-0.5 bg-outline', className)}
       {...props}
     />
   );

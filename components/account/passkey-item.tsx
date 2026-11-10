@@ -38,7 +38,7 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
 
   if (editing) {
     return (
-      <li className="flex flex-col gap-3 border-2 border-ink p-3">
+      <li className="flex flex-col gap-3 border-2 border-outline p-3">
         <form onSubmit={rename} className="flex flex-col gap-3 xs:flex-row">
           <Input
             aria-label={t('passkeys.rename-label', { name })}
@@ -58,7 +58,7 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
   }
 
   return (
-    <li className="flex flex-col gap-3 border-2 border-ink p-3 xs:flex-row xs:items-center">
+    <li className="flex flex-col gap-3 border-2 border-outline p-3 xs:flex-row xs:items-center">
       <KeyRound aria-hidden="true" className="hidden size-5 shrink-0 xs:block" />
       <div className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-semibold">{name}</span>

@@ -27,7 +27,7 @@ const tabsListVariants = cva(
     variants: {
       variant: {
         default: 'h-13 bordered bg-surface p-1',
-        line: 'gap-1 border-b-2 border-ink bg-transparent data-[orientation=vertical]:border-r-2 data-[orientation=vertical]:border-b-0',
+        line: 'gap-1 border-b-2 border-outline bg-transparent data-[orientation=vertical]:border-r-2 data-[orientation=vertical]:border-b-0',
       },
     },
     defaultVariants: {
@@ -60,7 +60,7 @@ function TabsTrigger({
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative inline-flex items-center justify-center whitespace-nowrap h-full border-2 border-transparent px-3 gap-1.5 text-sm font-bold disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-active:bg-primary data-active:text-white data-active:border-ink data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative inline-flex items-center justify-center whitespace-nowrap h-full border-2 border-transparent px-3 gap-1.5 text-sm font-bold disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-active:bg-primary data-active:text-white data-active:border-outline data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         'after:pointer-events-none after:absolute after:bg-primary after:opacity-0 after:transition-opacity after:hidden group-data-[variant=line]/tabs-list:after:block data-[orientation=horizontal]:after:inset-x-0 data-[orientation=horizontal]:after:-bottom-0.5 data-[orientation=horizontal]:after:h-1 data-[orientation=vertical]:after:inset-y-0 data-[orientation=vertical]:after:-right-0.5 data-[orientation=vertical]:after:w-1',
         'group-data-[variant=line]/tabs-list:data-active:border-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent group-data-[variant=line]/tabs-list:data-active:text-ink group-data-[variant=line]/tabs-list:data-active:after:opacity-100',
         className,

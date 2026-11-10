@@ -24,7 +24,7 @@ function Avatar({
       data-slot="avatar"
       data-size={size}
       className={cn(
-        'group/avatar relative flex shrink-0 overflow-hidden border-2 border-ink',
+        'group/avatar relative flex shrink-0 overflow-hidden border-2 border-outline',
         avatarSizes[size],
         className,
       )}
@@ -67,7 +67,7 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<'span'>) {
     <span
       data-slot="avatar-badge"
       className={cn(
-        'absolute right-0 bottom-0 z-10 inline-flex items-center justify-center border-2 border-ink bg-primary text-white select-none [&>svg]:shrink-0',
+        'absolute right-0 bottom-0 z-10 inline-flex items-center justify-center border-2 border-outline bg-primary text-white select-none [&>svg]:shrink-0',
         'group-data-[size=sm]/avatar:size-3 group-data-[size=sm]/avatar:[&>svg]:hidden',
         'group-data-[size=default]/avatar:size-4 group-data-[size=default]/avatar:[&>svg]:size-2',
         'group-data-[size=lg]/avatar:size-5 group-data-[size=lg]/avatar:[&>svg]:size-2.5',
@@ -96,7 +96,7 @@ function AvatarGroupCount({
     <div
       data-slot="avatar-group-count"
       className={cn(
-        'relative flex size-10 shrink-0 items-center justify-center border-2 border-ink bg-surface text-sm font-bold text-ink [&>svg]:size-4',
+        'relative flex size-10 shrink-0 items-center justify-center border-2 border-outline bg-surface text-sm font-bold text-ink [&>svg]:size-4',
         className,
       )}
       {...props}
