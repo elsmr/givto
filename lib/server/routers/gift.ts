@@ -74,5 +74,8 @@ export const giftRouter = router({
   }),
 
   /** "3 gifts to open": how many gifts I get, from gift day on; null before, or when my Santa marked nothing. */
-  toOpen: editionProcedure.query(async ({ ctx }) => ({ count: (await giftCounts(ctx.db, ctx.edition))[ctx.member.id] ?? null })),
+  toOpen: editionProcedure.query(async ({ ctx }) => {
+    const counts = await giftCounts(ctx.db, ctx.edition);
+    return { count: ctx.member.id in counts ? counts[ctx.member.id] : null };
+  }),
 });

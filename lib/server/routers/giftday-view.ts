@@ -44,7 +44,7 @@ export const presenterGiftDayView = (group: Group, edition: Edition, counts: Gif
       order && state
         ? {
             shuffledAt: edition.unwrapOrder!.shuffledAt,
-            people: order.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId), gifts: counts[memberId] ?? null })),
+            people: order.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId), gifts: memberId in counts ? counts[memberId] : null })),
             started: Boolean(progress),
             currentShown: Boolean(progress?.currentShown),
             /** For `giftday.advance`: the turns this view is based on. */
