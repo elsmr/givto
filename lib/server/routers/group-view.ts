@@ -4,6 +4,7 @@ import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
+import { guessingOn } from '../guess/guesses';
 import { suppressedEmails } from '../mail/suppression';
 
 /** Organizer only (privacy rules): emails of accounts, or of pending email invites. */
@@ -68,6 +69,8 @@ export const groupView = async (
       budget: edition.budget,
       notes: edition.notes,
       avoidPreviousGiftees: edition.avoidPreviousGiftees,
+      /** Guess your Santa (62) on: each person's Santa is shown at their turn. */
+      guessing: guessingOn(edition),
       hasPreviousEdition: Boolean(edition.previousEditionId),
       calendarSequence: edition.calendarSequence ?? 0,
       participantIds: edition.participants

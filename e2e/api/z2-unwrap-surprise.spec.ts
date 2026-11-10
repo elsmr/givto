@@ -18,6 +18,8 @@ test('the unwrap order stays a surprise for members', async ({ signIn, db }) => 
   }
   const at = { groupSlug: group.slug, editionNumber: 1 };
   ok(await ann.trpc.mutate('draw.run', at));
+  // Guess your Santa (62) off: these turns don't stop to show each Santa.
+  ok(await ann.trpc.mutate('guess.setEnabled', { ...at, enabled: false }));
   ok(await ann.trpc.mutate('giftday.shuffle', at));
   const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;
   await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'giftday' } });

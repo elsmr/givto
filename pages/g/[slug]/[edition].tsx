@@ -28,5 +28,5 @@ export default function EditionPage() {
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['group', 'wishlist', 'between', 'draw', 'giftday', 'manage']) },
+  props: { messages: await loadMessages(locale, ['group', 'wishlist', 'between', 'draw', 'giftday', 'manage', 'guess']) },
 });

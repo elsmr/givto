@@ -112,12 +112,15 @@ test('back to shopping: organizer only, new date, not once anything is unwrapped
   await expectOrganizerOnly((user) => back(user), bob, zed);
   expect(code(await back(ann, today)), 'today would start it again').toBe('DATE_IN_PAST');
 
-  await test.step('refused once someone unwrapped, or the big reveal is out', async () => {
+  await test.step('refused once a Santa was shown (62), someone unwrapped, or the big reveal is out', async () => {
     ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'start', turnsTaken: 0 }));
     ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'spin', turnsTaken: 0 }));
+    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'santa', turnsTaken: 0 }));
+    expect(code(await back(ann))).toBe('GIFT_DAY_UNDERWAY');
     ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'last', turnsTaken: 0 }));
     expect(code(await back(ann))).toBe('GIFT_DAY_UNDERWAY');
     ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'back', turnsTaken: 1 }));
+    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'back', turnsTaken: 0 }));
 
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: true }));
     ok(await ann.trpc.mutate('giftday.reveal', edition));

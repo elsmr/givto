@@ -7,6 +7,7 @@ import type settings from './en/settings.json';
 import type create from './en/create.json';
 import type email from './en/email.json';
 import type giftday from './en/giftday.json';
+import type guess from './en/guess.json';
 import type errors from './en/errors.json';
 import type home from './en/home.json';
 import type privacy from './en/privacy.json';
@@ -32,6 +33,7 @@ declare module 'next-intl' {
       create: typeof create;
       email: typeof email;
       giftday: typeof giftday;
+      guess: typeof guess;
       errors: typeof errors;
       home: typeof home;
       privacy: typeof privacy;

@@ -8,7 +8,7 @@ export const retention = {
   /** Same as SIGN_IN_EXPIRES_IN and the session expiry in lib/server/auth.ts. */
   signInCodeMinutes: 10,
   sessionDays: 30,
-  /** Claims, tips, questions and nudges, counted from gift day. */
+  /** Claims, gifts marked, guesses, tips, questions and nudges, counted from gift day. */
   editionMessagesMonths: 3,
   /** The draw stays until the next edition is drawn (avoid last year's pairs), at most this long. */
   drawMaxMonths: 24,

@@ -5,6 +5,7 @@ import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
+import { guessesOf } from '../guess/guesses';
 import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
 import { testHooksEnabled } from '../test-hooks';
 import { authedProcedure, editionProcedure, publicProcedure, router } from '../trpc';
@@ -18,13 +19,15 @@ const presenterView = async (db: Collections, group: Group, edition: Edition) =>
   groupName: group.name,
   title: edition.title,
   status: edition.status,
-  ...presenterGiftDayView(group, edition, await giftCounts(db, edition)),
+  ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
 });
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
   /** Unwrap order and reveal state for the group home; Santas only once revealed. */
-  get: editionProcedure.query(async ({ ctx }) => giftDayView(ctx.group, ctx.edition, await giftCounts(ctx.db, ctx.edition))),
+  get: editionProcedure.query(async ({ ctx }) =>
+    giftDayView(ctx.group, ctx.edition, await giftCounts(ctx.db, ctx.edition), await guessesOf(ctx.db, ctx.edition))
+  ),
 
   /** The presenter view (/g/[slug]/present) is the organizer's (PLAN-v2). */
   presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition)),

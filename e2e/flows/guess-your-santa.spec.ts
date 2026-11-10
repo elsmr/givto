@@ -1,0 +1,79 @@
+// Guess your Santa (62): the guess dialog locks one guess; on gift day the presenter shows the Santa
+// and the guess after the person unwrapped, the group page follows; the organizer can switch it off.
+import { expect, ok, test } from '../fixtures';
+import { drawnGroup } from '../api/s6-helpers';
+
+test('guess, locked in; the presenter shows "From … · You guessed …" at the turn', async ({ page, browser, signIn, signInPage, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const group = await drawnGroup(people, 'Guessing');
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  const { _id: groupId, members } = (await db.groups.findOne({ slug: group.slug }))!;
+  const { draw } = (await db.editions.findOne({ groupId, number: 1 }))!;
+  const idOf = (userId: string) => members.find((m) => m.userId === userId)!.id;
+  const nameOf = (memberId: string) => members.find((m) => m.id === memberId)!.name;
+  const bobsSanta = Object.entries(draw!.assignments).find(([, giftee]) => giftee === idOf(bob.id))![0];
+
+  await test.step('Bob makes his guess and it locks', async () => {
+    await signInPage(page, bob);
+    await page.goto(`/g/${group.slug}`);
+    const card = page.getByRole('heading', { name: 'Guess your Santa' });
+    await expect(card).toBeVisible();
+    await expect(page.getByText("You'll find out at your turn on gift day.")).toBeVisible();
+    await page.getByRole('button', { name: 'Make your guess' }).click();
+    const dialog = page.getByRole('dialog', { name: "Who's your Santa?" });
+    await expect(dialog.getByRole('radio', { name: 'Bob' })).toHaveCount(0);
+    await dialog.getByRole('radio', { name: nameOf(bobsSanta) }).check();
+    await dialog.getByRole('button', { name: 'Lock it in' }).click();
+    await expect(dialog).toBeHidden();
+    await expect(page.getByText(`You guessed ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(page.getByText('Locked in', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Make your guess' })).toHaveCount(0);
+  });
+
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  // Bob unwraps first, so his turn is the one with the guess.
+  await db.editions.updateOne({ groupId, number: 1 }, { $set: { 'unwrapOrder.memberIds': [idOf(bob.id), ...Object.keys(draw!.assignments).filter((id) => id !== idOf(bob.id))] } });
+
+  await test.step('the presenter: spin, unwrap, then who it was from', async () => {
+    const presenter = await browser.newPage();
+    await signInPage(presenter, ann);
+    await presenter.goto(`/g/${group.slug}/present`);
+    await presenter.getByRole('button', { name: 'Next' }).click();
+    await presenter.getByRole('switch', { name: 'Skip the spin' }).click();
+    await presenter.getByRole('button', { name: 'Spin' }).click();
+    await expect(presenter.getByText('Next to unwrap')).toBeVisible();
+    await expect(presenter.getByText(/^From /)).toHaveCount(0);
+    await presenter.getByRole('button', { name: 'Who was it from?' }).click();
+    await expect(presenter.getByText(`From ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(presenter.getByText(`You guessed ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(presenter.getByText('Nailed it!')).toBeVisible();
+    await expect(presenter.getByRole('button', { name: 'Next' })).toBeVisible();
+    await presenter.close();
+  });
+
+  await test.step("Bob's page shows his answer", async () => {
+    await page.reload();
+    await expect(page.getByText(`Your gift was from ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(page.getByText('Nailed it!').first()).toBeVisible();
+    await expect(page.getByText('1 of 1 guessed their Santa')).toBeVisible();
+  });
+});
+
+test('the organizer switches Guess your Santa off in settings: the card goes', async ({ page, signIn, signInPage }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann] = people;
+  const group = await drawnGroup(people, 'No guesses');
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}`);
+  await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toBeVisible();
+  await page.goto(`/g/${group.slug}/settings#guess`);
+  const toggle = page.getByRole('switch', { name: 'Guess your Santa' });
+  await expect(toggle).toBeChecked();
+  await expect(page.getByText(/each person's Santa is shown at their turn/)).toBeVisible();
+  await toggle.click();
+  await expect(toggle).not.toBeChecked();
+  await page.goto(`/g/${group.slug}`);
+  await expect(page.getByRole('tab', { name: 'Overview' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toHaveCount(0);
+});

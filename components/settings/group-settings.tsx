@@ -11,6 +11,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { GuessSettings } from '@/components/guess/guess-settings';
 import { DangerZone } from './danger-zone';
 import { EditionForm } from './edition-form';
 import { GroupNameForm } from './group-name-form';
@@ -63,6 +64,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
               </>
             ),
           },
+          { id: 'guess', title: t('guess'), content: <GuessSettings groupSlug={slug} edition={edition} /> },
         ]
       : []),
     { id: 'invite', title: tGroup('share.title'), content: <ShareSection group={data} /> },

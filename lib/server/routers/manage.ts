@@ -74,7 +74,8 @@ export const manageRouter = router({
 
   /**
    * giftday → drawn with a new gift day after today (today would start it again on the next tick).
-   * Only while nobody has unwrapped and the big reveal isn't out: what people saw can't be unseen.
+   * Only while nobody has unwrapped, no Santa was shown at a turn (62) and the big reveal isn't out:
+   * what people saw can't be unseen. Guessing opens again (it's open while shopping).
    * The gift day reminders already sent go, so the new day gets them.
    */
   backToShopping: organizerEditionProcedure
@@ -83,7 +84,8 @@ export const manageRouter = router({
       const { edition } = ctx;
       if (edition.status !== 'giftday') throw wrongStatus(edition);
       if (input.giftDayDate <= todayIn(edition.timeZone)) throw new AppError('DATE_IN_PAST');
-      if ((edition.unwrapOrder?.progress?.turns.length ?? 0) > 0 || edition.reveal.revealedAt) {
+      const progress = edition.unwrapOrder?.progress;
+      if ((progress?.turns.length ?? 0) > 0 || (progress?.santaShownIds?.length ?? 0) > 0 || edition.reveal.revealedAt) {
         throw new AppError('GIFT_DAY_UNDERWAY');
       }
       const now = new Date();
@@ -92,6 +94,7 @@ export const manageRouter = router({
           _id: edition._id,
           status: 'giftday',
           'unwrapOrder.progress.turns.0': { $exists: false },
+          'unwrapOrder.progress.santaShownIds.0': { $exists: false },
           'reveal.revealedAt': { $exists: false },
         },
         {
