@@ -144,12 +144,19 @@ test('links: paste links, the first one fills in the wish; a walled shop keeps i
     await expect(wish.getByRole('link', { name: /^Buy at / })).toHaveCount(1);
   });
 
+  await test.step('a link typed but not added yet is added on save', async () => {
+    await link.fill(socks);
+    await addWish(page, 'Socks for Dad');
+    await expect(wishItem(page, 'Socks for Dad').getByRole('link', { name: /^Buy at shop\.example/ })).toHaveAttribute('href', socks);
+    await expect(link).toHaveValue('');
+  });
+
   await test.step('a blocked address (the real server answer): say so, type the wish yourself', async () => {
     await page.unroute('**/api/trpc/import.fromUrl?*');
     await link.fill('http://127.0.0.1/admin');
     await page.getByRole('button', { name: 'Add link' }).click();
     await expect(page.getByText("That address can't be used. Try a link to a shop or web page.")).toBeVisible();
     await addWish(page, 'Typed by hand');
-    await expect(wishTitles(page)).toHaveText(['Merino wool socks', 'Typed by hand']);
+    await expect(wishTitles(page)).toHaveText(['Merino wool socks', 'Socks for Dad', 'Typed by hand']);
   });
 });
