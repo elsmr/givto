@@ -23,9 +23,12 @@ const settle = async (page: Page) => {
     .toBe(0);
 };
 
-/** Scans what's on screen now; soft, so one test reports every page. */
+/** Scans what's on screen now, disclosures opened; soft, so one test reports every page. */
 const scan = async (page: Page, label: string) => {
   await settle(page);
+  // Open disclosures, so their bodies are scanned too.
+  const closed = page.locator('details:not([open]) > summary:visible');
+  while ((await closed.count()) > 0) await closed.first().click();
   const theme = await page.locator('html').getAttribute('data-theme');
   const { violations } = await new AxeBuilder({ page }).analyze();
   const serious = violations
