@@ -3,8 +3,8 @@ import { Id, MultiLine } from './common';
 
 export const TipFields = v.object({
   text: MultiLine(1000),
-  /** Named by default; the author can post anonymously. */
-  anonymous: v.optional(v.boolean(), false),
+  /** Anonymous by default (owner); the author can sign it with their name. */
+  anonymous: v.optional(v.boolean(), true),
 });
 export type TipFields = v.InferOutput<typeof TipFields>;
 
