@@ -23,7 +23,6 @@ export default function GroupsPage() {
     <AppShell>
       <Head>
         <title>{t('page-title')}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4 xs:flex-row xs:items-center xs:justify-between">

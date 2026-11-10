@@ -18,7 +18,6 @@ export const ErrorPage = ({ statusCode }: { statusCode: number }) => {
     <AppShell>
       <Head>
         <title>{`${title} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="mx-auto flex max-w-xl flex-col gap-6">
         <GivtoLogo aria-hidden="true" className="size-20 -rotate-12" />

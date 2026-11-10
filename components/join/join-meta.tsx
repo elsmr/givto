@@ -17,7 +17,6 @@ export const JoinMeta = ({ preview, origin }: { preview: JoinPreview | null; ori
   return (
     <Head>
       <title>{title}</title>
-      <meta name="robots" content="noindex" />
       <meta key="description" name="description" content={description} />
       <meta key="og:url" property="og:url" content={origin} />
       <meta key="og:title" property="og:title" content={title} />

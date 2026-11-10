@@ -18,7 +18,6 @@ export default function StyleguidePage() {
     <AppShell>
       <Head>
         <title>Styleguide · Givto</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="flex flex-col gap-16">
         <h1 className="text-5xl font-extrabold">Styleguide</h1>

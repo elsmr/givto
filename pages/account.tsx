@@ -18,7 +18,6 @@ export default function AccountPage() {
     <AppShell>
       <Head>
         <title>{t('page-title')}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       <div className="mx-auto flex max-w-3xl flex-col gap-8">
         <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
