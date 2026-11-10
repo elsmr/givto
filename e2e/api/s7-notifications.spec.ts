@@ -62,15 +62,18 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   });
 
   await test.step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email', async () => {
-    // Approval after the draw slots Dan in at a random place (S4); pin the place so later steps can rely on it.
+    // Approval after the draw slots Dan in at a random place where the exclusions allow it (S4).
+    // Only Ann may give to Dan, so the place is Ann → Dan → Bob and later steps can rely on it.
+    // (The smoke test overwrote the draw after approving; a parallel deliveries run in between
+    // would mail the random place.)
+    const exclusions = [m.olive, m.bob, m.cee, kid].map((santa) => ({ from: santa.id, to: danId }));
+    await db.groups.updateOne({ _id: family._id }, { $set: { exclusions } });
     ok(await olive.trpc.mutate('membership.approve', { groupSlug: family.slug, memberId: danId }));
     const joined = await mails(dan, 'joined');
     expect(joined).toHaveLength(1);
     expect(joined[0].subject, 'Dan reads Dutch').toBe(nlEmail.joined.subject.replace('{group}', 'Family'));
-    const mDan = { id: danId };
-    await db.editions.updateOne(
-      { _id: e1._id },
-      { $set: { draw: drawOf([[m.olive, m.ann], [m.ann, mDan], [mDan, m.bob], [m.bob, m.cee], [m.cee, kid], [kid, m.olive]]) } }
+    expect((await db.editions.findOne({ _id: e1._id }))!.draw!.assignments).toEqual(
+      drawOf([[m.olive, m.ann], [m.ann, { id: danId }], [{ id: danId }, m.bob], [m.bob, m.cee], [m.cee, kid], [kid, m.olive]]).assignments
     );
     await run('deliveries');
     await expectMails(ann, 'gifteeChanged', 1);
