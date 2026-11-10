@@ -278,7 +278,7 @@ const toV2Exclusions = (rules: unknown, memberIdOf: Map<string, string>, dropped
     dropped(isRecord(rule) ? { from: short(rule.from), to: short(rule.to) } : short(rule));
     return [];
   });
-  return [...new Map(toExclusions([], pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
+  return [...new Map(toExclusions(pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
 };
 
 /** One cleaned old wish list item → a v2 wish document. */
