@@ -47,6 +47,15 @@ export const findWishImage = async (id: string): Promise<WishImageFile | null> =
 
 export const openWishImage = (id: string) => bucket().openDownloadStream(new ObjectId(id));
 
+/** Every image this person imported, on a wish or not (account deletion, 55). */
+export const deleteWishImagesOf = async (ownerId: string): Promise<void> => {
+  const files = await getMongoDb()
+    .collection<WishImageFile>('wishImages.files')
+    .find({ 'metadata.ownerId': ownerId }, { projection: { _id: 1 } })
+    .toArray();
+  await Promise.all(files.map((file) => deleteWishImage(file._id.toHexString())));
+};
+
 /** Best effort: a leftover file only costs storage. */
 export const deleteWishImage = async (id: string): Promise<void> => {
   await bucket()

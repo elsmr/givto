@@ -6,8 +6,9 @@ import { createServer } from 'node:http';
 import { Readable } from 'node:stream';
 import { gzipSync } from 'node:zlib';
 import { isBlockedAddress } from '../lib/server/import/blocked-address.ts';
-import { cleanProductUrl } from '../lib/server/import/clean-url.ts';
+import { cleanProductUrl, titleFromUrl } from '../lib/server/import/clean-url.ts';
 import { extractProduct } from '../lib/server/import/extract-product.ts';
+import { importProduct } from '../lib/server/import/import-product.ts';
 import { parseAmount } from '../lib/server/import/parse-price.ts';
 import { sendPinned } from '../lib/server/import/pinned-request.ts';
 import { FETCH_LIMITS, ImportError, safeFetch } from '../lib/server/import/safe-fetch.ts';
@@ -30,12 +31,59 @@ await check('import fixtures: bol.com (JSON-LD, HTML in description)', () => {
   assert.doesNotMatch(bol.description, /<|>/);
 });
 
-await check('import fixtures: Amazon (title + main image fallback, store suffix dropped)', () => {
-  const amazon = extractProduct(fixture('amazon'), 'https://www.amazon.nl/dp/B09XS7JWHH');
-  assert.match(amazon.title, /^Sony WH-1000XM5 draadloze .* zwart$/);
-  assert.equal(amazon.description, undefined, 'description that repeats the title is dropped');
-  assert.equal(amazon.price, undefined);
-  assert.equal(amazon.imageUrl, 'https://m.media-amazon.com/images/I/61O3iMlnJIL._AC_SL1500_.jpg');
+await check('import fixtures: Amazon .nl/.de (title + main image, no buy box: no price), .fr (buy box price)', () => {
+  const image = 'https://m.media-amazon.com/images/I/61O3iMlnJIL._AC_SL1500_.jpg';
+  const nl = extractProduct(fixture('amazon-nl'), 'https://www.amazon.nl/dp/B09XS7JWHH');
+  assert.match(nl.title, /^Sony WH-1000XM5 draadloze .* zwart$/);
+  assert.deepEqual([nl.description, nl.price, nl.imageUrl], [undefined, undefined, image], 'description repeating the title is dropped');
+  const de = extractProduct(fixture('amazon-de'), 'https://www.amazon.de/dp/B09XS7JWHH');
+  assert.deepEqual(de, { title: 'Sony WH-1000XM5 draadloos, toonaangevende', imageUrl: image });
+  const fr = extractProduct(fixture('amazon-fr'), 'https://www.amazon.fr/dp/B09XS7JWHH');
+  assert.match(fr.title, /^Sony WH-1000XM5 Wireless .* Black$/);
+  assert.deepEqual(fr.price, { currency: 'EUR', amount: 44365 });
+  assert.equal(fr.imageUrl, image);
+});
+
+await check('import fixtures: IKEA (JSON-LD, shop suffix in og:title not used)', () => {
+  const ikea = extractProduct(fixture('ikea'), 'https://www.ikea.com/nl/nl/p/billy-boekenkast-wit-00263850/');
+  assert.equal(ikea.title, 'BILLY Boekenkast - wit 80x28x202 cm');
+  assert.deepEqual(ikea.price, { currency: 'EUR', amount: 4999 });
+  assert.match(ikea.imageUrl, /^https:\/\/www\.ikea\.com\/nl\/nl\/images\/products\/billy-boekenkast-wit__/);
+  assert.match(ikea.description, /^BILLY Boekenkast - wit 80x28x202 cm\. Verstelbare planken/);
+});
+
+await check('import fixtures: microdata (scoped to the Product, relative image, price from content)', () => {
+  assert.deepEqual(extractProduct(fixture('microdata'), 'https://www.deklei.be/winkel/theepot/'), {
+    title: 'Handgemaakte theepot, 1 liter',
+    description: 'Gedraaid en geglazuurd in ons atelier in Gent.',
+    price: { currency: 'EUR', amount: 6450 },
+    imageUrl: 'https://www.deklei.be/wp-content/uploads/theepot-800x800.jpg',
+  });
+});
+
+await check('import: shop names dropped from titles', () => {
+  const titleOf = (title, url) => extractProduct(`<title>${title}</title>`, url).title;
+  assert.equal(titleOf('Lenovo Tab P11 | Coolblue | Tablets', 'https://www.coolblue.nl/product/1'), 'Lenovo Tab P11');
+  assert.equal(titleOf('BILLY boekenkast, wit  - IKEA', 'https://www.ikea.com/nl/nl/p/x/'), 'BILLY boekenkast, wit');
+  assert.equal(titleOf('Lego Creator | bol', 'https://www.bol.com/nl/nl/p/x/1/'), 'Lego Creator');
+  assert.equal(titleOf('Amazon.co.uk: Sony WH-1000XM5 : Electronics', 'https://www.amazon.co.uk/dp/B09XS7JWHH'), 'Sony WH-1000XM5 : Electronics');
+  assert.equal(titleOf('Sony WH-1000XM5: Amazon.de: Elektronica', 'https://www.amazon.de/dp/B09XS7JWHH'), 'Sony WH-1000XM5');
+  assert.equal(titleOf('Air Force 1 – Zalando', 'https://www.zalando.nl/x.html'), 'Air Force 1');
+  assert.equal(titleOf('IKEA PS 2014 lamp', 'https://www.ikea.com/nl/nl/p/x/'), 'IKEA PS 2014 lamp', 'a leading shop name without a colon stays');
+});
+
+await check('import: a title guessed from the URL for pages we can\'t read', () => {
+  const cases = {
+    'https://www.zalando.nl/nike-sportswear-air-force-1-07-sneakers-laag-white-ni112o0bt-a11.html': 'Nike sportswear air force 1 07 sneakers laag white',
+    'https://www.mediamarkt.nl/nl/product/_sony-wh-1000xm5-zwart-1716297.html': 'Sony wh 1000xm5 zwart',
+    'https://www.lego.com/nl-nl/product/the-razor-crest-75331': 'The razor crest 75331',
+    'https://www.bol.com/nl/nl/p/ford-m2ad-gris-magnum-met-autolak-spuibus-400ml/9300000031853451/': 'Ford m2ad gris magnum met autolak spuibus 400ml',
+    'https://www.amazon.nl/Sony-WH-1000XM5-draadloze-hoofdtelefoon/dp/B09XS7JWHH?th=1': 'Sony WH 1000XM5 draadloze hoofdtelefoon',
+    'https://www.etsy.com/listing/1063497432/personalised-leather-wallet': 'Personalised leather wallet',
+    'https://www.etsy.com/listing/1063497432/': undefined,
+    'https://www.amazon.com/dp/B09XS7JWHH': undefined,
+  };
+  for (const [url, title] of Object.entries(cases)) assert.equal(titleFromUrl(url), title, url);
 });
 
 await check('import fixtures: Coolblue (JSON-LD among other blocks, numeric price)', () => {
@@ -143,6 +191,8 @@ const routes = {
   '/json': () => ({ status: 200, headers: { 'content-type': 'application/json' }, body: Readable.from([Buffer.from('{}')]) }),
   '/missing': () => ({ status: 404, headers: { 'content-type': 'text/html' }, body: Readable.from([]) }),
   '/big': () => html(Buffer.alloc(FETCH_LIMITS.maxBytes + 1, 'a')),
+  '/big.png': () => ({ status: 200, headers: { 'content-type': 'image/png' }, body: Readable.from([Buffer.alloc(FETCH_LIMITS.maxBytes + 1)]) }),
+  '/walled': () => ({ status: 403, headers: { 'content-type': 'text/html' }, body: Readable.from([Buffer.from(fixture('zalando-bot-wall'))]) }),
   '/gzip-bomb': () => ({
     status: 200,
     headers: { 'content-type': 'text/html', 'content-encoding': 'gzip' },
@@ -150,10 +200,12 @@ const routes = {
   }),
   '/slow': () => new Promise(() => {}),
 };
+const sentHeaders = [];
 const fake = {
   resolve: async (hostname) => dns[hostname] ?? Promise.reject(new Error('ENOTFOUND')),
-  send: async (url, address) => {
+  send: async (url, address, headers) => {
     connected.push(address);
+    sentHeaders.push(headers);
     return routes[url.pathname]();
   },
 };
@@ -178,12 +230,13 @@ await check('SSRF: max 3 redirects, then the page', async () => {
   await rejects(safeFetch('https://shop.test/r0', 'page', fake), 'too_many_redirects');
 });
 
-await check('fetch limits: HTML only, size cap (also after gzip), HTTP errors, timeout', async () => {
+await check('fetch limits: HTML only, size cap (pages cut off, also after gzip; images rejected), HTTP errors, timeout', async () => {
   await rejects(safeFetch('https://shop.test/json', 'page', fake), 'unsupported_type');
   await rejects(safeFetch('https://shop.test/ok', 'image', fake), 'unsupported_type');
   await rejects(safeFetch('https://shop.test/missing', 'page', fake), 'http_error');
-  await rejects(safeFetch('https://shop.test/big', 'page', fake), 'too_large');
-  await rejects(safeFetch('https://shop.test/gzip-bomb', 'page', fake), 'too_large');
+  assert.equal((await safeFetch('https://shop.test/big', 'page', fake)).body.length, FETCH_LIMITS.maxBytes);
+  assert.equal((await safeFetch('https://shop.test/gzip-bomb', 'page', fake)).body.length, FETCH_LIMITS.maxBytes);
+  await rejects(safeFetch('https://shop.test/big.png', 'image', fake), 'too_large');
   const timeout = FETCH_LIMITS.timeoutMs;
   FETCH_LIMITS.timeoutMs = 200;
   const keepAlive = setTimeout(() => {}, 1000); // AbortSignal.timeout doesn't keep node running
@@ -202,4 +255,50 @@ await check('pinned request connects to the validated address, not a fresh DNS a
   for await (const chunk of response.body) chunks.push(chunk);
   assert.equal(Buffer.concat(chunks).toString(), `host=pinned.invalid:${port}`);
   server.close();
+});
+
+await check('fetch: a browser\'s headers (several shops wall off anything else)', async () => {
+  sentHeaders.length = 0;
+  await safeFetch('https://shop.test/ok', 'page', fake);
+  assert.match(sentHeaders[0]['user-agent'], /^Mozilla\/5\.0 .* Chrome\/[\d.]+ Safari\/[\d.]+$/);
+  assert.match(sentHeaders[0]['accept-language'], /^nl-NL,nl;q=0\.9,en/);
+  assert.match(sentHeaders[0].accept, /^text\/html,/);
+});
+
+// Shops on the simulated internet: pages by host + path, from the saved fixtures.
+const shopDns = { 'amzn.to': ['54.239.28.85'], 'www.amazon.nl': ['54.239.28.85'], 'www.amazon.com': ['54.239.28.85'], 'www.lego.com': ['104.18.1.1'], 'www.zalando.nl': ['2.16.1.1'], 'www.etsy.com': ['151.101.1.1'], 'www.mediamarkt.nl': ['104.18.2.2'] };
+const page = (name, status = 200) => () => ({ status, headers: { 'content-type': 'text/html; charset=utf-8' }, body: Readable.from([Buffer.from(fixture(name))]) });
+const shopRoutes = {
+  'amzn.to/3xYzAbC': () => redirect('https://www.amazon.nl/dp/B09XS7JWHH?tag=givto-21&linkCode=sl1&linkId=abc'),
+  'www.amazon.nl/dp/B09XS7JWHH': page('amazon-nl'),
+  'www.amazon.com/dp/B09XS7JWHH': page('amazon-com-bot-wall'),
+  'www.lego.com/nl-nl/product/the-razor-crest-75331': page('lego-bot-wall'),
+  'www.zalando.nl/nike-sportswear-air-force-1-07-sneakers-laag-white-ni112o0bt-a11.html': page('zalando-bot-wall', 403),
+  'www.etsy.com/listing/1063497432/': page('etsy-bot-wall', 403),
+  'www.mediamarkt.nl/nl/product/_sony-wh-1000xm5-zwart-1716297.html': page('mediamarkt-bot-wall', 403),
+};
+const shops = {
+  resolve: async (hostname) => shopDns[hostname] ?? Promise.reject(new Error('ENOTFOUND')),
+  send: async (url) => (shopRoutes[url.host + url.pathname] ?? page('blog', 404))(),
+};
+const rejectsBotWall = (promise, url) =>
+  assert.rejects(promise, (error) => error instanceof ImportError && error.reason === 'bot_wall' && error.url === url);
+
+await check('import: short links (amzn.to) followed to the product; the stored link is clean', async () => {
+  const imported = await importProduct('https://amzn.to/3xYzAbC', '0123456789abcdef01234567', shops);
+  assert.equal(imported.url, 'https://www.amazon.nl/dp/B09XS7JWHH');
+  assert.match(imported.title, /^Sony WH-1000XM5 draadloze/);
+  assert.equal(imported.imageId, undefined, 'the image failed (404 here), the import did not');
+});
+
+await check('import: bot walls (403 or a challenge page with a 200) are "bot_wall", with the address reached', async () => {
+  for (const url of [
+    'https://www.zalando.nl/nike-sportswear-air-force-1-07-sneakers-laag-white-ni112o0bt-a11.html',
+    'https://www.etsy.com/listing/1063497432/',
+    'https://www.mediamarkt.nl/nl/product/_sony-wh-1000xm5-zwart-1716297.html',
+    'https://www.amazon.com/dp/B09XS7JWHH',
+    'https://www.lego.com/nl-nl/product/the-razor-crest-75331',
+  ]) {
+    await rejectsBotWall(importProduct(url, '0123456789abcdef01234567', shops), url);
+  }
 });

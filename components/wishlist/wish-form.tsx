@@ -5,7 +5,10 @@ import { Input } from '@/components/ui/input';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
-import { draftToInput, emptyDraft, type WishDraft, type WishInput } from './wish-draft';
+import { MAX_WISH_LINKS } from '@/lib/schema/wish';
+import { ImportLink } from './import-link';
+import { addImportedLink, draftToInput, emptyDraft, type WishDraft, type WishInput } from './wish-draft';
+import { WishFormLinks } from './wish-form-links';
 import { WishMoreFields } from './wish-more-fields';
 
 interface WishFormProps {
@@ -20,10 +23,10 @@ interface WishFormProps {
 
 const hasDetails = (draft: WishDraft) =>
   (Object.keys(emptyDraft) as (keyof WishDraft)[]).some(
-    (key) => key !== 'title' && key !== 'currency' && draft[key] !== emptyDraft[key]
+    (key) => key !== 'title' && key !== 'currency' && key !== 'links' && draft[key] !== emptyDraft[key]
   );
 
-/** Add or edit a wish: one field plus "More details" (46). */
+/** Add or edit a wish (46, 73): paste links first, or just type the wish; the rest under "More details". */
 export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel, autoFocus }: WishFormProps) => {
   const t = useTranslations('wishlist.form');
   const id = useId();
@@ -38,6 +41,16 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
+      {draft.links.length < MAX_WISH_LINKS && (
+        <ImportLink
+          id={id}
+          onImported={(product) => {
+            setDraft((current) => addImportedLink(current, product));
+            if (product.description || product.price) setShowMore(true);
+          }}
+        />
+      )}
+      <WishFormLinks links={draft.links} onChange={(links) => update({ links })} />
       <Field>
         <FieldLabel htmlFor={`${id}-title`}>{t('title')}</FieldLabel>
         <Input

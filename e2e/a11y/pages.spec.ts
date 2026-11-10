@@ -2,6 +2,7 @@
 // Fails on serious and critical violations; every page is scanned before the test reports.
 import AxeBuilder from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
+import { Binary, ObjectId } from 'mongodb';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 
 const phases = ['draft', 'open', 'drawn', 'giftday', 'done'] as const;
@@ -68,7 +69,7 @@ const seedGroup = async (phase: Phase, people: User[], db: TestDb) => {
     ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   }
   ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks', price: { currency: 'EUR', amount: 1500 } }));
-  ok(await bob.trpc.mutate('wish.create', { title: 'Cookbook', url: 'https://shop.example/cookbook', reallyWant: true }));
+  ok(await bob.trpc.mutate('wish.create', { title: 'Cookbook', links: [{ url: 'https://shop.example/cookbook', title: 'The vegetarian cookbook', price: { currency: 'EUR', amount: 2495 } }], reallyWant: true }));
   ok(await cee.trpc.mutate('wish.create', { title: 'Scarf' }));
   if (phase === 'open') {
     ok(await ann.trpc.mutate('join.updateLink', { groupSlug: group.slug, requiresApproval: true, maxMembers: null }));
@@ -96,10 +97,21 @@ for (const theme of ['light', 'dark'] as const) {
       }
     });
 
-    test('my pages', async ({ page, signIn, signInPage }) => {
+    test('my pages', async ({ page, signIn, signInPage, db }) => {
       const ann = await signIn('ann');
       ok(await ann.trpc.mutate('group.create', { name: 'A11y mine', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
-      ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks', description: 'Size 42', price: { currency: 'EUR', amount: 1500 } }));
+      // A wish card with an imported picture and two "Buy at" links (73).
+      const imageId = new ObjectId();
+      const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
+      await db.raw.collection('wishImages.files').insertOne({
+        _id: imageId, length: png.length, chunkSize: 261120, uploadDate: new Date(), filename: 'wish-image', metadata: { ownerId: ann.id, contentType: 'image/png' },
+      });
+      await db.raw.collection('wishImages.chunks').insertOne({ files_id: imageId, n: 0, data: new Binary(png) });
+      const links = [
+        { url: 'https://www.bol.com/nl/nl/p/wollen-sokken/9300000012345678/', title: 'Wollen sokken', price: { currency: 'EUR', amount: 1499 }, imageId: imageId.toHexString() },
+        { url: 'https://www.zalando.nl/falke-sokken-fa112c0bt-a11.html' },
+      ];
+      ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks', description: 'Size 42', price: { currency: 'EUR', amount: 1500 }, links }));
       await signInPage(page, ann);
       for (const path of ['/app', '/wishlist', '/account', '/new']) await visit(page, path);
     });
