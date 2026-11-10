@@ -1,10 +1,11 @@
 import { AccountSettings } from '@/components/account/account-settings';
-import { useMe } from '@/components/account/use-me';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
 import { LoadFailed } from '@/components/shell/load-failed';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
+import { useQuery } from '@tanstack/react-query';
 import type { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
@@ -12,7 +13,7 @@ import Head from 'next/head';
 export default function AccountPage() {
   const t = useTranslations('account');
   const user = useRequireSession();
-  const me = useMe(Boolean(user));
+  const me = useQuery({ ...useTRPC().me.get.queryOptions(), enabled: Boolean(user) });
 
   return (
     <AppShell>
