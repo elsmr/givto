@@ -5,6 +5,7 @@ import { JoinUnavailable } from '@/components/join/join-unavailable';
 import { AppShell } from '@/components/shell/app-shell';
 import { getDb } from '@/lib/server/db';
 import { requireEnv } from '@/lib/server/env';
+import { currentEdition } from '@/lib/server/membership';
 import {
   findGroupByJoinLink,
   findPendingInvite,
@@ -50,6 +51,9 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
   const found = invite ? await findPendingInvite(db, slug, invite) : null;
   const group = !invite && token ? await findGroupByJoinLink(db, slug, token) : null;
   const preview = found ? invitePreview(found) : group ? joinLinkPreview(group) : null;
+  const groupId = found?.group._id ?? group?._id;
+  const edition = groupId ? await currentEdition(db, groupId) : null;
+  const upcoming = edition?.status === 'done' ? null : edition;
   res.setHeader('Cache-Control', 'private, no-store');
   res.setHeader('X-Robots-Tag', 'noindex');
   return {
@@ -57,7 +61,7 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
       slug,
       token,
       kind: invite ? 'invite' : 'link',
-      preview,
+      preview: preview && { ...preview, giftDay: upcoming?.giftDay?.date ?? null, budget: upcoming?.budget ?? null },
       origin: new URL(requireEnv('BETTER_AUTH_URL')).origin,
       messages: await loadMessages(locale, ['join', 'group']),
     },

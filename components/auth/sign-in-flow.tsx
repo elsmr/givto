@@ -1,5 +1,7 @@
 import { FieldSeparator } from '@/components/ui/field';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { authClient } from '@/lib/client/auth';
+import { MailCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -21,19 +23,22 @@ export const SignInFlow = ({ redirect }: { redirect: string }) => {
 
   if (email) {
     return (
-      <section aria-labelledby="check-email-title" className="flex flex-col gap-4">
-        <h2 id="check-email-title" className="text-2xl font-bold">
+      <div className="flex flex-col gap-4">
+        <IconCardTitle icon={MailCheck} tone="yellow">
           {t('check-email.title')}
-        </h2>
+        </IconCardTitle>
         <CodeForm email={email} callbackURL={redirect} onSignedIn={done} onBack={() => setEmail(null)} />
-      </section>
+      </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-5">
       <EmailForm callbackURL={redirect} onSent={setEmail} />
-      <FieldSeparator>{t('or')}</FieldSeparator>
+      {/* The label sits on the card, not the page. */}
+      <FieldSeparator className="*:data-[slot=field-separator-content]:bg-surface [&_[role=separator]]:border-dashed">
+        {t('or')}
+      </FieldSeparator>
       <PasskeyButton onSignedIn={done} />
     </div>
   );

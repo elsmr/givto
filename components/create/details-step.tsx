@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { CardDivider } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { todayIn } from '@/lib/local-date';
@@ -53,10 +54,12 @@ export const DetailsStep = ({ draft, timeZone, onChange, onNext }: DetailsStepPr
           <FieldDescription id="group-name-help">{t('name-help')}</FieldDescription>
           {issues.name && <FieldError>{tIssues(issues.name)}</FieldError>}
         </Field>
+        <CardDivider className="-mx-(--card-spacing) w-auto" />
         <GiftDayFields draft={draft} today={todayIn(timeZone)} placeIssue={issues.place} onChange={onChange} />
+        <CardDivider className="-mx-(--card-spacing) w-auto" />
         <BudgetFields draft={draft} onChange={onChange} />
       </FieldGroup>
-      <Button type="submit" size="lg" className="self-start">
+      <Button type="submit" size="lg" className="xs:self-start">
         {t('next')}
       </Button>
     </form>

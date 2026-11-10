@@ -1,5 +1,6 @@
 import { GivtoLogo } from '@/components/givto-logo';
 import { AppShell } from '@/components/shell/app-shell';
+import { FlowPage, MessageCard } from '@/components/shell/flow-page';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { useCurrentUser } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
@@ -20,49 +21,34 @@ export const ErrorPage = ({ statusCode }: { statusCode: number }) => {
         <title>{`${title} · Givto`}</title>
         <meta name="robots" content="noindex" />
       </Head>
-      <div className="mx-auto flex max-w-xl flex-col gap-6">
-        <GivtoLogo aria-hidden="true" className="size-20 -rotate-12" />
-        <div className="flex flex-col gap-2">
-          <p className="font-semibold text-muted">
+      <FlowPage
+        eyebrow={
+          <span className="flex items-center gap-3">
+            <GivtoLogo aria-hidden="true" className="size-12 -rotate-12" />
             {t('status', { code: statusCode })}
-          </p>
-          <h1 className="text-4xl font-extrabold sm:text-5xl">{title}</h1>
-          <p className="text-lg text-muted">
-            {isNotFound
-              ? t('not-found.description')
-              : t('fallback.description')}
-          </p>
-        </div>
-        <section
-          aria-labelledby="error-next-steps"
-          className="flex flex-col gap-4"
+          </span>
+        }
+        title={title}
+      >
+        <MessageCard
+          actions={
+            <>
+              {!isNotFound && <Button onClick={() => router.reload()}>{t('try-again')}</Button>}
+              <Link href={user ? '/app' : '/'} className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
+                {t('home')}
+              </Link>
+              {!user && (
+                <Link href="/auth/sign-in" className={buttonVariants({ variant: 'neutral' })}>
+                  {t('sign-in')}
+                </Link>
+              )}
+            </>
+          }
         >
-          <h2 id="error-next-steps" className="text-2xl font-bold">
-            {t('next-steps')}
-          </h2>
-          {isNotFound && !user && <p>{t('invite-hint')}</p>}
-          <div className="flex flex-col gap-4 xs:flex-row xs:flex-wrap">
-            {!isNotFound && (
-              <Button onClick={() => router.reload()}>{t('try-again')}</Button>
-            )}
-            {user ? (
-              <Link href="/app" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
-              {t('my-secret-santas')}
-            </Link>
-            ) : (
-              <Link href="/auth/sign-in" className={buttonVariants({ variant: isNotFound ? 'default' : 'neutral' })}>
-              {t('sign-in')}
-            </Link>
-            )}
-            <Link href="/new" className={buttonVariants({ variant: 'neutral' })}>
-              {t('start')}
-            </Link>
-            <Link href="/" className={buttonVariants({ variant: 'neutral' })}>
-              {t('home')}
-            </Link>
-          </div>
-        </section>
-      </div>
+          <p>{isNotFound ? t('not-found.description') : t('fallback.description')}</p>
+          {isNotFound && !user && <p className="text-base text-muted">{t('invite-hint')}</p>}
+        </MessageCard>
+      </FlowPage>
     </AppShell>
   );
 };

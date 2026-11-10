@@ -13,16 +13,17 @@ test('code: a private page sends you to sign-in and back', async ({ page, signIn
 test('link: the emailed link signs in and opens the page that asked', async ({ page, secrets }) => {
   const email = uniqueEmail('link');
   secrets.push(email);
-  await page.goto('/groups');
-  await expect(page).toHaveURL('/auth/sign-in?redirect=%2Fgroups');
+  await page.goto('/app');
+  await expect(page).toHaveURL('/auth/sign-in?redirect=%2Fapp');
   await page.getByLabel('Email').fill(email);
   await page.getByRole('button', { name: 'Email me a code' }).click();
   await expect(page.getByRole('heading', { name: 'Check your email' })).toBeVisible();
   const { link, code, token } = readSignInMail(await latestMail(email));
   secrets.push(code, token);
   await page.goto(link);
-  await expect(page).toHaveURL('/groups');
-  await expect(page.getByRole('heading', { name: 'My groups' })).toBeVisible();
+  await expect(page).toHaveURL('/app');
+  // A new account has no name yet: "Home", not "Hi <first name>".
+  await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible();
 });
 
 test('passkey: add one on the account page, then sign in with it', async ({ page, signIn, signInPage }) => {

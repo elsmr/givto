@@ -1,3 +1,4 @@
+import { Server } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { PrivacyList } from './privacy-list';
@@ -10,7 +11,7 @@ export const PrivacyProcessors = () => {
   const bold = (chunks: ReactNode) => <strong>{chunks}</strong>;
 
   return (
-    <PrivacySection id="privacy-processors" title={t('title')}>
+    <PrivacySection icon={Server} tone="mint" title={t('title')}>
       <p>{t('intro')}</p>
       <PrivacyList
         items={processors.map((processor) => t.rich(processor, { b: bold }))}
