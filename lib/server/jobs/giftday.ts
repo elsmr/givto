@@ -9,7 +9,7 @@ import { log } from '../log';
 const FURTHEST_AHEAD_ZONE = 'Pacific/Kiritimati';
 
 /**
- * Pure (31): the status an edition should have on local date `today` (YYYY-MM-DD, its own time
+ * Pure (31): the status an edition should have on local date `today` (YYYY-MM-DD, its group's time
  * zone). drawn → giftday on the gift day, → done from the day after (also when a day was missed).
  */
 export const giftDayStatus = (status: EditionStatus, giftDay: string, today: string): EditionStatus => {
@@ -36,10 +36,15 @@ export const runGiftDayTransitions = async (db: Collections, now: Date, editionI
       ...(editionIds && { _id: { $in: editionIds } }),
     })
     .toArray();
+  const groups = await db.groups
+    .find({ _id: { $in: [...new Set(editions.map((edition) => edition.groupId))] } }, { projection: { timeZone: 1 } })
+    .toArray();
+  const timeZones = new Map(groups.map((group) => [group._id, group.timeZone]));
   const moved = { giftday: [] as string[], done: [] as string[] };
   for (const edition of editions) {
-    if (!edition.giftDay) continue;
-    const next = giftDayStatus(edition.status, edition.giftDay.date, todayIn(edition.timeZone, now));
+    const timeZone = timeZones.get(edition.groupId);
+    if (!edition.giftDay || !timeZone) continue;
+    const next = giftDayStatus(edition.status, edition.giftDay.date, todayIn(timeZone, now));
     if ((next !== 'giftday' && next !== 'done') || next === edition.status) continue;
     const order =
       next === 'giftday' && !edition.unwrapOrder && edition.draw

@@ -80,7 +80,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
           status === 'done' &&
             visibleWishCount > 0 &&
             edition?.giftDay !== undefined &&
-            daysBetween(edition.giftDay.date, todayIn(edition.timeZone)) <= MARK_RECEIVED_DAYS && {
+            daysBetween(edition.giftDay.date, todayIn(group.timeZone)) <= MARK_RECEIVED_DAYS && {
               kind: 'markReceived' as const,
               count: visibleWishCount,
             },
@@ -95,7 +95,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
         title: edition.title,
         status: edition.status,
         giftDay: edition.giftDay?.date,
-        timeZone: edition.timeZone,
+        timeZone: group.timeZone,
         participantCount,
         gifteeReady: isDrawn(edition) && Boolean(edition.draw?.assignments[member.id]),
       },

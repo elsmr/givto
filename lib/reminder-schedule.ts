@@ -1,5 +1,5 @@
 // Pure: which reminder email (63) one person gets for one edition today, if any. Dates are local
-// dates (YYYY-MM-DD) in the edition's time zone. The job (lib/server/jobs/reminders.ts) runs it every
+// dates (YYYY-MM-DD) in the group's time zone. The job (lib/server/jobs/reminders.ts) runs it every
 // tick; tests/reminder-schedule.check.mjs plays it day by day.
 import { addDays, daysBetween } from './local-date';
 import type { EditionStatus } from './schema/edition';

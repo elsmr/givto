@@ -18,9 +18,9 @@ export const editionRouter = router({
   startNext: organizerProcedure.input(v.object({ title: v.optional(EditionTitle) })).mutation(async ({ ctx, input }) => {
     const current = await currentEdition(ctx.db, ctx.group._id);
     if (!current || isBeforeDraw(current)) throw new AppError('EDITION_IN_PROGRESS');
-    if (current.status !== 'done') await finishEdition(ctx.db, current);
+    if (current.status !== 'done') await finishEdition(ctx.db, current, ctx.group.timeZone);
     const now = new Date();
-    const year = Number(todayIn(current.timeZone, now).slice(0, 4));
+    const year = Number(todayIn(ctx.group.timeZone, now).slice(0, 4));
     const hadDraw = Object.keys(current.draw?.assignments ?? {}).length > 0;
     const edition: Edition = {
       _id: newId(),
@@ -28,7 +28,6 @@ export const editionRouter = router({
       number: current.number + 1,
       year,
       title: input.title ?? defaultEditionTitle(year, await ctx.db.editions.distinct('title', { groupId: ctx.group._id })),
-      timeZone: current.timeZone,
       exchangeMode: current.exchangeMode,
       ...(current.budget && { budget: current.budget }),
       avoidPreviousGiftees: hadDraw,

@@ -52,8 +52,8 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
 
 /** Wishlist, gift and ready-to-draw reminders by the schedule (lib/reminder-schedule.ts): at most one email a week per person. */
 const scheduledReminders = async (db: Collections, group: Group, edition: Edition, now: Date) => {
-  const today = todayIn(edition.timeZone, now);
-  const schedule = reminderEditionOf(edition);
+  const today = todayIn(group.timeZone, now);
+  const schedule = reminderEditionOf(edition, group.timeZone);
   const people = await reminderPeople(db, group, edition, now);
   return runEach('reminder', people, async ({ member, person, history }) => {
     const due = dueReminder(person, schedule, history, today);
@@ -79,8 +79,8 @@ const scheduledReminders = async (db: Collections, group: Group, edition: Editio
 
 /** The morning of gift day (29, 31), to everyone in the edition; not part of the weekly limit. */
 const giftDayReminders = async (db: Collections, group: Group, edition: Edition, now: Date) => {
-  if (!edition.giftDay || todayIn(edition.timeZone, now) !== edition.giftDay.date) return {};
-  const hour = hourIn(edition.timeZone, now);
+  if (!edition.giftDay || todayIn(group.timeZone, now) !== edition.giftDay.date) return {};
+  const hour = hourIn(group.timeZone, now);
   if (!isDrawn(edition) || hour < GIFT_DAY_HOURS.from || hour >= GIFT_DAY_HOURS.to) return {};
   const ids = edition.participants.filter((p) => p.participates && p.status === 'joined').map((p) => p.memberId);
   // Managers hear it once, for themselves: not again per managed member.

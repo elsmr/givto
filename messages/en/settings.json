@@ -12,6 +12,11 @@
     "label": "Group name",
     "help": "Stays the same every year, like Family or The office."
   },
+  "time-zone": {
+    "title": "Time zone",
+    "label": "Time zone",
+    "help": "Gift day, reminders and scheduled draws follow this time zone."
+  },
   "edition": {
     "title": "{edition}",
     "done": "This edition is over, so it can't be changed anymore.",

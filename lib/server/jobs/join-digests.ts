@@ -31,7 +31,7 @@ export const sendJoinDigests = async (db: Collections, now: Date, groupIds?: str
     .toArray();
   const counts: JobCounts[] = [];
   for (const group of groups) {
-    const { timeZone } = group.defaults;
+    const { timeZone } = group;
     if (hourIn(timeZone, now) < DIGEST_FROM_HOUR) continue;
     const yesterday = addDays(todayIn(timeZone, now), -1);
     const names = linkJoinersOn(group, yesterday, timeZone).map((m) => m.name);

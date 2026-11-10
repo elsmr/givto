@@ -37,7 +37,7 @@
   },
   "reveal": {
     "title": "The big reveal",
-    "switch": "Do the big reveal",
+    "switch": "End with the big reveal",
     "switch-help": "From gift day on, you can show everyone who was whose Santa.",
     "teaser": "On gift day, the organizer reveals who was whose Santa.",
     "ready": "Reveal it when everyone has unwrapped: then everyone sees who was whose Santa.",

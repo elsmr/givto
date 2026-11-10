@@ -9,9 +9,9 @@ import { visibleWishes } from '../wishlist/wish-view';
 
 const later = (a: Date, b: Date) => (a > b ? a : b);
 
-export const reminderEditionOf = (edition: Edition): ReminderEdition => ({
+export const reminderEditionOf = (edition: Edition, timeZone: string): ReminderEdition => ({
   status: edition.status,
-  drawnOn: edition.draw?.drawnAt && todayIn(edition.timeZone, edition.draw.drawnAt),
+  drawnOn: edition.draw?.drawnAt && todayIn(timeZone, edition.draw.drawnAt),
   giftDay: edition.giftDay?.date,
   wishlistBy: edition.wishlistBy,
   postBy: edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined,
@@ -31,7 +31,7 @@ const everyoneInvitedIn = async (db: Collections, group: Group, openedAt: Date, 
  */
 export const reminderPeople = async (db: Collections, group: Group, edition: Edition, now: Date) => {
   const openedAt = edition.statusChangedAt.open ?? edition.createdAt;
-  const local = (date: Date) => todayIn(edition.timeZone, date);
+  const local = (date: Date) => todayIn(group.timeZone, date);
   const participants = edition.participants.filter((p) => p.participates && p.status === 'joined');
   const gifts = await currentGifts(db, edition);
   const manualDraw = edition.status === 'open' && !edition.drawAt && participants.length >= MIN_PARTICIPANTS;

@@ -43,6 +43,7 @@ export const groupView = async (
     slug: group.slug,
     name: group.name,
     locale: group.locale,
+    timeZone: group.timeZone,
     me: { memberId: me.id, isOrganizer },
     members: visible.map((m) => ({
       id: m.id,
@@ -60,7 +61,7 @@ export const groupView = async (
       year: edition.year,
       title: edition.title,
       status: edition.status,
-      timeZone: edition.timeZone,
+      timeZone: group.timeZone,
       giftDay: edition.giftDay,
       drawAt: edition.drawAt,
       wishlistBy: edition.wishlistBy,
@@ -71,6 +72,8 @@ export const groupView = async (
       avoidPreviousGiftees: edition.avoidPreviousGiftees,
       /** Guess your Santa (62) on: each person's Santa is shown at their turn. */
       guessing: guessingOn(edition),
+      /** The big reveal (31) on: who was whose Santa comes out after the gifts. */
+      reveal: edition.reveal.enabled,
       hasPreviousEdition: Boolean(edition.previousEditionId),
       calendarSequence: edition.calendarSequence ?? 0,
       participantIds: edition.participants

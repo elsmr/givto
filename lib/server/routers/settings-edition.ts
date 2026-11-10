@@ -10,7 +10,7 @@ import { organizerEditionProcedure } from '../trpc';
 import { compactGiftDay, compactPrice } from './group';
 
 /** Scheduled draws run at this local time on the draw date. */
-const DRAW_TIME = '09:00';
+export const DRAW_TIME = '09:00';
 
 export const EditionSettingsInput = v.pipe(
   v.object({
@@ -37,9 +37,10 @@ const optionalFields = ['giftDay', 'drawAt', 'wishlistBy', 'postBy', 'budget', '
  */
 export const updateEdition = organizerEditionProcedure.input(EditionSettingsInput).mutation(async ({ ctx, input }) => {
   const { edition } = ctx;
+  const { timeZone } = ctx.group;
   if (edition.status === 'done') throw new AppError('EDITION_CLOSED');
-  const today = todayIn(edition.timeZone);
-  const drawOn = edition.drawAt && todayIn(edition.timeZone, edition.drawAt);
+  const today = todayIn(timeZone);
+  const drawOn = edition.drawAt && todayIn(timeZone, edition.drawAt);
   const movedIntoPast = (next: string | undefined, current: string | undefined) =>
     next !== undefined && next !== current && next < today;
   if (
@@ -68,7 +69,7 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
     exchangeMode: input.exchangeMode,
     avoidPreviousGiftees: input.avoidPreviousGiftees,
     giftDay: input.giftDay && compactGiftDay(input.giftDay),
-    drawAt: input.drawOn ? zonedInstant(input.drawOn, DRAW_TIME, edition.timeZone) : undefined,
+    drawAt: input.drawOn ? zonedInstant(input.drawOn, DRAW_TIME, timeZone) : undefined,
     wishlistBy: input.wishlistBy,
     postBy: input.postBy,
     budget: input.budget && compactPrice(input.budget),

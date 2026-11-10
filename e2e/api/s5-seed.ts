@@ -17,7 +17,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     id, name, role: 'member', status: 'joined', joinedAt: now, wishlistView: { includeNewWishes: true, hiddenWishIds: [] }, ...extra,
   });
   const group = (_id: string, slug: string, name: string, members: Member[]): Group => ({
-    _id, slug, name, locale: 'en', defaults: { timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }, createdBy: members[0].userId!,
+    _id, slug, name, locale: 'en', timeZone: 'Europe/Brussels', defaults: { exchangeMode: 'inPerson' }, createdBy: members[0].userId!,
     members, exclusions: [], households: [], createdAt: now, updatedAt: now,
   });
   await db.groups.insertMany([
@@ -40,7 +40,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     memberId, participates: true, status: 'joined', addedAt: now, ...extra,
   });
   const edition = (_id: string, groupId: string, status: Edition['status'], participants: Participant[], draw?: Edition['draw']): Edition => ({
-    _id, groupId, number: 1, year: 2099, title: 'Secret Santa 2099', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' },
+    _id, groupId, number: 1, year: 2099, title: 'Secret Santa 2099', giftDay: { date: '2099-12-24' },
     exchangeMode: 'inPerson', avoidPreviousGiftees: false, status, statusChangedAt: { open: now }, participants,
     reveal: { enabled: false }, createdAt: now, updatedAt: now, ...(draw && { draw }),
   });

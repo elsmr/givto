@@ -56,7 +56,7 @@ export const nudgeRouter = router({
       santaMemberId: ctx.santa.id,
       gifteeMemberId: ctx.giftee.id,
       kind: input.kind,
-      sendAfter: anonymousSendAt(now, ctx.edition.timeZone),
+      sendAfter: anonymousSendAt(now, ctx.group.timeZone),
       createdAt: now,
     };
     await ctx.db.nudges.insertOne(nudge);

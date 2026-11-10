@@ -1,5 +1,5 @@
 // When anonymous messages (Psst!, Santa questions) reach the giftee (30, 52): at a fixed
-// time of day in the edition's time zone, so the moment of delivery doesn't point at the
+// time of day in the group's time zone, so the moment of delivery doesn't point at the
 // Santa sitting across the room. Pure, so the scheduled jobs can reuse it.
 import { addDays, todayIn, zonedInstant } from './local-date';
 

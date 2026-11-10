@@ -49,7 +49,7 @@ export const questionRouter = router({
       gifteeMemberId: ctx.giftee.id,
       askerMemberId: ctx.santa.id,
       text: input.text,
-      notifyAfter: anonymousSendAt(now, ctx.edition.timeZone),
+      notifyAfter: anonymousSendAt(now, ctx.group.timeZone),
       createdAt: now,
     };
     await ctx.db.questions.insertOne(question);

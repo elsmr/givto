@@ -33,7 +33,7 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
     .map((offset) => (offset === 0 ? 'Etc/GMT' : `Etc/GMT${offset > 0 ? '+' : ''}${offset}`))
     .find((zone) => Number(new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', hourCycle: 'h23' }).format(new Date())) === 9)!;
   const party = trio(olive, ann, bob);
-  const partyGroup = groupDoc(olive, 'Party', party);
+  const partyGroup = groupDoc(olive, 'Party', party, { timeZone: morningZone });
   await db.groups.insertMany([family, partyGroup]);
   await db.invites.insertOne({
     _id: newId(), groupId: family._id, memberId: invitee.id, email: inviteeEmail, tokenHash: `old-${newId()}`,
@@ -41,7 +41,7 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
   });
   await db.editions.insertMany([
     e1,
-    editionDoc(partyGroup, 1, 'drawn', party, { timeZone: morningZone, giftDay: { date: today(morningZone), time: '19:30', place: 'The barn' }, draw: circle(party) }),
+    editionDoc(partyGroup, 1, 'drawn', party, { giftDay: { date: today(morningZone), time: '19:30', place: 'The barn' }, draw: circle(party) }),
   ]);
 
   ok(await bob.trpc.mutate('account.setNotifications', { reminders: false, wishlistUpdates: true, santaMessages: true, nextYear: true }));

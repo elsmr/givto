@@ -40,7 +40,6 @@ export type JoinLink = v.InferOutput<typeof JoinLink>;
 
 /** Prefilled into each new edition. */
 export const EditionDefaults = v.object({
-  timeZone: TimeZone,
   exchangeMode: ExchangeMode,
   budget: v.optional(Price),
 });
@@ -51,6 +50,8 @@ export const GroupFields = v.object({
   name: GroupName,
   /** Email language for people without an account; defaults to the organizer's. */
   locale: Locale,
+  /** Gift day, reminders and scheduled draws follow it; edition dates are local dates here. */
+  timeZone: TimeZone,
   defaults: EditionDefaults,
 });
 export type GroupFields = v.InferOutput<typeof GroupFields>;
