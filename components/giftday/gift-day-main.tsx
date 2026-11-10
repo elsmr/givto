@@ -6,7 +6,7 @@ import { GiftDayHero } from './gift-day-hero';
 import { UnwrapNow } from './unwrap-now';
 import { useGiftDay } from './use-gift-day';
 
-/** Gift day on the overview (61): who's unwrapping now, the presenter and the big reveal for the organizer, one line about my giftee. */
+/** Gift day on the overview (61): who's unwrapping now, the presenter for the organizer, the big reveal once it's out, one line about my giftee. */
 export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string; edition: GroupEdition; manage: boolean }) => {
   const input = { groupSlug, editionNumber: edition.number };
   const giftDay = useGiftDay(input, edition.status);
@@ -19,7 +19,7 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
         <GiftsToOpen {...input} />
         <GifteeLine {...input} />
       </GiftDayHero>
-      {giftDay.data && <BigRevealCard {...input} reveal={giftDay.data.reveal} guessing={giftDay.data.guessing} status={edition.status} manage={manage} />}
+      {giftDay.data && <BigRevealCard reveal={giftDay.data.reveal} guessing={giftDay.data.guessing} />}
     </>
   );
 };

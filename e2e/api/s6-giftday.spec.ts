@@ -60,8 +60,13 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
     expect(view.reveal.pairs).toBeNull();
   });
 
-  await test.step('the big reveal: off by default; pairs never in the API before it is on and gift day', async () => {
+  await test.step('the big reveal: off by default, can be on before the draw; pairs never in the API before it is on and gift day', async () => {
     expect((await editionOf(db, slug)).reveal).toEqual({ enabled: false });
+    const open = ok(
+      await ann.trpc.mutate('group.create', { name: 'Undrawn', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' })
+    );
+    ok(await ann.trpc.mutate('giftday.setReveal', { groupSlug: open.slug, editionNumber: 1, enabled: true }));
+    expect(ok(await ann.trpc.query('group.get', { groupSlug: open.slug })).edition!.reveal).toBe(true);
     const expectSantaFree = async () => {
       for (const person of [ann, bob]) {
         for (const text of [
@@ -129,11 +134,12 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
     ok(await bob.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: true }));
   });
 
-  await test.step('shuffling and the reveal stay put once the edition is done', async () => {
+  await test.step('once the edition is done: no shuffling, and the reveal is out without the presenter', async () => {
     await setStatus('done');
     expect(code(await ann.trpc.mutate('giftday.shuffle', edition))).toBe('EDITION_CLOSED');
+    expect(ok(await dan.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: true }));
-    ok(await ann.trpc.mutate('giftday.reveal', edition));
     expect(ok(await dan.trpc.query('giftday.get', edition)).reveal.revealed).toBe(true);
+    expect((await editionOf(db, slug)).reveal.revealedAt).toBeUndefined();
   });
 });

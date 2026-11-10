@@ -37,10 +37,10 @@
   },
   "reveal": {
     "title": "The big reveal",
-    "switch": "End with the big reveal",
-    "switch-help": "From gift day on, you can show everyone who was whose Santa.",
-    "teaser": "On gift day, the organizer reveals who was whose Santa.",
-    "ready": "Reveal it when everyone has unwrapped: then everyone sees who was whose Santa.",
+    "switch": "Reveal the Santas after the gifts",
+    "description": "At the end of the presenter view, everyone sees who was whose Santa. Not using the presenter? Then it's revealed when gift day is over.",
+    "on": "The Santas are revealed after the gifts",
+    "off": "The Santas stay secret",
     "button": "Reveal who was whose Santa",
     "revealed": "Here's who was whose Santa.",
     "pairs-label": "Who was whose Santa",
@@ -92,7 +92,6 @@
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   },
   "panel": {
-    "order": "Unwrap order",
-    "with-reveal": "Gift day: unwrap order and the big reveal"
+    "order": "Unwrap order"
   }
 }

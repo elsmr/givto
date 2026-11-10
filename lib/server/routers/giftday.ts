@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { isBeforeDraw, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
+import { isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
@@ -60,9 +60,8 @@ export const giftdayRouter = router({
     return presenterView(ctx.db, ctx.group, edition);
   }),
 
-  /** The big reveal on or off (off by default). Off again hides it from everyone. */
+  /** The big reveal on or off (off by default), any time. Off again hides it from everyone. */
   setReveal: organizerEditionProcedure.input(v.object({ enabled: v.boolean() })).mutation(async ({ ctx, input }) => {
-    if (!ctx.edition.draw || isBeforeDraw(ctx.edition)) throw new AppError('NOT_DRAWN');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
       input.enabled

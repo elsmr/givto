@@ -11,7 +11,7 @@ export const GuessingNote = ({ groupSlug }: { groupSlug: string }) => {
       <VenetianMask aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <span>
         {t('note')}{' '}
-        <Link href={`/g/${groupSlug}/settings#guess`} className="font-semibold">
+        <Link href={`/g/${groupSlug}/settings#gift-day`} className="font-semibold">
           {t('settings')}
         </Link>
       </span>
