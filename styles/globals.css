@@ -81,6 +81,14 @@
   }
 }
 
+/*
+ * Owner trial (67): numbers and small labels in monospace (stat tiles, badges, counts, dates in
+ * tiles). Unlayered, so it wins over font-heading. To revert, delete this rule and the `mono` classes.
+ */
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 @layer base {
   html {
     background-color: var(--color-page);
