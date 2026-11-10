@@ -26,10 +26,15 @@ export const newUnwrapOrder = (memberIds: string[], now: Date): NonNullable<Edit
 /**
  * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron) or
  * via the test trigger `giftday.runDue`. Entering gift day shuffles the unwrap order if nobody has.
+ * `editionIds` (test trigger only) limits it to those editions, so a test never moves another test's.
  */
-export const runGiftDayTransitions = async (db: Collections, now: Date) => {
+export const runGiftDayTransitions = async (db: Collections, now: Date, editionIds?: string[]) => {
   const editions = await db.editions
-    .find({ status: { $in: ['drawn', 'giftday'] }, 'giftDay.date': { $lte: todayIn(FURTHEST_AHEAD_ZONE, now) } })
+    .find({
+      status: { $in: ['drawn', 'giftday'] },
+      'giftDay.date': { $lte: todayIn(FURTHEST_AHEAD_ZONE, now) },
+      ...(editionIds && { _id: { $in: editionIds } }),
+    })
     .toArray();
   const moved = { giftday: [] as string[], done: [] as string[] };
   for (const edition of editions) {
