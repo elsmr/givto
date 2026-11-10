@@ -1,11 +1,11 @@
 {
   "before": {
     "title": "Get everyone in",
-    "who": "{count, plural, =0 {Nobody's in yet.} one {# person is in:} other {# people are in:}}",
+    "who": "{count, plural, =0 {Nobody's in yet} one {# person is in} other {# people are in}}",
     "scheduled": "Names will be drawn on {date}.",
     "manual": "The organizer draws the names when everyone's in.",
+    "manual-organizer": "Draw names when everyone's in.",
     "too-few": "The draw needs at least {min} people. Share the join link to get more people in.",
-    "change": "Invites and settings",
     "draw": "Draw names",
     "confirm-title": "Draw names now?",
     "confirm-description": "Everyone gets their giftee right away. People who join later are slotted in.",

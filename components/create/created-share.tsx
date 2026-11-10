@@ -28,7 +28,7 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
     >
       <Card>
         <CardContent>
-          <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} />
+          <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} primary />
         </CardContent>
         <CardDivider />
         <CardContent className="flex flex-col gap-4">
