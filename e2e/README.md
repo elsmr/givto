@@ -58,7 +58,7 @@ Import `test`, `expect` and helpers from `../fixtures`, never from `@playwright/
 Every test also gets a random `x-forwarded-for` for `page` and `request` (rate limits are per IP).
 
 Test-only triggers: with `E2E_TEST_HOOKS=1` (set by `env.ts`, refused when `VERCEL_ENV=production`,
-see `lib/server/test-hooks.ts`) `draw.runDue({ now })` and `giftday.runDue({ now, editionIds })` run the
+see `lib/server/test-hooks.ts`) `draw.runDue({ now, editionIds })` and `giftday.runDue({ now, editionIds })` run the
 scheduled jobs at a chosen time; `editionIds` limits the job to the test's own editions.
 
 ## Patterns
@@ -109,7 +109,7 @@ Tests run at the same time against one app and one database.
 - Never clear shared state (`DELETE /messages`, `deleteMany({})`, `updateMany({})`).
 - Cron jobs act on the whole database: `runCron(…)` (real time) also moves and mails other
   tests' data that is due by then. So:
-  - Test hooks always get `editionIds` (`giftday.runDue({ now, editionIds })`): a test that moves
+  - Test hooks always get `editionIds` (`draw.runDue` and `giftday.runDue`): a test that moves
     time never touches another test's editions.
   - By default, keep dates far ahead: gift days and draw dates in 2099 (`now` relative to them).
   - Only tests that use the real-time crons seed near today (`api/s7-*`, project `api-cron`).
