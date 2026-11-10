@@ -45,8 +45,10 @@ export const Wish = v.object({
   ...WishFields.entries,
   /** Global order, ascending. Reordering sets a value between the neighbours. */
   position: v.number(),
-  /** Marked received after gift day; hidden from the list from then on. */
+  /** Marked received after gift day ("I got this"); from then on it's in the archive like an archived wish. */
   receivedAt: v.optional(v.date()),
+  /** Archived by the owner (76): only on their own /wishlist, under Archived. Absent on older documents = not archived. */
+  archivedAt: v.optional(v.date()),
   createdAt: v.date(),
   updatedAt: v.date(),
 });

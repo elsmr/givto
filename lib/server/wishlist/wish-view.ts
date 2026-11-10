@@ -19,10 +19,18 @@ export type WishView = ReturnType<typeof toWishView>;
 export const wishOwnerId = (member: Member): string | undefined =>
   member.userId ?? (member.managedBy ? member.id : undefined);
 
-/** The current (not received) wishes of an owner, in the global order. */
+/** Archived (76) or received: only in the owner's archive. */
+export const inArchive = { $or: [{ archivedAt: { $exists: true } }, { receivedAt: { $exists: true } }] };
+
+/** The current (not archived, not received) wishes of an owner, in the global order. */
 export const listWishes = (db: Collections, ownerId: string, excludeIds: string[] = []) =>
   db.wishes
-    .find({ ownerId, receivedAt: { $exists: false }, ...(excludeIds.length > 0 && { _id: { $nin: excludeIds } }) })
+    .find({
+      ownerId,
+      archivedAt: { $exists: false },
+      receivedAt: { $exists: false },
+      ...(excludeIds.length > 0 && { _id: { $nin: excludeIds } }),
+    })
     .sort({ position: 1, _id: 1 })
     .toArray();
 
@@ -30,4 +38,22 @@ export const listWishes = (db: Collections, ownerId: string, excludeIds: string[
 export const visibleWishes = (db: Collections, member: Member) => {
   const ownerId = wishOwnerId(member);
   return ownerId ? listWishes(db, ownerId, member.wishlistView?.hiddenWishIds ?? []) : Promise.resolve([]);
+};
+
+/**
+ * What a Santa sees of their giftee's list: the group's view, plus archived wishes this Santa has
+ * Dibs! on in this edition (76), flagged, since they may have bought them already.
+ */
+export const santaWishes = async (db: Collections, giftee: Member, editionId: string, santaMemberId: string) => {
+  const ownerId = wishOwnerId(giftee);
+  if (!ownerId) return [];
+  const [visible, claims] = await Promise.all([
+    visibleWishes(db, giftee),
+    db.claims.find({ ownerId, editionId, santaMemberId }, { projection: { wishId: 1 } }).toArray(),
+  ]);
+  const archived = await db.wishes
+    .find({ _id: { $in: claims.map((claim) => claim.wishId) }, ownerId, ...inArchive })
+    .sort({ position: 1, _id: 1 })
+    .toArray();
+  return [...visible.map((wish) => ({ ...wish, archived: false })), ...archived.map((wish) => ({ ...wish, archived: true }))];
 };

@@ -7,7 +7,7 @@ import { deleteWishImage, findWishImage } from '../import/wish-images';
 import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { authedProcedure, memberProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
-import { listWishes, toWishView } from '../wishlist/wish-view';
+import { inArchive, listWishes, toWishView } from '../wishlist/wish-view';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
@@ -92,6 +92,41 @@ export const wishRouter = router({
       return toWishView(updated);
     }),
 
+  /** My archive, last archived first. Archived wishes reach no group and no Santa, except a Santa's own Dibs! (santaWishes). */
+  archived: authedProcedure.query(async ({ ctx }) =>
+    (await ctx.db.wishes.find({ ownerId: ctx.user.id, ...inArchive }).sort({ updatedAt: -1, _id: 1 }).toArray()).map(toWishView)
+  ),
+
+  /** Claims, gift marks and per-group hiding stay, so a restore brings the wish back as it was. */
+  archive: authedProcedure.input(WishInput).mutation(async ({ ctx, input }) => {
+    const wish = await findOwnWish(ctx, input.wishId);
+    if ((await ctx.db.wishes.countDocuments({ ownerId: ctx.user.id, ...inArchive })) >= MAX_WISHES) {
+      throw new AppError('ARCHIVE_FULL', { details: { max: MAX_WISHES } });
+    }
+    const now = new Date();
+    await ctx.db.wishes.updateOne({ _id: wish._id, ownerId: ctx.user.id }, { $set: { archivedAt: now, updatedAt: now } });
+    await markWishlistChanged(ctx.db, ctx.user.id);
+    return { wishId: wish._id };
+  }),
+
+  /** Back at the end of the list; also brings back a wish marked received. */
+  restore: authedProcedure.input(WishInput).mutation(async ({ ctx, input }) => {
+    const current = await listWishes(ctx.db, ctx.user.id);
+    if (current.length >= MAX_WISHES) throw new AppError('WISHLIST_FULL', { details: { max: MAX_WISHES } });
+    const restored = await ctx.db.wishes.findOneAndUpdate(
+      { _id: input.wishId, ownerId: ctx.user.id, ...inArchive },
+      {
+        $set: { position: (current.at(-1)?.position ?? -1) + 1, updatedAt: new Date() },
+        $unset: { archivedAt: true, receivedAt: true },
+      },
+      { returnDocument: 'after' }
+    );
+    if (!restored) throw new AppError('NOT_FOUND');
+    await markWishlistChanged(ctx.db, ctx.user.id);
+    return toWishView(restored);
+  }),
+
+  /** "Delete for good" from the archive; Santas keep their gift marks (they bought it). */
   delete: authedProcedure.input(WishInput).mutation(async ({ ctx, input }) => {
     const wish = await findOwnWish(ctx, input.wishId);
     await ctx.db.wishes.deleteOne({ _id: wish._id, ownerId: ctx.user.id });
