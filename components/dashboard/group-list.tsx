@@ -1,11 +1,11 @@
+import { daysBetween, todayIn } from '@/lib/local-date';
 import { useTranslations } from 'next-intl';
-import { daysUntil } from './days-until';
 import { GroupCard, type DashboardGroup } from './group-card';
 
 const isPast = (group: DashboardGroup) => group.archived || group.edition?.status === 'done';
 
 const giftDayOrder = (group: DashboardGroup) =>
-  group.edition?.giftDay ? daysUntil(group.edition.giftDay, group.edition.timeZone) : Infinity;
+  group.edition?.giftDay ? daysBetween(todayIn(group.edition.timeZone), group.edition.giftDay) : Infinity;
 
 const Section = ({ id, title, groups }: { id: string; title: string; groups: DashboardGroup[] }) => (
   <section aria-labelledby={id} className="flex flex-col gap-4">

@@ -1,11 +1,11 @@
+import { daysBetween, todayIn } from '@/lib/local-date';
 import { CalendarDays } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { daysUntil } from './days-until';
 
 export const GiftDayLabel = ({ date, timeZone }: { date?: string; timeZone: string }) => {
   const t = useTranslations('dashboard');
   const format = useFormatter();
-  const days = date === undefined ? undefined : daysUntil(date, timeZone);
+  const days = date === undefined ? undefined : daysBetween(todayIn(timeZone), date);
   const text =
     date === undefined || days === undefined
       ? t('gift-day.none')
