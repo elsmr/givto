@@ -4,9 +4,9 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useId, useState, type FormEvent } from 'react';
+import { useId, useRef, useState, type FormEvent } from 'react';
 import { MAX_WISH_LINKS } from '@/lib/schema/wish';
-import { ImportLink } from './import-link';
+import { ImportLink, type ImportLinkHandle } from './import-link';
 import { addImportedLink, draftToInput, emptyDraft, type WishDraft, type WishInput } from './wish-draft';
 import { WishFormLinks } from './wish-form-links';
 import { WishMoreFields } from './wish-more-fields';
@@ -32,11 +32,17 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
   const id = useId();
   const [draft, setDraft] = useState(initial);
   const [showMore, setShowMore] = useState(() => hasDetails(initial));
+  const importLink = useRef<ImportLinkHandle>(null);
   const update = (changes: Partial<WishDraft>) => setDraft((current) => ({ ...current, ...changes }));
 
-  const submit = (event: FormEvent) => {
+  // A link still in the paste field joins the wish rather than being lost; one that can't be read stops the save.
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    onSubmit(draftToInput(draft));
+    const typed = await importLink.current?.importTyped();
+    if (typed === false) return;
+    const next = typed ? addImportedLink(draft, typed) : draft;
+    setDraft(next);
+    onSubmit(draftToInput(next));
   };
 
   return (
@@ -44,6 +50,7 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
       {draft.links.length < MAX_WISH_LINKS && (
         <ImportLink
           id={id}
+          ref={importLink}
           onImported={(product) => {
             setDraft((current) => addImportedLink(current, product));
             if (product.description || product.price) setShowMore(true);
