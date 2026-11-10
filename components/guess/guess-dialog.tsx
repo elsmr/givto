@@ -55,7 +55,7 @@ export const GuessDialog = ({ input, people }: GuessDialogProps) => {
               {people.map((person) => (
                 <label
                   key={person.memberId}
-                  className="flex min-h-11 cursor-pointer items-center gap-3 border-2 border-outline bg-surface px-3 py-2 font-semibold break-words text-ink hover:bg-page has-checked:bg-yellow has-checked:shadow-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid"
+                  className="flex min-h-11 cursor-pointer items-center gap-3 border-2 border-outline bg-surface px-3 py-2 font-semibold break-words text-ink hover:bg-page has-checked:bg-primary-muted has-checked:shadow-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid"
                 >
                   <input
                     type="radio"

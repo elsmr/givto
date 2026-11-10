@@ -1,4 +1,5 @@
 import { GuessVerdict } from '@/components/guess/guess-verdict';
+import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -10,9 +11,16 @@ const name = (chunks: ReactNode) => <strong className="font-heading break-words"
 /** Guess your Santa (62) at the turn, once they've unwrapped: "From Bob · You guessed Cee ✓". */
 export const PresenterSanta = ({ result }: { result: PresenterGuessResult }) => {
   const t = useTranslations('guess.present');
+  const reduced = useReducedMotion();
 
+  // Grows open instead of popping in, so the centred turn above glides up rather than jumps.
   return (
-    <div className="flex flex-col items-center gap-4">
+    <m.div
+      initial={reduced ? false : { height: 0 }}
+      animate={{ height: 'auto' }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      className="flex flex-col items-center gap-4 overflow-hidden p-2"
+    >
       {result.right && <Confetti />}
       <m.p
         initial={{ opacity: 0, y: 24 }}
@@ -37,6 +45,6 @@ export const PresenterSanta = ({ result }: { result: PresenterGuessResult }) => 
           <span className="text-muted">{t('no-guess')}</span>
         )}
       </m.p>
-    </div>
+    </m.div>
   );
 };

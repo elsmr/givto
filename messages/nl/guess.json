@@ -20,12 +20,11 @@
     "locked": "Vastgelegd! Je hoort het als jij aan de beurt bent op pakjesdag."
   },
   "result": {
-    "list-label": "Wie raadde zijn Santa",
     "guessed": "gokte <name>{guess}</name>",
     "no-guess": "niet gegokt",
     "right": "Raak!",
     "wrong": "Net niet",
-    "score": "{right} van de {total} raadden hun Santa"
+    "score": "{right} van de {total} goed geraden"
   },
   "present": {
     "show": "Van wie was het?",

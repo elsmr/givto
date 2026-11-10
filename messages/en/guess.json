@@ -20,7 +20,6 @@
     "locked": "Locked in! You'll find out at your turn on gift day."
   },
   "result": {
-    "list-label": "Who guessed their Santa",
     "guessed": "guessed <name>{guess}</name>",
     "no-guess": "no guess",
     "right": "Nailed it!",
