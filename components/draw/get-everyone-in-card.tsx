@@ -30,18 +30,16 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
         <IconCardTitle icon={UserPlus} tone="mint">
           {t('title')}
         </IconCardTitle>
-        <CardDescription>
-          {edition.drawAt
-            ? t('scheduled', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })
-            : t(isOrganizer ? 'manual-organizer' : 'manual')}
-        </CardDescription>
+        {edition.drawAt && (
+          <CardDescription>{t('scheduled', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })}</CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <p className="shrink-0 font-semibold">{t('who', { count: people.length })}</p>
           {people.length > 0 && <AvatarStack people={people} />}
         </div>
-        {tooFew && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
+        {tooFew && <p className="text-muted">{t('too-few', { count: MIN_PARTICIPANTS - people.length })}</p>}
         {isOrganizer && (
           <>
             {joinLink && !joinLink.revoked ? (

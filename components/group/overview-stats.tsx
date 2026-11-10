@@ -1,14 +1,11 @@
 import { StillShoppingStat } from '@/components/gift/still-shopping-stat';
 import { useTRPC } from '@/lib/client/trpc';
-import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useQuery } from '@tanstack/react-query';
 import { Heart, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AvatarStack } from './avatar-stack';
 import { GiftDayStat } from './gift-day-stat';
-import { isBeforeDraw } from '@/lib/schema/edition';
 import type { GroupData } from './group-data';
-import { RingGauge } from './ring-gauge';
 import { StatCard } from '@/components/ui/stat-card';
 import type { GroupTab } from './use-group-tab';
 
@@ -19,7 +16,6 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
   const wishes = useQuery(trpc.wish.groupView.queryOptions({ groupSlug: group.slug }));
   const { edition } = group;
   const people = edition ? group.members.filter((m) => edition.participantIds.includes(m.id)) : group.members.filter((m) => m.status === 'joined');
-  const tooFew = Boolean(edition && isBeforeDraw(edition)) && people.length < MIN_PARTICIPANTS;
   const wishCount = wishes.data?.filter((wish) => !wish.hidden).length;
 
   return (
@@ -30,7 +26,6 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
         tone="coral"
         title={t('wishes')}
         value={wishCount ?? '–'}
-        unit={t('wishes-unit', { count: wishCount ?? 0 })}
         onClick={() => showTab('wishlist')}
       />
       <StatCard
@@ -38,9 +33,9 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
         tone="primary-muted"
         title={t('people')}
         className="col-span-2 lg:col-span-1"
-        visual={tooFew ? <RingGauge value={people.length} max={MIN_PARTICIPANTS} /> : <AvatarStack people={people} />}
-        value={tooFew ? undefined : people.length}
-        unit={tooFew ? t('needed', { count: MIN_PARTICIPANTS - people.length }) : t('people-in', { count: people.length })}
+        visual={<AvatarStack people={people} />}
+        value={people.length}
+        unit={t('people-in', { count: people.length })}
         onClick={() => showTab('people')}
       />
       {edition?.status === 'drawn' && group.organizer && edition.isCurrent && (

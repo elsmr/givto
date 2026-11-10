@@ -160,10 +160,8 @@
     "today": "Today!",
     "over": "Over",
     "wishes": "My wishes",
-    "wishes-unit": "{count, plural, one {shown here} other {shown here}}",
     "people": "People",
     "people-in": "{count, plural, one {person in} other {people in}}",
-    "needed": "{count, plural, one {# more needed to draw} other {# more needed to draw}}",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift"

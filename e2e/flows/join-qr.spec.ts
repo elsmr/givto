@@ -46,18 +46,24 @@ test('Get everyone in: the link row, how many are in and Draw names; a member se
   const group = ok(
     await ann.trpc.mutate('group.create', { name: 'Card', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' })
   );
-  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
-    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
-  }
+  const join = (person: typeof bob, name: string) => person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name });
+  ok(await join(bob, 'Bob'));
   const card = (on: typeof page) => on.locator('[data-slot="card"]').filter({ has: on.getByRole('heading', { name: 'Get everyone in' }) });
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
 
+  await test.step('two people in: the card says how many more the draw needs', async () => {
+    await expect(card(page).getByText('Drawing names needs 1 more person.')).toBeVisible();
+    ok(await join(cee, 'Cee'));
+    await page.reload();
+    await expect(card(page).getByText('Drawing names needs')).toHaveCount(0);
+  });
+
   await test.step('organizer: a count instead of names, the link row, one Draw names', async () => {
     await expect(card(page).getByText('3 people are in', { exact: true })).toBeVisible();
     await expect(card(page).getByText('Bob', { exact: true }), 'names are in the People tab').toHaveCount(0);
-    await expect(card(page).getByText("Draw names when everyone's in.")).toBeVisible();
+    await expect(card(page).getByText("when everyone's in"), 'no hint lines without a draw date').toHaveCount(0);
     await expect(card(page).getByRole('link', { name: 'Invites and settings' })).toHaveCount(0);
     await expect(card(page).getByRole('button', { name: 'Draw names' })).toHaveCount(1);
     for (const name of ['Copy link', 'Show QR code']) {
@@ -75,7 +81,7 @@ test('Get everyone in: the link row, how many are in and Draw names; a member se
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${group.slug}`);
     await expect(card(bobPage).getByText('3 people are in', { exact: true })).toBeVisible();
-    await expect(card(bobPage).getByText("The organizer draws the names when everyone's in.")).toBeVisible();
+    await expect(card(bobPage).getByText("when everyone's in")).toHaveCount(0);
     await expect(card(bobPage).getByLabel('Join link')).toHaveCount(0);
     await expect(card(bobPage).getByRole('button', { name: 'Draw names' })).toHaveCount(0);
   });
