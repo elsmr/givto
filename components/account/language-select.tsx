@@ -1,5 +1,5 @@
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
-import { Field, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { locales, type Locale } from '@/lib/schema/common';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
@@ -26,6 +26,7 @@ export const LanguageSelect = () => {
           </NativeSelectOption>
         ))}
       </NativeSelect>
+      <FieldDescription>{t('language.description')}</FieldDescription>
     </Field>
   );
 };

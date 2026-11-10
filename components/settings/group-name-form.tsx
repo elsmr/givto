@@ -1,13 +1,15 @@
 import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import { useInvalidateGroup } from '@/components/group/use-invalidate-group';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { GroupName } from '@/lib/schema/group';
 import { useMutation } from '@tanstack/react-query';
+import { PenLine } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 
@@ -38,9 +40,9 @@ export const GroupNameForm = ({ slug, name }: { slug: string; name: string }) =>
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('group-name.title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={PenLine} tone="primary-muted">
+          {t('group-name.title')}
+        </IconCardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={submit} className="flex flex-col gap-4">
