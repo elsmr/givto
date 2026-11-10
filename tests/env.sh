@@ -44,6 +44,7 @@ export LOG_LEVEL=debug
 export NEXT_PUBLIC_SENTRY_DSN=
 export JWT_SECRET_KEY=
 export APP_HOST=
+export E2E_TEST_HOOKS=1
 
 if [ "$mode" = start ]; then
   nohup pnpm start -p "$app" >"$logs/app.log" 2>&1 &

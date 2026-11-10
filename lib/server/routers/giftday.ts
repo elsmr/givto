@@ -4,6 +4,7 @@ import { UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { AppError } from '../errors';
 import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
+import { testHooksEnabled } from '../test-hooks';
 import { authedProcedure, editionProcedure, publicProcedure, router } from '../trpc';
 import { organizerEditionProcedure } from './draw';
 import { giftDayView, presenterGiftDayView } from './giftday-view';
@@ -95,11 +96,11 @@ export const giftdayRouter = router({
       return { wishId: input.wishId, received: input.received };
     }),
 
-  /** Dev and smoke tests only: what the scheduled job does, optionally at a given time. */
+  /** Tests only (lib/server/test-hooks.ts): what the scheduled job does, optionally at a given time. */
   runDue: publicProcedure
     .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())) }))
     .mutation(async ({ ctx, input }) => {
-      if (process.env.NODE_ENV === 'production') throw new AppError('NOT_FOUND');
+      if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
       return runGiftDayTransitions(ctx.db, input.now ? new Date(input.now) : new Date());
     }),
 });

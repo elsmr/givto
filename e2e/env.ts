@@ -39,4 +39,5 @@ export const appEnv: Record<string, string> = {
   JWT_SECRET_KEY: '',
   APP_HOST: '',
   VERCEL_ENV: '',
+  E2E_TEST_HOOKS: '1',
 };

@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import { drawEdition, redrawEdition } from '../draw/run';
 import { AppError } from '../errors';
 import { runDueDraws } from '../jobs/draws';
+import { testHooksEnabled } from '../test-hooks';
 import { editionProcedure, publicProcedure, router } from '../trpc';
 
 export const organizerEditionProcedure = editionProcedure.use(({ ctx, next }) => {
@@ -44,11 +45,11 @@ export const drawRouter = router({
     return { ok: true };
   }),
 
-  /** Dev and smoke tests only: what the scheduler (S7's cron) does, optionally at a given time. */
+  /** Tests only (lib/server/test-hooks.ts): what the scheduler (S7's cron) does, optionally at a given time. */
   runDue: publicProcedure
     .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())) }))
     .mutation(async ({ input }) => {
-      if (process.env.NODE_ENV === 'production') throw new AppError('NOT_FOUND');
+      if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
       return runDueDraws(input.now ? new Date(input.now) : new Date());
     }),
 });
