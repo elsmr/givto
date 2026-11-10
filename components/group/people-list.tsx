@@ -1,11 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
-import { IconTile } from './icon-tile';
+import { IconCardTitle } from './icon-card-title';
 import { PersonAvatar } from './person-avatar';
 
 /** Everyone sees names; only the organizer sees emails and invite statuses (privacy rules), and gets to the people settings. */
@@ -16,12 +16,9 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconTile icon={Users} tone="primary-muted" />
-          <CardTitle>
-            <h2>{t('title', { count: group.joinedCount })}</h2>
-          </CardTitle>
-        </div>
+        <IconCardTitle icon={Users} tone="primary-muted">
+          {t('title', { count: group.joinedCount })}
+        </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">

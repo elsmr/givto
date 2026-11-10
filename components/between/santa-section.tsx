@@ -1,8 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/group/icon-card-title';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useGifteeRevealed } from '@/components/draw/use-giftee-revealed';
+import { Lightbulb } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { EditionInput } from './edition-input';
 import { GifteeTips } from './giftee-tips';
@@ -24,9 +26,9 @@ export const SantaSection = ({ input }: { input: EditionInput }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title', { name })}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Lightbulb} tone="yellow">
+          {t('title', { name })}
+        </IconCardTitle>
         <CardDescription>{t('intro', { name })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">

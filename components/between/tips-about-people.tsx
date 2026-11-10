@@ -1,5 +1,5 @@
-import { IconTile } from '@/components/group/icon-tile';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/group/icon-card-title';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -22,12 +22,9 @@ export const TipsAboutPeople = ({ input }: { input: EditionInput }) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconTile icon={Lightbulb} tone="yellow" />
-          <CardTitle>
-            <h2>{t('title')}</h2>
-          </CardTitle>
-        </div>
+        <IconCardTitle icon={Lightbulb} tone="yellow">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>{t('intro')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">

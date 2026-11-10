@@ -1,9 +1,9 @@
 import { Doodle } from '@/components/group/doodle';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
-import { IconTile } from '@/components/group/icon-tile';
+import { IconCardTitle } from '@/components/group/icon-card-title';
 import { SharePanel } from '@/components/group/share-panel';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { UserPlus } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -26,12 +26,9 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
     <Card className="relative">
       <Doodle shape="starburst" className="absolute top-3 right-3 size-14 text-primary-muted" />
       <CardHeader className="pr-20">
-        <div className="flex items-center gap-3">
-          <IconTile icon={UserPlus} tone="mint" />
-          <CardTitle>
-            <h2>{t('title')}</h2>
-          </CardTitle>
-        </div>
+        <IconCardTitle icon={UserPlus} tone="mint">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>
           {edition.drawAt
             ? t('scheduled', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })

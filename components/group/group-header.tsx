@@ -15,7 +15,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      {me && <p className="font-semibold text-muted">{t('hi', { name: me.name })}</p>}
+      {me && <p className="font-semibold text-muted">{t('hi', { name: me.name.split(' ')[0] })}</p>}
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className="min-w-0 text-4xl font-extrabold break-words sm:text-5xl">{group.name}</h1>
         {group.me.isOrganizer && (

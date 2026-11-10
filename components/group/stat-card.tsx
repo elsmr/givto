@@ -18,22 +18,24 @@ type StatCardProps = {
   onClick?: () => void;
 };
 
-/** Overview stat (61): icon tile and title on the left, a big tabular number with a small label on the right. */
+/** Overview stat (61): icon tile left, big tabular number right; below, the title left and a small label right. */
 export const StatCard = ({ icon, tone, title, value, unit, visual, className, onClick }: StatCardProps) => {
   const body = (
     <>
-      <span className="flex min-w-0 flex-col items-start gap-2">
+      <span className="flex items-start justify-between gap-3">
         <IconTile icon={icon} tone={tone} />
-        <span className="font-semibold break-words">{title}</span>
+        <span className="flex min-w-0 items-center gap-3">
+          {visual}
+          {value !== undefined && <span className="font-heading text-3xl leading-none font-extrabold tabular-nums">{value}</span>}
+        </span>
       </span>
-      <span className="flex min-w-0 flex-col items-end gap-1 text-right">
-        {visual}
-        {value !== undefined && <span className="font-heading text-3xl leading-none font-extrabold tabular-nums">{value}</span>}
-        {unit && <span className="text-xs text-muted">{unit}</span>}
+      <span className="flex flex-wrap items-end justify-between gap-x-3 gap-y-0.5">
+        <span className="font-semibold break-words">{title}</span>
+        {unit && <span className="ml-auto text-right text-xs text-muted">{unit}</span>}
       </span>
     </>
   );
-  const classes = cn('flex justify-between gap-3 bg-surface p-4 text-left text-ink bordered shadow-md', className);
+  const classes = cn('flex flex-col justify-between gap-3 bg-surface p-4 text-left text-ink bordered shadow-md', className);
   return onClick ? (
     <button type="button" onClick={onClick} className={cn(classes, 'pressable')}>
       {body}

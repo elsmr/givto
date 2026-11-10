@@ -1,7 +1,7 @@
-import { IconTile } from '@/components/group/icon-tile';
+import { IconCardTitle } from '@/components/group/icon-card-title';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -53,12 +53,9 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
     // Card sets shadow-md; the brand shadow must win (tailwind-merge doesn't know `shadow-brand` is a shadow size).
     <Card className="shadow-brand!">
       <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconTile icon={Gift} tone="primary-muted" />
-          <CardTitle>
-            <h2>{t('title')}</h2>
-          </CardTitle>
-        </div>
+        <IconCardTitle icon={Gift} tone="primary-muted">
+          {t('title')}
+        </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {changedAt && (

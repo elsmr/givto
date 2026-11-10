@@ -1,8 +1,8 @@
 import { Doodle } from '@/components/group/doodle';
-import { IconTile } from '@/components/group/icon-tile';
+import { IconCardTitle } from '@/components/group/icon-card-title';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -22,12 +22,9 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-3">
-          <IconTile icon={Heart} tone="coral" />
-          <CardTitle>
-            <h2>{t('title')}</h2>
-          </CardTitle>
-        </div>
+        <IconCardTitle icon={Heart} tone="coral">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>{t('intro')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
