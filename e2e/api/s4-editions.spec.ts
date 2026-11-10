@@ -1,9 +1,9 @@
-// S4 draw & settings (other groups): "not the same as last year" that
+// S4 draw & settings (other groups): "not the same as last time" that
 // can't be met, the scheduled draw (test-only `draw.runDue`, scoped to its editions), deleting a group.
 import { expect, ok, test } from '../fixtures';
 import { codeOf, createGroup, editionOf, expectValidDraw, join, memberIdOf } from './s4-group';
 
-test('"not the same as last year" that makes the draw impossible is refused without names', async ({ signIn, db }) => {
+test('"not the same as last time" that makes the draw impossible is refused without names', async ({ signIn, db }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const trio = await createGroup(ann, 'Trio');
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee'], [dan, 'Dan']] as const) await join(person, trio, name);

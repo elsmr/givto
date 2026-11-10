@@ -49,7 +49,7 @@ export type ParticipantStatus = v.InferOutput<typeof ParticipantStatus>;
 
 /**
  * A group member ticked for this edition. Keyed by member id (managed members have no
- * user id; the member links the account). Next year's edition starts with every current
+ * user id; the member links the account). The next edition starts with every current
  * member ticked; the organizer unticks (`participates: false`) or adds before opening.
  */
 export const Participant = v.object({
@@ -125,7 +125,7 @@ export const EditionFields = v.object({
   postBy: v.optional(LocalDate),
   budget: v.optional(Price),
   notes: v.optional(MultiLine(2000)),
-  /** "Not the same as last year" (33): one-way exclusions derived server-side from the previous edition's draw, never exposed. */
+  /** "Not the same as last time" (33): one-way exclusions derived server-side from the previous edition's draw, never exposed. */
   avoidPreviousGiftees: v.optional(v.boolean(), false),
 });
 export type EditionFields = v.InferOutput<typeof EditionFields>;

@@ -16,7 +16,7 @@ export const drawParticipantIds = (group: Group, edition: Edition): string[] => 
 export interface DrawRules {
   /** Keep-apart rows (households) and older keep-apart pairs (26). */
   standing: Exclusion[];
-  /** "Not the same as last year" (33): one-way, from the previous edition's draw. Never leaves the server. */
+  /** "Not the same as last time" (33): one-way, from the previous edition's draw. Never leaves the server. */
   previous: Exclusion[];
 }
 
@@ -35,7 +35,7 @@ export const allRules = ({ standing, previous }: DrawRules): Exclusion[] => [...
 
 /**
  * TOO_FEW_PEOPLE or DRAW_IMPOSSIBLE. Stuck names come from the standing rules only: a stuck
- * set under "not the same as last year" could hint at last year's pairs, so that case has no names.
+ * set under "not the same as last time" could hint at the previous pairs, so that case has no names.
  */
 export const assertDrawable = (ids: string[], rules: DrawRules) => {
   if (ids.length < MIN_PARTICIPANTS) throw new AppError('TOO_FEW_PEOPLE', { details: { min: MIN_PARTICIPANTS } });

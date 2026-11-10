@@ -9,7 +9,7 @@ const knownErrors = ['TOO_FEW_PEOPLE', 'DRAW_IMPOSSIBLE', 'ALREADY_DRAWN', 'NOT_
 
 type DrawDetails = { givers?: string[]; receivers?: string[]; avoidPreviousGiftees?: boolean; min?: number };
 
-/** Why a draw or re-draw was refused; names the stuck people (34), never last year's pairs. */
+/** Why a draw or re-draw was refused; names the stuck people (34), never the previous edition's pairs. */
 export const DrawError = ({ error, members }: { error: unknown; members: GroupMember[] }) => {
   const t = useTranslations('draw.errors');
   const format = useFormatter();

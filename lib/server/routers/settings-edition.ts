@@ -32,7 +32,7 @@ const optionalFields = ['giftDay', 'drawAt', 'wishlistBy', 'postBy', 'budget', '
 
 /**
  * Dates (28): a changed date can't be in the past, the draw is before gift day, wishlists and
- * posting no later than gift day (schema). The schedule and "not the same as last year" are
+ * posting no later than gift day (schema). The schedule and "not the same as last time" are
  * fixed once drawn; turning the latter on must leave a possible draw. Done editions are read-only.
  */
 export const updateEdition = organizerEditionProcedure.input(EditionSettingsInput).mutation(async ({ ctx, input }) => {

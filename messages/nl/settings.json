@@ -24,7 +24,7 @@
     "post-by-help": "Optioneel.",
     "notes": "Notities voor iedereen",
     "notes-help": "Optioneel. Dresscode, thema, huisregels…",
-    "avoid-previous": "Niet hetzelfde als vorig jaar",
+    "avoid-previous": "Niet dezelfde persoon als vorige keer",
     "avoid-previous-help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet."
   },
   "people": {
@@ -66,8 +66,8 @@
     "DATE_IN_PAST": "Data kunnen niet in het verleden liggen.",
     "DATES_OUT_OF_ORDER": "De loting moet voor pakjesdag zijn, en verlanglijstjes en posten niet later dan pakjesdag.",
     "INVALID_INPUT": "Er klopt iets niet. Kijk de velden na en probeer het opnieuw.",
-    "ALREADY_DRAWN": "Er is al geloot, dus de datum van de loting en 'niet hetzelfde als vorig jaar' kunnen niet meer veranderen.",
-    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het loten niet voor deze mensen.",
+    "ALREADY_DRAWN": "Er is al geloot, dus de datum van de loting en 'niet dezelfde persoon als vorige keer' kunnen niet meer veranderen.",
+    "AVOID_PREVIOUS": "Met 'niet dezelfde persoon als vorige keer' lukt het loten niet voor deze mensen.",
     "EDITION_CLOSED": "Deze editie is voorbij en kan niet meer veranderen.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "ORGANIZER_CANNOT_LEAVE": "De organisator kan niet verwijderd worden.",

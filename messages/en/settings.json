@@ -24,7 +24,7 @@
     "post-by-help": "Optional.",
     "notes": "Notes for everyone",
     "notes-help": "Optional. Dress code, theme, house rules…",
-    "avoid-previous": "Not the same as last year",
+    "avoid-previous": "Not the same as last time",
     "avoid-previous-help": "Nobody draws the person they had last time. Nobody sees who that was, not even you."
   },
   "people": {
@@ -66,8 +66,8 @@
     "DATE_IN_PAST": "Dates can't be in the past.",
     "DATES_OUT_OF_ORDER": "The draw has to come before gift day, and wishlists and posting no later than gift day.",
     "INVALID_INPUT": "Something doesn't look right. Check the fields and try again.",
-    "ALREADY_DRAWN": "Names are drawn already, so the draw date and \"not the same as last year\" can't change.",
-    "AVOID_PREVIOUS": "With \"not the same as last year\" a draw would be impossible for these people.",
+    "ALREADY_DRAWN": "Names are drawn already, so the draw date and \"not the same as last time\" can't change.",
+    "AVOID_PREVIOUS": "With \"not the same as last time\" a draw would be impossible for these people.",
     "EDITION_CLOSED": "This edition is over, so it can't be changed anymore.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "ORGANIZER_CANNOT_LEAVE": "The organizer can't be removed.",

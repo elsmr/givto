@@ -22,7 +22,7 @@ import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-d
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
 
-/** Edition title, gift day, dates, exchange, budget, notes, "not the same as last year" (28, 33). */
+/** Edition title, gift day, dates, exchange, budget, notes, "not the same as last time" (28, 33). */
 export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('settings');
   const tIssues = useTranslations('group.issues');

@@ -19,7 +19,7 @@
     "sessions": "You're signed out after {days} days without a visit.",
     "addresses": "Postal addresses are deleted right after gift day.",
     "edition-messages": "Dibs!, gifts marked as got, guesses, tips, questions and Psst! messages are deleted {months} months after gift day. Without a gift day, we count from when the edition is finished or the next one starts.",
-    "draw": "The draw is kept until the next edition's draw, so nobody gets the same giftee two years in a row, and for {months} months at most.",
+    "draw": "The draw is kept until the next edition's draw, so nobody gets the same giftee twice in a row, and for {months} months at most.",
     "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",
     "account": "Your account and wishlist stay until you delete them.",
     "errors": "Error reports are deleted after {days} days at most.",
