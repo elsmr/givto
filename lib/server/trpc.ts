@@ -114,6 +114,12 @@ export const editionProcedure = memberProcedure
     return next({ ctx: { edition, log: ctx.log.child({ editionId: edition._id }) } });
   });
 
+/** Input `{ groupSlug, editionNumber }`. That edition, for the group's organizer. */
+export const organizerEditionProcedure = editionProcedure.use(({ ctx, next }) => {
+  if (ctx.member.role !== 'organizer') throw new AppError('NOT_ORGANIZER');
+  return next();
+});
+
 /**
  * Input `{ groupSlug, editionNumber, asMemberId? }`. The caller is a Santa in this edition's
  * draw: `ctx.santa` (the member giving) and `ctx.giftee`. Use it for giftee-scoped data

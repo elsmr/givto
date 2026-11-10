@@ -2,8 +2,7 @@ import { isBeforeDraw, type Edition } from '../../schema/edition';
 import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
-import { organizerProcedure, router } from '../trpc';
-import { organizerEditionProcedure } from './draw';
+import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
 
 /** Editions (33): "Same again next year" as a draft, opened once the organizer is happy. */
 export const editionRouter = router({

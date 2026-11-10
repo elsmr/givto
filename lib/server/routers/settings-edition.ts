@@ -6,7 +6,7 @@ import { checkEditionDates, EditionTitle, GiftDay, isBeforeDraw, type Edition } 
 import { ExchangeMode, MIN_PARTICIPANTS } from '../../schema/group';
 import { allRules, drawParticipantIds, drawRules } from '../draw/rules';
 import { AppError } from '../errors';
-import { organizerEditionProcedure } from './draw';
+import { organizerEditionProcedure } from '../trpc';
 import { compactGiftDay, compactPrice } from './group';
 
 /** Scheduled draws run at this local time on the draw date. */

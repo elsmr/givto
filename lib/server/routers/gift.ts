@@ -4,9 +4,8 @@ import { santaActionProcedure } from '../between/santa-role';
 import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentGifts, giftCounts } from '../gift/marks';
-import { editionProcedure, router } from '../trpc';
+import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 import { visibleWishes } from '../wishlist/wish-view';
-import { organizerEditionProcedure } from './draw';
 
 /**
  * "I've got my gift" (63): the Santa ticks wishes they bought and adds things that aren't on the

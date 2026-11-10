@@ -3,8 +3,7 @@ import { Id } from '../../schema/common';
 import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { guessingOn, guessingOpen } from '../guess/guesses';
-import { editionProcedure, router } from '../trpc';
-import { organizerEditionProcedure } from './draw';
+import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 import { giftDayView } from './giftday-view';
 
 /**

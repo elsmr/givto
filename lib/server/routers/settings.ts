@@ -4,8 +4,7 @@ import { GroupName, MAX_MEMBERS } from '../../schema/group';
 import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
 import { removeMember } from '../remove-member';
-import { organizerProcedure, router } from '../trpc';
-import { organizerEditionProcedure } from './draw';
+import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
 import { updateEdition } from './settings-edition';
 
 /** Organizer settings (27): every change is checked here, not only in the form. */

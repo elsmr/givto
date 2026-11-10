@@ -4,12 +4,7 @@ import { drawEdition, redrawEdition } from '../draw/run';
 import { AppError } from '../errors';
 import { runDueDraws } from '../jobs/draws';
 import { testHooksEnabled } from '../test-hooks';
-import { editionProcedure, publicProcedure, router } from '../trpc';
-
-export const organizerEditionProcedure = editionProcedure.use(({ ctx, next }) => {
-  if (ctx.member.role !== 'organizer') throw new AppError('NOT_ORGANIZER');
-  return next();
-});
+import { editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
 
 /** The draw (34). Results are never listed: each person only reads their own giftee. */
 export const drawRouter = router({
