@@ -49,7 +49,7 @@
     "title": "How did it go?",
     "description": "Hope you got something lovely. Mark the wishes you got: they leave your wishlist, so nobody buys them again.",
     "got-it": "I got this",
-    "got-it-label": "I got {title}",
+    "got-it-label": "I got this: {title}",
     "marked": "Marked as received: {title}",
     "undo": "Undo",
     "empty": "Nothing left on your wishlist for this group."
