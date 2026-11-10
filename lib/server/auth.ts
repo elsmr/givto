@@ -15,6 +15,7 @@ import { preferredLocale } from './locale';
 import { log } from './log';
 import { sendMail } from './mail';
 import { consumeRateLimit } from './rate-limit';
+import { retention } from '../privacy';
 
 /** Code and link expire after 10 minutes (the email says so). */
 const SIGN_IN_EXPIRES_IN = 10 * 60;
@@ -72,7 +73,7 @@ const createAuth = () => {
     baseURL: baseURL.origin,
     secret: requireEnv('BETTER_AUTH_SECRET'),
     database: mongodbAdapter(getMongoDb(), { client: getMongoClient(), usePlural: true }),
-    session: { expiresIn: 30 * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
+    session: { expiresIn: retention.sessionDays * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
     user: {
       additionalFields: {
         locale: { type: [...locales], required: false, defaultValue: 'en', input: false },
