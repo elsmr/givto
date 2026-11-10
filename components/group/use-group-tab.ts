@@ -17,7 +17,9 @@ export const useGroupTab = (available: readonly GroupTab[], top: RefObject<HTMLE
   const select = (next: GroupTab) => {
     setTab(next);
     const { pathname, search } = window.location;
-    window.history.replaceState(window.history.state, '', next === 'overview' ? pathname + search : `${pathname}${search}#${next}`);
+    const url = next === 'overview' ? pathname + search : `${pathname}${search}#${next}`;
+    // Next's entry state keeps `as`: back to this page restores that URL, so it has to carry the hash too.
+    window.history.replaceState({ ...window.history.state, as: url }, '', url);
     if (top.current && top.current.getBoundingClientRect().top < 0) top.current.scrollIntoView();
   };
   return [available.includes(tab) ? tab : 'overview', select] as const;
