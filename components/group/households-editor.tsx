@@ -21,11 +21,11 @@ export const HouseholdsEditor = ({ households, members, onChange }: HouseholdsEd
   return (
     <div className="flex flex-col gap-4">
       {households.map((household, index) => (
-        <div key={index} className="flex flex-col gap-3 border-2 border-ink p-3">
+        <div key={index} className="flex flex-col gap-3 border-2 border-outline p-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-semibold">{t('label', { number: index + 1 })}</span>
             {household.map((id) => (
-              <span key={id} className="inline-flex items-center gap-1 border-2 border-ink bg-primary-muted py-0.5 pl-2">
+              <span key={id} className="inline-flex items-center gap-1 border-2 border-outline bg-primary-muted py-0.5 pl-2">
                 {nameOf(id)}
                 <Button variant="ghost" size="icon-sm" aria-label={t('remove-person', { name: nameOf(id) })} onClick={() => replace(index, household.filter((h) => h !== id))}>
                   <X aria-hidden="true" />

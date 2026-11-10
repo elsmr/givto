@@ -47,7 +47,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
         {tooFew && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
         {group.me.isOrganizer && (
           <>
-            <hr className="border-t-2 border-dashed border-ink/40" />
+            <hr className="border-t-2 border-dashed border-outline" />
             {joinLink && !joinLink.revoked ? (
               <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} primary={tooFew} />
             ) : (

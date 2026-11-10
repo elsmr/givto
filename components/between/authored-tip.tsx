@@ -32,7 +32,7 @@ export const AuthoredTip = ({ input, tip, canEdit }: { input: EditionInput; tip:
   );
 
   return (
-    <li className="flex flex-col gap-2 border-b-2 border-ink pb-3 last:border-b-0">
+    <li className="flex flex-col gap-2 border-b-2 border-outline pb-3 last:border-b-0">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-bold">{t('about-name', { name: tip.aboutName })}</span>
         {tip.anonymous && <Badge>{t('anonymous-badge')}</Badge>}

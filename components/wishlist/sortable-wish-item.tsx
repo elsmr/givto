@@ -41,7 +41,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
     );
 
   return (
-    <li ref={rowRef} className={cn(dragging && 'opacity-50', over && 'outline-3 outline-offset-3 outline-primary')}>
+    <li ref={rowRef} className={cn(dragging && 'opacity-50', over && 'outline-3 outline-offset-3 outline-focus')}>
       <Card size="sm">
         {editing ? (
           <CardContent>
