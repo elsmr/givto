@@ -223,5 +223,5 @@ test('emails to an account without a language (migrated) use the group language'
   await db.users.updateOne({ _id: new ObjectId(bob.id) }, { $unset: { locale: true } });
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   const [mail] = await mailsTo(bob.email, 'namesDrawn');
-  expect(mail.subject).toBe('De namen zijn getrokken in Familie!');
+  expect(mail.subject).toBe('Er is geloot in Familie!');
 });

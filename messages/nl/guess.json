@@ -47,7 +47,7 @@
   "errors": {
     "GUESS_LOCKED": "Je hebt al een gok vastgelegd.",
     "GUESSING_CLOSED": "Gokken kan niet meer.",
-    "NOT_FOUND": "Die persoon zit niet in deze trekking.",
+    "NOT_FOUND": "Die persoon zit niet in deze loting.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   }

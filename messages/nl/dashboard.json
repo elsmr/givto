@@ -13,7 +13,7 @@
   "status": {
     "draft": "Nog niet verstuurd",
     "open": "Open",
-    "drawn": "Namen getrokken",
+    "drawn": "Geloot",
     "giftday": "Pakjesdag!",
     "done": "Afgelopen",
     "archived": "Gearchiveerd"
@@ -44,8 +44,8 @@
       "action": "Binnenlaten"
     },
     "readyToDraw": {
-      "text": "Iedereen is er: klaar om namen te trekken",
-      "action": "Trekken"
+      "text": "Iedereen is er: klaar om te loten",
+      "action": "Loten"
     },
     "draft": {
       "text": "Je volgende Secret Santa is nog niet verstuurd",

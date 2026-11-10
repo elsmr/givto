@@ -9,7 +9,7 @@
       "date": "Pakjesdag is vandaag, {today}.",
       "order": "De uitpakvolgorde wordt geschud, want dat heeft nog niemand gedaan.",
       "open": "Geclaimd!, tips en vragen blijven open tot het eind van de dag. Daarna is het voorbij.",
-      "secret": "Wie wie getrokken heeft blijft geheim, tenzij je de grote onthulling doet."
+      "secret": "Voor wie iedereen kocht, blijft geheim, tenzij je de grote onthulling doet."
     },
     "confirm": "Pakjesdag starten",
     "done": "Pakjesdag is begonnen"
@@ -31,7 +31,7 @@
     "item": "Terug naar shoppen",
     "underway": "Niet meer als er iets is uitgepakt of onthuld",
     "title": "Terug naar shoppen?",
-    "description": "Pakjesdag stopt: iedereen gaat weer shoppen voor het eigen lootje, tot de nieuwe pakjesdag.",
+    "description": "Pakjesdag stopt: iedereen gaat weer shoppen voor de eigen persoon, tot de nieuwe pakjesdag.",
     "points": {
       "date": "Pakjesdag verschuift naar de datum die je hieronder kiest. Herinneringen volgen die datum.",
       "order": "De uitpakvolgorde blijft een verrassing; het uitpakken begint opnieuw.",
@@ -55,7 +55,7 @@
     "done": "Pakjesdag is weer open"
   },
   "errors": {
-    "NOT_DRAWN": "De lootjes zijn nog niet getrokken.",
+    "NOT_DRAWN": "Er is nog niet geloot.",
     "NOT_GIFT_DAY": "Het is nog geen pakjesdag.",
     "GIFT_DAY_UNDERWAY": "Er is al iets uitgepakt of onthuld, dus terug kan niet meer.",
     "DATE_IN_PAST": "Kies een dag na vandaag.",

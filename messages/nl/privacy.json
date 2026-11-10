@@ -19,7 +19,7 @@
     "sessions": "Je wordt uitgelogd na {days} dagen zonder bezoek.",
     "addresses": "Postadressen wissen we meteen na pakjesdag.",
     "edition-messages": "Geclaimd!, aangeduide cadeaus, gokken, tips, vragen en Psst!-berichten wissen we {months} maanden na pakjesdag. Zonder pakjesdag tellen we vanaf het einde van de editie of de start van de volgende.",
-    "draw": "De loting bewaren we tot de namen voor de volgende editie getrokken zijn, zodat niemand twee jaar na elkaar dezelfde persoon krijgt, en hooguit {months} maanden.",
+    "draw": "De loting bewaren we tot er voor de volgende editie geloot is, zodat niemand twee jaar na elkaar dezelfde persoon krijgt, en hooguit {months} maanden.",
     "groups": "Groepen zonder activiteit in {months} maanden wissen we. We mailen de organisator eerst.",
     "account": "Je account en verlanglijstje blijven tot je ze zelf verwijdert.",
     "errors": "Foutmeldingen wissen we na hooguit {days} dagen.",

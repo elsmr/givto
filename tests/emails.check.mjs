@@ -26,8 +26,8 @@ for (const locale of ['en', 'nl']) {
       assert.ok(!/undefined|NaN|\{[a-z-]+\}/.test(output), `${label}: unfilled variable in ${kind}`);
     }
     assert.ok(text.trim().length > 50, `${label}: plain text`);
-    // Dutch copy says "namen trekken" and "je persoon"; "lootjes" is only for search metadata.
-    assert.ok(!/lootje/i.test(`${preview.subject} ${text}`), `${label}: says lootje`);
+    // Dutch copy says "loten" and "je persoon"; "lootjes trekken" is only for search metadata.
+    assert.ok(!/lootje|\b(trek|trekt|trekken|getrokken|trekking)\b/i.test(`${preview.subject} ${text}`), `${label}: says lootje or trekken`);
     if (preview.url) assert.ok(text.includes(preview.url), `${label}: link in plain text`);
     // Account emails end with "Givto · givto.app"; notifications say why they come and how to stop them.
     const account = ['sign-in', 'delete-account', 'invite', 'join-reminder'].includes(preview.name);

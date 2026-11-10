@@ -84,7 +84,7 @@
     "keys-counted": "→ of spatie: volgende · ← terug"
   },
   "errors": {
-    "NOT_DRAWN": "De namen zijn nog niet getrokken.",
+    "NOT_DRAWN": "Er is nog niet geloot.",
     "NOT_GIFT_DAY": "De grote onthulling kan vanaf pakjesdag.",
     "REVEAL_OFF": "Zet eerst de grote onthulling aan.",
     "EDITION_CLOSED": "Deze editie is voorbij.",
