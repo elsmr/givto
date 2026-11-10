@@ -12,7 +12,7 @@ export const PhaseStepper = ({ edition }: { edition: GroupEdition }) => {
   const current = phases.indexOf(editionPhase(edition));
 
   return (
-    <ol aria-label={t('label')} className="grid grid-cols-5 gap-1 bg-surface p-1 text-ink bordered">
+    <ol aria-label={t('label')} className="grid grid-cols-5 gap-0.5 bg-surface p-1 text-ink bordered sm:gap-1">
       {phases.map((phase, index) => {
         const Icon = index < current ? Check : icons[phase];
         return (
@@ -20,7 +20,7 @@ export const PhaseStepper = ({ edition }: { edition: GroupEdition }) => {
             key={phase}
             aria-current={index === current ? 'step' : undefined}
             className={cn(
-              'flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-0.5 py-1.5 text-center text-xs leading-tight font-bold sm:flex-row sm:gap-2 sm:text-sm',
+              'flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 border-2 border-transparent px-0 py-1.5 text-center text-xs leading-tight font-bold sm:flex-row sm:gap-2 sm:text-sm',
               index < current && 'text-ink',
               index === current && '-translate-x-0.5 -translate-y-0.5 border-ink bg-yellow shadow-sm',
               index > current && 'font-semibold text-muted'

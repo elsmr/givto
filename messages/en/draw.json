@@ -5,7 +5,7 @@
     "scheduled": "Names will be drawn on {date}.",
     "manual": "The organizer draws the names when everyone's in.",
     "too-few": "The draw needs at least {min} people. Share the join link to get more people in.",
-    "change": "Invites, who's in, dates and keep apart",
+    "change": "Invites and settings",
     "draw": "Draw names",
     "confirm-title": "Draw names now?",
     "confirm-description": "Everyone gets their giftee right away. People who join later are slotted in.",

@@ -14,7 +14,7 @@ export const GiftDayStat = ({ edition }: { edition: GroupEdition }) => {
   const days = daysBetween(todayIn(timeZone), giftDay.date);
   // Local dates have no time zone: format them as UTC so they never shift a day.
   const date = format.dateTime(new Date(`${giftDay.date}T00:00:00Z`), { day: 'numeric', month: 'short', timeZone: 'UTC' });
-  const word = (text: string) => <span className="text-xl">{text}</span>;
+  const word = (text: string) => <span className="text-base">{text}</span>;
   return (
     <StatCard
       icon={CalendarDays}
