@@ -19,7 +19,7 @@ export const newId = (): string => new ObjectId().toHexString();
 
 const DAY = 24 * 60 * 60;
 
-const collections = (db: Db) => ({
+export const collections = (db: Db) => ({
   users: db.collection<UserDoc>('users'),
   groups: db.collection<Group>('groups'),
   editions: db.collection<Edition>('editions'),
