@@ -22,7 +22,7 @@ export const SERVER_LOG = path.join(OUTPUT_DIR, 'server.log');
 
 /**
  * Every variable the app reads, so a local .env is never used (process env wins over .env in
- * Next) and no production value can leak in. Same values as tests/env.sh.
+ * Next) and no production value can leak in.
  */
 export const appEnv: Record<string, string> = {
   MONGODB_URI,

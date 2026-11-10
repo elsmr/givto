@@ -1,5 +1,5 @@
 // URL import checks (39), no network: saved shop pages → fields, URL cleanup, and the SSRF
-// boundary. Run: node --import ./tests/ts-hooks.mjs tests/import.check.mjs (also run by smoke-s2).
+// boundary. Run: node --import ./tests/ts-hooks.mjs tests/import.check.mjs.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createServer } from 'node:http';

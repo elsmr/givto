@@ -151,15 +151,3 @@ await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'giftday' 
 
 Insert documents directly (`db.groups.insertOne(…)`) only for states the API can't reach (old
 editions, other people's data, past dates); give them unique ids and slugs.
-
-## Converting a smoke suite
-
-One spec per suite (`tests/smoke-s4.mjs` → `api/s4-draw.spec.ts`). Every assertion keeps a
-counterpart; one smoke step becomes one test (or a `test.step` inside one when steps share state).
-Record the mapping in the ticket (`60-playwright.md`, Findings):
-
-| Old smoke step (file: step name) | New test (file › test › step) | Changes |
-| --- | --- | --- |
-| `smoke.mjs`: wrong code rejected, expired code rejected | `api/core.spec.ts` › wrong code rejected, expired code rejected | Expires only this address's code (was: every code); retries when a parallel lookup deletes it |
-| `smoke.mjs`: server log has no emails, codes or tokens | every test's `secrets` + `afterEach` in `api/core.spec.ts` | Checked per test instead of once at the end |
-| … | … | … |

@@ -3,7 +3,7 @@ services:
   mongo:
     # Major version pinned: the data volume doesn't survive a jump of more than one major.
     image: mongo:8
-    # Single-node replica set: Better Auth uses transactions (same as tests/env.sh).
+    # Single-node replica set: Better Auth uses transactions.
     command: ['--replSet', 'rs0']
     ports: ['127.0.0.1:27017:27017']
     volumes: ['mongo-data:/data/db']
