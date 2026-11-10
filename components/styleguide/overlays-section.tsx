@@ -31,7 +31,11 @@ import {
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
 export const OverlaysSection = () => (
-  <StyleguideSection id="overlays" title="Dialog, popover, menu and tooltip">
+  <StyleguideSection
+    id="overlays"
+    title="Dialog, popover, menu and tooltip"
+    description="Dialog to confirm what can't be undone; popover for a short explanation; menu for a few actions on one item; tooltip only for a hint on hover or focus."
+  >
     <StyleguideRow label="Overlays">
       <Dialog>
         <DialogTrigger render={<Button variant="neutral" />}>

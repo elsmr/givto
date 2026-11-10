@@ -1,20 +1,12 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarGroupCount,
-} from '@/components/ui/avatar';
+import { statusTone } from '@/components/group/edition-phase';
+import { AvatarStack } from '@/components/group/avatar-stack';
+import { PersonAvatar } from '@/components/group/person-avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { StyleguideRow, StyleguideSection } from './styleguide-section';
+import { editionStatuses } from '@/lib/schema/edition';
+import { Gift } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Captioned, StyleguideRow, StyleguideSection } from './styleguide-section';
 
 const badgeVariants = [
   'default',
@@ -24,55 +16,64 @@ const badgeVariants = [
   'primary-muted',
 ] as const;
 
-export const DisplaySection = () => (
-  <StyleguideSection id="display" title="Cards, badges and avatars">
-    <div className="grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle>Family Secret Santa</CardTitle>
-          <CardDescription>Gift day 24 December · 6 people</CardDescription>
-        </CardHeader>
-        <CardContent>
-          Everyone has added a wish. The draw is on 1 December.
-        </CardContent>
-        <CardFooter>
-          <Button>Open</Button>
-        </CardFooter>
-      </Card>
-      <Card className="bg-yellow shadow-brand">
-        <CardHeader>
-          <CardTitle>Your giftee is Cat</CardTitle>
-          <CardDescription className="text-ink">
-            Brand shadow, for the big reveal.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
-    <StyleguideRow label="Badges">
-      {badgeVariants.map((variant) => (
-        <Badge key={variant} variant={variant}>
-          {variant}
+export const BadgesSection = () => {
+  const t = useTranslations('dashboard.status');
+
+  return (
+    <StyleguideSection
+      id="badges"
+      title="Badges and chips"
+      description="Short status or tag next to a title. The tones are the same as the icon tiles. An edition status always uses its tone from statusTone."
+    >
+      <StyleguideRow label="Tones">
+        {badgeVariants.map((variant) => (
+          <Badge key={variant} variant={variant}>
+            {variant}
+          </Badge>
+        ))}
+        <Badge variant="mint">
+          <Gift aria-hidden="true" />
+          With an icon
         </Badge>
-      ))}
-    </StyleguideRow>
-    <StyleguideRow label="Avatars">
+      </StyleguideRow>
+      <StyleguideRow label="Edition status (statusTone)">
+        {editionStatuses.map((status) => (
+          <Captioned key={status} caption={`${status} → ${statusTone[status]}`}>
+            <Badge variant={statusTone[status]}>{t(status)}</Badge>
+          </Captioned>
+        ))}
+      </StyleguideRow>
+    </StyleguideSection>
+  );
+};
+
+const people = ['Ann', 'Bob', 'Cat', 'Dan', 'Eve', 'Finn', 'Gus'].map((name) => ({ id: name.toLowerCase(), name }));
+
+export const AvatarsSection = () => (
+  <StyleguideSection
+    id="avatars"
+    title="Avatars"
+    description="PersonAvatar picks a fill from the member id, so a person keeps their colour everywhere. Decorative: the name or count is always next to it."
+  >
+    <StyleguideRow label="Sizes">
       <Avatar size="sm">
         <AvatarFallback>A</AvatarFallback>
       </Avatar>
       <Avatar>
-        <AvatarFallback>B</AvatarFallback>
+        <AvatarFallback>A</AvatarFallback>
       </Avatar>
       <Avatar size="lg">
-        <AvatarFallback>C</AvatarFallback>
+        <AvatarFallback>A</AvatarFallback>
       </Avatar>
-      <AvatarGroup>
-        {['D', 'E', 'F'].map((initial) => (
-          <Avatar key={initial}>
-            <AvatarFallback>{initial}</AvatarFallback>
-          </Avatar>
-        ))}
-        <AvatarGroupCount>+3</AvatarGroupCount>
-      </AvatarGroup>
+    </StyleguideRow>
+    <StyleguideRow label="PersonAvatar">
+      {people.slice(0, 4).map((person) => (
+        <PersonAvatar key={person.id} id={person.id} name={person.name} />
+      ))}
+    </StyleguideRow>
+    <StyleguideRow label="AvatarStack">
+      <AvatarStack people={people} />
+      <span className="text-sm text-muted">7 people</span>
     </StyleguideRow>
   </StyleguideSection>
 );
