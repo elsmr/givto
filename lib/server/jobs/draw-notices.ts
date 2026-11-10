@@ -4,6 +4,7 @@ import { formatLocalDate } from '../../../emails/ui/format-date';
 import { formatPrice } from '../../../components/wishlist/format-price';
 import type { Edition } from '../../schema/edition';
 import type { Collections } from '../db';
+import { log } from '../log';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { groupUrl } from '../mail/urls';
@@ -13,8 +14,7 @@ import { startWishlistSnapshot } from './wishlist-changes';
 /**
  * "Names are drawn" to every Santa once, and "you have a new giftee" when a Santa's giftee
  * changes later (late joiner slotted in, someone left). The log key carries the giftee, so
- * a changed assignment is a new key; nothing else needs to know what changed. The draw
- * slice (S4) may call this right after drawing; the deliveries job catches up either way.
+ * a changed assignment is a new key; nothing else needs to know what changed.
  */
 export const sendDrawNotices = async (db: Collections, edition: Edition) => {
   const group = await db.groups.findOne({ _id: edition.groupId, deletedAt: { $exists: false } });
@@ -49,4 +49,26 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
       },
     });
   });
+};
+
+/**
+ * Sends the notices of an edition whose draw changed (`drawNoticesPendingAt`) and clears the
+ * flag, unless one failed (the deliveries job retries) or the draw changed again meanwhile.
+ */
+export const sendPendingDrawNotices = async (db: Collections, edition: Edition) => {
+  const counts = await sendDrawNotices(db, edition);
+  if (!counts.failed) {
+    await db.editions.updateOne({ _id: edition._id, drawNoticesPendingAt: edition.drawNoticesPendingAt }, { $unset: { drawNoticesPendingAt: true } });
+  }
+  return counts;
+};
+
+/** Right after a draw, re-draw or patch (68). Never fails the change: the deliveries job catches up. */
+export const sendDrawNoticesNow = async (db: Collections, editionId: string) => {
+  try {
+    const edition = await db.editions.findOne({ _id: editionId, drawNoticesPendingAt: { $exists: true } });
+    if (edition) await sendPendingDrawNotices(db, edition);
+  } catch (error) {
+    log.error({ err: error, editionId }, 'draw notices failed');
+  }
 };

@@ -1,17 +1,19 @@
-// Draw notices go out with the draw (68): "Names are drawn" and "You have a new giftee" arrive
-// right after draw.run, a late joiner, someone leaving, a re-draw or a scheduled draw, without
-// any cron call (the `api` project never runs the crons).
+// Draw notices go out with the draw (68): "Names are drawn" and "You have a new giftee" are sent
+// within the request of draw.run, a late joiner, someone leaving, a re-draw or a scheduled draw,
+// without any cron call (the `api` project never runs the crons).
 import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
 import { createGroup, editionOf, join } from './s4-group';
 
-const expectMails = (user: User, kind: string, count: number) =>
-  expect.poll(async () => (await mailsTo(user.email, kind)).length, { message: `${kind} mails to ${user.email}` }).toBe(count);
+/** Already there when the request returns. */
+const expectMails = async (user: User, kind: string, count: number) =>
+  expect(await mailsTo(user.email, kind), `${kind} mails to ${user.email}`).toHaveLength(count);
 
-/** Every Santa's current giftee has its notice logged: nothing left for the cron. */
+/** Every Santa's current giftee has its notice logged and nothing is pending: nothing left for the cron. */
 const expectAllNotified = async (db: TestDb, slug: string) => {
-  const { _id, draw } = await editionOf(db, slug, 1);
+  const { _id, draw, drawNoticesPendingAt } = await editionOf(db, slug, 1);
   const keys = Object.entries(draw!.assignments).map(([santa, giftee]) => `drawn:${_id}:${santa}:${giftee}`);
-  await expect.poll(() => db.sentNotifications.countDocuments({ _id: { $in: keys } }), { message: 'draw notices logged' }).toBe(keys.length);
+  expect(await db.sentNotifications.countDocuments({ _id: { $in: keys } }), 'draw notices logged').toBe(keys.length);
+  expect(drawNoticesPendingAt, 'no notices pending').toBeUndefined();
 };
 
 test('names-drawn email arrives right after draw.run, without any cron call', async ({ signIn, db }) => {
