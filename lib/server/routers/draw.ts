@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { Id } from '../../schema/common';
 import { drawEdition, redrawEdition } from '../draw/run';
 import { AppError } from '../errors';
 import { runDueDraws } from '../jobs/draws';
@@ -47,9 +48,9 @@ export const drawRouter = router({
 
   /** Tests only (lib/server/test-hooks.ts): what the scheduler (S7's cron) does, optionally at a given time. */
   runDue: publicProcedure
-    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())) }))
+    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())), editionIds: v.optional(v.array(Id)) }))
     .mutation(async ({ input }) => {
       if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
-      return runDueDraws(input.now ? new Date(input.now) : new Date());
+      return runDueDraws(input.now ? new Date(input.now) : new Date(), input.editionIds);
     }),
 });

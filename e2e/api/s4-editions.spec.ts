@@ -1,35 +1,7 @@
 // S4 draw & settings (was tests/smoke-s4.mjs, other groups): "not the same as last year" that
-// can't be met, the scheduled draw (test-only `draw.runDue`), deleting a group.
-import { mkdir, rm } from 'node:fs/promises';
-import path from 'node:path';
-import { setTimeout as sleep } from 'node:timers/promises';
-import { todayIn } from '@/lib/local-date';
-import { OUTPUT_DIR } from '../env';
+// can't be met, the scheduled draw (test-only `draw.runDue`, scoped to its editions), deleting a group.
 import { expect, ok, test } from '../fixtures';
-import { codeOf, createGroup, editionOf, expectValidDraw, join, memberIdOf, TZ } from './s4-group';
-
-/**
- * `draw.runDue` draws every due edition in the database, so a second copy of the scheduled-draw
- * test (`--repeat-each`) would draw this one's edition early. One at a time across workers; the
- * lock lives in the output dir, which Playwright empties at the start of every run.
- */
-const oneAtATime = async (name: string, fn: () => Promise<void>) => {
-  const lock = path.join(OUTPUT_DIR, `${name}.lock`);
-  for (;;) {
-    try {
-      await mkdir(lock);
-      break;
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
-      await sleep(200);
-    }
-  }
-  try {
-    await fn();
-  } finally {
-    await rm(lock, { recursive: true, force: true });
-  }
-};
+import { codeOf, createGroup, editionOf, expectValidDraw, join, memberIdOf } from './s4-group';
 
 test('"not the same as last year" that makes the draw impossible is refused without names', async ({ signIn, db }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
@@ -64,36 +36,40 @@ test('"not the same as last year" that makes the draw impossible is refused with
 });
 
 // tests/smoke-s4.mjs skipped this without E2E_TEST_HOOKS=1; the e2e server always sets it (api/test-hooks.spec.ts).
+// Draw dates in 2099 (was tomorrow) and `editionIds` on every runDue: it never draws another test's edition.
 test('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async ({ signIn, newClient, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const { trpc } = await newClient();
   const scheduled = await createGroup(ann, 'Scheduled');
-  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) await join(person, scheduled, name);
   const tooSmall = await createGroup(ann, 'Too small');
+  const bystander = await createGroup(ann, 'Bystander');
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) for (const group of [scheduled, bystander]) await join(person, group, name);
   await join(bob, tooSmall, 'Bob');
-  const tomorrow = todayIn(TZ, new Date(Date.now() + 86_400_000));
-  const input = { editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' } } as const;
+  const input = { editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
+  for (const { slug } of [scheduled, tooSmall, bystander]) ok(await ann.trpc.mutate('settings.updateEdition', { ...input, groupSlug: slug }));
+  const editionIds = [(await editionOf(db, scheduled.slug, 1))._id, (await editionOf(db, tooSmall.slug, 1))._id];
+  const drawAt = (await editionOf(db, scheduled.slug, 1)).drawAt;
+  expect(drawAt).toBeTruthy();
+  const runAt = async (offset: number) => ok(await trpc.mutate('draw.runDue', { now: new Date(drawAt!.getTime() + offset).toISOString(), editionIds }));
 
-  await oneAtATime('draw-run-due', async () => {
-    ok(await ann.trpc.mutate('settings.updateEdition', { ...input, groupSlug: scheduled.slug, drawOn: tomorrow }));
-    const drawAt = (await editionOf(db, scheduled.slug, 1)).drawAt;
-    expect(drawAt).toBeTruthy();
-    const tooEarly = ok(await trpc.mutate('draw.runDue', { now: new Date(drawAt!.getTime() - 60_000).toISOString() }));
-    expect(tooEarly.drawn).not.toContain((await editionOf(db, scheduled.slug, 1))._id);
-    expect((await editionOf(db, scheduled.slug, 1)).status).toBe('open');
+  const tooEarly = await runAt(-60_000);
+  expect(tooEarly.drawn).not.toContain((await editionOf(db, scheduled.slug, 1))._id);
+  expect((await editionOf(db, scheduled.slug, 1)).status).toBe('open');
 
-    ok(await ann.trpc.mutate('settings.updateEdition', { ...input, groupSlug: tooSmall.slug, drawOn: tomorrow }));
-
-    const due = ok(await trpc.mutate('draw.runDue', { now: new Date(drawAt!.getTime() + 60_000).toISOString() }));
-    const edition = await editionOf(db, scheduled.slug, 1);
-    expect(due.drawn).toContain(edition._id);
-    expect(edition.status).toBe('drawn');
-    expectValidDraw(edition.draw?.assignments, await Promise.all([ann, bob, cee].map((person) => memberIdOf(db, scheduled.slug, person))));
-    const small = await editionOf(db, tooSmall.slug, 1);
-    expect(due.failed).toContain(small._id);
-    expect(small.status).toBe('open');
-    expect(small.drawAt).toBeUndefined();
-  });
+  const due = await runAt(60_000);
+  const edition = await editionOf(db, scheduled.slug, 1);
+  expect(due.drawn).toContain(edition._id);
+  expect(edition.status).toBe('drawn');
+  expectValidDraw(edition.draw?.assignments, await Promise.all([ann, bob, cee].map((person) => memberIdOf(db, scheduled.slug, person))));
+  const small = await editionOf(db, tooSmall.slug, 1);
+  expect(due.failed).toContain(small._id);
+  expect(small.status).toBe('open');
+  expect(small.drawAt).toBeUndefined();
+  // Just as due, but not in `editionIds`: left alone.
+  const other = await editionOf(db, bystander.slug, 1);
+  expect([...due.drawn, ...due.failed]).not.toContain(other._id);
+  expect(other.status).toBe('open');
+  expect(other.drawAt).toEqual(drawAt);
 });
 
 test('delete group: gone for everyone', async ({ signIn }) => {

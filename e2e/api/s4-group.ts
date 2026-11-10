@@ -2,7 +2,7 @@
 import type { Group } from '@/lib/schema/group';
 import { expect, ok, type TestDb, type TrpcError, type User } from '../fixtures';
 
-export const TZ = 'Europe/Brussels';
+const TZ = 'Europe/Brussels';
 
 export const codeOf = (result: { error?: TrpcError }) => result.error?.data.appCode;
 
