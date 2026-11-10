@@ -30,7 +30,6 @@ export const WishMoveButtons = ({ wish, index, count, onMove }: WishMoveButtonsP
         id={buttonId(wish.id, 'up')}
         variant="ghost"
         size="icon-sm"
-        className="col-start-1 row-start-1"
         aria-label={t('move-up', { title: wish.title })}
         disabled={index === 0}
         onClick={() => move('up')}
@@ -41,7 +40,6 @@ export const WishMoveButtons = ({ wish, index, count, onMove }: WishMoveButtonsP
         id={buttonId(wish.id, 'down')}
         variant="ghost"
         size="icon-sm"
-        className="col-start-1 row-start-2"
         aria-label={t('move-down', { title: wish.title })}
         disabled={index === count - 1}
         onClick={() => move('down')}
