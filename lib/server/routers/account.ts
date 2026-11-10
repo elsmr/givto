@@ -4,6 +4,7 @@ import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
 import { PersonName } from '../../schema/common';
 import type { Edition } from '../../schema/edition';
+import { daysBetween, todayIn } from '../../local-date';
 import { MIN_PARTICIPANTS } from '../../schema/group';
 import { NotificationPrefs } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
@@ -17,6 +18,8 @@ import { authedProcedure, router } from '../trpc';
 import { listWishes } from '../wishlist/wish-view';
 
 const DELETION_CODE_TTL = 10 * 60 * 1000;
+// Wishes nobody gave stay unreceived on purpose, so the reminder to tick off gifts has to end.
+const MARK_RECEIVED_DAYS = 14;
 const deletionIdentifier = (userId: string) => `delete-account-${userId}`;
 const sha256 = (text: string) => createHash('sha256').update(text).digest();
 
@@ -82,7 +85,13 @@ export const accountRouter = router({
             unanswered > 0 && { kind: 'question' as const, count: unanswered },
             (status === 'open' || status === 'drawn') && visibleWishCount === 0 && { kind: 'noWishes' as const },
             status === 'giftday' && { kind: 'giftDay' as const },
-            status === 'done' && visibleWishCount > 0 && { kind: 'markReceived' as const, count: visibleWishCount },
+            status === 'done' &&
+              visibleWishCount > 0 &&
+              edition?.giftDay !== undefined &&
+              daysBetween(edition.giftDay.date, todayIn(edition.timeZone)) <= MARK_RECEIVED_DAYS && {
+                kind: 'markReceived' as const,
+                count: visibleWishCount,
+              },
           ].filter((todo) => todo !== false);
       return {
         slug: group.slug,

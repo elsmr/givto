@@ -56,9 +56,14 @@ test('account.groups lists to-dos per group', async ({ signIn, db }) => {
     expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'question', count: 1 }, { kind: 'giftDay' }]);
   });
 
-  await test.step('done: wishes left to mark received', async () => {
-    await db.editions.updateOne({ _id: editionId }, { $set: { status: 'done' } });
+  await test.step('done: wishes left to mark received, for two weeks after gift day', async () => {
+    const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
+    await db.editions.updateOne({ _id: editionId }, { $set: { status: 'done', 'giftDay.date': daysAgo(14) } });
     expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'markReceived', count: 1 }]);
+    await db.editions.updateOne({ _id: editionId }, { $set: { 'giftDay.date': daysAgo(16) } });
+    expect(await todosOf(bob, group.slug)).toEqual([]);
+    await db.editions.updateOne({ _id: editionId }, { $unset: { giftDay: true } });
+    expect(await todosOf(bob, group.slug)).toEqual([]);
   });
 
   await test.step('archived groups have none', async () => {
