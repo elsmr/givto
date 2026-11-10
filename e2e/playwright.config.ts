@@ -22,9 +22,9 @@ export default defineConfig({
   projects: [
     // API specs don't use a browser: they run once, in their own projects.
     { name: 'api', testMatch: '**/api/**/*.spec.ts', testIgnore: CRON_SPECS, use: { ...devices['Desktop Chrome'] } },
-    // Real-time cron jobs act on the whole database: "names drawn" mails for every drawn edition
-    // any test made, rendered on the app's event loop. They run after the other API specs, so they
-    // never stall them. (A dependency runs all its tests whatever the filter: only `api` here.)
+    // Real-time cron jobs act on the whole database: whatever any test left due by now, mails
+    // rendered on the app's event loop. They run after the other API specs, so they never touch or
+    // stall them. (A dependency runs all its tests whatever the filter: only `api` here.)
     { name: 'api-cron', testMatch: CRON_SPECS, dependencies: ['api'], timeout: 180_000, use: { ...devices['Desktop Chrome'] } },
     { name: 'desktop', testIgnore: '**/api/**', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile', testIgnore: '**/api/**', use: { ...devices['Pixel 7'], viewport: { width: 375, height: 812 } } },
