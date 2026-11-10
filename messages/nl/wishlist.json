@@ -63,12 +63,13 @@
     "empty": "Je verlanglijstje is nog leeg.",
     "show": "Tonen in deze groep",
     "shown": "“{title}” tonen in deze groep",
-    "hidden-badge": "Hier verborgen",
     "edit": "Mijn verlanglijstje bewerken",
     "add": "Wensen toevoegen",
     "visibility": "Kies wat deze groep ziet",
     "visibility-description": "Zet een wens uit om hem alleen voor deze groep te verbergen. Je andere groepen zien hem nog wel.",
-    "done": "Klaar"
+    "done": "Klaar",
+    "hidden-summary": "{count, plural, one {# wens hier verborgen} other {# wensen hier verborgen}}",
+    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep."
   },
   "giftee": {
     "title": "Verlanglijstje van {name}",

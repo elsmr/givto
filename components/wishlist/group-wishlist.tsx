@@ -1,23 +1,24 @@
 import { Doodle } from '@/components/group/doodle';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
-import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { Heart } from 'lucide-react';
+import { ChevronDown, Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { GroupVisibilityDialog } from './group-visibility-dialog';
 import { WishCard } from './wish-card';
 
-/** "My wishlist in this group" (61): what this group sees, hidden wishes marked; editing on /wishlist, hiding in a dialog. */
+/** "My wishlist in this group" (61): what this group sees; the hidden ones folded away under it; editing on /wishlist, hiding in a dialog. */
 export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('wishlist.group');
   const trpc = useTRPC();
   const view = useQuery(trpc.wish.groupView.queryOptions({ groupSlug }));
   const wishes = view.data ?? [];
+  const shown = wishes.filter((wish) => !wish.hidden);
+  const hidden = wishes.filter((wish) => wish.hidden);
 
   return (
     <Card>
@@ -36,17 +37,34 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             <p>{t('empty')}</p>
           </div>
         ) : (
-          <ul className="flex flex-col gap-4">
-            {wishes.map((wish) => (
-              <li key={wish.id}>
-                <WishCard
-                  wish={wish}
-                  className={wish.hidden ? 'border-dashed! shadow-none' : undefined}
-                  status={wish.hidden && <Badge>{t('hidden-badge')}</Badge>}
-                />
-              </li>
-            ))}
-          </ul>
+          <>
+            {shown.length === 0 ? (
+              <p>{t('all-hidden')}</p>
+            ) : (
+              <ul className="flex flex-col gap-4">
+                {shown.map((wish) => (
+                  <li key={wish.id}>
+                    <WishCard wish={wish} />
+                  </li>
+                ))}
+              </ul>
+            )}
+            {hidden.length > 0 && (
+              <details className="group/hidden border-2 border-dashed border-outline">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 font-semibold text-muted hover:bg-page [&::-webkit-details-marker]:hidden">
+                  {t('hidden-summary', { count: hidden.length })}
+                  <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open/hidden:rotate-180" />
+                </summary>
+                <ul className="flex flex-col gap-1 border-t-2 border-dashed border-outline px-3 py-2 text-muted">
+                  {hidden.map((wish) => (
+                    <li key={wish.id} className="break-words">
+                      {wish.title}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </>
         )}
         <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
           <Link href="/wishlist" className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral' })}>

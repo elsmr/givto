@@ -48,7 +48,7 @@ test('hide a wish from one group; Dibs! is "Taken" elsewhere and never shown to 
     await socks.click();
     await expect(socks).not.toBeChecked();
     await dialog.getByRole('button', { name: 'Done' }).click();
-    await expect(page.getByRole('tabpanel', { name: 'My wishlist' }).getByText('Hidden here')).toHaveCount(1);
+    await expect(page.getByRole('tabpanel', { name: 'My wishlist' }).getByText('1 wish hidden here')).toBeVisible();
   });
 
   const friendsSanta = await newPage();
