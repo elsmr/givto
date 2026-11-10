@@ -35,13 +35,49 @@ export const listWishes = (db: Collections, ownerId: string, onlyIds?: string[])
     .toArray();
 
 /**
- * What this member's group sees of their wishlist: the wishes shown in this group. A managed member's
- * wishes belong to this group alone, so they all show.
+ * What this member's group sees of their wishlist: the wishes shown in this group, in the group's order
+ * (the order of `shownWishIds`). A managed member's wishes belong to this group alone, so they all show.
  */
-export const visibleWishes = (db: Collections, member: Member) => {
+export const visibleWishes = async (db: Collections, member: Member) => {
   const ownerId = wishOwnerId(member);
-  if (!ownerId) return Promise.resolve([]);
-  return listWishes(db, ownerId, member.userId ? (member.wishlistView?.shownWishIds ?? []) : undefined);
+  if (!ownerId) return [];
+  if (!member.userId) return listWishes(db, ownerId);
+  const shownIds = member.wishlistView?.shownWishIds ?? [];
+  const wishes = await listWishes(db, ownerId, shownIds);
+  return wishes.toSorted((a, b) => shownIds.indexOf(a._id) - shownIds.indexOf(b._id));
+};
+
+/** My groups other than `exceptGroupId` that are active (not archived, latest edition not done), with what each shows of my wishes. */
+export const activeGroupsOf = async (db: Collections, userId: string, exceptGroupId?: string) => {
+  const groups = await db.groups
+    .find({
+      ...(exceptGroupId && { _id: { $ne: exceptGroupId } }),
+      deletedAt: { $exists: false },
+      archivedAt: { $exists: false },
+      members: { $elemMatch: { userId, status: 'joined' } },
+    })
+    .toArray();
+  const done = await db.editions
+    .aggregate<{ _id: string }>([
+      { $match: { groupId: { $in: groups.map((group) => group._id) } } },
+      { $sort: { number: -1 } },
+      { $group: { _id: '$groupId', status: { $first: '$status' } } },
+      { $match: { status: 'done' } },
+    ])
+    .toArray();
+  return groups
+    .filter((group) => !done.some((edition) => edition._id === group._id))
+    .map((group) => ({
+      name: group.name,
+      shownWishIds: group.members.find((m) => m.userId === userId && m.status === 'joined')?.wishlistView?.shownWishIds ?? [],
+    }));
+};
+
+/** Where a new group's view starts: my current wishes no other active group shows, so none shows twice. */
+export const unshownWishIds = async (db: Collections, userId: string, exceptGroupId?: string) => {
+  const [wishes, active] = await Promise.all([listWishes(db, userId), activeGroupsOf(db, userId, exceptGroupId)]);
+  const shown = new Set(active.flatMap((group) => group.shownWishIds));
+  return wishes.filter((wish) => !shown.has(wish._id)).map((wish) => wish._id);
 };
 
 /**

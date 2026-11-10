@@ -11,6 +11,7 @@ import { sendMail } from '../mail';
 import { inviteUrl } from '../mail/urls';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
+import { unshownWishIds } from '../wishlist/wish-view';
 
 const INVITE_DAYS = 7;
 const INVITES_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 30 };
@@ -99,6 +100,7 @@ export const inviteRouter = router({
             'members.$.userId': ctx.user.id,
             'members.$.status': 'joined',
             'members.$.joinedAt': now,
+            'members.$.wishlistView.shownWishIds': await unshownWishIds(ctx.db, ctx.user.id, group._id),
             updatedAt: now,
           },
         }

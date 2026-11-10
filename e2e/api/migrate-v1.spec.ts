@@ -133,7 +133,7 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       expect(home.edition).toMatchObject({ number: 1, year: 2022, title: 'Secret Santa 2022', status: 'done' });
       expect(mine.giftee?.name).toBeTruthy();
       expect(wishes.map((w: { title: string }) => w.title)).toEqual(['BOARD GAME', 'Scarf', 'Socks']);
-      expect(inOlder.map((w: { title: string; shown: boolean }) => [w.title, w.shown])).toEqual([['BOARD GAME', true], ['Scarf', false], ['Socks', true]]);
+      expect(inOlder.map((w: { title: string; shown: boolean }) => [w.title, w.shown])).toEqual([['BOARD GAME', true], ['Socks', true], ['Scarf', false]]);
       const group = (await c.groups.findOne({ _id: newer._id.toHexString() }))!;
       const edition = (await c.editions.findOne({ groupId: group._id }))!;
       const myId = group.members.find((m) => m.userId === userId)!.id;

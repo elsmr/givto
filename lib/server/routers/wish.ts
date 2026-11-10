@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { moveItem } from '../../move-item';
 import { Id } from '../../schema/common';
 import { Slug } from '../../schema/group';
 import { WishFields, type Wish } from '../../schema/wish';
@@ -8,7 +9,7 @@ import { deleteWishImage, findWishImage } from '../import/wish-images';
 import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { authedProcedure, memberProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
-import { inArchive, listWishes, toWishView } from '../wishlist/wish-view';
+import { activeGroupsOf, inArchive, listWishes, toWishView, visibleWishes } from '../wishlist/wish-view';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
@@ -48,7 +49,7 @@ const checkImages = async (ids: string[], userId: string) => {
 export const wishRouter = router({
   list: authedProcedure.query(async ({ ctx }) => (await listWishes(ctx.db, ctx.user.id)).map(toWishView)),
 
-  /** `groupSlugs`: the groups that show the new wish; it shows in no other group. */
+  /** `groupSlugs`: the groups that show the new wish, at the top of their list; it shows in no other group. */
   create: authedProcedure
     .input(v.object({ ...WishFields.entries, groupSlugs: v.optional(v.array(Slug), []) }))
     .mutation(async ({ ctx, input: { groupSlugs, ...fields } }) => {
@@ -71,7 +72,7 @@ export const wishRouter = router({
       if (slugs.length > 0) {
         await ctx.db.groups.updateMany(
           inGroups,
-          { $addToSet: { 'members.$[m].wishlistView.shownWishIds': wish._id } },
+          { $push: { 'members.$[m].wishlistView.shownWishIds': { $each: [wish._id], $position: 0 } } },
           { arrayFilters: [{ 'm.userId': ctx.user.id, 'm.status': 'joined' }] }
         );
       }
@@ -159,39 +160,40 @@ export const wishRouter = router({
     }),
 
   /**
-   * My wishlist as this group sees it: every wish with its shown flag for this group, and my other
-   * active groups (not archived, latest edition not done) that show it too: two Santas might buy it.
+   * My wishlist as this group sees it: the shown wishes in this group's order, then the hidden ones in
+   * the global order. `alsoIn`: my other active groups that show it too, as two Santas might buy it.
    */
   groupView: memberProcedure.query(async ({ ctx }) => {
-    const shown = new Set(ctx.member.wishlistView?.shownWishIds ?? []);
-    const others = await ctx.db.groups
-      .find({
-        _id: { $ne: ctx.group._id },
-        deletedAt: { $exists: false },
-        archivedAt: { $exists: false },
-        members: { $elemMatch: { userId: ctx.user.id, status: 'joined' } },
-      })
-      .toArray();
-    const done = await ctx.db.editions
-      .aggregate<{ _id: string; status: string }>([
-        { $match: { groupId: { $in: others.map((group) => group._id) } } },
-        { $sort: { number: -1 } },
-        { $group: { _id: '$groupId', status: { $first: '$status' } } },
-        { $match: { status: 'done' } },
-      ])
-      .toArray();
-    const active = others
-      .filter((group) => !done.some((edition) => edition._id === group._id))
-      .map((group) => ({
-        name: group.name,
-        shownWishIds: group.members.find((m) => m.userId === ctx.user.id && m.status === 'joined')?.wishlistView?.shownWishIds ?? [],
-      }));
-    return (await listWishes(ctx.db, ctx.user.id)).map((wish) => ({
+    const [wishes, shown, active] = await Promise.all([
+      listWishes(ctx.db, ctx.user.id),
+      visibleWishes(ctx.db, ctx.member),
+      activeGroupsOf(ctx.db, ctx.user.id, ctx.group._id),
+    ]);
+    const hidden = wishes.filter((wish) => !shown.some((other) => other._id === wish._id));
+    const withAlsoIn = (wish: Wish, isShown: boolean) => ({
       ...toWishView(wish),
-      shown: shown.has(wish._id),
+      shown: isShown,
       alsoIn: active.filter((group) => group.shownWishIds.includes(wish._id)).map(({ name }) => ({ name })),
-    }));
+    });
+    return [...shown.map((wish) => withAlsoIn(wish, true)), ...hidden.map((wish) => withAlsoIn(wish, false))];
   }),
+
+  /** Reorder this group's wishes: put a shown wish at `toIndex` of the group's list. The global order stays. */
+  moveInGroup: memberProcedure
+    .input(v.object({ ...WishInput.entries, toIndex: v.pipe(v.number(), v.integer(), v.minValue(0)) }))
+    .mutation(async ({ ctx, input }) => {
+      const visible = (await visibleWishes(ctx.db, ctx.member)).map((wish) => ({ id: wish._id }));
+      if (!visible.some(({ id }) => id === input.wishId)) throw new AppError('NOT_FOUND');
+      const moved = moveItem(visible, input.wishId, input.toIndex).map(({ id }) => id);
+      // Archived wishes stay shown (for a restore) but out of the list the person reorders.
+      const archived = (ctx.member.wishlistView?.shownWishIds ?? []).filter((id) => !moved.includes(id));
+      await ctx.db.groups.updateOne(
+        { _id: ctx.group._id },
+        { $set: { 'members.$[m].wishlistView.shownWishIds': [...moved, ...archived] } },
+        { arrayFilters: [{ 'm.id': ctx.member.id }] }
+      );
+      return { wishId: input.wishId, toIndex: input.toIndex };
+    }),
 
   /** Show or hide one of my wishes in this group. */
   setShown: memberProcedure

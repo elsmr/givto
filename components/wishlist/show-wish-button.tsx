@@ -8,46 +8,57 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldLabel } from '@/components/ui/field';
-import { Switch } from '@/components/ui/switch';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Eye, EyeOff } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 import type { WishView } from './wish-draft';
 
-type ShownWish = WishView & { shown: boolean; alsoIn: { name: string }[] };
+type GroupWish = WishView & { shown: boolean; alsoIn: { name: string }[] };
 
-/** On = shown in this group. Switching on a wish another active group shows asks first: two Santas might buy it. */
-export const ShowWishSwitch = ({ groupSlug, wish }: { groupSlug: string; wish: ShownWish }) => {
+/** Hide a wish in this group, or show it at the end of the group's list. Showing a wish another active group shows asks first: two Santas might buy it. */
+export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: GroupWish }) => {
   const t = useTranslations('wishlist.group');
   const format = useFormatter();
-  const id = useId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const [confirming, setConfirming] = useState(false);
   const viewKey = trpc.wish.groupView.queryKey({ groupSlug });
   const setShown = useMutation(
     trpc.wish.setShown.mutationOptions({
-      onMutate: ({ shown }) =>
-        queryClient.setQueryData(viewKey, (view) => view?.map((w) => (w.id === wish.id ? { ...w, shown } : w))),
+      onMutate: async ({ shown }) => {
+        await queryClient.cancelQueries({ queryKey: viewKey });
+        queryClient.setQueryData(viewKey, (view) => {
+          if (!view) return view;
+          const rest = view.filter((w) => w.id !== wish.id);
+          const count = rest.filter((w) => w.shown).length;
+          return [...rest.slice(0, count), { ...wish, shown }, ...rest.slice(count)];
+        });
+      },
       onSettled: () => queryClient.invalidateQueries({ queryKey: viewKey }),
     })
   );
   const show = (shown: boolean) => setShown.mutate({ groupSlug, wishId: wish.id, shown });
 
+  if (wish.shown) {
+    return (
+      <Button variant="neutral" size="icon-sm" aria-label={t('hide', { title: wish.title })} onClick={() => show(false)}>
+        <EyeOff aria-hidden="true" />
+      </Button>
+    );
+  }
   return (
     <>
-      <Field orientation="horizontal" className="w-fit">
-        <Switch
-          id={id}
-          size="sm"
-          aria-label={t('shown', { title: wish.title })}
-          checked={wish.shown}
-          onCheckedChange={(shown) => (shown && wish.alsoIn.length > 0 ? setConfirming(true) : show(shown))}
-        />
-        <FieldLabel htmlFor={id}>{t('show')}</FieldLabel>
-      </Field>
+      <Button
+        variant="neutral"
+        size="sm"
+        aria-label={t('show', { title: wish.title })}
+        onClick={() => (wish.alsoIn.length > 0 ? setConfirming(true) : show(true))}
+      >
+        <Eye aria-hidden="true" />
+        {t('show-short')}
+      </Button>
       <Dialog open={confirming} onOpenChange={setConfirming}>
         <DialogContent>
           <DialogHeader>

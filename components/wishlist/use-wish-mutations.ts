@@ -1,6 +1,6 @@
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { moveItem } from './move-item';
+import { moveItem } from '@/lib/move-item';
 
 /** Create, update, archive, restore, delete and move the signed-in person's wishes; moves are optimistic. */
 export const useWishMutations = () => {

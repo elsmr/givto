@@ -1,19 +1,24 @@
 import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/adapter/element-adapter';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { SortableWishItem } from './sortable-wish-item';
 import { isWishDragData } from './use-sortable-wish';
-import { useWishMutations } from './use-wish-mutations';
 import type { WishView } from './wish-draft';
 
-/** The owner's list: drag by the handle, or use the move up / down buttons (keyboard). */
-export const WishListEditor = ({ wishes }: { wishes: WishView[] }) => {
+interface WishListEditorProps<T extends WishView> {
+  wishes: T[];
+  onMove: (wishId: string, toIndex: number) => void;
+  status?: (wish: T) => ReactNode;
+  actions?: (wish: T) => ReactNode;
+}
+
+/** An editable list of my wishes (all of them, or a group's): drag by the handle, or use the move up / down buttons (keyboard). */
+export const WishListEditor = <T extends WishView>({ wishes, onMove, status, actions }: WishListEditorProps<T>) => {
   const t = useTranslations('wishlist.item');
-  const { move } = useWishMutations();
   const [announcement, setAnnouncement] = useState('');
 
-  const moveTo = (wish: WishView, toIndex: number) => {
-    move.mutate({ wishId: wish.id, toIndex });
+  const moveTo = (wish: T, toIndex: number) => {
+    onMove(wish.id, toIndex);
     setAnnouncement(t('moved', { title: wish.title, position: toIndex + 1, count: wishes.length }));
   };
 
@@ -40,6 +45,8 @@ export const WishListEditor = ({ wishes }: { wishes: WishView[] }) => {
             index={index}
             count={wishes.length}
             onMove={(toIndex) => moveTo(wish, toIndex)}
+            status={status?.(wish)}
+            actions={actions?.(wish)}
           />
         ))}
       </ol>

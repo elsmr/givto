@@ -9,6 +9,7 @@ import { addToCurrentEdition, nameUserIfUnnamed, placeHolding, randomToken } fro
 import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
+import { unshownWishIds } from '../wishlist/wish-view';
 
 const JOINS_PER_USER = { window: 60 * 60, max: 20 };
 const JOINS_PER_GROUP = { window: 60 * 60, max: 100 };
@@ -47,6 +48,8 @@ export const joinRouter = router({
             { sort: { createdAt: -1 } }
           );
       const reusedId = existing?.id ?? invite?.memberId;
+      // Someone rejoining keeps what they showed here before; anyone new starts with what no other active group shows.
+      const shownWishIds = existing ? undefined : await unshownWishIds(ctx.db, ctx.user.id, group._id);
       const cap = Math.min(group.joinLink.maxMembers ?? MAX_MEMBERS, MAX_MEMBERS);
       const hasRoom = {
         $expr: {
@@ -71,6 +74,7 @@ export const joinRouter = router({
                 'members.$.userId': ctx.user.id,
                 'members.$.status': status,
                 'members.$.joinedAt': now,
+                ...(shownWishIds && { 'members.$.wishlistView.shownWishIds': shownWishIds }),
                 updatedAt: now,
               },
             }
@@ -86,7 +90,7 @@ export const joinRouter = router({
                   role: 'member',
                   status,
                   joinedAt: now,
-                  wishlistView: { shownWishIds: [] },
+                  wishlistView: { shownWishIds: shownWishIds ?? [] },
                 } satisfies Member,
               },
               $set: { updatedAt: now },

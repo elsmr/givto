@@ -1,21 +1,38 @@
 import { Doodle } from '@/components/group/doodle';
+import { Badge } from '@/components/ui/badge';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { moveItem } from '@/lib/move-item';
 import { useTRPC } from '@/lib/client/trpc';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, Heart } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { GroupVisibilityDialog } from './group-visibility-dialog';
-import { WishCard } from './wish-card';
+import { ShowWishButton } from './show-wish-button';
+import { WishListEditor } from './wish-list-editor';
 
-/** "My wishlist in this group" (61): what this group sees; the hidden ones folded away under it; editing on /wishlist, hiding in a dialog. */
+/** "My wishlist in this group" (61): what this group sees in its own order, editable like /wishlist; the hidden ones folded away under it. */
 export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('wishlist.group');
+  const format = useFormatter();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const viewKey = trpc.wish.groupView.queryKey({ groupSlug });
   const view = useQuery(trpc.wish.groupView.queryOptions({ groupSlug }));
+  const move = useMutation(
+    trpc.wish.moveInGroup.mutationOptions({
+      onMutate: async ({ wishId, toIndex }) => {
+        await queryClient.cancelQueries({ queryKey: viewKey });
+        const previous = queryClient.getQueryData(viewKey);
+        queryClient.setQueryData(viewKey, (list) => list && moveItem(list, wishId, toIndex));
+        return { previous };
+      },
+      onError: (_error, _input, context) => queryClient.setQueryData(viewKey, context?.previous),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: viewKey }),
+    })
+  );
   const wishes = view.data ?? [];
   const shown = wishes.filter((wish) => wish.shown);
   const hidden = wishes.filter((wish) => !wish.shown);
@@ -41,13 +58,16 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             {shown.length === 0 ? (
               <p>{t('all-hidden')}</p>
             ) : (
-              <ul className="flex flex-col gap-4">
-                {shown.map((wish) => (
-                  <li key={wish.id}>
-                    <WishCard wish={wish} />
-                  </li>
-                ))}
-              </ul>
+              <WishListEditor
+                wishes={shown}
+                onMove={(wishId, toIndex) => move.mutate({ groupSlug, wishId, toIndex })}
+                status={(wish) =>
+                  wish.alsoIn.length > 0 && (
+                    <Badge variant="yellow">{t('also-in', { groups: format.list(wish.alsoIn.map(({ name }) => name)) })}</Badge>
+                  )
+                }
+                actions={(wish) => <ShowWishButton groupSlug={groupSlug} wish={wish} />}
+              />
             )}
             {hidden.length > 0 && (
               <details className="group/hidden border-2 border-dashed border-outline">
@@ -55,10 +75,11 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
                   {t('hidden-summary', { count: hidden.length })}
                   <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open/hidden:rotate-180" />
                 </summary>
-                <ul className="flex flex-col gap-1 border-t-2 border-dashed border-outline px-3 py-2 text-muted">
+                <ul className="flex flex-col divide-y-2 divide-dashed divide-outline border-t-2 border-dashed border-outline px-3">
                   {hidden.map((wish) => (
-                    <li key={wish.id} className="break-words">
-                      {wish.title}
+                    <li key={wish.id} className="flex items-center justify-between gap-3 py-2">
+                      <span className="min-w-0 break-words text-muted">{wish.title}</span>
+                      <ShowWishButton groupSlug={groupSlug} wish={wish} />
                     </li>
                   ))}
                 </ul>
@@ -66,12 +87,12 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             )}
           </>
         )}
-        <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-          <Link href={{ pathname: '/wishlist', query: { group: groupSlug } }} className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral' })}>
-            {t(wishes.length === 0 ? 'add' : 'edit')}
-          </Link>
-          {wishes.length > 0 && <GroupVisibilityDialog groupSlug={groupSlug} wishes={wishes} />}
-        </div>
+        <Link
+          href={{ pathname: '/wishlist', query: { group: groupSlug } }}
+          className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral', className: 'xs:w-fit' })}
+        >
+          {t('add')}
+        </Link>
       </CardContent>
     </Card>
   );

@@ -1,4 +1,4 @@
-/** The list with the item `id` moved to `toIndex` (clamped), as the server's wish.move does. */
+/** The list with the item `id` moved to `toIndex` (clamped), as wish.move and wish.moveInGroup do. */
 export const moveItem = <T extends { id: string }>(list: T[], id: string, toIndex: number): T[] => {
   const item = list.find((entry) => entry.id === id);
   if (!item) return list;

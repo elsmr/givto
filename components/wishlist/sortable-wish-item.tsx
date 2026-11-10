@@ -6,7 +6,7 @@ import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
 import { Archive, GripVertical, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useErrorMessage } from './use-error-message';
 import { useSortableWish } from './use-sortable-wish';
 import { useWishMutations } from './use-wish-mutations';
@@ -20,10 +20,14 @@ interface SortableWishItemProps {
   index: number;
   count: number;
   onMove: (toIndex: number) => void;
+  /** Next to the badges, e.g. "Also in Work". */
+  status?: ReactNode;
+  /** More buttons before edit and archive, e.g. hide in this group. */
+  actions?: ReactNode;
 }
 
 /** One of my wishes: its card with reorder / edit / archive, or the edit form. */
-export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishItemProps) => {
+export const SortableWishItem = ({ wish, index, count, onMove, status, actions }: SortableWishItemProps) => {
   const t = useTranslations('wishlist');
   const errorMessage = useErrorMessage();
   const client = useTRPCClient();
@@ -33,11 +37,11 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
   const { rowRef, handleRef, dragging, over } = useSortableWish(wish.id, index, !editing);
 
   const onError = (error: unknown) => toast.add({ title: errorMessage(error), type: 'error' });
-  // The row is gone by the time someone clicks undo, so undo calls the client directly; it puts the wish back in its place.
+  // The row is gone by the time someone clicks undo, so undo calls the client directly; onMove puts the wish back in its place.
   const undo = () =>
     client.wish.restore
       .mutate({ wishId: wish.id })
-      .then(() => client.wish.move.mutate({ wishId: wish.id, toIndex: index }))
+      .then(() => onMove(index))
       .then(refresh, onError);
   const archiveWish = () =>
     archive.mutate(
@@ -72,7 +76,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
           </CardContent>
         </Card>
       ) : (
-        <WishCard wish={wish} position={index + 1}>
+        <WishCard wish={wish} position={index + 1} status={status}>
           <div className="flex items-center gap-1">
             {/* Pointer only; keyboard users have the move buttons. */}
             <div
@@ -83,26 +87,27 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
               <GripVertical aria-hidden="true" className="size-5" />
             </div>
             <WishMoveButtons wish={wish} index={index} count={count} onMove={onMove} />
-            <Button
-              ref={editButton}
-              variant="neutral"
-              size="icon-sm"
-              className="ml-auto"
-              aria-label={t('item.edit', { title: wish.title })}
-              onClick={() => setEditing(true)}
-            >
-              <Pencil aria-hidden="true" />
-            </Button>
-            <Button
-              variant="neutral"
-              size="icon-sm"
-              className="ml-2"
-              aria-label={t('item.archive', { title: wish.title })}
-              disabled={archive.isPending}
-              onClick={archiveWish}
-            >
-              <Archive aria-hidden="true" />
-            </Button>
+            <div className="ml-auto flex items-center gap-2">
+              {actions}
+              <Button
+                ref={editButton}
+                variant="neutral"
+                size="icon-sm"
+                aria-label={t('item.edit', { title: wish.title })}
+                onClick={() => setEditing(true)}
+              >
+                <Pencil aria-hidden="true" />
+              </Button>
+              <Button
+                variant="neutral"
+                size="icon-sm"
+                aria-label={t('item.archive', { title: wish.title })}
+                disabled={archive.isPending}
+                onClick={archiveWish}
+              >
+                <Archive aria-hidden="true" />
+              </Button>
+            </div>
           </div>
         </WishCard>
       )}

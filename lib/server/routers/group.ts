@@ -11,6 +11,7 @@ import { AppError } from '../errors';
 import { currentEdition, nameUserIfUnnamed, randomToken } from '../membership';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, memberProcedure, organizerProcedure, router } from '../trpc';
+import { unshownWishIds } from '../wishlist/wish-view';
 import { groupView } from './group-view';
 
 const GROUPS_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 10 };
@@ -61,7 +62,7 @@ export const groupRouter = router({
       role: 'organizer',
       status: 'joined',
       joinedAt: now,
-      wishlistView: { shownWishIds: [] },
+      wishlistView: { shownWishIds: await unshownWishIds(ctx.db, ctx.user.id) },
     };
     const group: Group = {
       _id: newId(),

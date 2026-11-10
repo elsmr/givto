@@ -8,12 +8,14 @@ import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
 import { ArchivedWishes } from './archived-wishes';
 import { useOwnWishes } from './use-own-wishes';
+import { useWishMutations } from './use-wish-mutations';
 import { WishListEditor } from './wish-list-editor';
 
 /** The "My wishlist" page body (38): add or import a wish, edit, reorder, archive (76). */
 export const MyWishlist = () => {
   const t = useTranslations('wishlist');
   const wishes = useOwnWishes();
+  const { move } = useWishMutations();
 
   return (
     <div className="flex flex-col gap-8">
@@ -44,7 +46,7 @@ export const MyWishlist = () => {
               <h2 id="wishes-title" className="sr-only">
                 {t('list-title')}
               </h2>
-              <WishListEditor wishes={wishes.data} />
+              <WishListEditor wishes={wishes.data} onMove={(wishId, toIndex) => move.mutate({ wishId, toIndex })} />
               <p className="flex items-start gap-2 text-sm text-muted">
                 <EyeOff aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
                 {t('hide-hint')}
