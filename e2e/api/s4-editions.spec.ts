@@ -71,6 +71,21 @@ test('scheduled draw runs via runDueDraws once its time has come; impossible one
   expect(other.drawAt).toEqual(drawAt);
 });
 
+test('time zone: organizer only; a scheduled draw keeps its local date', async ({ signIn }) => {
+  const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
+  const group = await createGroup(ann, 'Moving');
+  await join(bob, group, 'Bob');
+  const input = { groupSlug: group.slug, editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
+  ok(await ann.trpc.mutate('settings.updateEdition', input));
+  expect(codeOf(await bob.trpc.mutate('settings.setTimeZone', { groupSlug: group.slug, timeZone: 'America/New_York' }))).toBe('NOT_ORGANIZER');
+  ok(await ann.trpc.mutate('settings.setTimeZone', { groupSlug: group.slug, timeZone: 'America/New_York' }));
+  const view = ok(await ann.trpc.query('group.get', { groupSlug: group.slug }));
+  expect(view.timeZone).toBe('America/New_York');
+  expect(view.edition?.timeZone).toBe('America/New_York');
+  expect(view.edition?.drawAt).toEqual(new Date('2099-12-01T14:00:00Z'));
+  expect(view.edition?.calendarSequence).toBe(2);
+});
+
 test('delete group: gone for everyone', async ({ signIn }) => {
   const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
   const doomed = await createGroup(ann, 'Doomed');

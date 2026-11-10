@@ -22,7 +22,6 @@ export const editionRouter = router({
       number: current.number + 1,
       year,
       title: `Secret Santa ${year}`,
-      timeZone: current.timeZone,
       exchangeMode: current.exchangeMode,
       ...(current.budget && { budget: current.budget }),
       avoidPreviousGiftees: hadDraw,

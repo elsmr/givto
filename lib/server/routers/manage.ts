@@ -21,11 +21,11 @@ const giftDayToday = (edition: Edition, today: string): Edition['giftDay'] =>
  * today, so the scheduled job keeps it there today and finishes it tomorrow. Deadlines after today
  * move to today (they can't be after gift day); the unwrap order is shuffled if nobody has.
  */
-const toGiftDayToday = async (db: Collections, edition: Edition, from: EditionStatus) => {
+const toGiftDayToday = async (db: Collections, edition: Edition, timeZone: string, from: EditionStatus) => {
   if (edition.status !== from) throw wrongStatus(edition);
   if (!edition.draw) throw new AppError('NOT_DRAWN');
   const now = new Date();
-  const today = todayIn(edition.timeZone, now);
+  const today = todayIn(timeZone, now);
   const notAfterToday = (date: string | undefined) => (date && date > today ? today : date);
   const wishlistBy = notAfterToday(edition.wishlistBy);
   const postBy = notAfterToday(edition.postBy);
@@ -55,7 +55,7 @@ const toGiftDayToday = async (db: Collections, edition: Edition, from: EditionSt
 export const manageRouter = router({
   /** drawn → giftday now, without waiting for the gift day date (or when there is none). */
   startGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
-    await toGiftDayToday(ctx.db, ctx.edition, 'drawn');
+    await toGiftDayToday(ctx.db, ctx.edition, ctx.group.timeZone, 'drawn');
     return { ok: true };
   }),
 
@@ -82,7 +82,7 @@ export const manageRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { edition } = ctx;
       if (edition.status !== 'giftday') throw wrongStatus(edition);
-      if (input.giftDayDate <= todayIn(edition.timeZone)) throw new AppError('DATE_IN_PAST');
+      if (input.giftDayDate <= todayIn(ctx.group.timeZone)) throw new AppError('DATE_IN_PAST');
       const progress = edition.unwrapOrder?.progress;
       if ((progress?.turns.length ?? 0) > 0 || (progress?.santaShownIds?.length ?? 0) > 0 || edition.reveal.revealedAt) {
         throw new AppError('GIFT_DAY_UNDERWAY');
@@ -115,7 +115,7 @@ export const manageRouter = router({
   reopenGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
     const latest = await currentEdition(ctx.db, ctx.group._id);
     if (latest?._id !== ctx.edition._id) throw new AppError('EDITION_CLOSED');
-    await toGiftDayToday(ctx.db, ctx.edition, 'done');
+    await toGiftDayToday(ctx.db, ctx.edition, ctx.group.timeZone, 'done');
     return { ok: true };
   }),
 });

@@ -1,16 +1,45 @@
 import * as v from 'valibot';
-import { Id } from '../../schema/common';
+import { todayIn, zonedInstant } from '../../local-date';
+import { Id, TimeZone } from '../../schema/common';
 import { GroupName, MAX_MEMBERS } from '../../schema/group';
 import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
 import { removeMember } from '../remove-member';
 import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
-import { updateEdition } from './settings-edition';
+import { DRAW_TIME, updateEdition } from './settings-edition';
 
 /** Organizer settings (27): every change is checked here, not only in the form. */
 export const settingsRouter = router({
   rename: organizerProcedure.input(v.object({ name: GroupName })).mutation(async ({ ctx, input }) => {
     await ctx.db.groups.updateOne({ _id: ctx.group._id }, { $set: { name: input.name, updatedAt: new Date() } });
+    return { ok: true };
+  }),
+
+  /**
+   * The group's time zone. Edition dates are local dates, so they stay; a scheduled draw keeps its
+   * local date and time, and gift day calendar events get a new sequence.
+   */
+  setTimeZone: organizerProcedure.input(v.object({ timeZone: TimeZone })).mutation(async ({ ctx, input }) => {
+    const { timeZone: from, _id: groupId } = ctx.group;
+    const to = input.timeZone;
+    if (to === from) return { ok: true };
+    const now = new Date();
+    await ctx.db.groups.updateOne({ _id: groupId }, { $set: { timeZone: to, updatedAt: now } });
+    const editions = await ctx.db.editions.find({ groupId, status: { $ne: 'done' } }).toArray();
+    await Promise.all(
+      editions.map((edition) =>
+        ctx.db.editions.updateOne(
+          { _id: edition._id },
+          {
+            $set: {
+              ...(edition.drawAt && isBeforeDraw(edition) && { drawAt: zonedInstant(todayIn(from, edition.drawAt), DRAW_TIME, to) }),
+              updatedAt: now,
+            },
+            ...(edition.giftDay && { $inc: { calendarSequence: 1 } }),
+          }
+        )
+      )
+    );
     return { ok: true };
   }),
 

@@ -12,6 +12,11 @@
     "label": "Naam van de groep",
     "help": "Blijft elk jaar hetzelfde, zoals Familie of Het werk."
   },
+  "time-zone": {
+    "title": "Tijdzone",
+    "label": "Tijdzone",
+    "help": "Cadeaudag, herinneringen en geplande lotingen volgen deze tijdzone."
+  },
   "edition": {
     "title": "{edition}",
     "done": "Deze editie is voorbij en kan niet meer veranderen.",

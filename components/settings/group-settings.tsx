@@ -15,6 +15,7 @@ import { GuessSettings } from '@/components/guess/guess-settings';
 import { DangerZone } from './danger-zone';
 import { EditionForm } from './edition-form';
 import { GroupNameForm } from './group-name-form';
+import { GroupTimeZoneForm } from './group-time-zone-form';
 import { KeepApartSection } from './keep-apart-section';
 import { PeopleSettings } from './people-settings';
 import { RedrawSection } from './redraw-section';
@@ -50,7 +51,16 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const { edition } = data;
   // Most used first; the danger zone last.
   const sections: { id: string; title: string; content: ReactNode }[] = [
-    { id: 'group', title: t('group-name.title'), content: <GroupNameForm slug={slug} name={data.name} /> },
+    {
+      id: 'group',
+      title: t('group-name.title'),
+      content: (
+        <>
+          <GroupNameForm slug={slug} name={data.name} />
+          <GroupTimeZoneForm slug={slug} timeZone={data.timeZone} />
+        </>
+      ),
+    },
     ...(edition
       ? [
           { id: 'edition', title: edition.title, content: <EditionForm key={edition.number} groupSlug={slug} edition={edition} /> },

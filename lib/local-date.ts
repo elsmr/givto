@@ -1,4 +1,4 @@
-// Pure: local dates (YYYY-MM-DD) in an edition's time zone, shared by the UI and the server (28).
+// Pure: local dates (YYYY-MM-DD) in a group's time zone, shared by the UI and the server (28).
 
 /** Today's date in `timeZone`, e.g. "2026-12-01". */
 export const todayIn = (timeZone: string, now = new Date()): string =>

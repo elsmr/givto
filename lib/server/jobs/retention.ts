@@ -40,13 +40,20 @@ const endedWithoutGiftDay = async (db: Collections, before: Date, filter: Filter
   return editions.map((edition) => edition._id);
 };
 
-/** Postal addresses go right after gift day (28, 55): once gift day is over in the edition's time zone. */
+/** Postal addresses go right after gift day (28, 55): once gift day is over in the group's time zone. */
 const deleteAddresses = async (db: Collections, now: Date) => {
   const withAddress = { 'participants.address': { $exists: true } };
   const editions = await db.editions
-    .find({ ...withAddress, 'giftDay.date': { $lte: isoDate(now) } }, { projection: { giftDay: 1, timeZone: 1 } })
+    .find({ ...withAddress, 'giftDay.date': { $lte: isoDate(now) } }, { projection: { groupId: 1, giftDay: 1 } })
     .toArray();
-  const past = editions.filter((edition) => edition.giftDay && edition.giftDay.date < todayIn(edition.timeZone, now));
+  const groups = await db.groups
+    .find({ _id: { $in: [...new Set(editions.map((edition) => edition.groupId))] } }, { projection: { timeZone: 1 } })
+    .toArray();
+  const timeZones = new Map(groups.map((group) => [group._id, group.timeZone]));
+  const past = editions.filter((edition) => {
+    const timeZone = timeZones.get(edition.groupId);
+    return edition.giftDay && timeZone && edition.giftDay.date < todayIn(timeZone, now);
+  });
   const ids = [...past.map((edition) => edition._id), ...(await endedWithoutGiftDay(db, now, withAddress))];
   await db.editions.updateMany({ _id: { $in: ids } }, { $unset: { 'participants.$[].address': true } });
   return ids.length;

@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { Id, LocalDate, LocalTime, MultiLine, Price, SingleLine, TimeZone } from './common';
+import { Id, LocalDate, LocalTime, MultiLine, Price, SingleLine } from './common';
 import { ExchangeMode } from './group';
 
 export const editionStatuses = ['draft', 'open', 'drawn', 'giftday', 'done'] as const;
@@ -17,7 +17,7 @@ export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status =
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);
 
-/** Local date + optional time in the edition's time zone, not a UTC instant: all-day events must not shift a day (28). */
+/** Local date + optional time in the group's time zone, not a UTC instant: all-day events must not shift a day (28). */
 export const GiftDay = v.object({
   date: LocalDate,
   time: v.optional(LocalTime),
@@ -106,10 +106,9 @@ export const Reveal = v.object({
   revealedAt: v.optional(v.date()),
 });
 
-/** Fields the organizer edits. All dates are local dates in `timeZone`. */
+/** Fields the organizer edits. All dates are local dates in the group's time zone. */
 export const EditionFields = v.object({
   title: EditionTitle,
-  timeZone: TimeZone,
   giftDay: v.optional(GiftDay),
   /** Scheduled draw (an instant, for the scheduler); absent = the organizer draws manually. */
   drawAt: v.optional(v.date()),
@@ -129,7 +128,7 @@ type EditionDates = Partial<Pick<EditionFields, 'giftDay' | 'wishlistBy' | 'post
 /**
  * Pipe this onto edition inputs that carry dates (28): wishlists and posting no later than
  * gift day (ISO dates compare as strings). "Draw before gift day" and "not in the past"
- * need the edition's time zone, so the procedure checks those.
+ * need the group's time zone, so the procedure checks those.
  */
 export const checkEditionDates = v.check<EditionDates, 'dates_out_of_order'>(
   ({ giftDay, wishlistBy, postBy }) =>
