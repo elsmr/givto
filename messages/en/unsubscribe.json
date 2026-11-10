@@ -12,6 +12,7 @@
   "category": {
     "reminders": "reminders",
     "wishlistUpdates": "wishlist updates",
-    "santaMessages": "messages from your Santa"
+    "santaMessages": "messages from your Santa",
+    "joins": "who joined your groups"
   }
 }

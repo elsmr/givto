@@ -4,6 +4,10 @@
 export const todayIn = (timeZone: string, now = new Date()): string =>
   new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 
+/** The hour (0–23) at `now` in `timeZone`. */
+export const hourIn = (timeZone: string, now = new Date()): number =>
+  Number(new Intl.DateTimeFormat('en-US', { timeZone, hour: 'numeric', hourCycle: 'h23' }).format(now));
+
 /** Whole days from `from` to `to` (both YYYY-MM-DD); negative when `to` is earlier. */
 export const daysBetween = (from: string, to: string): number =>
   Math.round((Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000);

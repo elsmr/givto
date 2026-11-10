@@ -46,9 +46,15 @@ test('account.groups lists to-dos per group', async ({ signIn, db }) => {
   await test.step('only delivered questions show for the giftee', async () => {
     const first = ok(await santa.trpc.mutate('question.ask', { ...edition, text: 'Size?' }));
     ok(await santa.trpc.mutate('question.ask', { ...edition, text: 'Colour?' }));
-    expect(await todosOf(bob, group.slug)).toEqual([]);
+    expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'getGift' }]);
     await db.questions.updateOne({ _id: first.id, editionId }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
+    expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'question', count: 1 }, { kind: 'getGift' }]);
+  });
+
+  await test.step('get your gift until it is marked (63)', async () => {
+    ok(await bob.trpc.mutate('gift.set', { ...edition, wishIds: [], lines: ['A scarf'] }));
     expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'question', count: 1 }]);
+    expect(await todosOf(santa, group.slug)).toContainEqual({ kind: 'getGift' });
   });
 
   await test.step('gift day', async () => {

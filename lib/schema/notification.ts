@@ -13,6 +13,8 @@ export const SentNotification = v.object({
   editionId: v.optional(Id),
   userId: v.optional(Id),
   memberId: v.optional(Id),
+  /** Reminders (63): the schedule slots this email covered, e.g. `wishlist-14`, so none goes twice. */
+  slots: v.optional(v.array(v.pipe(v.string(), v.maxLength(20)))),
   sentAt: v.date(),
 });
 export type SentNotification = v.InferOutput<typeof SentNotification>;

@@ -2,14 +2,15 @@ import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import { Confetti } from './confetti';
-import type { PresenterOrder } from './presenter-phase';
+import { currentGiftCount, type PresenterOrder } from './presenter-phase';
 
 type PresenterTurnSlideProps = { order: PresenterOrder; oneByOne: boolean };
 
-/** Whose turn it is, big, with a burst of confetti. No Santas here. */
+/** Whose turn it is, big, with a burst of confetti; "gift 2 of 3" when their Santa marked their gifts (63). No Santas here. */
 export const PresenterTurnSlide = ({ order, oneByOne }: PresenterTurnSlideProps) => {
   const t = useTranslations('giftday.present');
   const number = order.people.findIndex((p) => p.memberId === order.current?.memberId) + 1;
+  const gifts = currentGiftCount(order);
 
   return (
     <>
@@ -24,7 +25,13 @@ export const PresenterTurnSlide = ({ order, oneByOne }: PresenterTurnSlideProps)
       >
         {order.current?.name}
       </m.p>
-      {!oneByOne && <p className="text-xl text-muted sm:text-2xl">{t('step', { current: number, total: order.people.length })}</p>}
+      {oneByOne && gifts !== null && <p className="text-2xl font-semibold sm:text-4xl">{t('gift-of', { current: order.currentGift, total: gifts })}</p>}
+      {!oneByOne && (
+        <p className="text-xl text-muted sm:text-2xl">
+          {t('step', { current: number, total: order.people.length })}
+          {gifts !== null && ` · ${t('gifts', { count: gifts })}`}
+        </p>
+      )}
     </>
   );
 };

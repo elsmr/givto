@@ -33,7 +33,9 @@ export const saveDraw = async (
         updatedAt: now,
       },
     });
-    if (reopened.matchedCount > 0) await db.claims.deleteMany({ editionId: edition._id });
+    if (reopened.matchedCount > 0) {
+      await Promise.all([db.claims.deleteMany({ editionId: edition._id }), db.gifts.deleteMany({ editionId: edition._id })]);
+    }
     return reopened.matchedCount > 0;
   }
   const changed = changedSantas(previous, next).filter((santa) => santa in previous);
@@ -51,6 +53,9 @@ export const saveDraw = async (
     { arrayFilters: [{ 'changed.memberId': { $in: changed } }] }
   );
   if (saved.matchedCount === 0) return false;
-  if (changed.length > 0) await db.claims.deleteMany({ editionId: edition._id, santaMemberId: { $in: changed } });
+  if (changed.length > 0) {
+    const ofChanged = { editionId: edition._id, santaMemberId: { $in: changed } };
+    await Promise.all([db.claims.deleteMany(ofChanged), db.gifts.deleteMany(ofChanged)]);
+  }
   return true;
 };

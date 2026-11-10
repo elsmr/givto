@@ -12,9 +12,9 @@ import { circle, DAY, editionDoc, expectMails, groupDoc, mails, member, run, tod
 
 const trio = (olive: User, ann: User, bob: User) => [member(olive, 'Olive', { role: 'organizer' }), member(ann, 'Ann'), member(bob, 'Bob')];
 
-test('reminders: wishlist (empty only, opt-out respected), gift, post-by, gift day morning, join; each once', async ({ signIn, db, secrets }) => {
+test('reminders at real time: one combined email (wishlist + gift), opt-out, suppression, managed, gift day morning, join; each once', async ({ signIn, db, secrets }) => {
   const [olive, ann, bob, cee] = await Promise.all(['olive', 'ann', 'bob', 'cee'].map((name) => signIn(name)));
-  // Family (locale nl): Olive organizes and manages Kid; Ann has wishes; Ivy is invited without an account.
+  // Family (locale nl): Olive organizes and manages Kid; Ann and Olive have wishes; Ivy is invited without an account.
   const m = { olive: member(olive, 'Olive', { role: 'organizer' }), ann: member(ann, 'Ann'), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
   const kid = member(null, 'Kid', { managedBy: m.olive.id });
   const invitee = member(null, 'Ivy', { status: 'invited', invitedAt: new Date(Date.now() - 4 * DAY) });
@@ -22,27 +22,25 @@ test('reminders: wishlist (empty only, opt-out respected), gift, post-by, gift d
   secrets.push(inviteeEmail);
   const family = groupDoc(olive, 'Family', [...Object.values(m), kid, invitee], { locale: 'nl' });
   const people = [...Object.values(m), kid];
-  const e1 = editionDoc(family, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: circle(people) });
+  // Open, joined and drawn a month ago, gift day in 10 days: the "14 days before" slots (4 days ago)
+  // are this week's, and the "7 days before" ones (in 3 days) come along (lib/reminder-schedule.ts).
+  const monthAgo = new Date(Date.now() - 30 * DAY);
+  const drawn = editionDoc(family, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: { ...circle(people), drawnAt: monthAgo } });
+  const e1 = { ...drawn, statusChangedAt: { open: monthAgo, drawn: monthAgo }, participants: drawn.participants.map((p) => ({ ...p, addedAt: monthAgo })) };
   ok(await ann.trpc.mutate('wish.create', { title: 'Moomin mug' }));
-  // Reminder editions, each at a different point of its timeline.
+  ok(await olive.trpc.mutate('wish.create', { title: 'Green socks' }));
   const morningZone = Array.from({ length: 27 }, (_, i) => i - 12)
     .map((offset) => (offset === 0 ? 'Etc/GMT' : `Etc/GMT${offset > 0 ? '+' : ''}${offset}`))
     .find((zone) => Number(new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', hourCycle: 'h23' }).format(new Date())) === 9)!;
-  const [gifts, posts, party] = [trio(olive, ann, bob), trio(olive, ann, bob), trio(olive, ann, bob)];
-  const giftsGroup = groupDoc(olive, 'Gifts', gifts);
-  const postsGroup = groupDoc(olive, 'Posts', posts);
+  const party = trio(olive, ann, bob);
   const partyGroup = groupDoc(olive, 'Party', party);
-  await db.groups.insertMany([family, giftsGroup, postsGroup, partyGroup]);
+  await db.groups.insertMany([family, partyGroup]);
   await db.invites.insertOne({
     _id: newId(), groupId: family._id, memberId: invitee.id, email: inviteeEmail, tokenHash: `old-${newId()}`,
     createdAt: new Date(Date.now() - 4 * DAY), expiresAt: new Date(Date.now() + 3 * DAY),
   });
   await db.editions.insertMany([
     e1,
-    editionDoc(giftsGroup, 1, 'drawn', gifts, { giftDay: { date: today('Europe/Brussels', 5) }, draw: circle(gifts) }),
-    editionDoc(postsGroup, 1, 'drawn', posts, {
-      exchangeMode: 'byPost', postBy: today('Europe/Brussels', 1), giftDay: { date: today('Europe/Brussels', 6) }, draw: circle(posts),
-    }),
     editionDoc(partyGroup, 1, 'drawn', party, { timeZone: morningZone, giftDay: { date: today(morningZone), time: '19:30', place: 'The barn' }, draw: circle(party) }),
   ]);
 
@@ -50,18 +48,17 @@ test('reminders: wishlist (empty only, opt-out respected), gift, post-by, gift d
   await db.emailSuppressions.insertOne({ _id: ann.email, reason: 'bounce', at: new Date() });
   await run('reminders');
   await run('reminders');
-  await expectMails(olive, 'reminderWishlist', 2, 'Family'); // Olive also for Kid
-  await expectMails(cee, 'reminderWishlist', 1, 'Family');
-  const wishlistReminders = await Promise.all([olive, cee, ann, bob].map(async (user) => (await mails(user, 'reminderWishlist', 'Family')).length));
-  expect(wishlistReminders, 'Olive also for Kid; Ann has wishes; Bob opted out').toEqual([2, 1, 0, 0]);
-  expect((await mails(olive, 'reminderWishlist', 'Family')).map((mail) => mail.text).join()).toMatch(/For Kid/);
-  await expectMails(olive, 'reminderGift', 1, 'Gifts');
-  await expectMails(olive, 'reminderPost', 1, 'Posts');
-  expect((await mails(olive, 'reminderPost'))[0].subject).toMatch(/^Post your gift by /);
+  await expectMails(olive, 'reminderGift', 1, 'Family');
+  await expectMails(olive, 'reminderCombined', 1, 'Family'); // for Kid: no wishes
+  await expectMails(cee, 'reminderCombined', 1, 'Family');
+  const [forKid] = await mails(olive, 'reminderCombined', 'Family');
+  expect(forKid.text).toMatch(/Voor Kid|For Kid/);
+  expect(forKid.subject).toMatch(/ · .* · Family$/);
+  for (const user of [ann, bob]) expect((await mailsTo(user.email)).filter((mail) => mail.text.includes('Family')), 'suppressed / opted out').toHaveLength(0);
+  expect(await db.sentNotifications.countDocuments({ editionId: e1._id, slots: { $all: ['gift-14', 'gift-7'] } }), 'Olive, Kid, Cee; the 7-day ones came along').toBe(3);
   await expectMails(olive, 'reminderGiftDay', 1, 'Party');
   expect((await mails(olive, 'reminderGiftDay'))[0].text).toContain('The barn');
   expect(await mails(ann, 'reminderGiftDay'), 'suppressed address').toHaveLength(0);
-  expect(await mails(bob, 'reminderGift'), 'opted out').toHaveLength(0);
   await expect.poll(async () => (await mailsTo(inviteeEmail)).length).toBe(1);
   const [join] = await mailsTo(inviteeEmail);
   expect(join.subject, 'group language without an account').toBe(nlEmail['join-reminder'].subject.replace('{group}', 'Family'));

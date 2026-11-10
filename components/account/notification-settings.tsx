@@ -6,7 +6,7 @@ import type { NotificationPrefs } from '@/lib/schema/user';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 
-const kinds = ['reminders', 'wishlistUpdates', 'santaMessages', 'nextYear'] as const;
+const kinds = ['reminders', 'wishlistUpdates', 'santaMessages', 'nextYear', 'joins'] as const;
 
 export const NotificationSettings = ({ prefs }: { prefs: NotificationPrefs }) => {
   const t = useTranslations('account');

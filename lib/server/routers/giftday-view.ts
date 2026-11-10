@@ -1,6 +1,6 @@
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
-import { unwrapState } from '../../unwrap-turns';
+import { unwrapState, type GiftCounts } from '../../unwrap-turns';
 
 /** The big reveal (31) is out once the organizer turned it on and revealed it, from gift day on. */
 export const isRevealed = (edition: Edition) =>
@@ -8,8 +8,11 @@ export const isRevealed = (edition: Edition) =>
   Boolean(edition.reveal.revealedAt) &&
   (edition.status === 'giftday' || edition.status === 'done');
 
-/** The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed. */
-const giftDayState = (group: Group, edition: Edition) => {
+/**
+ * The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed.
+ * `counts`: gifts per person from what the Santas marked (63), from gift day on.
+ */
+const giftDayState = (group: Group, edition: Edition, counts: GiftCounts) => {
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const assignments = edition.draw?.assignments ?? {};
   const inDraw = Object.keys(assignments);
@@ -21,7 +24,7 @@ const giftDayState = (group: Group, edition: Edition) => {
   const santaOf = new Map(Object.entries(assignments).map(([santa, giftee]) => [giftee, santa]));
   const mode = edition.unwrapMode ?? 'allAtOnce';
   const progress = edition.unwrapOrder?.progress;
-  const state = order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? []);
+  const state = order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? [], counts);
   const pairs = isRevealed(edition)
     ? (order ?? inDraw).map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
     : null;
@@ -29,11 +32,11 @@ const giftDayState = (group: Group, edition: Edition) => {
 };
 
 /**
- * The presenter view (organizer): the whole unwrap order, whose turn it is and who's up next, and
- * the reveal pairs in unwrap order.
+ * The presenter view (organizer): the whole unwrap order with each person's gift count (null: their
+ * Santa marked nothing), whose turn it is and who's up next, and the reveal pairs in unwrap order.
  */
-export const presenterGiftDayView = (group: Group, edition: Edition) => {
-  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition);
+export const presenterGiftDayView = (group: Group, edition: Edition, counts: GiftCounts) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition, counts);
   const person = (memberId: string | null) => (memberId ? { memberId, name: nameOf(memberId) } : null);
   return {
     unwrapMode: mode,
@@ -41,7 +44,7 @@ export const presenterGiftDayView = (group: Group, edition: Edition) => {
       order && state
         ? {
             shuffledAt: edition.unwrapOrder!.shuffledAt,
-            people: order.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId) })),
+            people: order.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId), gifts: memberId in counts ? counts[memberId] : null })),
             started: Boolean(progress),
             currentShown: Boolean(progress?.currentShown),
             /** For `giftday.advance`: the turns this view is based on. */
@@ -50,6 +53,8 @@ export const presenterGiftDayView = (group: Group, edition: Edition) => {
             next: person(state.next),
             round: state.round,
             turn: state.turn,
+            /** "Gift 2 of 3": which of their gifts the current person opens. */
+            currentGift: state.currentGift,
             finished: state.finished,
           }
         : null,
@@ -62,8 +67,8 @@ export const presenterGiftDayView = (group: Group, edition: Edition) => {
  * (owner), so only who already went (in turn order) and who's unwrapping now, once the
  * presenter's reel landed on them. Reveal pairs by giftee name, not in unwrap order.
  */
-export const giftDayView = (group: Group, edition: Edition) => {
-  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition);
+export const giftDayView = (group: Group, edition: Edition, counts: GiftCounts) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition, counts);
   const wentIds = [...new Set(progress?.turns.map((turn) => turn.memberId) ?? [])];
   return {
     unwrapMode: mode,

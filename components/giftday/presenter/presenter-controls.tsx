@@ -18,7 +18,8 @@ export const PresenterControls = ({ actions, oneByOne, skipSpin, onSkipSpinChang
   const t = useTranslations('giftday');
   const id = useId();
   const { phase, spinStatus, busy } = actions;
-  const hint = phase === 'spin' ? t('present.keys-spin') : phase === 'turn' && oneByOne ? t('present.keys-one-by-one') : t('present.keys');
+  const byHand = phase === 'turn' && oneByOne && !actions.counted;
+  const hint = phase === 'spin' ? t('present.keys-spin') : byHand ? t('present.keys-one-by-one') : phase === 'turn' && oneByOne ? t('present.keys-counted') : t('present.keys');
   const toSpin = phase === 'spin' && spinStatus === 'idle';
   const toReveal = phase === 'reveal' && !actions.revealed;
   const nextLabel = toSpin
@@ -27,7 +28,7 @@ export const PresenterControls = ({ actions, oneByOne, skipSpin, onSkipSpinChang
       ? t('present.skip')
       : toReveal
         ? t('reveal.button')
-        : phase === 'turn' && oneByOne
+        : byHand
           ? t('present.more')
           : t('present.next');
 

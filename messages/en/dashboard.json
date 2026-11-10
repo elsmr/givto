@@ -35,6 +35,10 @@
       "text": "{count, plural, =1 {Your Santa asked you a question} other {Your Santa asked you # questions}}",
       "action": "Answer"
     },
+    "getGift": {
+      "text": "Got your gift yet? Mark it when you have",
+      "action": "Got it"
+    },
     "joinRequests": {
       "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}",
       "action": "Let in"

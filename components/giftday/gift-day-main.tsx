@@ -1,4 +1,5 @@
 import { GifteeLine } from '@/components/draw/giftee-line';
+import { GiftsToOpen } from '@/components/gift/gifts-to-open';
 import type { GroupEdition } from '@/components/group/group-data';
 import { BigRevealCard } from './big-reveal-card';
 import { GiftDayHero } from './gift-day-hero';
@@ -15,6 +16,7 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
     <>
       <GiftDayHero groupSlug={groupSlug} canPresent={manage}>
         {order?.started && <UnwrapNow order={order} className="w-full bg-surface text-left" />}
+        <GiftsToOpen {...input} />
         <GifteeLine {...input} />
       </GiftDayHero>
       {giftDay.data && <BigRevealCard {...input} reveal={giftDay.data.reveal} status={edition.status} manage={manage} />}
