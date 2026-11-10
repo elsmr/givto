@@ -61,7 +61,7 @@ export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextE
   const lit = quick ? end : (path[hop] ?? -1);
   const won = quick || popped;
   return (
-    <ul aria-hidden="true" className="flex w-full flex-wrap items-center justify-center gap-6 sm:gap-12">
+    <ul aria-hidden="true" className="flex w-full flex-wrap items-center justify-center gap-4 sm:gap-12">
       {cards.map((name, i) => (
         <m.li
           key={i}
@@ -69,7 +69,7 @@ export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextE
           animate={{ scale: quick || i !== lit ? 1 : won ? 1.15 : 1.05, opacity: won && i !== end ? 0.35 : 1 }}
           transition={won ? { type: 'spring', stiffness: 400, damping: 12, opacity: { duration: 0.3 } } : { duration: 0.08 }}
           className={cn(
-            'max-w-full px-8 py-6 font-heading text-[clamp(2rem,5vw,5rem)] leading-none font-extrabold break-words text-ink bordered',
+            'max-w-full px-5 py-4 font-heading text-[clamp(2rem,5vw,5rem)] leading-none font-extrabold break-words text-ink bordered sm:px-8 sm:py-6',
             i === lit ? 'bg-yellow shadow-brand' : 'bg-surface shadow-lg dark:border-control dark:shadow-brand'
           )}
         >
