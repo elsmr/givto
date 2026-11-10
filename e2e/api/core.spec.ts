@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import {
   authPost,
   expect,
+  latestMail,
   mailsTo,
   ok,
   randomIp,
@@ -95,6 +96,13 @@ test('sign in with the magic link token (POST); reused token rejected', async ({
   expect(again.status()).toBe(400);
   expect((await again.json()).code).toBe('INVALID_TOKEN');
   expect(setCookies(again)).toBe('');
+});
+
+test('emails ask Mailgun not to track opens or clicks (sign-in links stay direct)', async ({ request, secrets }) => {
+  const email = uniqueEmail('trk');
+  const { code, token } = await requestSignIn(request, email);
+  secrets.push(email, code, token);
+  expect((await latestMail(email)).tracking).toBe('no');
 });
 
 test('wrong code rejected, expired code rejected', async ({ newClient, db, secrets }) => {

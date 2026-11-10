@@ -1,7 +1,7 @@
 // Stands in for Mailgun's HTTP API. Records messages; tests read them back.
 //   POST   /messages          Mailgun-style multipart send (what the app calls)
 //   GET    /messages?to=<email>  recorded messages, oldest first:
-//          { to, from, subject, text, html, headers (h:*), tags (o:tag), attachments (file names), at }
+//          { to, from, subject, text, html, headers (h:*), tags (o:tag), tracking (o:tracking), attachments (file names), at }
 //   DELETE /messages          forget everything
 // Inbox for local development (browser):
 //   GET    /                  newest first; GET /<n> one message (n = 1 for the first recorded)
@@ -94,6 +94,7 @@ http
         html: field('html'),
         headers: Object.fromEntries([...form.keys()].filter((key) => key.startsWith('h:')).map((key) => [key.slice(2), field(key)])),
         tags: form.getAll('o:tag').map(String),
+        tracking: field('o:tracking'),
         attachments: form.getAll('attachment').map((file) => file.name),
         at: new Date().toISOString(),
       });

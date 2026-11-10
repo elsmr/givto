@@ -29,6 +29,8 @@ export const sendMail = async ({ to, subject, body, unsubscribeUrl, tag, calenda
   form.append('subject', oneLine(subject));
   form.append('html', html);
   form.append('text', text);
+  // Whatever the domain's dashboard setting: tracking would rewrite sign-in links and break /privacy's promise.
+  form.append('o:tracking', 'no');
   if (unsubscribeUrl) {
     form.append('h:List-Unsubscribe', `<${unsubscribeUrl}>`);
     form.append('h:List-Unsubscribe-Post', 'List-Unsubscribe=One-Click');

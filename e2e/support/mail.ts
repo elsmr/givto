@@ -12,6 +12,8 @@ export interface SentMail {
   headers: Record<string, string>;
   /** Mailgun `o:tag`: the kind of mail, e.g. `reminderGift` (sign-in mails have none). */
   tags: string[];
+  /** Mailgun's `o:tracking`: '' when not sent. */
+  tracking: string;
   /** Attachment file names. */
   attachments: string[];
   at: string;
