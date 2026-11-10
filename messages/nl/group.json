@@ -160,7 +160,6 @@
     "over": "Voorbij",
     "wishes": "Mijn wensen",
     "people": "Deelnemers",
-    "people-in": "{count, plural, one {doet mee} other {doen mee}}",
     "gifts": "Cadeau gekocht",
     "gifts-still": "Nog aan het shoppen: {names}",
     "gifts-all": "Iedereen heeft een cadeau"

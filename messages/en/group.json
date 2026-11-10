@@ -160,7 +160,6 @@
     "over": "Over",
     "wishes": "My wishes",
     "people": "People",
-    "people-in": "{count, plural, one {person in} other {people in}}",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift"

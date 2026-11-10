@@ -35,7 +35,6 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
         className="col-span-2 lg:col-span-1"
         visual={<AvatarStack people={people} />}
         value={people.length}
-        unit={t('people-in', { count: people.length })}
         onClick={() => showTab('people')}
       />
       {edition?.status === 'drawn' && group.organizer && edition.isCurrent && (
