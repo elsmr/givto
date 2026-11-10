@@ -8,8 +8,8 @@
   "order": {
     "title": "Unwrap order",
     "intro": "Picked at random and kept a surprise: the presenter spins for who's next.",
-    "none": "No unwrap order yet. The organizer can shuffle one; otherwise it's shuffled on gift day.",
-    "none-organizer": "Shuffle a random unwrap order. It stays a surprise: you spin for each turn in the presenter view. If you don't shuffle, it's shuffled on gift day.",
+    "none": "No unwrap order yet: it's shuffled by gift day.",
+    "none-organizer": "The order stays a surprise: you spin for each turn in the presenter view. If you don't shuffle, it's shuffled on gift day.",
     "you": "you",
     "shuffle": "Shuffle the unwrap order",
     "reshuffle": "Shuffle again",
@@ -38,7 +38,7 @@
   "reveal": {
     "title": "The big reveal",
     "switch": "Do the big reveal",
-    "switch-help": "From gift day on, you can show everyone who was whose Santa. Off unless you turn it on.",
+    "switch-help": "From gift day on, you can show everyone who was whose Santa.",
     "teaser": "On gift day, the organizer reveals who was whose Santa.",
     "ready": "Reveal it when everyone has unwrapped: then everyone sees who was whose Santa.",
     "button": "Reveal who was whose Santa",

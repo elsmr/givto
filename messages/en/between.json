@@ -26,7 +26,6 @@
   },
   "santa": {
     "title": "Shopping for {name}",
-    "intro": "Tips from others, and ways to ask {name} for ideas without them knowing it's you.",
     "tips-title": "Tips for you",
     "tips-empty": "No tips about {name} yet.",
     "tip-from": "From {name}",

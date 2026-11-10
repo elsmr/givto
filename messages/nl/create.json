@@ -17,7 +17,6 @@
   "details": {
     "name": "Hoe heet je Secret Santa?",
     "name-placeholder": "Familie",
-    "name-help": "Iets wat iedereen herkent, zoals Familie, Vrienden of Het werk.",
     "next": "Volgende",
     "gift-day": {
       "legend": "Wanneer is pakjesdag?",
@@ -35,7 +34,7 @@
     },
     "budget": {
       "legend": "Budget",
-      "help": "Mag je overslaan. Iedereen ziet het, zodat niemand te veel uitgeeft.",
+      "help": "Mag je overslaan. Iedereen ziet het.",
       "amount": "Bedrag",
       "max": "Tot (optioneel)",
       "currency": "Munteenheid"
@@ -52,7 +51,7 @@
   },
   "share": {
     "title": "{group} staat klaar!",
-    "description": "Deel deze link in jullie groepsapp. Iedereen die hem opent, kan meedoen.",
+    "description": "Deel deze link met je familie of vrienden. Iedereen die hem opent, kan meedoen.",
     "later": "Je vindt de link ook op de groepspagina. Daar kun je mensen ook per e-mail uitnodigen.",
     "go-to-group": "Naar je Secret Santa"
   }

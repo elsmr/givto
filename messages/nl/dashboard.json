@@ -5,7 +5,7 @@
   "load-failed": "We konden je groepen niet laden.",
   "empty": {
     "title": "Nog geen groepen",
-    "body": "Start een Secret Santa met je familie, vrienden of collega's. Uitgenodigd? Open de link uit je groepschat of e-mail."
+    "body": "Start een Secret Santa met je familie, vrienden of collega's. Uitgenodigd? Open de link uit de e-mail of het bericht."
   },
   "past": "Eerder",
   "organizer": "Jij bent de organisator",
@@ -13,7 +13,7 @@
   "status": {
     "draft": "Nog niet verstuurd",
     "open": "Open",
-    "drawn": "Namen getrokken",
+    "drawn": "Geloot",
     "giftday": "Pakjesdag!",
     "done": "Afgelopen",
     "archived": "Gearchiveerd"
@@ -26,7 +26,7 @@
   "hi": "Hoi {name}",
   "todo": {
     "title": "Te doen",
-    "all-done": "Niets te doen op dit moment. Als iets je aandacht nodig heeft, zie je het hier.",
+    "all-done": "Niets te doen op dit moment.",
     "giftDay": {
       "text": "Het is pakjesdag!",
       "action": "Openen"
@@ -44,8 +44,8 @@
       "action": "Binnenlaten"
     },
     "readyToDraw": {
-      "text": "Iedereen is er: klaar om namen te trekken",
-      "action": "Trekken"
+      "text": "Iedereen is er: klaar om te loten",
+      "action": "Loten"
     },
     "draft": {
       "text": "Je volgende Secret Santa is nog niet verstuurd",

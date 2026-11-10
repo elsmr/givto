@@ -46,7 +46,7 @@
   },
   "notifications": {
     "title": "Emails",
-    "description": "Choose which emails you get. Sign-in emails always come through.",
+    "description": "Sign-in emails always come through.",
     "reminders": "Reminders before deadlines and gift day",
     "wishlistUpdates": "When your giftee changes their wishlist or gets a tip",
     "santaMessages": "Psst! hints and questions from your Santa",

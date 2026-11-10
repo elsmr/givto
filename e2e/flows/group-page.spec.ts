@@ -163,7 +163,7 @@ test('the people stat fits as many avatars as it has room for and counts the res
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
 
-  const card = page.getByRole('button', { name: '12 People people in' });
+  const card = page.getByRole('button', { name: '12 People', exact: true });
   const stack = card.locator('[data-slot="avatar-group"]');
   await expect(stack.locator('[data-slot="avatar-group-count"]')).toBeVisible();
   const shown = await stack.locator('[data-slot="avatar"]').count();

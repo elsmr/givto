@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Secret Santa voor familie en vrienden",
     "title": "Secret Santa, geregeld met één link",
-    "lead": "Start een Secret Santa, zet de link in de familie-appgroep en laat iedereen meedoen. Givto trekt de namen, bewaart de verlanglijstjes en telt af naar pakjesdag.",
+    "lead": "Start een Secret Santa, deel de link met je familie of vrienden en laat iedereen meedoen. Givto loot, bewaart de verlanglijstjes en telt af naar pakjesdag.",
     "cta": "Start een Secret Santa",
     "how-it-works": "Zo werkt het",
     "note": "Gratis. Geen wachtwoorden, geen app nodig."
@@ -15,15 +15,15 @@
     },
     "share": {
       "title": "Deel één link",
-      "description": "Zet de link in de familie-appgroep. Je hebt niemands e-mailadres nodig."
+      "description": "Deel de link met je familie of vrienden. Je hebt niemands e-mailadres nodig."
     },
     "join": {
       "title": "Iedereen doet mee",
       "description": "Iedereen tikt op de link, vult naam en e-mailadres in en bevestigt met een code die we mailen."
     },
     "draw": {
-      "title": "Namen trekken",
-      "description": "Is iedereen erbij? Trek de namen. Je ziet alleen voor wie jij koopt, en koppels hou je makkelijk uit elkaar."
+      "title": "Loten",
+      "description": "Is iedereen erbij? Dan loot je. Je ziet alleen voor wie jij koopt, en koppels hou je makkelijk uit elkaar."
     },
     "wishlists": {
       "title": "Vul je verlanglijstje",
@@ -60,12 +60,12 @@
       "answer": "Geen wachtwoorden en niets te installeren. Iedereen doet mee via de link met naam en e-mailadres en bevestigt met een code die we mailen."
     },
     "secret": {
-      "question": "Wie ziet wie wie getrokken heeft?",
+      "question": "Wie ziet wie voor wie koopt?",
       "answer": "Niemand. Je ziet alleen voor wie jij zelf koopt. Wil je toch alles weten? Sluit pakjesdag af met de grote onthulling."
     },
     "apart": {
       "question": "Kan ik koppels uit elkaar houden?",
-      "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan trekken ze elkaar nooit."
+      "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan krijgen ze elkaar nooit."
     },
     "cost": {
       "question": "Wat kost het?",

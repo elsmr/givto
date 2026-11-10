@@ -14,7 +14,7 @@
   },
   "draft": {
     "title": "Er is nog niets verstuurd",
-    "description": "Deze editie is een concept. Kijk wie er meedoet en welke data kloppen, en open hem dan zodat mensen kunnen meedoen en de namen getrokken kunnen worden.",
+    "description": "Kijk wie er meedoet en of de data kloppen, en open hem dan zodat mensen kunnen meedoen.",
     "member": "De organisator zet deze editie klaar.",
     "settings": "Deelnemers en data",
     "open": "Editie openen",
@@ -27,8 +27,8 @@
     "buying-for": "Je koopt een cadeau voor",
     "hide": "Verbergen",
     "changed": "Je persoon is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
-    "not-in": "Je doet niet mee aan deze trekking.",
-    "not-fitted": "Je deed mee na de trekking en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan de namen opnieuw trekken.",
+    "not-in": "Je doet niet mee aan deze loting.",
+    "not-fitted": "Je deed mee na de loting en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw loten.",
     "show": "Tonen"
   },
   "next": {
@@ -36,16 +36,16 @@
     "description": "Begin de editie van {year} met iedereen van deze keer. Er wordt niets verstuurd tot je hem opent.",
     "start": "Editie {year} beginnen",
     "errors": {
-      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor de namen nog niet getrokken zijn.",
+      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is.",
       "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
     }
   },
   "errors": {
-    "TOO_FEW_PEOPLE": "Om namen te trekken zijn er minstens {min} mensen nodig.",
+    "TOO_FEW_PEOPLE": "Om te loten zijn er minstens {min} mensen nodig.",
     "DRAW_IMPOSSIBLE": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Pas aan wie niet samen mag, en probeer het opnieuw.",
-    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het niet om namen te trekken voor deze mensen. Zet het uit in de instellingen en probeer het opnieuw.",
-    "ALREADY_DRAWN": "De namen zijn al getrokken.",
-    "NOT_DRAWN": "Er zijn nog geen namen getrokken.",
+    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het loten niet voor deze mensen. Zet het uit in de instellingen en probeer het opnieuw.",
+    "ALREADY_DRAWN": "Er is al geloot.",
+    "NOT_DRAWN": "Er is nog niet geloot.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   },

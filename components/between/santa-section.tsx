@@ -1,5 +1,5 @@
 import { IconCardTitle } from '@/components/ui/icon-card-title';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -29,7 +29,6 @@ export const SantaSection = ({ input }: { input: EditionInput }) => {
         <IconCardTitle icon={Lightbulb} tone="yellow">
           {t('title', { name })}
         </IconCardTitle>
-        <CardDescription>{t('intro', { name })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <GifteeTips input={input} view={tips.data} />

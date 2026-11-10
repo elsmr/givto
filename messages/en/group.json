@@ -20,7 +20,6 @@
     "no-budget": "No budget",
     "draw": "The draw",
     "draw-on": "Names are drawn on {date}",
-    "draw-manual": "The organizer draws the names",
     "drawn": "Names are drawn",
     "wishlist-by": "Wishlists ready by",
     "post-by": "Post gifts by",
@@ -91,7 +90,7 @@
   },
   "keep-apart": {
     "title": "Keep apart",
-    "description": "Who shouldn't draw each other? Couples and families usually buy for each other anyway. People in the same row never draw each other.",
+    "description": "Who shouldn't draw each other? People in the same row never draw each other.",
     "save": "Save",
     "saved": "Saved",
     "errors": {
@@ -161,7 +160,6 @@
     "over": "Over",
     "wishes": "My wishes",
     "people": "People",
-    "people-in": "{count, plural, one {person in} other {people in}}",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift"

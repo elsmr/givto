@@ -5,7 +5,7 @@
   "load-failed": "We couldn't load your groups.",
   "empty": {
     "title": "No groups yet",
-    "body": "Start a Secret Santa for your family, friends or colleagues. Invited by someone? Open the link from your group chat or email."
+    "body": "Start a Secret Santa for your family, friends or colleagues. Invited by someone? Open the link from the email or message."
   },
   "past": "Earlier",
   "organizer": "You organize this",
@@ -26,7 +26,7 @@
   "hi": "Hi {name}",
   "todo": {
     "title": "To do",
-    "all-done": "Nothing to do right now. We'll show it here when something needs you.",
+    "all-done": "Nothing to do right now.",
     "giftDay": {
       "text": "It's gift day!",
       "action": "Open"

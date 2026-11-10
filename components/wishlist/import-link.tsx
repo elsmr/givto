@@ -6,13 +6,19 @@ import { useMutation } from '@tanstack/react-query';
 import { TRPCClientError } from '@trpc/client';
 import { Link2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type ClipboardEvent } from 'react';
+import { useImperativeHandle, useState, type ClipboardEvent, type Ref } from 'react';
 import { shopName } from './shop-name';
 import { useErrorMessage } from './use-error-message';
 import type { ImportedWish } from './wish-draft';
 
+/** Imports what's still typed in the field (when the wish is saved): `false` if it couldn't, with the reason shown. */
+export interface ImportLinkHandle {
+  importTyped: () => Promise<ImportedWish | false | undefined>;
+}
+
 interface ImportLinkProps {
   id: string;
+  ref: Ref<ImportLinkHandle>;
   onImported: (product: ImportedWish) => void;
 }
 
@@ -22,7 +28,7 @@ const isHttpUrl = (text: string) => /^https?:\/\/\S+$/i.test(text) && URL.canPar
  * "Paste a link" at the top of the wish form (39, 73): the server reads the page and the link
  * joins the wish. Pasting imports right away. Not a form of its own: it sits inside the wish form.
  */
-export const ImportLink = ({ id, onImported }: ImportLinkProps) => {
+export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
   const t = useTranslations('wishlist.import');
   const trpc = useTRPC();
   const errorMessage = useErrorMessage();
@@ -30,31 +36,39 @@ export const ImportLink = ({ id, onImported }: ImportLinkProps) => {
   const [notice, setNotice] = useState('');
   const importUrl = useMutation(trpc.import.fromUrl.mutationOptions());
 
-  const run = (text: string) => {
+  const read = async (text: string): Promise<ImportedWish | undefined> => {
     const trimmed = text.trim();
-    if (!trimmed || importUrl.isPending) return;
-    if (!isHttpUrl(trimmed)) return setNotice(t('blocked'));
+    if (!isHttpUrl(trimmed)) return void setNotice(t('blocked'));
     setNotice('');
-    importUrl.mutate(
-      { url: trimmed },
-      {
-        onSuccess: (product) => {
-          setUrl('');
-          onImported(product);
-          setNotice(t('done'));
-        },
-        onError: (error) => {
-          const data = error instanceof TRPCClientError ? error.data : undefined;
-          if (data?.appCode === 'IMPORT_BLOCKED' || data?.appCode === 'INVALID_INPUT') return setNotice(t('blocked'));
-          if (data?.appCode !== 'IMPORT_FAILED') return setNotice(errorMessage(error));
-          const { url: kept = trimmed, title, reason } = (data.details ?? {}) as { url?: string; title?: string; reason?: string };
-          setUrl('');
-          onImported({ url: kept, ...(title && { title }) });
-          setNotice(reason === 'bot_wall' ? t('bot-wall', { shop: shopName(kept) }) : t('failed'));
-        },
-      }
-    );
+    try {
+      const product = await importUrl.mutateAsync({ url: trimmed });
+      setUrl('');
+      setNotice(t('done'));
+      return product;
+    } catch (error) {
+      const data = error instanceof TRPCClientError ? error.data : undefined;
+      if (data?.appCode === 'IMPORT_BLOCKED' || data?.appCode === 'INVALID_INPUT') return void setNotice(t('blocked'));
+      if (data?.appCode !== 'IMPORT_FAILED') return void setNotice(errorMessage(error));
+      const { url: kept = trimmed, title, reason } = (data.details ?? {}) as { url?: string; title?: string; reason?: string };
+      setUrl('');
+      setNotice(reason === 'bot_wall' ? t('bot-wall', { shop: shopName(kept) }) : t('failed'));
+      return { url: kept, ...(title && { title }) };
+    }
   };
+
+  const run = async (text: string) => {
+    if (!text.trim() || importUrl.isPending) return;
+    const product = await read(text);
+    if (product) onImported(product);
+  };
+
+  useImperativeHandle(ref, () => ({
+    importTyped: async () => {
+      if (!url.trim()) return undefined;
+      if (importUrl.isPending) return false;
+      return (await read(url)) ?? false;
+    },
+  }));
 
   const paste = (event: ClipboardEvent<HTMLInputElement>) => {
     const text = event.clipboardData.getData('text').trim();

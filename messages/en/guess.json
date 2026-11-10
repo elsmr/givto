@@ -13,7 +13,7 @@
   },
   "dialog": {
     "title": "Who's your Santa?",
-    "description": "Pick one person. Once it's locked in, you can't change it. Nobody sees your guess until your turn on gift day.",
+    "description": "Once it's locked in, you can't change it. Nobody sees your guess until your turn on gift day.",
     "people": "Your guess",
     "lock": "Lock it in",
     "cancel": "Not yet",

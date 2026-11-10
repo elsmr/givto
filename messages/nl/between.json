@@ -26,7 +26,6 @@
   },
   "santa": {
     "title": "Cadeau voor {name}",
-    "intro": "Tips van anderen, en manieren om {name} om ideeën te vragen zonder dat ze weten dat jij het bent.",
     "tips-title": "Tips voor jou",
     "tips-empty": "Nog geen tips over {name}.",
     "tip-from": "Van {name}",

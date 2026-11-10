@@ -17,7 +17,6 @@
   "details": {
     "name": "What's your Secret Santa called?",
     "name-placeholder": "Family",
-    "name-help": "Something everyone recognizes, like Family, Friends or The office.",
     "next": "Next",
     "gift-day": {
       "legend": "When's gift day?",
@@ -35,7 +34,7 @@
     },
     "budget": {
       "legend": "Budget",
-      "help": "Optional. Everyone sees it, so nobody overspends.",
+      "help": "Optional. Everyone sees it.",
       "amount": "Amount",
       "max": "Up to (optional)",
       "currency": "Currency"
@@ -52,7 +51,7 @@
   },
   "share": {
     "title": "{group} is ready!",
-    "description": "Share this link in your group chat. Everyone who opens it can join.",
+    "description": "Share this link with your family or friends. Everyone who opens it can join.",
     "later": "You'll find the link on the group page too, where you can also invite people by email.",
     "go-to-group": "Go to your Secret Santa"
   }
