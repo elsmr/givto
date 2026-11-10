@@ -8,7 +8,7 @@ import { GiftDayStat } from './gift-day-stat';
 import { isBeforeDraw } from './edition-phase';
 import type { GroupData } from './group-data';
 import { RingGauge } from './ring-gauge';
-import { StatCard } from './stat-card';
+import { StatCard } from '@/components/ui/stat-card';
 import type { GroupTab } from './use-group-tab';
 
 /** Gift day countdown, my wishes here and who's in (61); the last two open their tab. */

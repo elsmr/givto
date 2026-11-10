@@ -45,7 +45,7 @@ export const ImportLink = ({ onImported }: ImportLinkProps) => {
   };
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-2 sm:flex-row sm:items-end">
+    <form onSubmit={submit} className="flex flex-col gap-2 @md:flex-row @md:items-end">
       <Field className="flex-1">
         <FieldLabel htmlFor={`${id}-url`}>{t('label')}</FieldLabel>
         <Input
@@ -59,7 +59,7 @@ export const ImportLink = ({ onImported }: ImportLinkProps) => {
           onChange={(event) => setUrl(event.target.value)}
         />
       </Field>
-      <Button type="submit" variant="neutral" disabled={importUrl.isPending}>
+      <Button type="submit" variant="neutral" className="w-fit" disabled={importUrl.isPending}>
         <Link2 aria-hidden="true" />
         {importUrl.isPending ? t('busy') : t('submit')}
       </Button>

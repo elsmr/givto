@@ -1,5 +1,5 @@
 import { Doodle } from '@/components/group/doodle';
-import { IconCardTitle } from '@/components/group/icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';

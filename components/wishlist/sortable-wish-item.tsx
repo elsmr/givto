@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDivider } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
@@ -10,8 +11,9 @@ import { useSortableWish } from './use-sortable-wish';
 import { useWishMutations } from './use-wish-mutations';
 import { draftFromWish, type WishView } from './wish-draft';
 import { WishForm } from './wish-form';
-import { WishSummary } from './wish-summary';
+import { WishImage } from './wish-image';
 import { WishMoveButtons } from './wish-move-buttons';
+import { WishDetails } from './wish-summary';
 
 interface SortableWishItemProps {
   wish: WishView;
@@ -20,6 +22,7 @@ interface SortableWishItemProps {
   onMove: (toIndex: number) => void;
 }
 
+/** One wish as a card: picture on top, the wish, then reorder / edit / delete. */
 export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishItemProps) => {
   const t = useTranslations('wishlist');
   const errorMessage = useErrorMessage();
@@ -38,53 +41,73 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
     );
 
   return (
-    <li
-      ref={rowRef}
-      className={cn(
-        'flex gap-2 bg-surface p-3 shadow-md bordered sm:gap-4 sm:p-4',
-        dragging && 'opacity-50',
-        over && 'outline-3 outline-offset-3 outline-focus'
-      )}
-    >
-      <div className="flex flex-col items-center gap-1">
-        <span className="font-heading text-lg font-extrabold" aria-hidden="true">
-          {index + 1}
-        </span>
-        {/* Pointer only; keyboard users have the move buttons. */}
-        {!editing && (
-          <div ref={handleRef} title={t('item.drag', { title: wish.title })} className="cursor-grab p-1.5 text-muted">
-            <GripVertical aria-hidden="true" className="size-5" />
-          </div>
+    <li ref={rowRef} className={cn(dragging && 'opacity-50', over && 'outline-3 outline-offset-3 outline-focus')}>
+      <Card size="sm">
+        {editing ? (
+          <CardContent>
+            <WishForm
+              initial={draftFromWish(wish)}
+              submitLabel={t('form.save')}
+              busy={update.isPending}
+              error={update.error ? errorMessage(update.error) : undefined}
+              onSubmit={(input) =>
+                update.mutate({ wishId: wish.id, ...input }, { onSuccess: () => setEditing(false) })
+              }
+              onCancel={() => setEditing(false)}
+              autoFocus
+            />
+          </CardContent>
+        ) : (
+          <>
+            {wish.imageId && (
+              <>
+                <CardContent className="flex justify-center">
+                  <WishImage imageId={wish.imageId} alt={t('form.image-alt', { title: wish.title })} size={160} />
+                </CardContent>
+                <CardDivider />
+              </>
+            )}
+            <CardContent className="flex gap-3">
+              <span className="font-heading text-3xl leading-none font-extrabold tabular-nums" aria-hidden="true">
+                {index + 1}
+              </span>
+              <WishDetails wish={wish} />
+            </CardContent>
+            <CardDivider />
+            <CardContent className="flex items-center gap-1">
+              {/* Pointer only; keyboard users have the move buttons. */}
+              <div
+                ref={handleRef}
+                title={t('item.drag', { title: wish.title })}
+                className="grid size-11 cursor-grab place-items-center text-muted sm:size-9"
+              >
+                <GripVertical aria-hidden="true" className="size-5" />
+              </div>
+              <WishMoveButtons wish={wish} index={index} count={count} onMove={onMove} />
+              <Button
+                ref={editButton}
+                variant="neutral"
+                size="icon-sm"
+                className="ml-auto"
+                aria-label={t('item.edit', { title: wish.title })}
+                onClick={() => setEditing(true)}
+              >
+                <Pencil aria-hidden="true" />
+              </Button>
+              <Button
+                variant="danger"
+                size="icon-sm"
+                className="ml-2"
+                aria-label={t('item.delete', { title: wish.title })}
+                disabled={remove.isPending}
+                onClick={deleteWish}
+              >
+                <Trash2 aria-hidden="true" />
+              </Button>
+            </CardContent>
+          </>
         )}
-      </div>
-      {editing ? (
-        <div className="min-w-0 flex-1">
-          <WishForm
-            initial={draftFromWish(wish)}
-            submitLabel={t('form.save')}
-            busy={update.isPending}
-            error={update.error ? errorMessage(update.error) : undefined}
-            onSubmit={(input) =>
-              update.mutate({ wishId: wish.id, ...input }, { onSuccess: () => setEditing(false) })
-            }
-            onCancel={() => setEditing(false)}
-            autoFocus
-          />
-        </div>
-      ) : (
-        <>
-          <WishSummary wish={wish} />
-          <div className="grid h-fit grid-cols-2 gap-2">
-            <WishMoveButtons wish={wish} index={index} count={count} onMove={onMove} />
-            <Button ref={editButton} variant="neutral" size="icon-sm" className="col-start-2 row-start-1" aria-label={t('item.edit', { title: wish.title })} onClick={() => setEditing(true)}>
-              <Pencil aria-hidden="true" />
-            </Button>
-            <Button variant="danger" size="icon-sm" className="col-start-2 row-start-2" aria-label={t('item.delete', { title: wish.title })} disabled={remove.isPending} onClick={deleteWish}>
-              <Trash2 aria-hidden="true" />
-            </Button>
-          </div>
-        </>
-      )}
+      </Card>
     </li>
   );
 };

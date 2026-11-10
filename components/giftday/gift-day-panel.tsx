@@ -1,4 +1,4 @@
-import { DisclosureCard } from '@/components/group/disclosure-card';
+import { DisclosureCard } from '@/components/ui/disclosure-card';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';

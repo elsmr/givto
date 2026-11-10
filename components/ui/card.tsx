@@ -89,8 +89,20 @@ function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
+/** Dashed rule edge to edge, between a card's head and its details. */
+function CardDivider({ className, ...props }: React.ComponentProps<'hr'>) {
+  return (
+    <hr
+      data-slot="card-divider"
+      className={cn('w-full border-0 border-t-2 border-dashed border-outline', className)}
+      {...props}
+    />
+  );
+}
+
 export {
   Card,
+  CardDivider,
   CardHeader,
   CardFooter,
   CardTitle,

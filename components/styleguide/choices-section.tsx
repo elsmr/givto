@@ -4,7 +4,11 @@ import { Switch } from '@/components/ui/switch';
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
 export const ChoicesSection = () => (
-  <StyleguideSection id="choices" title="Checkbox and switch">
+  <StyleguideSection
+    id="choices"
+    title="Checkbox and switch"
+    description="Checkbox for choices saved with a form, switch for settings that apply at once."
+  >
     <StyleguideRow label="Checkbox">
       <Field orientation="horizontal" className="w-fit">
         <Checkbox id="sg-check" />

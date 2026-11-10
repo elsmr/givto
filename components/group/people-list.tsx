@@ -5,7 +5,7 @@ import { Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
-import { IconCardTitle } from './icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { PersonAvatar } from './person-avatar';
 
 /** Everyone sees names; only the organizer sees emails and invite statuses (privacy rules), and gets to the people settings. */

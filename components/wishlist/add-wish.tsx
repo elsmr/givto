@@ -1,4 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardDivider } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ImportLink } from './import-link';
@@ -18,22 +20,13 @@ export const AddWish = () => {
   const resetForm = (initial: WishDraft) => setForm(({ key }) => ({ key: key + 1, initial }));
 
   return (
-    <Card>
+    <Card className="shadow-brand">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('add-title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Plus} tone="yellow">
+          {t('add-title')}
+        </IconCardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-5">
-        <ImportLink
-          onImported={(draft, message) => {
-            if (draft) resetForm(draft);
-            setNotice(message);
-          }}
-        />
-        <p role="status" className="text-sm font-semibold empty:hidden">
-          {notice}
-        </p>
+      <CardContent>
         <WishForm
           key={form.key}
           initial={form.initial}
@@ -51,6 +44,18 @@ export const AddWish = () => {
             })
           }
         />
+      </CardContent>
+      <CardDivider />
+      <CardContent className="@container flex flex-col gap-3">
+        <ImportLink
+          onImported={(draft, message) => {
+            if (draft) resetForm(draft);
+            setNotice(message);
+          }}
+        />
+        <p role="status" className="text-sm font-semibold empty:hidden">
+          {notice}
+        </p>
       </CardContent>
     </Card>
   );

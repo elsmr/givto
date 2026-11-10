@@ -2,7 +2,7 @@ import { DrawError } from '@/components/draw/draw-error';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Dialog,
   DialogClose,
@@ -13,9 +13,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
+import { Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 /** Re-draw before gift day (27), behind a clear warning. */
@@ -35,9 +37,9 @@ export const RedrawSection = ({ group, edition }: { group: GroupData; edition: G
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Shuffle} tone="yellow">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

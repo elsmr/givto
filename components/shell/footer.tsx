@@ -2,13 +2,14 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { LanguageSwitch } from './language-switch';
 
-export const Footer = () => {
+/** `language`: off in the app, where Account has the language setting. */
+export const Footer = ({ language = true }: { language?: boolean }) => {
   const t = useTranslations('shell');
 
   return (
     <footer className="border-t-(length:--border-width) border-outline bg-surface">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <LanguageSwitch />
+        {language && <LanguageSwitch />}
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <Link
             href="/privacy"

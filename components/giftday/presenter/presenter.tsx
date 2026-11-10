@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { appErrorCode } from '../../group/app-error-code';
 import { GroupNotFound } from '../../group/group-not-found';
-import { useRequireSession } from '../../group/use-require-session';
+import { useRequireSession } from '@/components/auth/use-require-session';
 import { ShuffleButton } from '../shuffle-button';
 import { PresenterFrame } from './presenter-frame';
 import { PresenterStage } from './presenter-stage';

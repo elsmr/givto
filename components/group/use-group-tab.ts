@@ -10,7 +10,7 @@ const fromHash = (available: readonly GroupTab[]): GroupTab => {
 
 /**
  * The group home's tab (61), kept in the URL hash (#giftee, #wishlist, #people) so a reload keeps it.
- * Switching scrolls back to `top` when the page was scrolled past it (the phone tab bar sits at the bottom).
+ * Switching scrolls back to `top` when the page was scrolled past it.
  */
 export const useGroupTab = (available: readonly GroupTab[], top: RefObject<HTMLElement | null>) => {
   const [tab, setTab] = useState(() => fromHash(available));

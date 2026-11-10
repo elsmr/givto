@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import type { Price } from '../schema/common';
 import { JoinLink, Slug, type Group } from '../schema/group';
 import type { Invite } from '../schema/invite';
 import type { Collections } from './db';
@@ -45,6 +46,9 @@ export type JoinPreview = {
   requiresApproval: boolean;
   /** Email invites are bound to one address. */
   invite?: { email: string; name: string };
+  /** The current edition's, for the join page (not the tRPC previews); null when unset or over. */
+  giftDay?: string | null;
+  budget?: Price | null;
 };
 
 export const joinLinkPreview = (group: Group): JoinPreview => ({

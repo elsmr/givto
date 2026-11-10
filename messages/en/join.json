@@ -13,9 +13,11 @@
     "start": "Start a Secret Santa"
   },
   "intro": {
-    "title": "{organizer} invited you to {group}",
+    "title": "You're invited!",
     "description": "Join the Secret Santa: add your wishlist and find out who you're buying for.",
-    "approval": "The organizer lets people in, so you'll be in once they've said yes."
+    "approval": "The organizer lets people in, so you'll be in once they've said yes.",
+    "organizer": "Organizer: {name}",
+    "gift-day": "Gift day {date}"
   },
   "requested": {
     "title": "Almost there!",
@@ -61,6 +63,7 @@
     "sign-out": "Sign out",
     "decline": "No thanks",
     "declined-title": "No problem!",
-    "declined": "{organizer} will see that you're sitting this one out."
+    "declined": "{organizer} will see that you're sitting this one out.",
+    "home": "Go to the home page"
   }
 }

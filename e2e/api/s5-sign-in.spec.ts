@@ -17,12 +17,12 @@ import {
 
 /** A sign-in mail whose link carries the token and callbackURL in the fragment only, never the query. */
 const requestSignInLink = async (request: APIRequestContext, email: string, secrets: string[], options?: AuthOptions) => {
-  const signIn = await requestSignIn(request, email, { callbackURL: '/groups', ...options });
+  const signIn = await requestSignIn(request, email, { callbackURL: '/app', ...options });
   secrets.push(email, signIn.code, signIn.token);
   const url = new URL(signIn.link);
   expect(url.pathname).toBe('/auth/link');
   expect(url.search, 'no token in the query string').toBe('');
-  expect(new URLSearchParams(url.hash.slice(1)).get('callbackURL')).toBe('/groups');
+  expect(new URLSearchParams(url.hash.slice(1)).get('callbackURL')).toBe('/app');
   return signIn;
 };
 

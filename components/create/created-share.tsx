@@ -1,5 +1,7 @@
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { FlowPage } from '@/components/shell/flow-page';
 import { buttonVariants } from '@/components/ui/button';
+import { Card, CardContent, CardDivider } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -18,19 +20,24 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
   useEffect(() => heading.current?.focus(), []);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <LogoAnimation variant="celebrate" className="mb-2 size-20" />
-        <h1 ref={heading} tabIndex={-1} className="text-4xl font-extrabold outline-none sm:text-5xl">
-          {t('title', { group: groupName })}
-        </h1>
-        <p className="text-lg">{t('description')}</p>
-      </div>
-      <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} />
-      <p className="text-muted">{t('later')}</p>
-      <Link href={`/g/${slug}`} className={buttonVariants({ size: 'lg', variant: 'neutral', className: 'self-start' })}>
-        {t('go-to-group')}
-      </Link>
-    </div>
+    <FlowPage
+      eyebrow={<LogoAnimation variant="celebrate" className="size-20" />}
+      title={t('title', { group: groupName })}
+      description={t('description')}
+      headingRef={heading}
+    >
+      <Card>
+        <CardContent>
+          <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} />
+        </CardContent>
+        <CardDivider />
+        <CardContent className="flex flex-col gap-4">
+          <p className="text-muted">{t('later')}</p>
+          <Link href={`/g/${slug}`} className={buttonVariants({ variant: 'neutral', className: 'xs:self-start' })}>
+            {t('go-to-group')}
+          </Link>
+        </CardContent>
+      </Card>
+    </FlowPage>
   );
 };

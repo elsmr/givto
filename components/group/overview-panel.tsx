@@ -4,7 +4,7 @@ import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
 import { NotebookText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { DisclosureCard } from './disclosure-card';
+import { DisclosureCard } from '@/components/ui/disclosure-card';
 import { isBeforeDraw } from './edition-phase';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';

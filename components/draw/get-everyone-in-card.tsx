@@ -1,6 +1,6 @@
 import { Doodle } from '@/components/group/doodle';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
-import { IconCardTitle } from '@/components/group/icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { SharePanel } from '@/components/group/share-panel';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
@@ -47,7 +47,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
         {tooFew && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
         {group.me.isOrganizer && (
           <>
-            <hr className="border-t-2 border-dashed border-ink/40" />
+            <hr className="border-t-2 border-dashed border-outline" />
             {joinLink && !joinLink.revoked ? (
               <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} primary={tooFew} />
             ) : (

@@ -8,7 +8,7 @@ export const Header = () => {
   return (
     <header className="border-b-(length:--border-width) border-outline bg-surface">
       <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-4 sm:px-6">
-        <LogoLink href={user ? '/groups' : '/'} />
+        <LogoLink href="/" />
         <MainNav user={user} />
       </div>
     </header>

@@ -86,7 +86,7 @@ test('a member sees the group', async ({ page, signIn, signInPage }) => {
   const ann = await signIn('ann');
   // …seed through ann.trpc…
   await signInPage(page, ann);
-  await page.goto('/groups');
+  await page.goto('/app');
   await expect(page.getByRole('heading', { name: 'My groups' })).toBeVisible();
 });
 ```

@@ -15,7 +15,7 @@ export default function EditionPage() {
   const editionNumber = Number(query.edition);
   const valid = Number.isInteger(editionNumber) && editionNumber >= 1;
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
         <meta name="robots" content="noindex" />

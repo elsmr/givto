@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { IconTile, type Tone } from './icon-tile';
 
@@ -16,10 +17,12 @@ type StatCardProps = {
   className?: string;
   /** Makes the card a button, e.g. to open the matching tab. */
   onClick?: () => void;
+  /** Makes the card a link. */
+  href?: string;
 };
 
 /** Overview stat (61): icon tile left, big tabular number right; below, the title left and a small label right. */
-export const StatCard = ({ icon, tone, title, value, unit, visual, className, onClick }: StatCardProps) => {
+export const StatCard = ({ icon, tone, title, value, unit, visual, className, onClick, href }: StatCardProps) => {
   const body = (
     <>
       <span className="flex items-start justify-between gap-3">
@@ -36,6 +39,13 @@ export const StatCard = ({ icon, tone, title, value, unit, visual, className, on
     </>
   );
   const classes = cn('flex flex-col justify-between gap-3 bg-surface p-4 text-left text-ink bordered shadow-md', className);
+  if (href) {
+    return (
+      <Link href={href} className={cn(classes, 'pressable no-underline')}>
+        {body}
+      </Link>
+    );
+  }
   return onClick ? (
     <button type="button" onClick={onClick} className={cn(classes, 'pressable')}>
       {body}

@@ -1,11 +1,11 @@
 {
   "skip-to-content": "Naar de inhoud",
   "main-navigation": "Hoofdmenu",
-  "my-secret-santas": "Mijn groepen",
+  "home": "Home",
+  "open-app": "Open Givto",
   "my-wishlist": "Mijn verlanglijstje",
   "retry": "Opnieuw proberen",
   "sign-in": "Inloggen",
-  "account-menu": "Accountmenu van {name}",
   "account": "Account",
   "sign-out": "Uitloggen",
   "language": "Taal",

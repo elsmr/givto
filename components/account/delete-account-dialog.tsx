@@ -44,7 +44,7 @@ export const DeleteAccountDialog = ({ email }: { email: string }) => {
 
   return (
     <Dialog>
-      <DialogTrigger render={<Button variant="danger" className="self-start" />}>{t('delete.open')}</DialogTrigger>
+      <DialogTrigger render={<Button variant="neutral" className="self-start" />}>{t('delete.open')}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('delete.dialog-title')}</DialogTitle>

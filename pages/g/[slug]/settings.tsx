@@ -11,7 +11,7 @@ export default function GroupSettingsPage() {
   const t = useTranslations('settings');
   const slug = String(useRouter().query.slug ?? '');
   return (
-    <AppShell>
+    <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
         <meta name="robots" content="noindex" />

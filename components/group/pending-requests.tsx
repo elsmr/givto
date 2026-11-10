@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { GroupData } from './group-data';
-import { IconCardTitle } from './icon-card-title';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { useInvalidateGroup } from './use-invalidate-group';
 
 /** People who joined via a link that needs approval (45). Organizer only. */
