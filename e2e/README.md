@@ -24,9 +24,11 @@ Needs Docker. `playwright.config.ts` starts and stops everything:
 - Ports: app 5001, mail 5091, Mongo 27061. To run two checkouts at once, set other ones:
   `E2E_APP_PORT=5101 E2E_MAIL_PORT=5191 E2E_MONGO_PORT=27161 pnpm e2e`.
 
-Projects: `desktop` (Desktop Chrome) and `mobile` (Pixel 7 in Chromium, 375px wide). API specs
-run in `desktop` only (no browser, nothing to gain from twice). Fully parallel; retries 1 in CI,
-0 locally; traces on the first retry (`--trace on` to always record one).
+Projects: `desktop` (Desktop Chrome) and `mobile` (Pixel 7 in Chromium, 375px wide) for flows and
+a11y. API specs run once (no browser, nothing to gain from twice): `api`, then `api-cron` (the
+specs that run the cron jobs at real time, `api/s7-*`) after it, with a 3-minute timeout: those
+jobs work through every test's data and would stall the app for the others. Fully parallel;
+retries 1 in CI, 0 locally; traces on the first retry (`--trace on` to always record one).
 
 ## Fixtures (`fixtures.ts`)
 
@@ -56,8 +58,8 @@ Import `test`, `expect` and helpers from `../fixtures`, never from `@playwright/
 Every test also gets a random `x-forwarded-for` for `page` and `request` (rate limits are per IP).
 
 Test-only triggers: with `E2E_TEST_HOOKS=1` (set by `env.ts`, refused when `VERCEL_ENV=production`,
-see `lib/server/test-hooks.ts`) `draw.runDue({ now })` and `giftday.runDue({ now })` run the
-scheduled jobs at a chosen time.
+see `lib/server/test-hooks.ts`) `draw.runDue({ now })` and `giftday.runDue({ now, editionIds })` run the
+scheduled jobs at a chosen time; `editionIds` limits the job to the test's own editions.
 
 ## Patterns
 
@@ -105,11 +107,12 @@ Tests run at the same time against one app and one database.
   edition". Scope every query to the test's own ids or emails, and assert with `toContain` on job
   results (`{ drawn: [...] }`), never `toEqual` on the whole list.
 - Never clear shared state (`DELETE /messages`, `deleteMany({})`, `updateMany({})`).
-- Jobs act on the whole database: `runCron(…)` (real time) and `draw.runDue` / `giftday.runDue`
-  (chosen time) also move other tests' editions that are due by then. So:
-  - By default, keep dates far ahead: gift days and draw dates in 2099.
-  - A test that moves time picks its `now` and its own dates in 2098 or earlier and only asserts
-    on its own editions.
+- Cron jobs act on the whole database: `runCron(…)` (real time) also moves and mails other
+  tests' data that is due by then. So:
+  - Test hooks always get `editionIds` (`giftday.runDue({ now, editionIds })`): a test that moves
+    time never touches another test's editions.
+  - By default, keep dates far ahead: gift days and draw dates in 2099 (`now` relative to them).
+  - Only tests that use the real-time crons seed near today (`api/s7-*`, project `api-cron`).
   - Seeded "due" data (past `sendAfter`, `notifyAfter`, …) may be processed by another test's
     `tick`; assert on your own ids (mails to your own users), not on counts in the job result.
 - Expiring a sign-in code or link in the database: Better Auth deletes every expired
@@ -138,8 +141,8 @@ ok(await ann.trpc.mutate('draw.run', edition));
 ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
 ```
 
-Gift day: through the transition (gift day in 2098, see above):
-`ok(await ann.trpc.mutate('giftday.runDue', { now: '2098-12-24T12:00:00.000Z' }))`, or directly:
+Gift day: through the transition, scoped to your edition (`editionId` from `db.editions`):
+`ok(await ann.trpc.mutate('giftday.runDue', { now: '2099-12-24T12:00:00.000Z', editionIds: [editionId] }))`, or directly:
 
 ```ts
 const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;

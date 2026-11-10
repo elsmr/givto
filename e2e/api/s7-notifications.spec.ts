@@ -15,7 +15,6 @@ test('cron: secret required, unknown jobs 404', async () => {
 });
 
 test('a family edition: join request, draw notices, Psst!, questions, unsubscribe, digests, handover', async ({ signIn, db }) => {
-  test.slow(); // a dozen cron runs over the whole database
   const [olive, ann, bob, cee, dan] = await Promise.all(['olive', 'ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   // Family: Olive organizes and manages Kid; Dan asks to join through the link. Locale nl, so
   // people without an account get Dutch; account holders get their own language.
