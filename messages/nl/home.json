@@ -1,8 +1,8 @@
 {
   "hero": {
-    "eyebrow": "Lootjes trekken met familie en vrienden",
+    "eyebrow": "Secret Santa voor familie en vrienden",
     "title": "Secret Santa, geregeld met één link",
-    "lead": "Start een Secret Santa, zet de link in de familie-appgroep en laat iedereen meedoen. Givto trekt de lootjes, bewaart de verlanglijstjes en telt af naar pakjesdag.",
+    "lead": "Start een Secret Santa, zet de link in de familie-appgroep en laat iedereen meedoen. Givto trekt de namen, bewaart de verlanglijstjes en telt af naar pakjesdag.",
     "cta": "Start een Secret Santa",
     "how-it-works": "Zo werkt het",
     "note": "Gratis. Geen wachtwoorden, geen app nodig."
@@ -22,8 +22,8 @@
       "description": "Iedereen tikt op de link, vult naam en e-mailadres in en bevestigt met een code die we mailen."
     },
     "draw": {
-      "title": "Lootjes trekken",
-      "description": "Is iedereen erbij? Trek de lootjes. Iedereen ziet alleen het eigen lootje, en koppels hou je makkelijk uit elkaar."
+      "title": "Namen trekken",
+      "description": "Is iedereen erbij? Trek de namen. Je ziet alleen voor wie jij koopt, en koppels hou je makkelijk uit elkaar."
     },
     "wishlists": {
       "title": "Vul je verlanglijstje",
@@ -50,7 +50,7 @@
     },
     "editions": {
       "title": "Volgend jaar weer",
-      "description": "Je groep blijft bestaan. Start volgend jaar een nieuwe editie met iedereen aangevinkt, en de loting vermijdt de lootjes van vorig jaar."
+      "description": "Je groep blijft bestaan. Start volgend jaar een nieuwe editie met iedereen aangevinkt, en niemand krijgt dezelfde persoon als vorig jaar."
     }
   },
   "faq": {
@@ -61,11 +61,11 @@
     },
     "secret": {
       "question": "Wie ziet wie wie getrokken heeft?",
-      "answer": "Iedereen ziet alleen het eigen lootje. Wil je toch alles weten? Sluit pakjesdag af met de grote onthulling."
+      "answer": "Niemand. Je ziet alleen voor wie jij zelf koopt. Wil je toch alles weten? Sluit pakjesdag af met de grote onthulling."
     },
     "apart": {
       "question": "Kan ik koppels uit elkaar houden?",
-      "answer": "Ja. Voeg huishoudens of Niet samen-paren toe en de loting koppelt ze nooit aan elkaar."
+      "answer": "Ja. Voeg huishoudens of Niet samen-paren toe en de trekking koppelt ze nooit aan elkaar."
     },
     "cost": {
       "question": "Wat kost het?",

@@ -1,51 +1,51 @@
 {
   "before": {
-    "title": "Lootjes trekken",
+    "title": "Namen trekken",
     "who": "{count, plural, =0 {Nog niemand doet mee.} one {# persoon doet mee:} other {# mensen doen mee:}}",
-    "scheduled": "De lootjes worden getrokken op {date}.",
-    "manual": "De organisator trekt de lootjes als iedereen erbij is.",
-    "too-few": "Om lootjes te trekken zijn er minstens {min} mensen nodig. Deel de link zodat er meer mensen bij kunnen.",
+    "scheduled": "De namen worden getrokken op {date}.",
+    "manual": "De organisator trekt de namen als iedereen erbij is.",
+    "too-few": "Om namen te trekken zijn er minstens {min} mensen nodig. Deel de link zodat er meer mensen bij kunnen.",
     "change": "Deelnemers aanpassen of een datum kiezen",
-    "draw": "Lootjes trekken",
-    "confirm-title": "Nu lootjes trekken?",
-    "confirm-description": "Iedereen krijgt meteen een lootje. Wie later meedoet, schuift er tussen.",
-    "confirm": "Lootjes trekken",
+    "draw": "Namen trekken",
+    "confirm-title": "Nu namen trekken?",
+    "confirm-description": "Iedereen krijgt meteen een naam. Wie later meedoet, schuift er tussen.",
+    "confirm": "Namen trekken",
     "cancel": "Nog niet",
-    "drawn": "Lootjes getrokken!"
+    "drawn": "De namen zijn getrokken!"
   },
   "draft": {
     "title": "Er is nog niets verstuurd",
-    "description": "Deze editie is een concept. Kijk wie er meedoet en welke data kloppen, en open hem dan zodat mensen kunnen meedoen en de lootjes getrokken kunnen worden.",
+    "description": "Deze editie is een concept. Kijk wie er meedoet en welke data kloppen, en open hem dan zodat mensen kunnen meedoen en de namen getrokken kunnen worden.",
     "member": "De organisator zet deze editie klaar.",
     "settings": "Deelnemers en data",
     "open": "Editie openen",
     "opened": "Editie geopend"
   },
   "reveal": {
-    "title": "Je lootje",
+    "title": "Je persoon",
     "tap": "Tik om te zien voor wie je een cadeau koopt",
     "hint": "Kijk even of er niemand over je schouder meekijkt.",
     "buying-for": "Je koopt een cadeau voor",
     "hide": "Verbergen",
-    "changed": "Je lootje is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
+    "changed": "Je persoon is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
     "not-in": "Je doet niet mee aan deze trekking.",
-    "not-fitted": "Je deed mee na de trekking en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw lootjes trekken."
+    "not-fitted": "Je deed mee na de trekking en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan de namen opnieuw trekken."
   },
   "next": {
     "title": "Volgend jaar weer?",
     "description": "Begin de editie van {year} met iedereen van deze keer. Er wordt niets verstuurd tot je hem opent.",
     "start": "Editie {year} beginnen",
     "errors": {
-      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog geen lootjes getrokken zijn.",
+      "EDITION_IN_PROGRESS": "Er is al een editie waarvoor de namen nog niet getrokken zijn.",
       "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
     }
   },
   "errors": {
-    "TOO_FEW_PEOPLE": "Om lootjes te trekken zijn er minstens {min} mensen nodig.",
+    "TOO_FEW_PEOPLE": "Om namen te trekken zijn er minstens {min} mensen nodig.",
     "DRAW_IMPOSSIBLE": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Pas aan wie niet samen mag, en probeer het opnieuw.",
-    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het niet om lootjes te trekken voor deze mensen. Zet het uit in de instellingen en probeer het opnieuw.",
-    "ALREADY_DRAWN": "De lootjes zijn al getrokken.",
-    "NOT_DRAWN": "Er zijn nog geen lootjes getrokken.",
+    "AVOID_PREVIOUS": "Met 'niet hetzelfde als vorig jaar' lukt het niet om namen te trekken voor deze mensen. Zet het uit in de instellingen en probeer het opnieuw.",
+    "ALREADY_DRAWN": "De namen zijn al getrokken.",
+    "NOT_DRAWN": "Er zijn nog geen namen getrokken.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   },

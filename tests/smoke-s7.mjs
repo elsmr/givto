@@ -113,7 +113,7 @@ await step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re
   const result = await run('deliveries');
   assert.equal(result.draws.sent, 2, JSON.stringify(result));
   assert.equal((await mails(ann, 'gifteeChanged')).length, 1);
-  assert.match((await mails(dan, 'namesDrawn'))[0].subject, /lootjes zijn getrokken/);
+  assert.match((await mails(dan, 'namesDrawn'))[0].subject, /namen zijn getrokken/);
   for (const user of [olive, bob, cee]) assert.equal((await mails(user, 'gifteeChanged')).length, 0);
 });
 

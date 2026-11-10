@@ -44,7 +44,7 @@
     "title": "E-mails",
     "description": "Kies welke e-mails je krijgt. Inlogmails komen altijd door.",
     "reminders": "Herinneringen voor deadlines en pakjesdag",
-    "wishlistUpdates": "Als je lootje het verlanglijstje aanpast of een tip krijgt",
+    "wishlistUpdates": "Als je persoon het verlanglijstje aanpast of een tip krijgt",
     "santaMessages": "Psst!-hints en vragen van je Santa",
     "nextYear": "Een jaarlijkse herinnering om het opnieuw te doen (organisatoren)",
     "saved": "E-mailinstellingen opgeslagen"
@@ -61,7 +61,7 @@
   },
   "delete": {
     "title": "Account verwijderen",
-    "description": "Dit verwijdert je verlanglijstje, je groepen, tips en vragen. Lootjes waar je in zit blijven geldig voor de anderen, met “Verwijderd account” in plaats van je naam. Organiseer je een groep, dan neemt wie na jou als eerste in de groep kwam het over.",
+    "description": "Dit verwijdert je verlanglijstje, je groepen, tips en vragen. Trekkingen waar je in zit blijven geldig voor de anderen, met “Verwijderd account” in plaats van je naam. Organiseer je een groep, dan neemt wie na jou als eerste in de groep kwam het over.",
     "open": "Mijn account verwijderen",
     "dialog-title": "Je account verwijderen?",
     "dialog-description": "Dit kan niet ongedaan worden gemaakt. Om zeker te weten dat jij het bent, mailen we je een code.",

@@ -14,7 +14,7 @@
   "status": {
     "draft": "Nog niet verstuurd",
     "open": "Open",
-    "drawn": "Lootjes getrokken",
+    "drawn": "Namen getrokken",
     "giftday": "Pakjesdag!",
     "done": "Afgelopen",
     "archived": "Gearchiveerd"
@@ -25,5 +25,5 @@
     "past": "Pakjesdag was op {date}",
     "none": "Nog geen pakjesdag gekozen"
   },
-  "giftee-ready": "Je lootje is getrokken"
+  "giftee-ready": "Je persoon staat klaar"
 }

@@ -4,7 +4,7 @@
   "status": {
     "draft": "Concept",
     "open": "Open om mee te doen",
-    "drawn": "Lootjes getrokken",
+    "drawn": "Namen getrokken",
     "giftday": "Pakjesdag",
     "done": "Afgelopen"
   },
@@ -20,10 +20,10 @@
     },
     "budget": "Budget",
     "no-budget": "Geen budget",
-    "draw": "Lootjes trekken",
-    "draw-on": "De lootjes worden getrokken op {date}",
-    "draw-manual": "De organisator trekt de lootjes",
-    "drawn": "De lootjes zijn getrokken",
+    "draw": "Namen trekken",
+    "draw-on": "De namen worden getrokken op {date}",
+    "draw-manual": "De organisator trekt de namen",
+    "drawn": "De namen zijn getrokken",
     "wishlist-by": "Verlanglijstjes klaar op",
     "post-by": "Cadeaus op de post op",
     "notes": "Notities"
@@ -84,7 +84,7 @@
   "leave": {
     "button": "Stoppen met deze Secret Santa",
     "title": "Stoppen met {group}?",
-    "description": "Je doet niet meer mee aan de trekking en ziet de groep niet meer. Zijn de lootjes al getrokken, dan krijgt je Santa iemand anders. Je verlanglijstje blijft van jou.",
+    "description": "Je doet niet meer mee aan de trekking en ziet de groep niet meer. Zijn de namen al getrokken, dan krijgt je Santa iemand anders. Je verlanglijstje blijft van jou.",
     "cancel": "Blijven",
     "confirm": "Stoppen",
     "errors": {
@@ -97,7 +97,7 @@
     "save": "Opslaan",
     "saved": "Opgeslagen",
     "errors": {
-      "DRAW_IMPOSSIBLE": "Met deze regels kan niemand een lootje trekken. Haal een regel weg en probeer opnieuw.",
+      "DRAW_IMPOSSIBLE": "Met deze regels kunnen de namen niet getrokken worden. Haal een regel weg en probeer het opnieuw.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     },
     "households": {
@@ -118,8 +118,8 @@
       "add": "Toevoegen"
     },
     "feasibility": {
-      "too-few": "Voor lootjes trekken zijn minstens {min} mensen nodig.",
-      "possible": "Lootjes trekken kan.",
+      "too-few": "Om namen te trekken zijn minstens {min} mensen nodig.",
+      "possible": "De namen kunnen getrokken worden.",
       "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal een regel weg."
     }
   },
