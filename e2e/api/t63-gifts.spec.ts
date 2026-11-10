@@ -90,6 +90,8 @@ test('gift counts from gift day: "gift 2 of 3", one by one ends by itself; unkno
   const [ann] = people;
   const group = await drawnGroup(people, 'Counts');
   const at = { groupSlug: group.slug, editionNumber: 1 };
+  // Guess your Santa (62) off: these turns don't stop to show each Santa.
+  ok(await ann.trpc.mutate('guess.setEnabled', { ...at, enabled: false }));
   ok(await ann.trpc.mutate('giftday.setMode', { ...at, mode: 'oneByOne' }));
   ok(await ann.trpc.mutate('giftday.shuffle', at));
   const presenter = async () => ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!;

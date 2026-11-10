@@ -103,6 +103,7 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
     await db.tips.insertOne({
       _id: newId(), editionId: edition._id, authorMemberId: old[0].id, aboutMemberId: old[1].id, text: 'Tip', anonymous: false, createdAt: new Date(), updatedAt: new Date(),
     });
+    await db.guesses.insertOne({ _id: newId(), editionId: edition._id, guesserMemberId: old[1].id, guessedMemberId: old[2].id, createdAt: new Date() });
   }
   const wish = ok(await ann.trpc.mutate('wish.create', { title: 'With a picture' }));
   const [orphan, used] = [new ObjectId(), new ObjectId()];
@@ -122,6 +123,7 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
   expect((await after(past)).draw, "replaced by edition 2's draw").toBeUndefined();
   expect((await after(recent)).draw).toBeTruthy();
   expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
+  expect(await db.guesses.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent guess stays').toBe(1);
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);
 });
 
