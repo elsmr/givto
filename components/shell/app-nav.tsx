@@ -22,7 +22,7 @@ export const AppNav = ({ className }: { className?: string }) => {
       aria-label={t('main-navigation')}
       className={cn(
         'sticky bottom-0 z-30 border-t-(length:--border-width) border-outline bg-surface p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]',
-        'md:top-0 md:h-dvh md:w-24 md:shrink-0 md:border-t-0 md:border-r-(length:--border-width) md:px-2 md:py-4',
+        'md:top-0 md:h-dvh md:w-28 md:shrink-0 md:border-t-0 md:border-r-(length:--border-width) md:px-2 md:py-4',
         className,
       )}
     >
@@ -38,7 +38,7 @@ export const AppNav = ({ className }: { className?: string }) => {
                 href={href}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold text-ink no-underline',
+                  'flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold break-words hyphens-auto text-ink no-underline',
                   active ? '-translate-x-0.5 -translate-y-0.5 border-outline bg-yellow shadow-sm' : 'hover:bg-page',
                 )}
               >
