@@ -29,12 +29,12 @@ export const StatCard = ({ icon, tone, title, value, unit, visual, className, on
         <IconTile icon={icon} tone={tone} />
         <span className="flex min-w-0 items-center gap-3">
           {visual}
-          {value !== undefined && <span className="font-heading text-3xl leading-none font-extrabold tabular-nums">{value}</span>}
+          {value !== undefined && <span className="mono font-heading text-3xl leading-none font-extrabold tabular-nums">{value}</span>}
         </span>
       </span>
       <span className="flex flex-wrap items-end justify-between gap-x-3 gap-y-0.5">
         <span className="font-semibold break-words">{title}</span>
-        {unit && <span className="ml-auto text-right text-xs text-muted">{unit}</span>}
+        {unit && <span className="mono ml-auto text-right text-xs text-muted">{unit}</span>}
       </span>
     </>
   );

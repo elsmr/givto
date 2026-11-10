@@ -17,7 +17,7 @@ export const RingGauge = ({ value, max }: { value: number; max: number }) => {
           className={value >= max ? 'stroke-mint' : 'stroke-primary'}
         />
       </svg>
-      <span className="text-sm font-bold tabular-nums">
+      <span className="mono text-sm font-bold tabular-nums">
         {value}/{max}
       </span>
     </span>

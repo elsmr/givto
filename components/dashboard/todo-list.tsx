@@ -33,7 +33,7 @@ export const TodoList = ({ groups }: { groups: DashboardGroup[] }) => {
         <CardTitle>
           <h2 className="flex items-center gap-3">
             {t('title')}
-            {todos.length > 0 && <span className="bg-ink px-2 text-base text-page tabular-nums">{todos.length}</span>}
+            {todos.length > 0 && <span className="mono bg-ink px-2 text-base text-page tabular-nums">{todos.length}</span>}
           </h2>
         </CardTitle>
       </CardHeader>

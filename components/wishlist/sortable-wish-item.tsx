@@ -68,7 +68,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
               </>
             )}
             <CardContent className="flex gap-3">
-              <span className="font-heading text-3xl leading-none font-extrabold tabular-nums" aria-hidden="true">
+              <span className="mono font-heading text-3xl leading-none font-extrabold tabular-nums" aria-hidden="true">
                 {index + 1}
               </span>
               <WishDetails wish={wish} />

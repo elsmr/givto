@@ -7,7 +7,7 @@ const GiftDayLabel = ({ date }: { date?: string }) => {
   const t = useTranslations('dashboard.gift-day');
   const format = useFormatter();
   return (
-    <p className="flex items-center gap-2 font-semibold">
+    <p className="mono flex items-center gap-2 font-semibold">
       <CalendarDays aria-hidden="true" className="size-5 shrink-0" />
       {date === undefined
         ? t('none')
@@ -24,10 +24,10 @@ export const GiftDayCountdown = ({ date, timeZone, size = 'md' }: { date?: strin
 
   return (
     <p className="flex flex-col">
-      <span className={cn('font-heading leading-none font-extrabold tabular-nums', size === 'lg' ? 'text-6xl' : 'text-4xl')}>
+      <span className={cn('mono font-heading leading-none font-extrabold tabular-nums', size === 'lg' ? 'text-6xl' : 'text-4xl')}>
         {days === 0 ? t('today') : days}
       </span>
-      <span className="text-xs font-semibold text-muted">{days === 0 ? t('today-label') : t('days', { days })}</span>
+      <span className="mono text-xs font-semibold text-muted">{days === 0 ? t('today-label') : t('days', { days })}</span>
     </p>
   );
 };

@@ -1,22 +1,22 @@
 import { StyleguideSection } from './styleguide-section';
 
 const scale = [
-  { className: 'font-heading text-6xl leading-none font-extrabold tabular-nums', sample: '12', use: 'Big number: the countdown on the hero card' },
+  { className: 'mono font-heading text-6xl leading-none font-extrabold tabular-nums', sample: '12', use: 'Big number: the countdown on the hero card' },
   { className: 'font-heading text-4xl font-extrabold sm:text-5xl', sample: 'Family Secret Santa', use: 'Page title (PageHeader h1), 4xl on phones' },
-  { className: 'font-heading text-3xl leading-none font-extrabold tabular-nums', sample: '7', use: 'Stat number (StatCard)' },
+  { className: 'mono font-heading text-3xl leading-none font-extrabold tabular-nums', sample: '7', use: 'Stat number (StatCard)' },
   { className: 'font-heading text-2xl font-bold', sample: 'Your groups', use: 'Section heading (h2)' },
   { className: 'font-heading text-xl font-bold', sample: 'Gift day', use: 'Card title' },
   { className: 'text-lg', sample: 'Add a few wishes so your Santa knows what to get you.', use: 'Intro text' },
   { className: 'text-base', sample: 'Body text in the system font stack.', use: 'Body' },
   { className: 'text-sm text-muted', sample: 'Gift day 24 December · 6 people', use: 'Descriptions, secondary lines' },
-  { className: 'text-xs font-semibold text-muted', sample: 'days to go', use: 'Tiny label under a big number' },
+  { className: 'mono text-xs font-semibold text-muted', sample: 'days to go', use: 'Tiny label under a big number' },
 ];
 
 export const TypographySection = () => (
   <StyleguideSection
     id="typography"
     title="Typography"
-    description="Headings and numbers use the heading font, everything else the system font. Weight carries the hierarchy: extrabold for titles and numbers, bold for headings, semibold for labels."
+    description="Headings use the heading font; numbers and tiny labels are in monospace for now (owner trial); everything else the system font. Weight carries the hierarchy: extrabold for titles and numbers, bold for headings, semibold for labels."
   >
     <ul className="flex flex-col">
       {scale.map(({ className, sample, use }) => (
