@@ -29,9 +29,12 @@ test('add, edit, reorder by drag and by keyboard, delete', async ({ page, signIn
     await addWish(page, 'Board game');
     await page.getByLabel('Wish', { exact: true }).fill('Cookbook');
     await page.getByRole('button', { name: 'More details' }).click();
-    await page.getByLabel('Notes').fill('Anything vegetarian');
+    await page.getByLabel('Notes').fill('Anything vegetarian, like https://example.com/ottolenghi.');
     await page.getByRole('button', { name: 'Add wish' }).click();
     await expect(wishItem(page, 'Cookbook')).toContainText('Anything vegetarian');
+    const inNotes = wishItem(page, 'Cookbook').getByRole('link', { name: 'https://example.com/ottolenghi' });
+    await expect(inNotes).toHaveAttribute('href', 'https://example.com/ottolenghi');
+    await expect(inNotes).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
     await expect(wishTitles(page)).toHaveText(['Wool socks', 'Board game', 'Cookbook']);
     await expect(page.getByText('3 wishes')).toBeVisible();
   });

@@ -7,6 +7,7 @@ import { WishBadges } from './wish-badges';
 import { WishBuyLinks } from './wish-buy-links';
 import type { WishView } from './wish-draft';
 import { WishImage } from './wish-image';
+import { LinkedText } from './linked-text';
 
 /** Notes and links: under picture and title when narrow, beside the picture when wide. */
 const wide = 'col-span-2 @md/wish:col-span-1 @md/wish:col-start-2';
@@ -63,7 +64,9 @@ export const WishCard = ({ wish, inBudget, position, status, children, className
           {details && <p className="mono text-sm font-semibold">{details}</p>}
         </div>
         {wish.description && (
-          <p className={cn('text-sm break-words whitespace-pre-line', wide)}>{wish.description}</p>
+          <p className={cn('text-sm break-words whitespace-pre-line', wide)}>
+            <LinkedText text={wish.description} />
+          </p>
         )}
         {wish.links.length > 0 && (
           <div className={wide}>
