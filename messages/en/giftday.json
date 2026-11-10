@@ -36,7 +36,7 @@
     "cancel": "Keep this order"
   },
   "reveal": {
-    "title": "The big reveal",
+    "title": "Who was whose Santa?",
     "switch": "Reveal the Santas after the gifts",
     "description": "At the end of the presenter view, everyone sees who was whose Santa. Not using the presenter? Then it's revealed when gift day is over.",
     "on": "The Santas are revealed after the gifts",
@@ -84,8 +84,8 @@
   },
   "errors": {
     "NOT_DRAWN": "Names aren't drawn yet.",
-    "NOT_GIFT_DAY": "The big reveal opens on gift day.",
-    "REVEAL_OFF": "Turn on the big reveal first.",
+    "NOT_GIFT_DAY": "The Santas can be revealed from gift day on.",
+    "REVEAL_OFF": "Turn on revealing the Santas first.",
     "EDITION_CLOSED": "This edition is over.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."

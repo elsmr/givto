@@ -36,7 +36,7 @@ const wishTitles = (tab: Locator) => tab.getByRole('listitem').getByRole('headin
 
 test('hide a wish from one group; Dibs! is "Taken" elsewhere and never shown to the owner', async ({ page, newPage, signIn, signInPage, db }) => {
   const [olive, ann, bob, cee, dan] = await Promise.all(['olive', 'ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
-  for (const title of ['Wool socks', 'Cookbook']) ok(await olive.trpc.mutate('wish.create', { title }));
+  for (const title of ['Cookbook', 'Wool socks']) ok(await olive.trpc.mutate('wish.create', { title }));
   const family = await drawnGroup(db, 'Family', [[ann, 'Ann'], [bob, 'Bob'], [olive, 'Olive']], olive);
   const friends = await drawnGroup(db, 'Friends', [[cee, 'Cee'], [dan, 'Dan'], [olive, 'Olive']], olive);
 

@@ -9,7 +9,7 @@
       "date": "The gift day is today, {today}.",
       "order": "The unwrap order is shuffled, because nobody has yet.",
       "open": "Dibs!, tips and questions stay open until the end of the day. Then it's done.",
-      "secret": "Who drew whom stays secret, unless you do the big reveal."
+      "secret": "Who drew whom stays secret, unless you reveal the Santas."
     },
     "confirm": "Start gift day",
     "done": "Gift day has started"
@@ -49,7 +49,7 @@
     "points": {
       "open": "Dibs!, tips, questions, the unwrap order and the settings open again.",
       "date": "The gift day date becomes today.",
-      "secret": "The big reveal stays as it is."
+      "secret": "Whether the Santas are revealed stays as it is."
     },
     "confirm": "Reopen gift day",
     "done": "Gift day is open again"

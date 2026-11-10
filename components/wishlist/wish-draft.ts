@@ -11,8 +11,7 @@ export interface WishDraft {
   title: string;
   description: string;
   links: WishLink[];
-  priceFrom: string;
-  priceTo: string;
+  price: string;
   currency: string;
   variant: string;
   reallyWant: boolean;
@@ -23,8 +22,7 @@ export const emptyDraft: WishDraft = {
   title: '',
   description: '',
   links: [],
-  priceFrom: '',
-  priceTo: '',
+  price: '',
   currency: 'EUR',
   variant: '',
   reallyWant: false,
@@ -39,8 +37,7 @@ export const draftFromWish = (wish: WishView): WishDraft => ({
   title: wish.title,
   description: wish.description ?? '',
   links: wish.links,
-  priceFrom: toMajor(wish.price?.amount),
-  priceTo: toMajor(wish.price?.maxAmount),
+  price: toMajor(wish.price?.amount),
   currency: wish.price?.currency ?? emptyDraft.currency,
   variant: wish.variant ?? '',
   reallyWant: wish.reallyWant ?? false,
@@ -56,24 +53,20 @@ export const addImportedLink = (draft: WishDraft, { url, title, description, pri
     links,
     title: title ?? '',
     description: draft.description || description || '',
-    ...(price && { priceFrom: toMajor(price.amount), priceTo: toMajor(price.maxAmount), currency: price.currency }),
+    ...(price && { price: toMajor(price.amount), currency: price.currency }),
   };
 };
 
 const optional = (text: string) => text.trim() || undefined;
 
 export const draftToInput = (draft: WishDraft): WishInput => {
-  const amount = toCents(draft.priceFrom);
-  const maxAmount = toCents(draft.priceTo);
+  const amount = toCents(draft.price);
   return {
     kind: draft.kind,
     title: draft.title,
     description: optional(draft.description),
     links: draft.links,
-    price:
-      amount === undefined
-        ? undefined
-        : { currency: draft.currency, amount, ...(maxAmount !== undefined && { maxAmount }) },
+    price: amount === undefined ? undefined : { currency: draft.currency, amount },
     variant: optional(draft.variant),
     reallyWant: draft.reallyWant,
   };

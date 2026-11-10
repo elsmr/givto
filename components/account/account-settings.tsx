@@ -38,7 +38,7 @@ export const AccountSettings = ({ me }: { me: RouterOutputs['me']['get'] }) => {
           <ThemeSelect />
         </AccountSubsection>
         <CardDivider />
-        <AccountSubsection title={t('notifications.title')} description={t('notifications.description')}>
+        <AccountSubsection title={t('notifications.title')}>
           <NotificationSettings prefs={me.notifications} />
         </AccountSubsection>
       </AccountSection>

@@ -1,7 +1,7 @@
 {
   "page-title": "Unsubscribe · Givto",
   "title": "Stop {category}?",
-  "intro": "You won't get {category} from Givto by email anymore. Sign-in emails always come through.",
+  "intro": "You won't get {category} from Givto by email anymore.",
   "confirm": "Unsubscribe",
   "done-title": "You're unsubscribed",
   "done": "No more {category}. Changed your mind? Turn them back on in your email settings.",

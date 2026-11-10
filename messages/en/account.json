@@ -45,8 +45,7 @@
     "removed": "Passkey removed"
   },
   "notifications": {
-    "title": "Emails",
-    "description": "Sign-in emails always come through.",
+    "title": "Email notifications",
     "reminders": "Reminders before deadlines and gift day",
     "wishlistUpdates": "When your giftee changes their wishlist or gets a tip",
     "santaMessages": "Psst! hints and questions from your Santa",

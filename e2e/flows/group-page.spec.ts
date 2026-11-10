@@ -1,7 +1,6 @@
 // The group home by phase (61): the phase stepper, the tabs in the URL hash, the app nav on
 // phones and desktop, and notices that only show when there's something to see.
 import type { Page } from '@playwright/test';
-import { ObjectId } from 'mongodb';
 import { expect, ok, test, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
@@ -146,32 +145,6 @@ test('the app nav: a bar at the bottom on phones, a rail on desktop; the tabs fi
   }
   await tab(page, 'People').click();
   await expect(page.getByRole('tabpanel', { name: 'People' })).toBeVisible();
-});
-
-test('the people stat fits as many avatars as it has room for and counts the rest', async ({ page, signIn, signInPage, db }, testInfo) => {
-  const [ann, bob] = await Promise.all(['ann', 'bob'].map((name) => signIn(name)));
-  const group = await openGroup(ann, bob, 'Crowd');
-  const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;
-  const now = new Date();
-  const crowd = ['Cee', 'Dee', 'Eve', 'Fay', 'Gus', 'Hal', 'Ivy', 'Jan', 'Kim', 'Lou'].map((name) => ({
-    id: new ObjectId().toHexString(), name, role: 'member' as const, status: 'joined' as const, joinedAt: now,
-    wishlistView: { includeNewWishes: true, hiddenWishIds: [] },
-  }));
-  await db.groups.updateOne({ _id: groupId }, { $push: { members: { $each: crowd } } });
-  const participants = crowd.map((m) => ({ memberId: m.id, participates: true, status: 'joined' as const, addedAt: now }));
-  await db.editions.updateOne({ groupId, number: 1 }, { $push: { participants: { $each: participants } } });
-  await signInPage(page, ann);
-  await page.goto(`/g/${group.slug}`);
-
-  const card = page.getByRole('button', { name: '12 People', exact: true });
-  const stack = card.locator('[data-slot="avatar-group"]');
-  await expect(stack.locator('[data-slot="avatar-group-count"]')).toBeVisible();
-  const shown = await stack.locator('[data-slot="avatar"]').count();
-  if (testInfo.project.name === 'mobile') expect(shown).toBe(5);
-  else expect(shown).toBeGreaterThanOrEqual(3);
-  await expect(stack.locator('[data-slot="avatar-group-count"]')).toHaveText(`+${12 - shown}`);
-  const [cardBox, stackBox] = [(await card.boundingBox())!, (await stack.boundingBox())!];
-  expect(stackBox.x + stackBox.width, 'inside the card').toBeLessThanOrEqual(cardBox.x + cardBox.width);
 });
 
 test('notices show only when there is something: join requests, Psst! and questions', async ({ page, newPage, signIn, signInPage, db }) => {

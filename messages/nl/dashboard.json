@@ -71,7 +71,6 @@
     "today-label": "het is pakjesdag"
   },
   "wishlist-stat": {
-    "title": "Mijn verlanglijstje",
-    "unit": "{count, plural, =1 {wens} other {wensen}}"
+    "title": "Mijn verlanglijstje"
   }
 }

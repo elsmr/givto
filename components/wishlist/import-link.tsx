@@ -85,28 +85,26 @@ export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="@container flex flex-col gap-2 @md:flex-row @md:items-end">
-        <Field className="flex-1">
-          <FieldLabel htmlFor={`${id}-link`}>{t('label')}</FieldLabel>
-          <Input
-            id={`${id}-link`}
-            type="url"
-            inputMode="url"
-            maxLength={2000}
-            placeholder={t('placeholder')}
-            aria-describedby={`${id}-link-hint`}
-            value={url}
-            onChange={(event) => setUrl(event.target.value)}
-            onPaste={paste}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter') return;
-              event.preventDefault();
-              run(url);
-            }}
-          />
-        </Field>
-        <Button type="button" variant="neutral" className="w-fit" disabled={importUrl.isPending} onClick={() => run(url)}>
+    <Field>
+      <FieldLabel htmlFor={`${id}-link`}>{t('label')}</FieldLabel>
+      <div className="flex gap-2">
+        <Input
+          id={`${id}-link`}
+          type="url"
+          inputMode="url"
+          maxLength={2000}
+          placeholder={t('placeholder')}
+          aria-describedby={`${id}-link-hint`}
+          value={url}
+          onChange={(event) => setUrl(event.target.value)}
+          onPaste={paste}
+          onKeyDown={(event) => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            run(url);
+          }}
+        />
+        <Button type="button" variant="ghost" disabled={importUrl.isPending} onClick={() => run(url)}>
           <Link2 aria-hidden="true" />
           {importUrl.isPending ? t('busy') : t('submit')}
         </Button>
@@ -115,6 +113,6 @@ export const ImportLink = ({ id, ref, onImported }: ImportLinkProps) => {
       <p role="status" className={notice === t('added') ? 'sr-only' : 'text-sm font-semibold empty:hidden'}>
         {notice}
       </p>
-    </div>
+    </Field>
   );
 };

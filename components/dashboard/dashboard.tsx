@@ -14,6 +14,9 @@ const isPast = (group: DashboardGroup) => group.archived || group.edition?.statu
 const giftDayOrder = (group: DashboardGroup) =>
   group.edition?.giftDay ? daysUntil(group.edition.giftDay, group.edition.timeZone) : Infinity;
 
+// Editions brought over from the old app have a year but no gift day.
+const pastOrder = (group: DashboardGroup) => group.edition?.giftDay ?? String(group.edition?.year ?? '');
+
 const GroupGrid = ({ groups }: { groups: DashboardGroup[] }) => (
   <ul className="grid gap-6 sm:grid-cols-2">
     {groups.map((group) => (
@@ -38,7 +41,7 @@ export const Dashboard = ({ groups }: { groups: DashboardGroup[] }) => {
   const t = useTranslations('dashboard');
   const wishes = useQuery(useTRPC().wish.list.queryOptions());
   const [next, ...current] = groups.filter((group) => !isPast(group)).toSorted((a, b) => giftDayOrder(a) - giftDayOrder(b));
-  const past = groups.filter(isPast).toSorted((a, b) => giftDayOrder(b) - giftDayOrder(a));
+  const past = groups.filter(isPast).toSorted((a, b) => pastOrder(b).localeCompare(pastOrder(a)));
 
   return (
     <div className="flex flex-col gap-10">
@@ -49,7 +52,6 @@ export const Dashboard = ({ groups }: { groups: DashboardGroup[] }) => {
           tone="coral"
           title={t('wishlist-stat.title')}
           value={wishes.data?.length ?? '–'}
-          unit={t('wishlist-stat.unit', { count: wishes.data?.length ?? 0 })}
           href="/wishlist"
         />
       </div>

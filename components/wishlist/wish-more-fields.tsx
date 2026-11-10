@@ -1,7 +1,6 @@
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
 import { WishKind } from '@/lib/schema/wish';
 import { useTranslations } from 'next-intl';
 import type { WishDraft } from './wish-draft';
@@ -37,15 +36,6 @@ export const WishMoreFields = ({ id, draft, update }: WishMoreFieldsProps) => {
         </div>
         {draft.kind !== 'wish' && <FieldDescription>{t(`kind-${draft.kind}-hint`)}</FieldDescription>}
       </FieldSet>
-      <Field>
-        <FieldLabel htmlFor={`${id}-description`}>{t('description')}</FieldLabel>
-        <Textarea
-          id={`${id}-description`}
-          maxLength={2000}
-          value={draft.description}
-          onChange={(event) => update({ description: event.target.value })}
-        />
-      </Field>
       <WishPriceFields id={id} draft={draft} update={update} />
       <Field>
         <FieldLabel htmlFor={`${id}-variant`}>{t('variant')}</FieldLabel>

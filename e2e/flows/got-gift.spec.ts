@@ -29,7 +29,7 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   await expect(page.getByText("You've got 2 gifts")).toBeVisible();
   const mugCard = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'Moomin mug' }) });
   await expect(mugCard.getByText('Bought'), 'the same card, marked bought (73)').toBeVisible();
-  await expect(mugCard.getByRole('link', { name: /^Buy at bol\.com/ })).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
+  await expect(mugCard.getByRole('link', { name: /^bol\.com/ })).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
 
   await page.goto(`/g/${group.slug}`);
   const others = members.filter((m) => m.userId !== ann.id).map((m) => m.name).toSorted();

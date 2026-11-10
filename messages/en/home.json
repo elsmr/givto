@@ -1,71 +1,71 @@
 {
   "hero": {
     "eyebrow": "Secret Santa for family and friends",
-    "title": "Secret Santa, sorted with one link",
-    "lead": "Start a Secret Santa, share the link with your family or friends and let everyone join. Givto draws the names, keeps the wishlists and counts down to gift day.",
+    "title": "Organize a Secret Santa with one link",
+    "lead": "Share a link with your family or friends so everyone can join. Givto draws the names and keeps the wishlists.",
     "cta": "Start a Secret Santa",
     "how-it-works": "How it works",
-    "note": "Free. No passwords, no app to install."
+    "note": "Free. No passwords and no app to install."
   },
   "steps": {
     "title": "How it works",
     "create": {
       "title": "Start a Secret Santa",
-      "description": "Give it a name, and add a gift day and a budget if you like. Takes a minute."
+      "description": "Give it a name. Add a gift day and a budget if you like."
     },
     "share": {
-      "title": "Share one link",
-      "description": "Share the link with your family or friends. You don't need anyone's email address."
+      "title": "Share the link",
+      "description": "Send the link to your family or friends. You don't need their email addresses."
     },
     "join": {
       "title": "Everyone joins",
-      "description": "People tap the link, enter their name and email and confirm with a code we send them."
+      "description": "People open the link, enter their name and email and confirm with a code."
     },
     "draw": {
       "title": "Draw names",
-      "description": "Once everyone's in, draw names. Everyone only sees their own giftee, and you can keep couples apart."
+      "description": "When everyone's in, draw names. Each person only sees who they're buying for."
     },
     "wishlists": {
-      "title": "Fill your wishlists",
-      "description": "Add a few wishes so your Santa knows what to get you. Santas call Dibs! so nobody buys the same thing twice."
+      "title": "Fill in your wishlist",
+      "description": "Add a few wishes so your Santa knows what to get you."
     },
     "gift-day": {
       "title": "Gift day",
-      "description": "Unwrap in turns with the unwrap order, and end with the big reveal if you want one."
+      "description": "Unwrap your gifts in turns, and end with the big reveal if you like."
     }
   },
   "features": {
-    "title": "Everything your Secret Santa needs",
+    "title": "Also in Givto",
     "wishlist": {
-      "title": "One wishlist, every group",
-      "description": "Keep one personal wishlist and use it in all your groups. Hide wishes from a group that shouldn't see them."
+      "title": "One wishlist for all your groups",
+      "description": "Keep one wishlist for every group you're in. Hide wishes from a group if you want."
     },
     "dibs": {
       "title": "Dibs!",
-      "description": "Santas claim a wish so nobody doubles up. You never see what's been claimed on your own list."
+      "description": "Santas call Dibs! on what they're buying, so you don't get the same gift from two groups."
     },
     "tips": {
       "title": "Tips for Santa",
-      "description": "Know what someone really wants? Leave a tip for their Santa, with your name or anonymously."
+      "description": "Leave a tip for someone's Santa, with your name or anonymously."
     },
     "editions": {
       "title": "Same again next year",
-      "description": "Your group sticks around: start a new edition any time with everyone ticked, and nobody gets the same person as last time."
+      "description": "Next year, start again with the same group. Givto can make sure nobody gets the same person as last time."
     }
   },
   "faq": {
     "title": "Questions",
     "account": {
       "question": "Does everyone need an account?",
-      "answer": "No passwords and nothing to install. People join from the link with their name and email and confirm with a code we email them."
+      "answer": "Just an email address. No password and no app."
     },
     "secret": {
       "question": "Who can see who drew whom?",
-      "answer": "Everyone only sees who they give to. If you like, end gift day with the big reveal."
+      "answer": "Nobody, not even the organizer. You can end gift day with the big reveal if you like."
     },
     "apart": {
       "question": "Can I keep couples apart?",
-      "answer": "Yes. Put them in the same Keep apart row and they never draw each other."
+      "answer": "Yes. Put them in the same Keep apart row and they won't draw each other."
     },
     "cost": {
       "question": "What does it cost?",
@@ -73,11 +73,11 @@
     },
     "data": {
       "question": "What happens to my data?",
-      "answer": "We only keep what your Secret Santa needs and clean up after gift day. Read the <link>privacy page</link>."
+      "answer": "We only keep what your Secret Santa needs and delete it when it's no longer needed. Read the <link>privacy page</link>."
     }
   },
   "closing": {
-    "title": "Ready? It takes a minute.",
+    "title": "Ready to start?",
     "cta": "Start a Secret Santa"
   }
 }
