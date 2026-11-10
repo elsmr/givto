@@ -15,7 +15,8 @@ export const retention = {
   drawMaxMonths: 24,
   /** Groups without edition activity; deleted after an email warning. */
   inactiveGroupMonths: 24,
-  errorReportDays: 90,
+  /** Sentry keeps errors 30 days on the free Developer plan; paid plans keep them 90. Raise this when upgrading. */
+  errorReportDays: 30,
   /** Which email went to whom (`sentNotifications`): the TTL index in lib/server/db.ts. Changing it on an existing database needs a collMod. */
   sentEmailsDays: 400,
 };
