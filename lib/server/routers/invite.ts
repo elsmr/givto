@@ -1,10 +1,10 @@
 import * as v from 'valibot';
 import { InviteEmail, inviteSubject } from '../../../emails/invite';
+import { siteUrl } from '../../../emails/ui/site';
 import { Email, PersonName } from '../../schema/common';
 import { MAX_MEMBERS, Slug } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
-import { requireEnv } from '../env';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
 import { addToCurrentEdition, hashToken, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
@@ -64,8 +64,7 @@ export const inviteRouter = router({
         expiresAt: new Date(now.getTime() + INVITE_DAYS * 24 * 60 * 60 * 1000),
       });
       const locale = account?.locale ?? ctx.group.locale;
-      const base = new URL(requireEnv('BETTER_AUTH_URL')).origin;
-      const url = `${base}${locale === 'en' ? '' : `/${locale}`}/g/${ctx.group.slug}/join?invite=${token}`;
+      const url = siteUrl(locale, `/g/${ctx.group.slug}/join?invite=${token}`);
       const names = { locale, organizer: ctx.member.name, group: ctx.group.name };
       await sendMail({
         to: input.email,
