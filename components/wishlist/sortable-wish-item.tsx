@@ -43,7 +43,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
       className={cn(
         'flex gap-2 bg-surface p-3 shadow-md bordered sm:gap-4 sm:p-4',
         dragging && 'opacity-50',
-        over && 'outline-3 outline-offset-3 outline-primary'
+        over && 'outline-3 outline-offset-3 outline-focus'
       )}
     >
       <div className="flex flex-col items-center gap-1">

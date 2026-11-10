@@ -85,5 +85,9 @@
     "EDITION_CLOSED": "This edition is over.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  },
+  "panel": {
+    "order": "Unwrap order",
+    "with-reveal": "Gift day: unwrap order and the big reveal"
   }
 }

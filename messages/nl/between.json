@@ -21,7 +21,8 @@
     "save": "Bewaren",
     "cancel": "Annuleren",
     "closed": "Tips zijn gesloten voor deze Secret Santa.",
-    "nobody": "Nog niemand om een tip over te geven."
+    "nobody": "Nog niemand om een tip over te geven.",
+    "dialog-description": "Alleen hun Santa leest die: nooit de persoon over wie het gaat, nooit de organisator."
   },
   "santa": {
     "title": "Cadeau voor {name}",

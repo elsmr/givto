@@ -1,8 +1,10 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { History } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
+import { IconCardTitle } from './icon-card-title';
 
 /** Every edition of the group, newest first (33). Only once there's history. */
 export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNumber: number }) => {
@@ -12,9 +14,9 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('editions.title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={History} tone="mint">
+          {t('editions.title')}
+        </IconCardTitle>
       </CardHeader>
       <CardContent>
         <ul className="flex flex-col divide-y-2 divide-ink/10">

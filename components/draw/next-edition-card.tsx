@@ -1,9 +1,11 @@
+import { IconCardTitle } from '@/components/group/icon-card-title';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { FieldError } from '@/components/ui/field';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
 import { useMutation } from '@tanstack/react-query';
+import { Repeat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { knownAppError } from '../group/app-error-code';
@@ -36,9 +38,9 @@ export const NextEditionCard = ({ groupSlug, edition }: { groupSlug: string; edi
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <IconCardTitle icon={Repeat} tone="primary-muted">
+          {t('title')}
+        </IconCardTitle>
         <CardDescription>{t('description', { year })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
