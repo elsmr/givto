@@ -152,12 +152,12 @@
   }
 
   /*
-   * Yellow, mint and coral are too light for cream text: they keep the light theme's text and an
-   * ink focus ring (lavender vanishes on them). Surfaces inside them switch back (rule above).
+   * Yellow, mint and coral are too light for cream text: dark text, a dark muted (4.5:1+ on all
+   * three) and a dark focus ring (lavender vanishes on them). Surfaces inside switch back (rule above).
    */
   :root[data-theme='dark'] :is(.bg-yellow, .bg-mint, .bg-coral):not(:disabled, [data-disabled]) {
     --color-ink: #111111;
-    --color-muted: #5c5c66;
+    --color-muted: #35323d;
     --color-focus: #111111;
     color: var(--color-ink);
   }
