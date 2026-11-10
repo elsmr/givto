@@ -46,7 +46,7 @@
   },
   "notifications": {
     "title": "E-mails",
-    "description": "Kies welke e-mails je krijgt. Inlogmails komen altijd door.",
+    "description": "Inlogmails komen altijd door.",
     "reminders": "Herinneringen voor deadlines en pakjesdag",
     "wishlistUpdates": "Als je persoon het verlanglijstje aanpast of een tip krijgt",
     "santaMessages": "Psst!-hints en vragen van je Santa",

@@ -8,8 +8,8 @@
   "order": {
     "title": "Uitpakvolgorde",
     "intro": "Willekeurig gekozen en een verrassing: de presentator draait wie er aan de beurt is.",
-    "none": "Er is nog geen uitpakvolgorde. De organisator kan er een schudden; anders gebeurt dat op pakjesdag.",
-    "none-organizer": "Schud een willekeurige uitpakvolgorde. Die blijft een verrassing: in de presentatieweergave draai je voor elke beurt. Schud je niet, dan gebeurt het op pakjesdag.",
+    "none": "Nog geen uitpakvolgorde: die wordt uiterlijk op pakjesdag geschud.",
+    "none-organizer": "De volgorde blijft een verrassing: in de presentatieweergave draai je voor elke beurt. Schud je niet, dan gebeurt het op pakjesdag.",
     "you": "jij",
     "shuffle": "Uitpakvolgorde schudden",
     "reshuffle": "Opnieuw schudden",
@@ -38,7 +38,7 @@
   "reveal": {
     "title": "De grote onthulling",
     "switch": "De grote onthulling doen",
-    "switch-help": "Vanaf pakjesdag kun je iedereen laten zien wie wiens Santa was. Staat uit tot je hem aanzet.",
+    "switch-help": "Vanaf pakjesdag kun je iedereen laten zien wie wiens Santa was.",
     "teaser": "Op pakjesdag onthult de organisator wie wiens Santa was.",
     "ready": "Onthul het als iedereen heeft uitgepakt: dan ziet iedereen wie wiens Santa was.",
     "button": "Onthul wie wiens Santa was",

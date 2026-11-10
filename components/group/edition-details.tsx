@@ -15,9 +15,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
   const localDate = (date: string) => formatLocalDate(date, locale);
   const draw = !isBeforeDraw(edition)
     ? t('drawn')
-    : edition.drawAt
-      ? t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) })
-      : t('draw-manual');
+    : edition.drawAt && t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) });
   const posted = edition.exchangeMode !== 'inPerson';
 
   return (
@@ -34,8 +32,12 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
               </dd>
             </>
           )}
-          <dt className="font-semibold">{t('draw')}</dt>
-          <dd>{draw}</dd>
+          {draw && (
+            <>
+              <dt className="font-semibold">{t('draw')}</dt>
+              <dd>{draw}</dd>
+            </>
+          )}
           {edition.wishlistBy && (
             <>
               <dt className="font-semibold">{t('wishlist-by')}</dt>

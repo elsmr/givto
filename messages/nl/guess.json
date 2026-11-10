@@ -13,7 +13,7 @@
   },
   "dialog": {
     "title": "Wie is jouw Santa?",
-    "description": "Kies één persoon. Eenmaal vastgelegd kun je het niet meer veranderen. Niemand ziet je gok tot jij aan de beurt bent op pakjesdag.",
+    "description": "Eenmaal vastgelegd kun je het niet meer veranderen. Niemand ziet je gok tot jij aan de beurt bent op pakjesdag.",
     "people": "Jouw gok",
     "lock": "Leg vast",
     "cancel": "Nog niet",

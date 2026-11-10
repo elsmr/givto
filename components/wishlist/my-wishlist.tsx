@@ -30,12 +30,9 @@ export const MyWishlist = () => {
         // Phones: the empty note or "Add a wish" first, then the list. Wide: "Add a wish" beside it.
         <div className="flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
           {wishes.data.length === 0 && (
-            <div className="flex items-start gap-4 border-2 border-dashed border-outline bg-surface p-6 lg:col-start-1 lg:row-start-1">
+            <div className="flex items-center gap-4 border-2 border-dashed border-outline bg-surface p-6 lg:col-start-1 lg:row-start-1">
               <IconTile icon={Heart} tone="coral" />
-              <div className="flex flex-col gap-2">
-                <h2 className="text-xl font-bold">{t('empty-title')}</h2>
-                <p className="max-w-prose">{t('empty')}</p>
-              </div>
+              <h2 className="text-xl font-bold">{t('empty-title')}</h2>
             </div>
           )}
           <div className="lg:sticky lg:top-8 lg:col-start-2 lg:row-start-1">

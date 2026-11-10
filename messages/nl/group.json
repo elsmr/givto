@@ -20,7 +20,6 @@
     "no-budget": "Geen budget",
     "draw": "Loting",
     "draw-on": "Er wordt geloot op {date}",
-    "draw-manual": "De organisator loot",
     "drawn": "Er is geloot",
     "wishlist-by": "Verlanglijstjes klaar op",
     "post-by": "Cadeaus op de post op",
@@ -91,7 +90,7 @@
   },
   "keep-apart": {
     "title": "Niet samen",
-    "description": "Wie mag elkaar niet krijgen? Stelletjes en gezinnen kopen toch al iets voor elkaar. Wie in dezelfde rij staat, krijgt elkaar nooit.",
+    "description": "Wie mag elkaar niet krijgen? Wie in dezelfde rij staat, krijgt elkaar nooit.",
     "save": "Opslaan",
     "saved": "Opgeslagen",
     "errors": {

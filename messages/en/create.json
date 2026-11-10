@@ -17,7 +17,6 @@
   "details": {
     "name": "What's your Secret Santa called?",
     "name-placeholder": "Family",
-    "name-help": "Something everyone recognizes, like Family, Friends or The office.",
     "next": "Next",
     "gift-day": {
       "legend": "When's gift day?",
@@ -35,7 +34,7 @@
     },
     "budget": {
       "legend": "Budget",
-      "help": "Optional. Everyone sees it, so nobody overspends.",
+      "help": "Optional. Everyone sees it.",
       "amount": "Amount",
       "max": "Up to (optional)",
       "currency": "Currency"

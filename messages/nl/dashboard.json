@@ -26,7 +26,7 @@
   "hi": "Hoi {name}",
   "todo": {
     "title": "Te doen",
-    "all-done": "Niets te doen op dit moment. Als iets je aandacht nodig heeft, zie je het hier.",
+    "all-done": "Niets te doen op dit moment.",
     "giftDay": {
       "text": "Het is pakjesdag!",
       "action": "Openen"

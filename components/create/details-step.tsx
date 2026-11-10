@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { CardDivider } from '@/components/ui/card';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { todayIn } from '@/lib/local-date';
 import { GiftDay } from '@/lib/schema/edition';
@@ -48,10 +48,8 @@ export const DetailsStep = ({ draft, timeZone, onChange, onNext }: DetailsStepPr
             placeholder={t('name-placeholder')}
             value={draft.name}
             aria-invalid={issues.name ? 'true' : undefined}
-            aria-describedby="group-name-help"
             onChange={(event) => onChange({ name: event.target.value })}
           />
-          <FieldDescription id="group-name-help">{t('name-help')}</FieldDescription>
           {issues.name && <FieldError>{tIssues(issues.name)}</FieldError>}
         </Field>
         <CardDivider className="-mx-(--card-spacing) w-auto" />

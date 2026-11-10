@@ -26,7 +26,7 @@
   "hi": "Hi {name}",
   "todo": {
     "title": "To do",
-    "all-done": "Nothing to do right now. We'll show it here when something needs you.",
+    "all-done": "Nothing to do right now.",
     "giftDay": {
       "text": "It's gift day!",
       "action": "Open"

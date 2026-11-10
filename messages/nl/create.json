@@ -17,7 +17,6 @@
   "details": {
     "name": "Hoe heet je Secret Santa?",
     "name-placeholder": "Familie",
-    "name-help": "Iets wat iedereen herkent, zoals Familie, Vrienden of Het werk.",
     "next": "Volgende",
     "gift-day": {
       "legend": "Wanneer is pakjesdag?",
@@ -35,7 +34,7 @@
     },
     "budget": {
       "legend": "Budget",
-      "help": "Mag je overslaan. Iedereen ziet het, zodat niemand te veel uitgeeft.",
+      "help": "Mag je overslaan. Iedereen ziet het.",
       "amount": "Bedrag",
       "max": "Tot (optioneel)",
       "currency": "Munteenheid"
