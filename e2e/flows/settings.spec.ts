@@ -209,6 +209,8 @@ test('after gift day: same again next year, then open the new edition', async ({
 
   await test.step('open it from the group page', async () => {
     await page.getByRole('link', { name: 'Back to Yearly' }).click();
+    await expect(page.getByRole('link', { name: 'Secret Santa 2099' }), 'editions start collapsed').toBeHidden();
+    await page.getByRole('heading', { name: 'Editions' }).click();
     await expect(page.getByRole('link', { name: 'Secret Santa 2100' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('link', { name: 'Secret Santa 2099' })).toBeVisible();
     await expect(page.getByRole('heading', { name: "Nothing's sent yet" })).toBeVisible();
