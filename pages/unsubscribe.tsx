@@ -6,11 +6,15 @@ import type { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 
 /** Where the footer link of reminder and notification emails lands (29, 54). No sign-in needed. */
 export default function UnsubscribePage() {
   const t = useTranslations('unsubscribe');
   const router = useRouter();
+  // Not `router.isReady` while rendering: without a query it's already true at hydration, unlike on the server.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(router.isReady), [router.isReady]);
 
   return (
     <AppShell>
@@ -19,7 +23,7 @@ export default function UnsubscribePage() {
         <meta name="robots" content="noindex" />
         <meta name="referrer" content="no-referrer" />
       </Head>
-      {router.isReady ? <UnsubscribeCard token={String(router.query.t ?? '')} /> : <LogoAnimation variant="loading" />}
+      {ready ? <UnsubscribeCard token={String(router.query.t ?? '')} /> : <LogoAnimation variant="loading" />}
     </AppShell>
   );
 }

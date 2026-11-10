@@ -19,10 +19,10 @@ import type { GroupMember } from '../group/group-data';
 import { DrawError } from './draw-error';
 import { useRefreshEdition } from './use-refresh-edition';
 
-type DrawNamesButtonProps = { groupSlug: string; editionNumber: number; members: GroupMember[] };
+type DrawNamesButtonProps = { groupSlug: string; editionNumber: number; members: GroupMember[]; primary: boolean };
 
 /** Organizer: "Draw names" now, after a confirmation (34). */
-export const DrawNamesButton = ({ groupSlug, editionNumber, members }: DrawNamesButtonProps) => {
+export const DrawNamesButton = ({ groupSlug, editionNumber, members, primary }: DrawNamesButtonProps) => {
   const t = useTranslations('draw.before');
   const trpc = useTRPC();
   const refresh = useRefreshEdition(groupSlug);
@@ -45,7 +45,7 @@ export const DrawNamesButton = ({ groupSlug, editionNumber, members }: DrawNames
         run.reset();
       }}
     >
-      <DialogTrigger render={<Button size="lg" />}>
+      <DialogTrigger render={<Button size="lg" variant={primary ? 'default' : 'neutral'} />}>
         <Shuffle aria-hidden="true" />
         {t('draw')}
       </DialogTrigger>

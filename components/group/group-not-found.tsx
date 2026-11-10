@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { signOut } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -18,9 +18,9 @@ export const GroupNotFound = () => {
       <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
       <p className="text-lg">{t('description')}</p>
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Button nativeButton={false} render={<Link href="/groups" />}>
+        <Link href="/groups" className={buttonVariants()}>
           {t('my-secret-santas')}
-        </Button>
+        </Link>
         <Button variant="neutral" onClick={() => void switchAccount()}>
           {t('switch-account')}
         </Button>

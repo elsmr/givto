@@ -1,7 +1,6 @@
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import { cn } from '@/lib/utils';
 import { Check, Presentation } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -20,7 +19,7 @@ type UnwrapOrderCardProps = {
   canPresent: boolean;
 };
 
-/** The unwrap order (32): the same random order for everyone, who's unwrapping now, and the mode. */
+/** The unwrap order (32): a surprise until the presenter spins, so only who's unwrapping now and who already went; and the mode. */
 export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, canShuffle, canPresent }: UnwrapOrderCardProps) => {
   const t = useTranslations('giftday.order');
   const inProgress = Boolean(order?.started && !order.finished);
@@ -35,21 +34,21 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, c
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {order?.started && <UnwrapNow order={order} />}
-        {order && (
-          <ol className="flex flex-col gap-2">
-            {order.people.map((person, index) => (
-              <li key={person.memberId} className={cn('flex items-center gap-3', order.started && person.done && 'text-muted')}>
-                <span className="flex size-8 shrink-0 items-center justify-center border-2 border-ink bg-yellow font-bold text-ink">
-                  {index + 1}
-                </span>
-                <span className="min-w-0 font-semibold break-words">
-                  {person.name}
-                  {person.memberId === meId && <span className="font-normal text-muted"> ({t('you')})</span>}
-                </span>
-                {order.started && person.done && <Check aria-label={t('done')} className="size-5 shrink-0" />}
-              </li>
-            ))}
-          </ol>
+        {order && order.went.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold">{t('went')}</h3>
+            <ol className="flex flex-col gap-2">
+              {order.went.map((person) => (
+                <li key={person.memberId} className="flex items-center gap-3">
+                  <span className="min-w-0 font-semibold break-words">
+                    {person.name}
+                    {person.memberId === meId && <span className="font-normal text-muted"> ({t('you')})</span>}
+                  </span>
+                  {person.done && <Check aria-label={t('done')} className="size-5 shrink-0" />}
+                </li>
+              ))}
+            </ol>
+          </div>
         )}
         {canShuffle ? (
           <UnwrapModeSelect groupSlug={groupSlug} editionNumber={editionNumber} mode={mode} locked={inProgress} />

@@ -4,7 +4,8 @@ import { KeepApartSection } from '@/components/group/keep-apart-section';
 import { PendingRequests } from '@/components/group/pending-requests';
 import { ShareSection } from '@/components/group/share-section';
 import { useRequireSession } from '@/components/group/use-require-session';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LoadFailed } from '@/components/shell/load-failed';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
@@ -18,7 +19,7 @@ import { GroupNameForm } from './group-name-form';
 import { PeopleSettings } from './people-settings';
 import { RedrawSection } from './redraw-section';
 
-/** /g/[slug]/settings (27): the organizer's place for the group and its current edition. Members get not-found. */
+/** /g/[slug]/settings (27): the organizer's place for the group and its current edition. Members are sent back to the group; others get not-found. */
 export const GroupSettings = ({ slug }: { slug: string }) => {
   const t = useTranslations('settings');
   const tGroup = useTranslations('group');
@@ -28,13 +29,20 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
 
   if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {
-    return (
-      <Alert variant="danger">
-        <AlertDescription>{tGroup('load-failed')}</AlertDescription>
-      </Alert>
-    );
+    return <LoadFailed message={tGroup('load-failed')} onRetry={() => void group.refetch()} />;
   }
   const organizer = group.data?.organizer;
+  if (group.data && !organizer) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
+        <p className="text-lg">{t('only-organizer', { group: group.data.name })}</p>
+        <Link href={`/g/${slug}`} className={buttonVariants({ className: 'self-start' })}>
+          {t('back', { group: group.data.name })}
+        </Link>
+      </div>
+    );
+  }
   if (group.error || !organizer) return <GroupNotFound />;
 
   const { data } = group;
@@ -43,7 +51,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <Link href={`/g/${slug}`} className="inline-flex items-center gap-1 self-start font-semibold">
+        <Link href={`/g/${slug}`} className="inline-flex min-h-11 items-center gap-1 self-start font-semibold">
           <ArrowLeft aria-hidden="true" className="size-4" />
           {t('back', { group: data.name })}
         </Link>
@@ -65,7 +73,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
           </CardHeader>
         </Card>
       )}
-      <ShareSection group={data} />
+      <ShareSection group={data} primary={false} />
       {edition?.status === 'drawn' && <RedrawSection group={data} edition={edition} />}
       <DangerZone slug={slug} groupName={data.name} />
     </div>

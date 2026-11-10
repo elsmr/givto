@@ -1,6 +1,6 @@
 {
   "page-title": "Secret Santa",
-  "load-failed": "We couldn't load this Secret Santa. Check your connection and reload the page.",
+  "load-failed": "We couldn't load this Secret Santa. Check your connection and try again.",
   "status": {
     "draft": "Draft",
     "open": "Open to join",
@@ -126,7 +126,7 @@
   "not-found": {
     "title": "We couldn't find this Secret Santa",
     "description": "It doesn't exist, or you're not in it with this account. Joining? Open the link from your organizer again.",
-    "my-secret-santas": "Go to my Secret Santas",
+    "my-secret-santas": "Go to my groups",
     "switch-account": "Sign in with another email"
   },
   "issues": {

@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
+import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
 import { GripVertical, Pencil, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -24,6 +25,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
   const errorMessage = useErrorMessage();
   const { update, remove } = useWishMutations();
   const [editing, setEditing] = useState(false);
+  const editButton = useFocusAfterEdit(editing);
   const { rowRef, handleRef, dragging, over } = useSortableWish(wish.id, index, !editing);
 
   const deleteWish = () =>
@@ -74,7 +76,7 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
           <WishSummary wish={wish} />
           <div className="grid h-fit grid-cols-2 gap-2">
             <WishMoveButtons wish={wish} index={index} count={count} onMove={onMove} />
-            <Button variant="neutral" size="icon-sm" className="col-start-2 row-start-1" aria-label={t('item.edit', { title: wish.title })} onClick={() => setEditing(true)}>
+            <Button ref={editButton} variant="neutral" size="icon-sm" className="col-start-2 row-start-1" aria-label={t('item.edit', { title: wish.title })} onClick={() => setEditing(true)}>
               <Pencil aria-hidden="true" />
             </Button>
             <Button variant="danger" size="icon-sm" className="col-start-2 row-start-2" aria-label={t('item.delete', { title: wish.title })} disabled={remove.isPending} onClick={deleteWish}>

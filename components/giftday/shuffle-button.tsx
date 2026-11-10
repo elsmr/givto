@@ -47,7 +47,7 @@ export const ShuffleButton = ({ groupSlug, editionNumber, again }: ShuffleButton
 
   if (!again) {
     return (
-      <Button disabled={shuffle.isPending} onClick={run}>
+      <Button variant="neutral" disabled={shuffle.isPending} onClick={run}>
         {label}
       </Button>
     );

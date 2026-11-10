@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import type { NudgeKind } from '@/lib/schema/nudge';
 import { Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -18,9 +18,9 @@ export const PsstNotice = ({ kind, forName }: { kind: NudgeKind; forName: string
       <AlertDescription>
         <p>{text}</p>
         {forName === null && (
-          <Button size="sm" className="mt-2" nativeButton={false} render={<Link href="/wishlist" />}>
+          <Link href="/wishlist" className={buttonVariants({ size: 'sm', className: 'mt-2' })}>
             {t('for-you.edit-wishlist')}
-          </Button>
+          </Link>
         )}
       </AlertDescription>
     </Alert>

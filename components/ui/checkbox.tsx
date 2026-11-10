@@ -13,7 +13,8 @@ function Checkbox({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        'peer flex size-5 shrink-0 items-center justify-center border-2 border-ink bg-surface data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-checked:text-white data-indeterminate:bg-primary data-indeterminate:text-white aria-invalid:border-danger',
+        // ::after widens the hit area to 44px (50: tap targets) without changing the look.
+        'peer relative flex size-5 shrink-0 items-center justify-center after:absolute after:-inset-3 after:content-[\'\'] border-2 border-ink bg-surface data-disabled:cursor-not-allowed data-disabled:border-dashed data-disabled:bg-page data-checked:bg-primary data-checked:text-white data-indeterminate:bg-primary data-indeterminate:text-white aria-invalid:border-danger',
         className,
       )}
       {...props}

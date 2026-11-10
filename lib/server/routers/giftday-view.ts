@@ -8,12 +8,8 @@ export const isRevealed = (edition: Edition) =>
   Boolean(edition.reveal.revealedAt) &&
   (edition.status === 'giftday' || edition.status === 'done');
 
-/**
- * Gift day for every member (31, 32): the unwrap order and progress, and the reveal state. Who
- * drew whom (`pairs`) only once revealed; before that the output has no Santa at all. Whose turn
- * it is only once the presenter's reel landed on them, except for the presenter itself (`presenter`).
- */
-export const giftDayView = (group: Group, edition: Edition, { presenter = false } = {}) => {
+/** The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed. */
+const giftDayState = (group: Group, edition: Edition) => {
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const assignments = edition.draw?.assignments ?? {};
   const inDraw = Object.keys(assignments);
@@ -22,13 +18,23 @@ export const giftDayView = (group: Group, edition: Edition, { presenter = false 
   const order = edition.unwrapOrder
     ? [...stored.filter((id) => inDraw.includes(id)), ...inDraw.filter((id) => !stored.includes(id))]
     : null;
-  const giftees = order ?? inDraw;
   const santaOf = new Map(Object.entries(assignments).map(([santa, giftee]) => [giftee, santa]));
   const mode = edition.unwrapMode ?? 'allAtOnce';
   const progress = edition.unwrapOrder?.progress;
   const state = order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? []);
-  const shown = presenter || Boolean(progress?.currentShown);
-  const person = (memberId: string | null) => (memberId && shown ? { memberId, name: nameOf(memberId) } : null);
+  const pairs = isRevealed(edition)
+    ? (order ?? inDraw).map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
+    : null;
+  return { nameOf, order, mode, progress, state, revealEnabled: edition.reveal.enabled, revealed: isRevealed(edition), pairs };
+};
+
+/**
+ * The presenter view (organizer): the whole unwrap order, whose turn it is and who's up next, and
+ * the reveal pairs in unwrap order.
+ */
+export const presenterGiftDayView = (group: Group, edition: Edition) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition);
+  const person = (memberId: string | null) => (memberId ? { memberId, name: nameOf(memberId) } : null);
   return {
     unwrapMode: mode,
     unwrapOrder:
@@ -47,13 +53,31 @@ export const giftDayView = (group: Group, edition: Edition, { presenter = false 
             finished: state.finished,
           }
         : null,
-    reveal: {
-      enabled: edition.reveal.enabled,
-      revealed: isRevealed(edition),
-      /** In unwrap order: "<giftee> got theirs from <santa>". */
-      pairs: isRevealed(edition)
-        ? giftees.map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
+    reveal: { enabled: revealEnabled, revealed, pairs },
+  };
+};
+
+/**
+ * Gift day on the group home, for every member (31, 32): the unwrap order stays a surprise
+ * (owner), so only who already went (in turn order) and who's unwrapping now, once the
+ * presenter's reel landed on them. Reveal pairs by giftee name, not in unwrap order.
+ */
+export const giftDayView = (group: Group, edition: Edition) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs } = giftDayState(group, edition);
+  const wentIds = [...new Set(progress?.turns.map((turn) => turn.memberId) ?? [])];
+  return {
+    unwrapMode: mode,
+    unwrapOrder:
+      order && state
+        ? {
+            shuffledAt: edition.unwrapOrder!.shuffledAt,
+            went: wentIds.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId) })),
+            started: Boolean(progress),
+            current: state.current && progress?.currentShown ? { memberId: state.current, name: nameOf(state.current) } : null,
+            turn: state.turn,
+            finished: state.finished,
+          }
         : null,
-    },
+    reveal: { enabled: revealEnabled, revealed, pairs: pairs?.toSorted((a, b) => a.giftee.localeCompare(b.giftee)) ?? null },
   };
 };

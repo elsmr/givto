@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react';
 import { JoinQrCode } from './join-qr-code';
 import { joinUrl } from './join-url';
 
-type SharePanelProps = { slug: string; token: string; groupName: string; locale: string };
+type SharePanelProps = { slug: string; token: string; groupName: string; locale: string; primary?: boolean };
 
-/** Copy, Web Share and QR for the join link (45). */
-export const SharePanel = ({ slug, token, groupName, locale }: SharePanelProps) => {
+/** Copy, Web Share and QR for the join link (45). `primary`: copying is the screen's main action. */
+export const SharePanel = ({ slug, token, groupName, locale, primary = true }: SharePanelProps) => {
   const t = useTranslations('group.share');
   const [canShare, setCanShare] = useState(false);
   const [showQr, setShowQr] = useState(false);
@@ -35,7 +35,7 @@ export const SharePanel = ({ slug, token, groupName, locale }: SharePanelProps) 
       </label>
       <Input id="join-link" readOnly value={url} onFocus={(event) => event.target.select()} />
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Button onClick={copy}>
+        <Button variant={primary ? 'default' : 'neutral'} onClick={copy}>
           <Copy aria-hidden="true" />
           {t('copy')}
         </Button>

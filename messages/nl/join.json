@@ -8,7 +8,7 @@
     "title": "Deze link werkt niet meer",
     "link": "Misschien heeft de organisator een nieuwe link gemaakt. Vraag of die hem nog eens deelt.",
     "invite": "Deze uitnodiging is al gebruikt, afgeslagen of verlopen. Vraag de organisator om een nieuwe.",
-    "my-secret-santas": "Naar mijn Secret Santa's",
+    "my-secret-santas": "Naar mijn groepen",
     "sign-in": "Inloggen",
     "start": "Start lootjes trekken"
   },
@@ -20,7 +20,7 @@
   "requested": {
     "title": "Bijna!",
     "description": "{organizer} moet je nog toelaten. Zodra dat gebeurt, staat de Secret Santa in je lijst.",
-    "my-secret-santas": "Naar mijn Secret Santa's"
+    "my-secret-santas": "Naar mijn groepen"
   },
   "details": {
     "name": "Je naam",

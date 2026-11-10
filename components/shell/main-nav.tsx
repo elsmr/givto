@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import type { CurrentUser } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
 import dynamic from 'next/dynamic';
@@ -25,9 +25,9 @@ export const MainNav = ({ user }: { user: CurrentUser | null }) => {
           <AccountMenu user={user} />
         </>
       ) : (
-        <Button nativeButton={false} render={<Link href="/auth/sign-in" />}>
+        <Link href="/auth/sign-in" className={buttonVariants()}>
           {t('sign-in')}
-        </Button>
+        </Link>
       )}
     </nav>
   );

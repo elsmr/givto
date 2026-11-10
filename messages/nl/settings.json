@@ -1,5 +1,6 @@
 {
   "page-title": "Instellingen",
+  "only-organizer": "Alleen de organisator kan de instellingen van {group} aanpassen.",
   "back": "Terug naar {group}",
   "title": "Instellingen",
   "saved": "Opgeslagen",
@@ -52,7 +53,7 @@
   },
   "danger": {
     "title": "Gevarenzone",
-    "description": "Als je de groep verwijdert, verdwijnt die voor iedereen, met alle edities. Verlanglijstjes blijven van hun eigenaar.",
+    "description": "Als je de groep verwijdert, verdwijnt die voor iedereen, met alle edities. Ieders verlanglijstje blijft bewaard.",
     "button": "Groep verwijderen",
     "confirm-title": "{group} verwijderen?",
     "confirm-description": "Niemand kan nog bij de groep en de edities. Dit kun je niet ongedaan maken.",

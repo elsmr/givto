@@ -48,11 +48,11 @@ export const InviteForm = ({ slug }: { slug: string }) => {
         <div className="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
           <Field>
             <FieldLabel htmlFor="invite-name">{t('name')}</FieldLabel>
-            <Input id="invite-name" required maxLength={50} value={name} onChange={(e) => setName(e.target.value)} />
+            <Input id="invite-name" required maxLength={50} autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} />
           </Field>
           <Field>
             <FieldLabel htmlFor="invite-email">{t('email')}</FieldLabel>
-            <Input id="invite-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input id="invite-email" type="email" required autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
           <Button type="submit" variant="neutral" disabled={send.isPending}>
             {t('send')}

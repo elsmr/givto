@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 
 type UnwrapOrder = NonNullable<RouterOutputs['giftday']['get']['unwrapOrder']>;
 
-/** On gift day, for everyone's phone: who's unwrapping now and who's next, as the presenter steps. */
+/** On gift day, for everyone's phone: who's unwrapping now, as the presenter steps (who's next stays a surprise). */
 export const UnwrapNow = ({ order }: { order: UnwrapOrder }) => {
   const t = useTranslations('giftday.order');
 
@@ -19,11 +19,6 @@ export const UnwrapNow = ({ order }: { order: UnwrapOrder }) => {
           </p>
         ) : (
           <p className="text-lg font-semibold">{t('spinning')}</p>
-        )}
-        {order.next && (
-          <p>
-            {t('up-next')}: <strong className="break-words">{order.next.name}</strong>
-          </p>
         )}
       </div>
     </div>

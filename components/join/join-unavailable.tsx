@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { useCurrentUser } from '@/lib/client/session';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -13,12 +13,12 @@ export const JoinUnavailable = ({ kind }: { kind: 'link' | 'invite' }) => {
       <h1 className="text-4xl font-extrabold sm:text-5xl">{t('title')}</h1>
       <p className="text-lg">{t(kind)}</p>
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        <Button nativeButton={false} render={<Link href={user ? '/groups' : '/auth/sign-in'} />}>
+        <Link href={user ? '/groups' : '/auth/sign-in'} className={buttonVariants()}>
           {user ? t('my-secret-santas') : t('sign-in')}
-        </Button>
-        <Button variant="neutral" nativeButton={false} render={<Link href="/new" />}>
+        </Link>
+        <Link href="/new" className={buttonVariants({ variant: 'neutral' })}>
           {t('start')}
-        </Button>
+        </Link>
       </div>
     </div>
   );
