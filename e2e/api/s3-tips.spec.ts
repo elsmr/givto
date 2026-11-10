@@ -17,11 +17,11 @@ test('tips: before and after the draw, who sees what', async ({ signIn, db }) =>
     const authored = ok(await cee.trpc.query('tip.authored', E1))!;
     expect(authored.canWrite).toBe(true);
     expect(authored.people.map((p) => p.name).sort()).toEqual(['Ann', 'Bob', 'Dan', 'Kid', 'Olive']);
-    const ceeTip = ok(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.ann.id, text: 'Ann collects Moomin mugs' }));
+    const ceeTip = ok(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.ann.id, text: 'Ann collects Moomin mugs', anonymous: false }));
     expect(Object.keys(ceeTip).sort()).toEqual(['aboutMemberId', 'aboutName', 'anonymous', 'id', 'text', 'updatedAt']);
-    expect(ceeTip.anonymous, 'named by default').toBe(false);
     const bobTip = ok(await bob.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.ann.id, text: 'Size M, loves green', anonymous: true }));
     const kidTip = ok(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.kid.id, text: 'Kid is into dinosaurs' }));
+    expect(kidTip.anonymous, 'anonymous by default').toBe(true);
     expect(codeOf(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.cee.id, text: 'Me!' })), 'not about yourself').toBe('NOT_FOUND');
     expect(codeOf(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.nina.id, text: 'x' })), 'not in the draw').toBe('NOT_FOUND');
     expect(codeOf(await cee.trpc.mutate('tip.create', { ...E1, aboutMemberId: m.ann.id, text: ' ' }))).toBe('INVALID_INPUT');
@@ -83,6 +83,8 @@ test('tips: before and after the draw, who sees what', async ({ signIn, db }) =>
     expect(ok(await dan.trpc.query('tip.forGiftee', E1))!.tips[0].used).toBe(true);
     const text = JSON.stringify(before);
     for (const secret of ['used', 'santa', 'Santa']) expect(text, secret).not.toContain(secret);
+    const kept = ok(await cee.trpc.mutate('tip.update', { ...E1, tipId: ceeTip.id, text: 'Moomin mugs' }));
+    expect(kept.anonymous, 'an edit without the switch keeps the tip named').toBe(false);
     const updated = ok(await cee.trpc.mutate('tip.update', { ...E1, tipId: ceeTip.id, text: 'Moomin mugs, not the plates', anonymous: true }));
     expect(updated.anonymous).toBe(true);
     const tip = ok(await dan.trpc.query('tip.forGiftee', E1))!.tips[0];

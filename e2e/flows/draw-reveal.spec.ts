@@ -73,7 +73,7 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   const name = draw.nameOf(giftee);
   const tipper = people.find((person) => person !== ann && person !== giftee)!;
   ok(await giftee.trpc.mutate('wish.create', { title: 'Moomin mug' }));
-  ok(await tipper.trpc.mutate('tip.create', { ...edition, aboutMemberId: draw.memberIdOf(giftee), text: 'Loves green tea' }));
+  ok(await tipper.trpc.mutate('tip.create', { ...edition, aboutMemberId: draw.memberIdOf(giftee), text: 'Loves green tea', anonymous: false }));
 
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);

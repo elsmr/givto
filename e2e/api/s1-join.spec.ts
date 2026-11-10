@@ -77,7 +77,7 @@ test('non-organizer can’t manage; outsiders don’t see the group', async ({ s
     ['join.updateLink', { requiresApproval: true, maxMembers: null }],
     ['invite.send', { name: 'Zed', email: zed }],
     ['membership.approve', { memberId: '0'.repeat(24) }],
-    ['group.setKeepApart', { households: [], pairs: [] }],
+    ['group.setKeepApart', { households: [] }],
   ] as [MutationPath, object][]) {
     expect(codeOf(await bob.trpc.mutate(path, { groupSlug: slug, ...input } as never)), path).toBe('NOT_ORGANIZER');
   }

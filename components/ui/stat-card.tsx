@@ -27,7 +27,7 @@ export const StatCard = ({ icon, tone, title, value, unit, visual, className, on
     <>
       <span className="flex items-start justify-between gap-3">
         <IconTile icon={icon} tone={tone} />
-        <span className="flex min-w-0 items-center gap-3">
+        <span className="flex min-w-0 flex-1 items-center justify-end gap-3">
           {visual}
           {value !== undefined && <span className="mono font-heading text-3xl leading-none font-extrabold tabular-nums">{value}</span>}
         </span>

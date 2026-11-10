@@ -69,7 +69,7 @@ test('Family: settings, draw, changes after the draw, next edition, .ics', async
     ok(await ann.trpc.mutate('settings.setParticipants', { ...edition1, memberIds: [id.ann, id.bob] }));
     expect(codeOf(await ann.trpc.mutate('draw.run', edition1))).toBe('TOO_FEW_PEOPLE');
     // Below the minimum the keep-apart check is skipped, so an impossible household can be saved…
-    ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[id.ann, id.bob, id.cee]], pairs: [] }));
+    ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[id.ann, id.bob, id.cee]] }));
     ok(await ann.trpc.mutate('settings.setParticipants', { ...edition1, memberIds: Object.values(id) }));
     const refused = await ann.trpc.mutate('draw.run', edition1);
     expect(codeOf(refused)).toBe('DRAW_IMPOSSIBLE');
@@ -78,7 +78,7 @@ test('Family: settings, draw, changes after the draw, next edition, .ics', async
     expect(givers.length > receivers.length && givers.every((g) => [id.ann, id.bob, id.cee].includes(g)), JSON.stringify(givers)).toBe(true);
     expect(receivers.toSorted()).toEqual([id.dan, id.eve].toSorted());
     expect((await editionOf(db, slug, 1)).status).toBe('open');
-    ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[id.ann, id.bob]], pairs: [[id.cee, id.dan]] }));
+    ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[id.ann, id.bob], [id.cee, id.dan], [id.bob, id.cee]] }));
   });
 
   await test.step('draw now: everyone has a valid giftee, nobody themselves or kept apart', async () => {

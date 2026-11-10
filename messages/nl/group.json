@@ -55,7 +55,6 @@
     "share": "Delen",
     "share-text": "Doe mee met onze Secret Santa {group} op Givto",
     "show-qr": "QR-code tonen",
-    "hide-qr": "QR-code verbergen",
     "qr-label": "QR-code met de link om mee te doen aan {group}",
     "settings": {
       "title": "Instellingen van de link",
@@ -92,34 +91,24 @@
   },
   "keep-apart": {
     "title": "Niet samen",
-    "description": "Stelletjes en huisgenoten kopen toch al iets voor elkaar. Zet ze in een huishouden, dan trekken ze elkaar niet.",
+    "description": "Wie mag elkaar niet trekken? Stelletjes en gezinnen kopen toch al iets voor elkaar. Wie in dezelfde rij staat, trekt elkaar nooit.",
     "save": "Opslaan",
     "saved": "Opgeslagen",
     "errors": {
-      "DRAW_IMPOSSIBLE": "Met deze regels kunnen de namen niet getrokken worden. Haal een regel weg en probeer het opnieuw.",
+      "DRAW_IMPOSSIBLE": "Met deze rijen kunnen de namen niet getrokken worden. Haal iemand uit een rij en probeer het opnieuw.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     },
-    "households": {
-      "title": "Huishoudens",
-      "label": "Huishouden {number}",
-      "add": "Nieuw huishouden",
+    "rows": {
+      "label": "Rij {number}",
+      "add": "Rij toevoegen",
       "add-person": "Iemand toevoegen…",
       "remove-person": "{name} eruit halen",
-      "remove": "Huishouden weghalen",
-      "needs-two": "Een huishouden heeft minstens twee mensen nodig."
-    },
-    "pairs": {
-      "title": "Trekken elkaar niet",
-      "pair": "{first} ↔ {second}",
-      "remove": "{first} en {second} weghalen",
-      "first": "Iemand…",
-      "second": "…en iemand",
-      "add": "Toevoegen"
+      "remove": "Rij weghalen",
+      "needs-two": "Zet minstens twee mensen in deze rij."
     },
     "feasibility": {
       "too-few": "Om namen te trekken zijn minstens {min} mensen nodig.",
-      "possible": "De namen kunnen getrokken worden.",
-      "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal een regel weg."
+      "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal iemand uit een rij."
     }
   },
   "not-found": {
@@ -171,10 +160,8 @@
     "today": "Vandaag!",
     "over": "Voorbij",
     "wishes": "Mijn wensen",
-    "wishes-unit": "{count, plural, one {hier zichtbaar} other {hier zichtbaar}}",
     "people": "Deelnemers",
     "people-in": "{count, plural, one {doet mee} other {doen mee}}",
-    "needed": "{count, plural, one {nog # nodig om te trekken} other {nog # nodig om te trekken}}",
     "gifts": "Cadeau gekocht",
     "gifts-still": "Nog aan het shoppen: {names}",
     "gifts-all": "Iedereen heeft een cadeau"

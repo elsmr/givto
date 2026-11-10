@@ -14,14 +14,14 @@ export const drawParticipantIds = (group: Group, edition: Edition): string[] => 
 };
 
 export interface DrawRules {
-  /** Households and keep-apart pairs (26). */
+  /** Keep-apart rows (households) and older keep-apart pairs (26). */
   standing: Exclusion[];
   /** "Not the same as last year" (33): one-way, from the previous edition's draw. Never leaves the server. */
   previous: Exclusion[];
 }
 
 export const drawRules = async (db: Collections, group: Group, edition: Edition): Promise<DrawRules> => {
-  const standing = [...group.exclusions, ...toExclusions(group.households.map((h) => h.memberIds), [])];
+  const standing = [...group.exclusions, ...toExclusions(group.households.map((h) => h.memberIds))];
   if (!edition.avoidPreviousGiftees || !edition.previousEditionId) return { standing, previous: [] };
   const previousEdition = await db.editions.findOne(
     { _id: edition.previousEditionId, groupId: group._id },

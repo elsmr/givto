@@ -81,11 +81,12 @@ export const tipRouter = router({
       return toAuthoredTip(tip, ctx.group);
     }),
 
-  update: editionProcedure.input(v.object({ ...TipInput.entries, ...TipFields.entries })).mutation(async ({ ctx, input }) => {
+  /** Without `anonymous` the tip keeps its own setting (the create default doesn't apply). */
+  update: editionProcedure.input(v.object({ ...TipInput.entries, text: TipFields.entries.text, anonymous: v.optional(v.boolean()) })).mutation(async ({ ctx, input }) => {
     if (!tipsOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
     const tip = await findOwnTip(ctx.db, ctx.edition, ctx.member, input.tipId);
     await writeLimit(ctx.member.id);
-    const changes = { text: input.text, anonymous: input.anonymous, updatedAt: new Date() };
+    const changes = { text: input.text, anonymous: input.anonymous ?? tip.anonymous, updatedAt: new Date() };
     await ctx.db.tips.updateOne({ _id: tip._id }, { $set: changes });
     return toAuthoredTip({ ...tip, ...changes }, ctx.group);
   }),

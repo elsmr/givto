@@ -55,7 +55,6 @@
     "share": "Share",
     "share-text": "Join our Secret Santa {group} on Givto",
     "show-qr": "Show QR code",
-    "hide-qr": "Hide QR code",
     "qr-label": "QR code with the join link for {group}",
     "settings": {
       "title": "Link settings",
@@ -92,34 +91,24 @@
   },
   "keep-apart": {
     "title": "Keep apart",
-    "description": "Couples and housemates usually buy for each other anyway. Group them, and they won't draw each other.",
+    "description": "Who shouldn't draw each other? Couples and families usually buy for each other anyway. People in the same row never draw each other.",
     "save": "Save",
     "saved": "Saved",
     "errors": {
-      "DRAW_IMPOSSIBLE": "With these rules nobody can draw names. Remove a rule and try again.",
+      "DRAW_IMPOSSIBLE": "With these rows nobody can draw names. Take someone out of a row and try again.",
       "INTERNAL": "Something went wrong on our side. Try again in a moment."
     },
-    "households": {
-      "title": "Households",
-      "label": "Household {number}",
-      "add": "New household",
+    "rows": {
+      "label": "Row {number}",
+      "add": "Add a row",
       "add-person": "Add someone…",
       "remove-person": "Take {name} out",
-      "remove": "Remove household",
-      "needs-two": "A household needs at least two people."
-    },
-    "pairs": {
-      "title": "Don't draw each other",
-      "pair": "{first} ↔ {second}",
-      "remove": "Remove {first} and {second}",
-      "first": "Someone…",
-      "second": "…and someone",
-      "add": "Add"
+      "remove": "Remove row",
+      "needs-two": "Add at least two people to this row."
     },
     "feasibility": {
       "too-few": "The draw needs at least {min} people.",
-      "possible": "A draw is possible.",
-      "stuck": "{count, plural, =0 {{givers} can't give to anyone} other {{givers} can only give to {receivers}}}. Remove a rule."
+      "stuck": "{count, plural, =0 {{givers} can't give to anyone} other {{givers} can only give to {receivers}}}. Take someone out of a row."
     }
   },
   "not-found": {
@@ -171,10 +160,8 @@
     "today": "Today!",
     "over": "Over",
     "wishes": "My wishes",
-    "wishes-unit": "{count, plural, one {shown here} other {shown here}}",
     "people": "People",
     "people-in": "{count, plural, one {person in} other {people in}}",
-    "needed": "{count, plural, one {# more needed to draw} other {# more needed to draw}}",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift"

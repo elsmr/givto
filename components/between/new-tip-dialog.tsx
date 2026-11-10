@@ -10,7 +10,7 @@ import type { EditionInput } from './edition-input';
 import { TipForm } from './tip-form';
 import { useBetweenError } from './use-between-error';
 
-const emptyTip = { aboutMemberId: '', text: '', anonymous: false };
+const emptyTip = { aboutMemberId: '', text: '', anonymous: true };
 
 type NewTipDialogProps = { input: EditionInput; people: { memberId: string; name: string }[] };
 

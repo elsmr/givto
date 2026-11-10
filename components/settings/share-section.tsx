@@ -23,19 +23,19 @@ export const ShareSection = ({ group }: { group: GroupData }) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {joinLink && !joinLink.revoked ? (
-          <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} primary={false} />
+          <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} />
         ) : (
           <Alert>
             <AlertDescription>{t('revoked')}</AlertDescription>
           </Alert>
         )}
         {joinLink && (
-          <details className="group/link-settings">
-            <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 font-semibold [&::-webkit-details-marker]:hidden">
+          <details className="group/link-settings border-2 border-outline">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-3 py-2 font-semibold hover:bg-page group-open/link-settings:border-b-2 group-open/link-settings:border-dashed group-open/link-settings:border-outline [&::-webkit-details-marker]:hidden">
               {t('settings.title')}
-              <ChevronDown aria-hidden="true" className="size-5 transition-transform group-open/link-settings:rotate-180" />
+              <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open/link-settings:rotate-180" />
             </summary>
-            <div className="pt-2">
+            <div className="p-3">
               <JoinLinkSettings slug={group.slug} joinLink={joinLink} />
             </div>
           </details>

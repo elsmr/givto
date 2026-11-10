@@ -49,6 +49,8 @@ test('create, copy the link, and a second person joins through it', async ({ pag
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(link);
     await page.getByRole('button', { name: 'Show QR code' }).click();
     await expect(page.getByRole('img', { name: 'QR code with the join link for Cousins' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('img', { name: 'QR code with the join link for Cousins' })).toBeHidden();
   });
 
   const bobPage = await newPage();

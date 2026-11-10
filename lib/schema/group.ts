@@ -16,7 +16,7 @@ export type ExchangeMode = v.InferOutput<typeof ExchangeMode>;
 export const Exclusion = v.object({ from: Id, to: Id });
 export type Exclusion = v.InferOutput<typeof Exclusion>;
 
-/** Nobody gives to someone in their own household (26). */
+/** A keep-apart row (26): nobody gives to someone in a row they're in. A person can be in several. */
 export const Household = v.object({
   id: Id,
   name: v.optional(SingleLine(50)),

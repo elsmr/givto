@@ -67,33 +67,43 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   });
 });
 
-test('keep apart: a household and a pair, and the draw follows them', async ({ page, signIn, signInPage, db }) => {
+test('keep apart: rows of people, a stuck row is named, and the draw follows them', async ({ page, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann, bob, cee, dan] = people;
   const group = await openGroup(people, 'Apart');
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}/settings`);
   const keepApart = card(page, 'Keep apart');
+  const row1 = keepApart.getByRole('group', { name: 'Row 1' });
+  const row2 = keepApart.getByRole('group', { name: 'Row 2' });
 
-  await test.step('Ann and Bob are a household; Cee and Dan don\'t draw each other', async () => {
-    await keepApart.getByRole('button', { name: 'New household' }).click();
-    await keepApart.getByLabel('Add someone…').selectOption('Ann');
-    await keepApart.getByLabel('Add someone…').selectOption('Bob');
-    await expect(keepApart.getByRole('button', { name: 'Take Bob out' })).toBeVisible();
-    await keepApart.getByLabel('Someone…', { exact: true }).selectOption('Cee');
-    await keepApart.getByLabel('…and someone').selectOption('Dan');
-    await keepApart.getByRole('button', { name: 'Add' }).click();
-    await expect(keepApart.getByText('Cee ↔ Dan')).toBeVisible();
-    await expect(keepApart.getByRole('status')).toHaveText('A draw is possible.');
+  await test.step('Ann and Bob in one row, Cee and Dan in another', async () => {
+    await keepApart.getByRole('button', { name: 'Add a row' }).click();
+    await row1.getByLabel('Add someone…').selectOption('Ann');
+    await row1.getByLabel('Add someone…').selectOption('Bob');
+    await expect(row1.getByRole('button', { name: 'Take Bob out' })).toBeVisible();
+    await keepApart.getByRole('button', { name: 'Add a row' }).click();
+    await row2.getByLabel('Add someone…').selectOption('Cee');
+    await expect(row2).toContainText('Add at least two people to this row.');
+    await row2.getByLabel('Add someone…').selectOption('Dan');
+    await expect(keepApart.getByRole('status'), 'nothing to say while a draw is possible').toBeEmpty();
+  });
+
+  await test.step('Cee in both rows: the draw is stuck, said until Cee is taken out again', async () => {
+    await row1.getByLabel('Add someone…').selectOption('Cee');
+    await expect(keepApart.getByRole('status')).toContainText('Take someone out of a row.');
+    await row1.getByRole('button', { name: 'Take Cee out' }).click();
+    await expect(keepApart.getByRole('status')).toBeEmpty();
     await keepApart.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Saved', { exact: true })).toBeVisible();
   });
 
   await test.step('kept after a reload', async () => {
     await page.reload();
-    await expect(keepApart.getByRole('button', { name: 'Take Ann out' })).toBeVisible();
-    await expect(keepApart.getByRole('button', { name: 'Take Bob out' })).toBeVisible();
-    await expect(keepApart.getByText('Cee ↔ Dan')).toBeVisible();
+    await expect(row1.getByRole('button', { name: 'Take Ann out' })).toBeVisible();
+    await expect(row1.getByRole('button', { name: 'Take Bob out' })).toBeVisible();
+    await expect(row2.getByRole('button', { name: 'Take Cee out' })).toBeVisible();
+    await expect(row2.getByRole('button', { name: 'Take Dan out' })).toBeVisible();
   });
 
   await test.step('the draw keeps them apart, and the rules are frozen after it', async () => {
@@ -101,7 +111,7 @@ test('keep apart: a household and a pair, and the draw follows them', async ({ p
     const draw = await drawOf(db, group.slug, people);
     for (const [a, b] of [[ann, bob], [bob, ann], [cee, dan], [dan, cee]]) expect(draw.gifteeOf(a)).not.toBe(b);
     await page.reload();
-    await expect(keepApart).toContainText("Names are drawn, so households and pairs can't change for this edition.");
+    await expect(keepApart).toContainText("Names are drawn, so who's kept apart can't change for this edition.");
     await expect(keepApart.getByRole('button', { name: 'Save' })).toHaveCount(0);
   });
 });
@@ -209,6 +219,8 @@ test('after gift day: same again next year, then open the new edition', async ({
 
   await test.step('open it from the group page', async () => {
     await page.getByRole('link', { name: 'Back to Yearly' }).click();
+    await expect(page.getByRole('link', { name: 'Secret Santa 2099' }), 'editions start collapsed').toBeHidden();
+    await page.getByRole('heading', { name: 'Editions' }).click();
     await expect(page.getByRole('link', { name: 'Secret Santa 2100' })).toHaveAttribute('aria-current', 'page');
     await expect(page.getByRole('link', { name: 'Secret Santa 2099' })).toBeVisible();
     await expect(page.getByRole('heading', { name: "Nothing's sent yet" })).toBeVisible();

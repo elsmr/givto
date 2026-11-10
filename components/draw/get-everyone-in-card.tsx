@@ -1,18 +1,17 @@
+import { AvatarStack } from '@/components/group/avatar-stack';
 import { Doodle } from '@/components/group/doodle';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
-import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { SharePanel } from '@/components/group/share-panel';
-import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { UserPlus } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import Link from 'next/link';
 import { DrawNamesButton } from './draw-names-button';
 
 /**
- * Open edition (61): who's in and when names are drawn; the organizer shares the join link and draws.
- * Link settings, email invites and keep apart are in the settings.
+ * Open edition (61): how many are in and when names are drawn; the organizer shares the join link and
+ * draws. Names are in the People tab; link settings, email invites and keep apart in the settings.
  */
 export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('draw.before');
@@ -21,6 +20,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
   const tooFew = people.length < MIN_PARTICIPANTS;
   const leftOut = group.members.filter((m) => m.status !== 'removed' && !edition.participantIds.includes(m.id)).map((m) => m.name);
+  const { isOrganizer } = group.me;
   const joinLink = group.organizer?.joinLink;
 
   return (
@@ -30,41 +30,25 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
         <IconCardTitle icon={UserPlus} tone="mint">
           {t('title')}
         </IconCardTitle>
-        <CardDescription>
-          {edition.drawAt
-            ? t('scheduled', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })
-            : t('manual')}
-        </CardDescription>
+        {edition.drawAt && (
+          <CardDescription>{t('scheduled', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })}</CardDescription>
+        )}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <p className="font-semibold">{t('who', { count: people.length })}</p>
-        <ul className="flex flex-wrap gap-2">
-          {people.map((person) => (
-            <li key={person.id} className="border-2 border-outline bg-primary-muted px-2 py-0.5 font-semibold break-all">
-              {person.name}
-            </li>
-          ))}
-        </ul>
-        {tooFew && <p className="text-muted">{t('too-few', { min: MIN_PARTICIPANTS })}</p>}
-        {group.me.isOrganizer && (
+        <div className="flex items-center gap-3">
+          <p className="shrink-0 font-semibold">{t('who', { count: people.length })}</p>
+          {people.length > 0 && <AvatarStack people={people} />}
+        </div>
+        {tooFew && <p className="text-muted">{t('too-few', { count: MIN_PARTICIPANTS - people.length })}</p>}
+        {isOrganizer && (
           <>
-            <hr className="border-t-2 border-dashed border-outline" />
             {joinLink && !joinLink.revoked ? (
-              <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} primary={tooFew} />
+              <SharePanel slug={group.slug} token={joinLink.token} groupName={group.name} locale={group.locale} />
             ) : (
               <p>{tShare('revoked')}</p>
             )}
-            <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap xs:items-center">
-              <DrawNamesButton
-                groupSlug={group.slug}
-                editionNumber={edition.number}
-                members={group.members}
-                leftOut={leftOut}
-                primary={!tooFew}
-              />
-              <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
-                {t('change')}
-              </Link>
+            <div className="flex flex-col xs:flex-row">
+              <DrawNamesButton groupSlug={group.slug} editionNumber={edition.number} members={group.members} leftOut={leftOut} primary={!tooFew} />
             </div>
           </>
         )}
