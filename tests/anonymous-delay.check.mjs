@@ -13,6 +13,7 @@ assert.equal(sendAt('2026-12-01T22:30:00Z', 'Europe/Brussels'), '2026-12-02T17:0
 assert.equal(sendAt('2026-07-01T10:00:00Z', 'Europe/Brussels'), '2026-07-01T16:00:00.000Z');
 assert.equal(sendAt('2026-03-28T18:00:00Z', 'Europe/Brussels'), '2026-03-29T16:00:00.000Z', 'DST starts overnight');
 assert.equal(sendAt('2026-10-24T20:00:00Z', 'Europe/Brussels'), '2026-10-25T17:00:00.000Z', 'DST ends overnight');
+assert.equal(sendAt('2026-10-24T15:29:00Z', 'Europe/Amsterdam'), '2026-10-25T17:00:00.000Z', 'DST ends overnight: 25.5h wait');
 // Month and year rollover, zones far from UTC.
 assert.equal(sendAt('2026-12-31T23:30:00Z', 'Europe/Brussels'), '2027-01-01T17:00:00.000Z');
 assert.equal(sendAt('2026-12-01T12:00:00Z', 'America/New_York'), '2026-12-01T23:00:00.000Z');
@@ -23,7 +24,7 @@ for (let i = 0; i < 500; i++) {
   const now = new Date(Date.UTC(2026, 0, 1) + Math.floor(Math.random() * 365 * 24 * 60) * 60_000);
   const at = anonymousSendAt(now, 'Europe/Amsterdam');
   const wait = at.getTime() - now.getTime();
-  assert.ok(wait >= 60 * 60 * 1000 && wait <= 25 * 60 * 60 * 1000, `${now.toISOString()} → ${at.toISOString()}`);
+  assert.ok(wait >= 60 * 60 * 1000 && wait <= 26 * 60 * 60 * 1000, `${now.toISOString()} → ${at.toISOString()}`);
   const hour = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Amsterdam', hour: 'numeric', hourCycle: 'h23' }).format(at);
   assert.equal(hour, '18');
 }
