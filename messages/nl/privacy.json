@@ -23,6 +23,7 @@
     "groups": "Groepen zonder activiteit in {months} maanden wissen we. We mailen de organisator eerst.",
     "account": "Je account en verlanglijstje blijven tot je ze zelf verwijdert.",
     "errors": "Foutmeldingen wissen we na hooguit {days} dagen.",
+    "emails": "Het overzicht van welke mail naar wie ging, wissen we na {days} dagen.",
     "logs": "Serverlogs bevatten nooit namen, e-mailadressen of wensen."
   },
   "processors": {

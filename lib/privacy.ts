@@ -15,6 +15,8 @@ export const retention = {
   /** Groups without edition activity; deleted after an email warning. */
   inactiveGroupMonths: 24,
   errorReportDays: 90,
+  /** Which email went to whom (`sentNotifications`): the TTL index in lib/server/db.ts. Changing it on an existing database needs a collMod. */
+  sentEmailsDays: 400,
 };
 
-export const privacyUpdatedOn = '2026-11-09';
+export const privacyUpdatedOn = '2026-11-10';

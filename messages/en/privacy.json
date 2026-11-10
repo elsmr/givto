@@ -23,6 +23,7 @@
     "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",
     "account": "Your account and wishlist stay until you delete them.",
     "errors": "Error reports are deleted after {days} days at most.",
+    "emails": "The record of which email went to whom is deleted after {days} days.",
     "logs": "Server logs never contain names, email addresses or wishes."
   },
   "processors": {
