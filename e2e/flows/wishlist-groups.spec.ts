@@ -1,5 +1,6 @@
 // One wishlist, several groups (38): hide a wish from one group; Dibs! from a Santa, shown as
-// "Taken" to Santas in other groups and never to the wishlist's owner.
+// "Taken" to Santas in other groups and never to the wishlist's owner. Archived (76): only the Santa
+// with Dibs! still sees it, as no longer on the list.
 import type { Locator, Page } from '@playwright/test';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 
@@ -76,5 +77,20 @@ test('hide a wish from one group; Dibs! is "Taken" elsewhere and never shown to 
       await expect(page.getByRole('heading', { name: 'Cookbook' }).first()).toBeVisible();
       await expect(page.getByRole('main')).not.toContainText(/Dibs|Taken|Someone else is getting/);
     }
+  });
+
+  await test.step('Olive archives the cookbook: only the Santa with Dibs! still sees it', async () => {
+    await page.goto('/wishlist');
+    await page.getByRole('button', { name: 'Archive “Cookbook”' }).click();
+    await expect(page.getByRole('heading', { name: 'Archived (1)' })).toBeVisible();
+    await expect(page.getByRole('main')).not.toContainText(/Dibs|Taken|No longer on the list/);
+    // A reload hides the giftee again (the reveal is per page load), so the tap is there again.
+    await friendsSanta.reload();
+    const withDibs = await openGifteeWishlist(friendsSanta, friends.slug);
+    await expect(wishTitles(withDibs)).toHaveText(['Wool socks', 'Cookbook']);
+    await expect(withDibs.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('No longer on the list')).toBeVisible();
+    await familySanta.reload();
+    await familySanta.getByRole('button', { name: /Tap to see who you're buying for/ }).click();
+    await expect(familySanta.getByRole('tabpanel', { name: 'My giftee' }).getByText("Olive hasn't added any wishes yet.")).toBeVisible();
   });
 });

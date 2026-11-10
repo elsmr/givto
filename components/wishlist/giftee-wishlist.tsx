@@ -51,11 +51,16 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
                   wish={wish}
                   inBudget={isInBudget(wish.price, budget)}
                   status={
-                    bought.has(wish.id) && (
-                      <Badge variant="mint">
-                        <PackageCheck aria-hidden="true" />
-                        {t('bought')}
-                      </Badge>
+                    (wish.archived || bought.has(wish.id)) && (
+                      <>
+                        {wish.archived && <Badge>{t('gone')}</Badge>}
+                        {bought.has(wish.id) && (
+                          <Badge variant="mint">
+                            <PackageCheck aria-hidden="true" />
+                            {t('bought')}
+                          </Badge>
+                        )}
+                      </>
                     )
                   }
                 >

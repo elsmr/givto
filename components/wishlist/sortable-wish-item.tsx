@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
+import { useTRPCClient } from '@/lib/client/trpc';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
-import { GripVertical, Pencil, Trash2 } from 'lucide-react';
+import { Archive, GripVertical, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useErrorMessage } from './use-error-message';
@@ -21,21 +22,34 @@ interface SortableWishItemProps {
   onMove: (toIndex: number) => void;
 }
 
-/** One of my wishes: its card with reorder / edit / delete, or the edit form. */
+/** One of my wishes: its card with reorder / edit / archive, or the edit form. */
 export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishItemProps) => {
   const t = useTranslations('wishlist');
   const errorMessage = useErrorMessage();
-  const { update, remove } = useWishMutations();
+  const client = useTRPCClient();
+  const { update, archive, refresh } = useWishMutations();
   const [editing, setEditing] = useState(false);
   const editButton = useFocusAfterEdit(editing);
   const { rowRef, handleRef, dragging, over } = useSortableWish(wish.id, index, !editing);
 
-  const deleteWish = () =>
-    remove.mutate(
+  const onError = (error: unknown) => toast.add({ title: errorMessage(error), type: 'error' });
+  // The row is gone by the time someone clicks undo, so undo calls the client directly; it puts the wish back in its place.
+  const undo = () =>
+    client.wish.restore
+      .mutate({ wishId: wish.id })
+      .then(() => client.wish.move.mutate({ wishId: wish.id, toIndex: index }))
+      .then(refresh, onError);
+  const archiveWish = () =>
+    archive.mutate(
       { wishId: wish.id },
       {
-        onSuccess: () => toast.add({ title: t('item.deleted', { title: wish.title }), type: 'success' }),
-        onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
+        onSuccess: () =>
+          toast.add({
+            title: t('item.archived', { title: wish.title }),
+            type: 'success',
+            actionProps: { children: t('item.undo'), onClick: undo },
+          }),
+        onError,
       }
     );
 
@@ -80,14 +94,14 @@ export const SortableWishItem = ({ wish, index, count, onMove }: SortableWishIte
               <Pencil aria-hidden="true" />
             </Button>
             <Button
-              variant="danger"
+              variant="neutral"
               size="icon-sm"
               className="ml-2"
-              aria-label={t('item.delete', { title: wish.title })}
-              disabled={remove.isPending}
-              onClick={deleteWish}
+              aria-label={t('item.archive', { title: wish.title })}
+              disabled={archive.isPending}
+              onClick={archiveWish}
             >
-              <Trash2 aria-hidden="true" />
+              <Archive aria-hidden="true" />
             </Button>
           </div>
         </WishCard>

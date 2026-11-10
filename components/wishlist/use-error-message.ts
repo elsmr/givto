@@ -5,6 +5,7 @@ const keyByCode = {
   INVALID_INPUT: 'invalid',
   WISH_TAKEN: 'taken',
   WISHLIST_FULL: 'full',
+  ARCHIVE_FULL: 'archive-full',
   RATE_LIMITED: 'rate-limited',
 } as const;
 

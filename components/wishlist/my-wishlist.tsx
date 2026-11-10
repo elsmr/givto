@@ -6,10 +6,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EyeOff, Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
+import { ArchivedWishes } from './archived-wishes';
 import { useOwnWishes } from './use-own-wishes';
 import { WishListEditor } from './wish-list-editor';
 
-/** The "My wishlist" page body (38): add or import a wish, edit, reorder. */
+/** The "My wishlist" page body (38): add or import a wish, edit, reorder, archive (76). */
 export const MyWishlist = () => {
   const t = useTranslations('wishlist');
   const wishes = useOwnWishes();
@@ -50,6 +51,7 @@ export const MyWishlist = () => {
               </p>
             </section>
           )}
+          <ArchivedWishes />
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-// The personal wishlist on /wishlist (38, 73): add, edit, links, reorder by drag and by keyboard, delete.
+// The personal wishlist on /wishlist (38, 73, 76): add, edit, links, reorder by drag and by keyboard, archive.
 import type { Page } from '@playwright/test';
 import { Binary, ObjectId } from 'mongodb';
 import superjson from 'superjson';
@@ -19,7 +19,7 @@ const addWish = async (page: Page, title: string) => {
   await expect(wishItem(page, title)).toBeVisible();
 };
 
-test('add, edit, reorder by drag and by keyboard, delete', async ({ page, signIn, signInPage }) => {
+test('add, edit, reorder by drag and by keyboard, archive, restore, delete for good', async ({ page, signIn, signInPage }) => {
   await signInPage(page, await signIn('olive'));
   await page.goto('/wishlist');
   await expect(page.getByRole('heading', { name: 'Your wishlist is empty' })).toBeVisible();
@@ -70,10 +70,40 @@ test('add, edit, reorder by drag and by keyboard, delete', async ({ page, signIn
     await expect(wishTitles(page)).toHaveText(['Wool socks', 'Cookbook', 'Board game for two']);
   });
 
-  await test.step('delete', async () => {
-    await page.getByRole('button', { name: 'Delete “Wool socks”' }).click();
-    await expect(page.getByText('Deleted “Wool socks”')).toBeVisible();
+  const archived = page.getByRole('group').filter({ has: page.getByRole('heading', { name: /^Archived \(/ }) });
+
+  await test.step('archive, then undo: back in its place', async () => {
+    await page.getByRole('button', { name: 'Archive “Wool socks”' }).click();
+    await expect(page.getByText('Archived “Wool socks”')).toBeVisible();
     await expect(wishTitles(page)).toHaveText(['Cookbook', 'Board game for two']);
+    await expect(page.getByText('2 wishes')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Archived (1)' })).toBeVisible();
+    await page.getByRole('button', { name: 'Undo' }).click();
+    await expect(wishTitles(page)).toHaveText(['Wool socks', 'Cookbook', 'Board game for two']);
+    await expect(page.getByRole('heading', { name: /^Archived \(/ })).toHaveCount(0);
+  });
+
+  await test.step('restore from the archive: back at the end', async () => {
+    await page.getByRole('button', { name: 'Archive “Wool socks”' }).click();
+    await page.getByRole('heading', { name: 'Archived (1)' }).click();
+    await expect(archived.getByRole('heading', { name: 'Wool socks' })).toBeVisible();
+    await page.getByRole('button', { name: 'Restore “Wool socks”' }).click();
+    await expect(wishTitles(page)).toHaveText(['Cookbook', 'Board game for two', 'Wool socks']);
+    await expect(page.getByRole('heading', { name: /^Archived \(/ })).toHaveCount(0);
+  });
+
+  await test.step('delete for good, after a confirm', async () => {
+    await page.getByRole('button', { name: 'Archive “Cookbook”' }).click();
+    await page.getByRole('heading', { name: 'Archived (1)' }).click();
+    await page.getByRole('button', { name: 'Delete for good: “Cookbook”' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Delete “Cookbook” for good?' });
+    await dialog.getByRole('button', { name: 'Keep it' }).click();
+    await expect(archived.getByRole('heading', { name: 'Cookbook' })).toBeVisible();
+    await page.getByRole('button', { name: 'Delete for good: “Cookbook”' }).click();
+    await dialog.getByRole('button', { name: 'Delete for good' }).click();
+    await expect(page.getByText('Deleted “Cookbook”')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /^Archived \(/ })).toHaveCount(0);
+    await expect(wishTitles(page)).toHaveText(['Board game for two', 'Wool socks']);
   });
 });
 
