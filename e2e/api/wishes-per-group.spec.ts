@@ -23,5 +23,5 @@ test('a new wish shows only in the groups picked; alsoIn lists the other active 
   expect((await viewOf(home.slug, plain.id)).alsoIn).toEqual([]);
 
   expect(codeOf(await ann.trpc.mutate('wish.create', { title: 'Sneaky', groupSlugs: [home.slug, notMine.slug] }))).toBe('GROUP_NOT_FOUND');
-  expect(ok(await ann.trpc.query('wish.list')).map((wish) => wish.title)).toEqual(['Socks', 'Mug']);
+  expect(ok(await ann.trpc.query('wish.list')).map((wish) => wish.title)).toEqual(['Mug', 'Socks']);
 });
