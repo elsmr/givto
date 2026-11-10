@@ -1,43 +1,10 @@
 // Renders every email template in every locale (14): no missing messages or variables, HTML
 // under Gmail's 102 KB clip, a plain-text part with the button's link, `lang` set.
 // EMAIL_PREVIEW_DIR=<dir> also writes each rendered HTML there for browser previews.
-// Run: pnpm test (or node tests/emails.check.mjs)
+// Run: pnpm test (or node --import ./tests/ts-hooks.mjs tests/emails.check.mjs)
 import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { createRequire, registerHooks } from 'node:module';
 import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-// The templates are TSX: compile them with Next's SWC (already installed) as node loads them.
-const require = createRequire(import.meta.url);
-const swc = require('next/dist/build/swc/index.js');
-await swc.loadBindings();
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    try {
-      return nextResolve(specifier, context);
-    } catch (error) {
-      if (!specifier.startsWith('.') || error?.code !== 'ERR_MODULE_NOT_FOUND') throw error;
-      try {
-        return nextResolve(`${specifier}.ts`, context);
-      } catch {
-        return nextResolve(`${specifier}.tsx`, context);
-      }
-    }
-  },
-  load(url, context, nextLoad) {
-    if (url.endsWith('.json')) {
-      return { format: 'module', source: `export default ${readFileSync(fileURLToPath(url), 'utf8')}`, shortCircuit: true };
-    }
-    if (!url.endsWith('.tsx')) return nextLoad(url, context);
-    const { code } = swc.transformSync(readFileSync(fileURLToPath(url), 'utf8'), {
-      filename: fileURLToPath(url),
-      jsc: { parser: { syntax: 'typescript', tsx: true }, transform: { react: { runtime: 'automatic' } }, target: 'es2022' },
-      module: { type: 'es6' },
-    });
-    return { format: 'module', source: code, shortCircuit: true };
-  },
-});
 
 process.env.BETTER_AUTH_URL ??= 'https://givto.example';
 const { render } = await import('@react-email/render');

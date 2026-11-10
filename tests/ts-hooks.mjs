@@ -1,7 +1,14 @@
-// Lets node run the server's TypeScript modules directly (type stripping): resolves
-// extensionless relative imports (`./safe-fetch`) to `.ts` files, as the bundler does.
+// Lets node run the app's TypeScript directly, as the bundler does: extensionless relative imports
+// resolve to `.ts` then `.tsx`, `.tsx` (the email templates) compiles with Next's SWC (already
+// installed), and `.json` (messages) imports without import attributes. Node strips `.ts` types itself.
 // Use: node --import ./tests/ts-hooks.mjs <script>
-import { registerHooks } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { createRequire, registerHooks } from 'node:module';
+import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
+const swc = require('next/dist/build/swc/index.js');
+await swc.loadBindings();
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
@@ -9,7 +16,23 @@ registerHooks({
       return nextResolve(specifier, context);
     } catch (error) {
       if (!specifier.startsWith('.') || error?.code !== 'ERR_MODULE_NOT_FOUND') throw error;
-      return nextResolve(`${specifier}.ts`, context);
+      try {
+        return nextResolve(`${specifier}.ts`, context);
+      } catch {
+        return nextResolve(`${specifier}.tsx`, context);
+      }
     }
+  },
+  load(url, context, nextLoad) {
+    if (url.endsWith('.json') && !url.includes('/node_modules/')) {
+      return { format: 'module', source: `export default ${readFileSync(fileURLToPath(url), 'utf8')}`, shortCircuit: true };
+    }
+    if (!url.endsWith('.tsx')) return nextLoad(url, context);
+    const { code } = swc.transformSync(readFileSync(fileURLToPath(url), 'utf8'), {
+      filename: fileURLToPath(url),
+      jsc: { parser: { syntax: 'typescript', tsx: true }, transform: { react: { runtime: 'automatic' } }, target: 'es2022' },
+      module: { type: 'es6' },
+    });
+    return { format: 'module', source: code, shortCircuit: true };
   },
 });
