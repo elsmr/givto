@@ -25,15 +25,18 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
   const current = !edition || edition.isCurrent;
   const manage = Boolean(group.organizer) && current;
   const input = edition && { groupSlug: slug, editionNumber: edition.number };
+  const done = edition?.status === 'done';
+  const nextEdition = manage && edition && !isBeforeDraw(edition) && <NextEditionCard group={group} edition={edition} />;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-6">
         {manage && <PendingRequests group={group} />}
         {input && <ForYouSection input={input} />}
+        {done && nextEdition}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
-        {edition?.guessing && !isBeforeDraw(edition) && <GuessCard group={group} edition={edition} />}
-        {manage && edition && !isBeforeDraw(edition) && <NextEditionCard group={group} edition={edition} />}
+        {edition?.guessing && !isBeforeDraw(edition) && !done && <GuessCard group={group} edition={edition} />}
+        {!done && nextEdition}
       </div>
       <div className="min-w-0 lg:row-span-2">
         <OverviewStats group={group} showTab={showTab} />

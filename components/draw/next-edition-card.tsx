@@ -28,7 +28,7 @@ export const NextEditionCard = ({ group, edition }: { group: GroupData; edition:
         <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button variant="neutral" onClick={() => setOpen(true)}>
+        <Button onClick={() => setOpen(true)}>
           {t('start')}
         </Button>
       </CardContent>

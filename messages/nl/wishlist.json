@@ -28,8 +28,7 @@
     "kind-surpriseMe-hint": "Vertel wat je leuk vindt; je Santa kiest iets uit.",
     "kind-donation-hint": "Geen cadeau, maar een gift aan een goed doel. Voeg er een link naar toe.",
     "description": "Toelichting",
-    "price-from": "Prijs",
-    "price-to": "Tot (optioneel)",
+    "price": "Prijs",
     "currency": "Valuta",
     "variant": "Maat, kleur of uitvoering",
     "really-want": "Dit wil ik heel graag",
@@ -58,8 +57,7 @@
     "surprise-me": "Verras me",
     "donation": "Liever een donatie",
     "in-budget": "Binnen budget",
-    "links": "Waar je het koopt",
-    "buy-at": "Kopen bij {shop}",
+    "links": "Links",
     "new-tab": "(opent in een nieuw tabblad)"
   },
   "archive": {

@@ -103,7 +103,7 @@ for (const theme of ['light', 'dark'] as const) {
     test('my pages', async ({ page, signIn, signInPage, db }) => {
       const ann = await signIn('ann');
       ok(await ann.trpc.mutate('group.create', { name: 'A11y mine', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
-      // A wish card with an imported picture and two "Buy at" links (73).
+      // A wish card with an imported picture and two shop links (73).
       const imageId = new ObjectId();
       const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
       await db.raw.collection('wishImages.files').insertOne({

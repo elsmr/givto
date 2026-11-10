@@ -211,6 +211,11 @@ test('after gift day: same again next year, then open the new edition', async ({
 
   await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'done' } });
   await page.reload();
+  await test.step('done: a new edition comes first, guessing is gone', async () => {
+    const overview = page.getByRole('tabpanel', { name: 'Overview' });
+    await expect(overview.getByRole('heading', { level: 2 }).first()).toHaveText('Same again next year?');
+    await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toHaveCount(0);
+  });
   const title = `Secret Santa ${todayIn('Europe/Brussels').slice(0, 4)}`;
   await test.step("start a new edition: this year's, a draft, in the settings", async () => {
     await page.getByRole('button', { name: 'Start a new edition' }).click();

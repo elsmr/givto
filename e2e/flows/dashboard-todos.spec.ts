@@ -87,3 +87,15 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
     ).toHaveAttribute('aria-current', 'step');
   });
 });
+
+test('earlier groups: newest first, by gift day or else the year', async ({ page, signIn, signInPage, db }) => {
+  const ann = await signIn('ann');
+  for (const [name, year] of [['Y2021', 2021], ['Y2023', 2023], ['Y2022', 2022]] as const) {
+    const { _id: groupId } = (await db.groups.findOne({ slug: (await createGroup(ann, name, 'Ann', [])).slug }))!;
+    await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'done', year }, $unset: { giftDay: '' } });
+  }
+  await signInPage(page, ann);
+  await page.goto('/app');
+  await page.getByText('Earlier (3)').click();
+  await expect(page.getByRole('main').getByRole('heading', { level: 3 })).toHaveText(['Y2023', 'Y2022', 'Y2021']);
+});

@@ -3,7 +3,6 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { Heart, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { AvatarStack } from './avatar-stack';
 import { GiftDayStat } from './gift-day-stat';
 import type { GroupData } from './group-data';
 import { StatCard } from '@/components/ui/stat-card';
@@ -33,7 +32,6 @@ export const OverviewStats = ({ group, showTab }: { group: GroupData; showTab: (
         tone="primary-muted"
         title={t('people')}
         className="col-span-2 lg:col-span-1"
-        visual={<AvatarStack people={people} />}
         value={people.length}
         onClick={() => showTab('people')}
       />

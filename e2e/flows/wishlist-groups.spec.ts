@@ -38,7 +38,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
   const [olive, ann, bob, cee, dan] = await Promise.all(['olive', 'ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const family = await drawnGroup(db, 'Family', [[ann, 'Ann'], [bob, 'Bob'], [olive, 'Olive']], olive);
   const friends = await drawnGroup(db, 'Friends', [[cee, 'Cee'], [dan, 'Dan'], [olive, 'Olive']], olive);
-  for (const title of ['Wool socks', 'Cookbook']) ok(await olive.trpc.mutate('wish.create', { title, groupSlugs: [friends.slug] }));
+  for (const title of ['Cookbook', 'Wool socks']) ok(await olive.trpc.mutate('wish.create', { title, groupSlugs: [friends.slug] }));
 
   await test.step('Olive shows only the cookbook in Family, after a warning that Friends sees it too', async () => {
     await signInPage(page, olive);

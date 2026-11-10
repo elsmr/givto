@@ -93,6 +93,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
       edition: edition && {
         number: edition.number,
         title: edition.title,
+        year: edition.year,
         status: edition.status,
         giftDay: edition.giftDay?.date,
         timeZone: group.timeZone,

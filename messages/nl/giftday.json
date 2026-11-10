@@ -36,7 +36,7 @@
     "cancel": "Deze volgorde houden"
   },
   "reveal": {
-    "title": "De grote onthulling",
+    "title": "Wie was wiens Santa?",
     "switch": "Na de cadeaus onthullen wie wiens Santa was",
     "description": "Op het einde van de presentatieweergave ziet iedereen wie wiens Santa was. Gebruik je de presentatieweergave niet? Dan wordt het onthuld als pakjesdag voorbij is.",
     "on": "De Santa's worden onthuld na de cadeaus",
@@ -84,8 +84,8 @@
   },
   "errors": {
     "NOT_DRAWN": "Er is nog niet geloot.",
-    "NOT_GIFT_DAY": "De grote onthulling kan vanaf pakjesdag.",
-    "REVEAL_OFF": "Zet eerst de grote onthulling aan.",
+    "NOT_GIFT_DAY": "De Santa's kunnen vanaf pakjesdag onthuld worden.",
+    "REVEAL_OFF": "Zet eerst het onthullen van de Santa's aan.",
     "EDITION_CLOSED": "Deze editie is voorbij.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."

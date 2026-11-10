@@ -45,8 +45,7 @@
     "removed": "Passkey verwijderd"
   },
   "notifications": {
-    "title": "E-mails",
-    "description": "Inlogmails komen altijd door.",
+    "title": "E-mailmeldingen",
     "reminders": "Herinneringen voor deadlines en pakjesdag",
     "wishlistUpdates": "Als je persoon het verlanglijstje aanpast of een tip krijgt",
     "santaMessages": "Psst!-hints en vragen van je Santa",
