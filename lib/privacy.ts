@@ -1,8 +1,7 @@
-// Owner to confirm (55 Findings): the contact email is a placeholder, the periods are
-// proposals. The retention job (55) must use these values so /privacy matches what we do.
+// The retention job (55) uses these values, so /privacy matches what we do.
 export const privacyContact = {
   controller: 'Elias Meire',
-  email: 'privacy@example.com',
+  email: 'elias@meire.dev',
 };
 
 export const retention = {
