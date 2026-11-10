@@ -21,7 +21,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "closed": "Tips are closed for this Secret Santa.",
-    "nobody": "Nobody to leave a tip about yet."
+    "nobody": "Nobody to leave a tip about yet.",
+    "dialog-description": "Only their Santa reads it: never the person it's about, never the organizer."
   },
   "santa": {
     "title": "Shopping for {name}",

@@ -9,8 +9,6 @@
     "done": "Done"
   },
   "summary": {
-    "no-gift-day": "No gift day yet",
-    "countdown": "{when, select, past {Gift day is over} today {It's gift day!} other {{days, plural, one {Gift day is tomorrow} other {Gift day in # days}}}}",
     "gift-day": "Gift day",
     "exchange": "Gifts",
     "exchange-modes": {
@@ -38,7 +36,8 @@
       "declined": "Sits this one out",
       "removed": "Left"
     },
-    "bounced": "Email bounced: check the address"
+    "bounced": "Email bounced: check the address",
+    "manage": "Invite and manage people"
   },
   "requests": {
     "title": "{count, plural, one {# person wants} other {# people want}} to join",
@@ -146,5 +145,39 @@
     "past": "This is {edition}, an earlier edition.",
     "go-current": "Go to the current edition",
     "not-found": "This edition doesn't exist."
+  },
+  "hi": "Hi {name}",
+  "budget-chip": "Budget {budget}",
+  "phase": {
+    "label": "Where this Secret Santa is",
+    "join": "Join",
+    "draw": "Draw",
+    "shop": "Shop",
+    "giftday": "Gift day",
+    "done": "Done",
+    "done-state": "finished"
+  },
+  "tabs": {
+    "label": "This Secret Santa",
+    "overview": "Overview",
+    "giftee": "My giftee",
+    "wishlist": "My wishlist",
+    "people": "People"
+  },
+  "stats": {
+    "gift-day": "Gift day",
+    "no-gift-day": "Not set yet",
+    "days-to-go": "{count, plural, one {day to go} other {days to go}} · {date}",
+    "today": "Today!",
+    "over": "Over",
+    "wishes": "My wishes",
+    "wishes-unit": "{count, plural, one {shown here} other {shown here}}",
+    "people": "People",
+    "people-in": "{count, plural, one {person in} other {people in}}",
+    "needed": "{count, plural, one {# more needed to draw} other {# more needed to draw}}"
+  },
+  "overview": {
+    "details": "Dates, budget and notes",
+    "to-giftee": "Their wishlist and tips"
   }
 }

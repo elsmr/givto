@@ -1,3 +1,4 @@
+import { IconTile } from '@/components/group/icon-tile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,13 +8,13 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Gift } from 'lucide-react';
 import * as m from 'motion/react-m';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { useGifteeRevealed } from './use-giftee-revealed';
 
-type RevealCardProps = { groupSlug: string; editionNumber: number; timeZone: string };
+type RevealCardProps = { groupSlug: string; editionNumber: number; timeZone: string; children?: ReactNode };
 
-/** "You're buying for …", hidden until tapped so it isn't read over a shoulder. Only my own giftee. */
-export const RevealCard = ({ groupSlug, editionNumber, timeZone }: RevealCardProps) => {
+/** "You're buying for …", hidden until tapped so it isn't read over a shoulder. Only my own giftee. `children`: shown with the name. */
+export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: RevealCardProps) => {
   const t = useTranslations('draw.reveal');
   const format = useFormatter();
   const trpc = useTRPC();
@@ -52,9 +53,12 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone }: RevealCardPro
     // Card sets shadow-md; the brand shadow must win (tailwind-merge doesn't know `shadow-brand` is a shadow size).
     <Card className="shadow-brand!">
       <CardHeader>
-        <CardTitle>
-          <h2>{t('title')}</h2>
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <IconTile icon={Gift} tone="primary-muted" />
+          <CardTitle>
+            <h2>{t('title')}</h2>
+          </CardTitle>
+        </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {changedAt && (
@@ -70,6 +74,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone }: RevealCardPro
           >
             <p className="font-semibold text-muted">{t('buying-for')}</p>
             <p className="font-heading text-4xl font-extrabold break-words sm:text-5xl">{giftee.name}</p>
+            {children}
             <Button ref={toggleButton} variant="ghost" onClick={() => toggle(false)}>
               {t('hide')}
             </Button>

@@ -1,16 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { daysBetween, todayIn } from '@/lib/local-date';
+import { Card, CardContent } from '@/components/ui/card';
 import { useFormatter, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { formatBudget } from './format-budget';
 import type { GroupEdition } from './group-data';
 
-/** Gift day with countdown, the draw, deadlines, exchange mode, budget and notes (28, 51). `children`: actions below. */
-export const EditionSummary = ({ edition, children }: { edition: GroupEdition; children?: ReactNode }) => {
+/** Gift day, the draw, deadlines, exchange mode, budget and notes (28, 51). `children`: actions below. */
+export const EditionDetails = ({ edition, children }: { edition: GroupEdition; children?: ReactNode }) => {
   const t = useTranslations('group.summary');
   const format = useFormatter();
   const { giftDay, budget, timeZone } = edition;
-  const days = giftDay ? daysBetween(todayIn(timeZone), giftDay.date) : null;
   // Local dates have no time zone: format them as UTC so they never shift a day.
   const localDate = (date: string) => format.dateTime(new Date(`${date}T00:00:00Z`), { dateStyle: 'full', timeZone: 'UTC' });
   const beforeDraw = edition.status === 'draft' || edition.status === 'open';
@@ -23,9 +21,6 @@ export const EditionSummary = ({ edition, children }: { edition: GroupEdition; c
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{days === null ? t('no-gift-day') : t('countdown', { when: days < 0 ? 'past' : days === 0 ? 'today' : 'future', days })}</CardTitle>
-      </CardHeader>
       <CardContent className="flex flex-col gap-5">
         <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-[auto_1fr]">
           {giftDay && (

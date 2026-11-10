@@ -58,7 +58,11 @@
     "show": "Tonen in deze groep",
     "shown": "“{title}” tonen in deze groep",
     "hidden-badge": "Hier verborgen",
-    "edit": "Mijn verlanglijstje bewerken"
+    "edit": "Mijn verlanglijstje bewerken",
+    "add": "Wensen toevoegen",
+    "visibility": "Kies wat deze groep ziet",
+    "visibility-description": "Zet een wens uit om hem alleen voor deze groep te verbergen. Je andere groepen zien hem nog wel.",
+    "done": "Klaar"
   },
   "giftee": {
     "title": "Verlanglijstje van {name}",

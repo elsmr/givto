@@ -58,7 +58,11 @@
     "show": "Show in this group",
     "shown": "Show “{title}” in this group",
     "hidden-badge": "Hidden here",
-    "edit": "Edit my wishlist"
+    "edit": "Edit my wishlist",
+    "add": "Add wishes",
+    "visibility": "Choose what this group sees",
+    "visibility-description": "Switch a wish off to hide it from this group only. Your other groups still see it.",
+    "done": "Done"
   },
   "giftee": {
     "title": "{name}'s wishlist",
