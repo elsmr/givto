@@ -12,6 +12,15 @@ export const useAdvance = (groupSlug: string, editionNumber: number) => {
   const presenterKey = trpc.giftday.presenter.queryKey({ groupSlug, editionNumber });
   const mutation = useMutation(
     trpc.giftday.advance.mutationOptions({
+      // The reel landed on whose turn the server already decided; `spin` only marks it shown. So show
+      // the turn now instead of waiting for the round trip (an error refetches the real state).
+      onMutate: async ({ action }) => {
+        if (action !== 'spin') return;
+        await queryClient.cancelQueries({ queryKey: presenterKey });
+        queryClient.setQueryData(presenterKey, (view) =>
+          view?.unwrapOrder ? { ...view, unwrapOrder: { ...view.unwrapOrder, currentShown: true } } : view
+        );
+      },
       onSuccess: (view) => {
         queryClient.setQueryData(presenterKey, view);
         void queryClient.invalidateQueries(trpc.giftday.get.pathFilter());
