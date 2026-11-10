@@ -1,7 +1,7 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { isDrawn } from '../../schema/edition';
-import { newId } from '../db';
+import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
@@ -51,7 +51,7 @@ export const claimRouter = router({
         createdAt: new Date(),
       });
     } catch (error) {
-      if ((error as { code?: number }).code === 11000) throw new AppError('WISH_TAKEN');
+      if (isDuplicateKey(error)) throw new AppError('WISH_TAKEN');
       throw error;
     }
     return { wishId: wish._id, claim: 'mine' as const };

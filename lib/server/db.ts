@@ -18,6 +18,8 @@ export type UserDoc = User & { _id: ObjectId };
 
 export const newId = (): string => new ObjectId().toHexString();
 
+export const isDuplicateKey = (error: unknown) => (error as { code?: number }).code === 11000;
+
 const DAY = 24 * 60 * 60;
 
 export const collections = (db: Db) => ({

@@ -1,5 +1,5 @@
 import { isBeforeDraw, type Edition } from '../../schema/edition';
-import { newId } from '../db';
+import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
 import { organizerProcedure, router } from '../trpc';
@@ -41,7 +41,7 @@ export const editionRouter = router({
       await ctx.db.editions.insertOne(edition);
     } catch (error) {
       // Unique (groupId, number): someone started it a moment ago.
-      if ((error as { code?: number }).code === 11000) throw new AppError('EDITION_IN_PROGRESS');
+      if (isDuplicateKey(error)) throw new AppError('EDITION_IN_PROGRESS');
       throw error;
     }
     return { number: edition.number };

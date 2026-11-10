@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { getDb } from './db';
+import { getDb, isDuplicateKey } from './db';
 import { AppError } from './errors';
 
 export interface RateLimitRule {
@@ -37,8 +37,8 @@ export const consumeRateLimit = async (
       { upsert: true, returnDocument: 'after' }
     );
   // Two first requests can race on the upsert; the loser retries as an update.
-  const counter = await consume().catch((error: { code?: number }) => {
-    if (error.code === 11000) return consume();
+  const counter = await consume().catch((error: unknown) => {
+    if (isDuplicateKey(error)) return consume();
     throw error;
   });
   if (!counter || counter.count <= max) return { allowed: true, retryAfter: null };
