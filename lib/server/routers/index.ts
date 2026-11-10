@@ -1,19 +1,25 @@
 import { getMongoDb } from '../db';
 import { publicProcedure, router } from '../trpc';
 import { accountRouter } from './account';
+import { claimRouter } from './claim';
+import { drawRouter } from './draw';
+import { editionRouter } from './edition';
+import { giftRouter } from './gift';
+import { giftdayRouter } from './giftday';
 import { groupRouter } from './group';
+import { guessRouter } from './guess';
+import { importRouter } from './import';
 import { inviteRouter } from './invite';
 import { joinRouter } from './join';
-import { betweenRouters } from './between';
-import { meRouter } from './me';
-import { wishlistRouters } from './wishlist';
-import { membershipRouter } from './membership';
-import { drawRouters } from './draw-routers';
-import { giftdayRouter } from './giftday';
 import { manageRouter } from './manage';
-import { giftRouter } from './gift';
-import { guessRouter } from './guess';
+import { meRouter } from './me';
+import { membershipRouter } from './membership';
+import { nudgeRouter } from './nudge';
+import { questionRouter } from './question';
 import { remindersRouter } from './reminders';
+import { settingsRouter } from './settings';
+import { tipRouter } from './tip';
+import { wishRouter } from './wish';
 
 /** Slices add their router here: `<domain>: <domain>Router` from `./<domain>`. */
 export const appRouter = router({
@@ -23,13 +29,19 @@ export const appRouter = router({
   }),
   me: meRouter,
   account: accountRouter,
-  ...wishlistRouters,
+  wish: wishRouter,
+  claim: claimRouter,
+  import: importRouter,
   group: groupRouter,
   join: joinRouter,
   invite: inviteRouter,
   membership: membershipRouter,
-  ...betweenRouters,
-  ...drawRouters,
+  tip: tipRouter,
+  question: questionRouter,
+  nudge: nudgeRouter,
+  draw: drawRouter,
+  edition: editionRouter,
+  settings: settingsRouter,
   giftday: giftdayRouter,
   manage: manageRouter,
   gift: giftRouter,

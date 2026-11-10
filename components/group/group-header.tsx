@@ -2,16 +2,16 @@ import { ManageMenu } from '@/components/manage/manage-menu';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
+import { formatBudget } from '@/lib/format-budget';
 import { Settings } from 'lucide-react';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { formatBudget } from './format-budget';
 import type { GroupData } from './group-data';
 
 /** Greeting, group name, the edition with its budget and exchange chips, and Settings + Manage for the organizer (61, 64). */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
-  const format = useFormatter();
+  const locale = useLocale();
   const me = group.members.find((m) => m.id === group.me.memberId);
   const { edition } = group;
 
@@ -34,7 +34,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
       {edition && (
         <>
           <p className="font-semibold">{edition.title}</p>
-          {edition.budget && <Badge variant="mint">{t('budget-chip', { budget: formatBudget(format, edition.budget) })}</Badge>}
+          {edition.budget && <Badge variant="mint">{t('budget-chip', { budget: formatBudget(edition.budget, locale) })}</Badge>}
           <Badge variant="primary-muted">{t(`summary.exchange-modes.${edition.exchangeMode}`)}</Badge>
         </>
       )}

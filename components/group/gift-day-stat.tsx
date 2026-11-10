@@ -1,19 +1,18 @@
-import { daysBetween, todayIn } from '@/lib/local-date';
+import { daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
 import { CalendarDays } from 'lucide-react';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import type { GroupEdition } from './group-data';
 import { StatCard } from '@/components/ui/stat-card';
 
 /** Days to gift day, with the date (28). */
 export const GiftDayStat = ({ edition }: { edition: GroupEdition }) => {
   const t = useTranslations('group.stats');
-  const format = useFormatter();
+  const locale = useLocale();
   const { giftDay, timeZone } = edition;
   if (!giftDay) return <StatCard icon={CalendarDays} tone="yellow" title={t('gift-day')} value="–" unit={t('no-gift-day')} />;
 
   const days = daysBetween(todayIn(timeZone), giftDay.date);
-  // Local dates have no time zone: format them as UTC so they never shift a day.
-  const date = format.dateTime(new Date(`${giftDay.date}T00:00:00Z`), { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const date = formatLocalDate(giftDay.date, locale, { day: 'numeric', month: 'short' });
   const word = (text: string) => <span className="text-base">{text}</span>;
   return (
     <StatCard

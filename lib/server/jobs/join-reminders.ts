@@ -1,9 +1,9 @@
 import { JoinReminderEmail, joinReminderSubject } from '../../../emails/join-reminder';
-import { siteUrl } from '../../../emails/ui/site';
 import type { Collections } from '../db';
 import { newId } from '../db';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
+import { inviteUrl } from '../mail/urls';
 import { hashToken, organizerOf, randomToken } from '../membership';
 import { runEach } from './run-each';
 
@@ -43,7 +43,7 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
       groupId: group._id,
       memberId: member.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, name: member.name, organizer: organizer.name, url: siteUrl(to.locale, `/g/${group.slug}/join?invite=${token}`) };
+        const props = { locale: to.locale, group: group.name, name: member.name, organizer: organizer.name, url: inviteUrl(to.locale, group.slug, token) };
         return { subject: joinReminderSubject(props), body: JoinReminderEmail(props) };
       },
     }).catch(async (error: unknown) => {

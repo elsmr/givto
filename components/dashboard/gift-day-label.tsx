@@ -1,17 +1,18 @@
+import { formatLocalDate } from '@/lib/local-date';
 import { cn } from '@/lib/utils';
 import { CalendarDays } from 'lucide-react';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { daysUntil } from './days-until';
 
 const GiftDayLabel = ({ date }: { date?: string }) => {
   const t = useTranslations('dashboard.gift-day');
-  const format = useFormatter();
+  const locale = useLocale();
   return (
     <p className="mono flex items-center gap-2 font-semibold">
       <CalendarDays aria-hidden="true" className="size-5 shrink-0" />
       {date === undefined
         ? t('none')
-        : t('past', { date: format.dateTime(new Date(`${date}T12:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' }) })}
+        : t('past', { date: formatLocalDate(date, locale, { dateStyle: 'medium' }) })}
     </p>
   );
 };

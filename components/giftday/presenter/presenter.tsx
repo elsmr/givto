@@ -1,5 +1,6 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useTRPC } from '@/lib/client/trpc';
+import { isDrawn } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
@@ -52,7 +53,7 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
     return frame(
       <div className="flex flex-col items-center gap-6 px-6 py-16 text-center">
         <p className="text-2xl font-semibold">{t('present.no-order')}</p>
-        {(view.data.status === 'drawn' || view.data.status === 'giftday') && (
+        {isDrawn(view.data) && (
           <ShuffleButton groupSlug={groupSlug} editionNumber={editionNumber} again={false} />
         )}
       </div>

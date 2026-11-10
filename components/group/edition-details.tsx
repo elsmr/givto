@@ -1,17 +1,18 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { formatBudget } from '@/lib/format-budget';
+import { formatLocalDate } from '@/lib/local-date';
 import { isBeforeDraw } from '@/lib/schema/edition';
-import { useFormatter, useTranslations } from 'next-intl';
+import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { formatBudget } from './format-budget';
 import type { GroupEdition } from './group-data';
 
 /** Gift day, the draw, deadlines, exchange mode, budget and notes (28, 51). `children`: actions below. */
 export const EditionDetails = ({ edition, children }: { edition: GroupEdition; children?: ReactNode }) => {
   const t = useTranslations('group.summary');
   const format = useFormatter();
+  const locale = useLocale();
   const { giftDay, budget, timeZone } = edition;
-  // Local dates have no time zone: format them as UTC so they never shift a day.
-  const localDate = (date: string) => format.dateTime(new Date(`${date}T00:00:00Z`), { dateStyle: 'full', timeZone: 'UTC' });
+  const localDate = (date: string) => formatLocalDate(date, locale);
   const draw = !isBeforeDraw(edition)
     ? t('drawn')
     : edition.drawAt
@@ -50,7 +51,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
             </>
           )}
           <dt className="font-semibold">{t('budget')}</dt>
-          <dd>{budget ? formatBudget(format, budget) : t('no-budget')}</dd>
+          <dd>{budget ? formatBudget(budget, locale) : t('no-budget')}</dd>
           {edition.notes && (
             <>
               <dt className="font-semibold">{t('notes')}</dt>

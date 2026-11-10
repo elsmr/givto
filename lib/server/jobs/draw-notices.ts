@@ -1,7 +1,7 @@
 import { GifteeChangedEmail, gifteeChangedSubject } from '../../../emails/giftee-changed';
 import { NamesDrawnEmail, namesDrawnSubject } from '../../../emails/names-drawn';
-import { formatLocalDate } from '../../../emails/ui/format-date';
-import { formatPrice } from '../../../components/wishlist/format-price';
+import { formatBudget } from '../../format-budget';
+import { formatLocalDate } from '../../local-date';
 import type { Edition } from '../../schema/edition';
 import type { Collections } from '../db';
 import { log } from '../log';
@@ -44,7 +44,7 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
         const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), forName: to.forName };
         if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);
-        const budget = edition.budget && formatPrice(edition.budget, to.locale);
+        const budget = edition.budget && formatBudget(edition.budget, to.locale);
         return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget }) };
       },
     });

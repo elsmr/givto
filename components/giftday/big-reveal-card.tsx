@@ -2,7 +2,7 @@ import { IconTile } from '@/components/ui/icon-tile';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import type { EditionStatus } from '@/lib/schema/edition';
+import { isFromGiftDay, type EditionStatus } from '@/lib/schema/edition';
 import { Sparkles } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { GuessScoreboard } from '@/components/guess/guess-scoreboard';
@@ -26,7 +26,7 @@ type BigRevealCardProps = {
  */
 export const BigRevealCard = ({ groupSlug, editionNumber, reveal, guessing, status, manage }: BigRevealCardProps) => {
   const t = useTranslations('giftday.reveal');
-  const fromGiftDay = status === 'giftday' || status === 'done';
+  const fromGiftDay = isFromGiftDay({ status });
 
   if (!manage && !reveal.enabled) return null;
   const description = reveal.revealed

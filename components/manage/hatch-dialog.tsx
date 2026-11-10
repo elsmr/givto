@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { addDays, todayIn } from '@/lib/local-date';
-import { useFormatter, useTranslations } from 'next-intl';
+import { addDays, formatLocalDate, todayIn } from '@/lib/local-date';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { hatchErrors, hatchPoints, type Hatch } from './hatches';
 import { useHatch } from './use-hatch';
@@ -30,13 +30,13 @@ type HatchDialogProps = {
 /** "Are you sure?" for one hatch (64): what will happen, point by point; back to shopping asks for the new date. */
 export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: HatchDialogProps) => {
   const t = useTranslations('manage');
-  const format = useFormatter();
+  const locale = useLocale();
   const today = todayIn(edition.timeZone);
   const tomorrow = addDays(today, 1);
   const upcoming = edition.giftDay && edition.giftDay.date > today ? edition.giftDay.date : '';
   const [giftDayDate, setGiftDayDate] = useState(upcoming || tomorrow);
   const run = useHatch(hatch, groupSlug, onClose);
-  const todayLabel = format.dateTime(new Date(`${today}T00:00:00Z`), { dateStyle: 'full', timeZone: 'UTC' });
+  const todayLabel = formatLocalDate(today, locale);
   const points = hatchPoints[hatch].filter((point) => !(shuffled && point === 'startGiftDay.points.order'));
   const error = run.error && knownAppError(run.error, hatchErrors);
 

@@ -1,10 +1,9 @@
 import { ReminderGiftDayEmail, reminderGiftDaySubject } from '../../../emails/reminder-gift-day';
 import { ReminderEmail, reminderSubject, type ReminderParts } from '../../../emails/reminder';
-import { formatLocalDate } from '../../../emails/ui/format-date';
 import { siteUrl } from '../../../emails/ui/site';
-import { daysBetween, hourIn, todayIn } from '../../local-date';
+import { daysBetween, formatLocalDate, hourIn, todayIn } from '../../local-date';
 import { dueReminder, type DueReminder, type ReminderPart } from '../../reminder-schedule';
-import type { Edition } from '../../schema/edition';
+import { isDrawn, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
@@ -82,7 +81,7 @@ const scheduledReminders = async (db: Collections, group: Group, edition: Editio
 const giftDayReminders = async (db: Collections, group: Group, edition: Edition, now: Date) => {
   if (!edition.giftDay || todayIn(edition.timeZone, now) !== edition.giftDay.date) return {};
   const hour = hourIn(edition.timeZone, now);
-  if ((edition.status !== 'drawn' && edition.status !== 'giftday') || hour < GIFT_DAY_HOURS.from || hour >= GIFT_DAY_HOURS.to) return {};
+  if (!isDrawn(edition) || hour < GIFT_DAY_HOURS.from || hour >= GIFT_DAY_HOURS.to) return {};
   const ids = edition.participants.filter((p) => p.participates && p.status === 'joined').map((p) => p.memberId);
   // Managers hear it once, for themselves: not again per managed member.
   const people = group.members.filter((m): m is Member => ids.includes(m.id) && m.status === 'joined' && Boolean(m.userId));

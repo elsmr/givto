@@ -6,8 +6,7 @@ import type { Collections } from '../db';
 import { AppError } from '../errors';
 import { newUnwrapOrder } from '../jobs/giftday';
 import { currentEdition } from '../membership';
-import { router } from '../trpc';
-import { organizerEditionProcedure } from './draw';
+import { organizerEditionProcedure, router } from '../trpc';
 
 /** Each action is only offered in its status: another one means it isn't there yet, or it just changed. */
 const wrongStatus = ({ status }: Edition) =>
