@@ -105,25 +105,25 @@ for (const theme of ['light', 'dark'] as const) {
     });
 
     for (const phase of phases) {
-      test(`${phase}: organizer and member`, async ({ page, signIn, signInPage, db }) => {
+      // Each test runs axe on up to 10 pages: too slow for the default timeout on a busy machine.
+      test(`${phase}: organizer`, async ({ page, signIn, signInPage, db }) => {
+        test.slow();
         const people = await Promise.all(['ann', 'bob', 'cee', 'dee'].map((name) => signIn(name)));
-        const [ann, bob] = people;
         const group = await seedGroup(phase, people, db);
+        await signInPage(page, people[0]);
+        await scanGroupTabs(page, group.slug);
+        await visit(page, `/g/${group.slug}/settings`);
+        if (phase !== 'open') await visit(page, `/g/${group.slug}/present`);
+        if (phase === 'draft') await visit(page, `/g/${group.slug}/1`);
+      });
 
-        await test.step('organizer', async () => {
-          await signInPage(page, ann);
-          await scanGroupTabs(page, group.slug);
-          await visit(page, `/g/${group.slug}/settings`);
-          if (phase !== 'open') await visit(page, `/g/${group.slug}/present`);
-          if (phase === 'draft') await visit(page, `/g/${group.slug}/1`);
-        });
-
-        await test.step('member', async () => {
-          await page.context().clearCookies();
-          await signInPage(page, bob);
-          await scanGroupTabs(page, group.slug);
-          await visit(page, `/g/${group.slug}/settings`);
-        });
+      test(`${phase}: member`, async ({ page, signIn, signInPage, db }) => {
+        test.slow();
+        const people = await Promise.all(['ann', 'bob', 'cee', 'dee'].map((name) => signIn(name)));
+        const group = await seedGroup(phase, people, db);
+        await signInPage(page, people[1]);
+        await scanGroupTabs(page, group.slug);
+        await visit(page, `/g/${group.slug}/settings`);
       });
     }
   });
