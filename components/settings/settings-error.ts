@@ -1,5 +1,5 @@
 import { TRPCClientError } from '@trpc/client';
-import { knownAppError } from '../group/app-error-code';
+import { appErrorCode, knownAppError } from '../group/app-error-code';
 
 const knownErrors = [
   'DATE_IN_PAST',
@@ -15,6 +15,6 @@ const knownErrors = [
 export const settingsErrorKey = (error: unknown) => {
   const issues: { message: string }[] = (error instanceof TRPCClientError && error.data?.issues) || [];
   if (issues.some((issue) => issue.message === 'dates_out_of_order')) return 'DATES_OUT_OF_ORDER';
-  if (error instanceof TRPCClientError && error.data?.appCode === 'DRAW_IMPOSSIBLE') return 'AVOID_PREVIOUS';
+  if (appErrorCode(error) === 'DRAW_IMPOSSIBLE') return 'AVOID_PREVIOUS';
   return knownAppError(error, knownErrors);
 };
