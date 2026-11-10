@@ -18,7 +18,6 @@ export default function EditionPage() {
     <AppShell app>
       <Head>
         <title>{`${t('page-title')} · Givto`}</title>
-        <meta name="robots" content="noindex" />
       </Head>
       {valid ? <GroupHome key={`${slug}/${editionNumber}`} slug={slug} editionNumber={editionNumber} /> : <PastEditionNotice slug={slug} />}
     </AppShell>
