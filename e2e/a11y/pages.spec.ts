@@ -115,6 +115,8 @@ for (const theme of ['light', 'dark'] as const) {
         { url: 'https://www.zalando.nl/falke-sokken-fa112c0bt-a11.html' },
       ];
       ok(await ann.trpc.mutate('wish.create', { title: 'Wool socks', description: 'Size 42', price: { currency: 'EUR', amount: 1500 }, links }));
+      const archived = ok(await ann.trpc.mutate('wish.create', { title: 'Moomin mug', reallyWant: true }));
+      ok(await ann.trpc.mutate('wish.archive', { wishId: archived.id }));
       await signInPage(page, ann);
       for (const path of ['/app', '/wishlist', '/account', '/new']) await visit(page, path);
     });

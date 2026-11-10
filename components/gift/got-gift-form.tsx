@@ -20,6 +20,7 @@ type GotGiftFormProps = {
 /** Tick the wishes you got (Dibs! ones start ticked) and add the rest as short lines (63). */
 export const GotGiftForm = ({ list, initial, busy, onSubmit }: GotGiftFormProps) => {
   const t = useTranslations('wishlist.got-gift');
+  const tGiftee = useTranslations('wishlist.giftee');
   const id = useId();
   const [wishIds, setWishIds] = useState(initial.wishIds);
   const [lines, setLines] = useState(initial.lines);
@@ -53,6 +54,7 @@ export const GotGiftForm = ({ list, initial, busy, onSubmit }: GotGiftFormProps)
                   <FieldLabel htmlFor={`${id}-${wish.id}`} className="flex flex-wrap items-center gap-2 font-normal">
                     <span className="break-words">{wish.title}</span>
                     {wish.claim === 'taken' && <Badge>{t('taken')}</Badge>}
+                    {wish.archived && <Badge>{tGiftee('gone')}</Badge>}
                   </FieldLabel>
                 </Field>
               </li>
