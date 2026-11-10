@@ -81,11 +81,12 @@ test('presenter, all at once: intro, spin or skip it, turns with gift counts, th
     await expect(page.getByRole('heading', { level: 2, name: "It's gift day!" })).toBeVisible();
   });
 
-  await test.step('→ starts; the reel spins and lands on the first person: 1 of 3 · 2 gifts', async () => {
+  await test.step('→ starts; the highlight hops and lands on the first person: 1 of 3 · 2 gifts', async () => {
     await page.keyboard.press('ArrowRight');
     await expect(page.getByRole('heading', { name: "Who's next?" })).toBeVisible();
     await button(page, 'Spin').click();
-    await expect(page.getByText('1 of 3 · 2 gifts', { exact: true })).toBeVisible();
+    // Three left: the highlight hops between their cards for about 4 seconds first.
+    await expect(page.getByText('1 of 3 · 2 gifts', { exact: true })).toBeVisible({ timeout: 10_000 });
     await expect(shownName(page, first)).toBeVisible();
     await expect(page.getByText('Next to unwrap')).toBeVisible();
   });
