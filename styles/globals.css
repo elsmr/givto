@@ -139,6 +139,9 @@
  * Outlines and hard shadows stay dark; a warm purple-ink page with lighter tinted surfaces;
  * the colour fills carry the style; cream is for text only. Contrast table: .scratch/53 Findings.
  */
+/* `dark:` follows the theme attribute, not the system setting. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 @layer base {
   :root[data-theme='dark'] {
     color-scheme: dark;
