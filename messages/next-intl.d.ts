@@ -13,6 +13,7 @@ import type privacy from './en/privacy.json';
 import type seo from './en/seo.json';
 import type group from './en/group.json';
 import type join from './en/join.json';
+import type manage from './en/manage.json';
 import type shell from './en/shell.json';
 import type ui from './en/ui.json';
 import type unsubscribe from './en/unsubscribe.json';
@@ -37,6 +38,7 @@ declare module 'next-intl' {
       seo: typeof seo;
       group: typeof group;
       join: typeof join;
+      manage: typeof manage;
       shell: typeof shell;
       ui: typeof ui;
       unsubscribe: typeof unsubscribe;

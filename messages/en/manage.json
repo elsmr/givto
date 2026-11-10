@@ -1,0 +1,66 @@
+{
+  "button": "Manage",
+  "cancel": "Cancel",
+  "startGiftDay": {
+    "item": "Start gift day now",
+    "title": "Start gift day now?",
+    "description": "Gift day starts for everyone right away, without waiting for the date.",
+    "points": {
+      "date": "The gift day is today, {today}.",
+      "order": "The unwrap order is shuffled, because nobody has yet.",
+      "open": "Dibs!, tips and questions stay open until the end of the day. Then it's done.",
+      "secret": "Who drew whom stays secret, unless you do the big reveal."
+    },
+    "confirm": "Start gift day",
+    "done": "Gift day has started"
+  },
+  "finishGiftDay": {
+    "item": "Finish gift day",
+    "title": "Finish gift day now?",
+    "description": "This Secret Santa is over for everyone, without waiting for tomorrow.",
+    "points": {
+      "closed": "Dibs!, tips, questions and the settings close.",
+      "received": "Everyone can tick off what they got.",
+      "next": "You can start next year's edition.",
+      "undo": "Changed your mind? Reopen gift day from this menu."
+    },
+    "confirm": "Finish gift day",
+    "done": "Gift day is over"
+  },
+  "backToShopping": {
+    "item": "Back to shopping",
+    "underway": "Not once something's unwrapped or revealed",
+    "title": "Back to shopping?",
+    "description": "Gift day stops: everyone shops for their giftee again, until the new gift day.",
+    "points": {
+      "date": "Gift day moves to the date you pick below. Reminders follow it.",
+      "order": "The unwrap order stays a surprise; the unwrapping starts over.",
+      "secret": "Nothing has been unwrapped or revealed, so nobody learns anything."
+    },
+    "date": "New gift day",
+    "date-help": "After today. You can still change it in the settings.",
+    "confirm": "Back to shopping",
+    "done": "Back to shopping"
+  },
+  "reopenGiftDay": {
+    "item": "Reopen gift day",
+    "title": "Reopen gift day for today?",
+    "description": "For corrections: it's gift day again until the end of today, {today}. Then it's over again.",
+    "points": {
+      "open": "Dibs!, tips, questions, the unwrap order and the settings open again.",
+      "date": "The gift day date becomes today.",
+      "secret": "The big reveal stays as it is."
+    },
+    "confirm": "Reopen gift day",
+    "done": "Gift day is open again"
+  },
+  "errors": {
+    "NOT_DRAWN": "The names aren't drawn yet.",
+    "NOT_GIFT_DAY": "It isn't gift day yet.",
+    "GIFT_DAY_UNDERWAY": "Something has been unwrapped or revealed already, so it can't go back.",
+    "DATE_IN_PAST": "Pick a day after today.",
+    "EDITION_CLOSED": "Only the latest edition can be reopened.",
+    "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  }
+}
