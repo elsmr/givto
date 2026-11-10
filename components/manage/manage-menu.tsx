@@ -21,7 +21,8 @@ export const ManageMenu = ({ groupSlug, edition }: { groupSlug: string; edition:
   const giftDay = useGiftDay({ groupSlug, editionNumber: edition.number }, edition.status);
   const hatches = hatchesFor(edition.status);
   if (hatches.length === 0) return null;
-  const underway = Boolean(giftDay.data?.unwrapOrder?.went.length || giftDay.data?.reveal.revealed);
+  // A Santa shown at a turn (62) counts too: what people saw can't be unseen.
+  const underway = Boolean(giftDay.data?.unwrapOrder?.went.length || giftDay.data?.reveal.revealed || giftDay.data?.guessing?.results.length);
 
   return (
     <>

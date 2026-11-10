@@ -24,5 +24,5 @@ export default function GroupSettingsPage() {
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['group', 'settings', 'draw', 'create']) },
+  props: { messages: await loadMessages(locale, ['group', 'settings', 'draw', 'create', 'guess']) },
 });

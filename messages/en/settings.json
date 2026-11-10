@@ -1,4 +1,5 @@
 {
+  "guess": "Guess your Santa",
   "page-title": "Settings",
   "only-organizer": "Only the organizer can change the settings of {group}.",
   "back": "Back to {group}",

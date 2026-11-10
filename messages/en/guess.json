@@ -1,0 +1,55 @@
+{
+  "card": {
+    "title": "Guess your Santa",
+    "open": "Who do you think is buying your gift? One guess, no take-backs.",
+    "when": "You'll find out at your turn on gift day.",
+    "make": "Make your guess",
+    "you-guessed": "You guessed <name>{guess}</name>",
+    "locked": "Locked in",
+    "closed": "Guessing closed when gift day started.",
+    "from": "Your gift was from <name>{santa}</name>",
+    "no-guess": "You didn't guess this time.",
+    "so-far": "Guesses so far"
+  },
+  "dialog": {
+    "title": "Who's your Santa?",
+    "description": "Pick one person. Once it's locked in, you can't change it. Nobody sees your guess until your turn on gift day.",
+    "people": "Your guess",
+    "lock": "Lock it in",
+    "cancel": "Not yet",
+    "locked": "Locked in! You'll find out at your turn on gift day."
+  },
+  "result": {
+    "list-label": "Who guessed their Santa",
+    "guessed": "guessed <name>{guess}</name>",
+    "no-guess": "no guess",
+    "right": "Nailed it!",
+    "wrong": "Not quite",
+    "score": "{right} of {total} guessed their Santa"
+  },
+  "present": {
+    "show": "Who was it from?",
+    "from": "From <name>{santa}</name>",
+    "you-guessed": "You guessed <name>{guess}</name>",
+    "no-guess": "No guess this time",
+    "keys": "→ or space: who was it from? · ← back"
+  },
+  "settings": {
+    "title": "Guess your Santa",
+    "switch": "Guess your Santa",
+    "description": "Everyone can make one secret guess at who their Santa is. On gift day, each person's Santa is shown at their turn in the presenter view, with their guess. Switch it off to keep Santas secret.",
+    "on": "Guess your Santa is on",
+    "off": "Guess your Santa is off: Santas stay secret"
+  },
+  "panel": {
+    "note": "Each person's Santa is shown at their turn. Switch off Guess your Santa to keep Santas secret.",
+    "settings": "Guess your Santa settings"
+  },
+  "errors": {
+    "GUESS_LOCKED": "You've already locked in a guess.",
+    "GUESSING_CLOSED": "Guessing is closed.",
+    "NOT_FOUND": "That person isn't in this draw.",
+    "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
+    "INTERNAL": "Something went wrong on our side. Try again in a moment."
+  }
+}

@@ -3,7 +3,8 @@ import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { PresenterControls } from './presenter-controls';
-import type { PresenterOrder, PresenterView } from './presenter-phase';
+import { GuessScoreboard } from '@/components/guess/guess-scoreboard';
+import { canRevealIn, currentSanta, type PresenterOrder, type PresenterView } from './presenter-phase';
 import { PresenterRevealSlide } from './presenter-reveal-slide';
 import { PresenterTitleSlide } from './presenter-title-slide';
 import { PresenterTurnSlide } from './presenter-turn-slide';
@@ -44,9 +45,15 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order }: Presen
                 <WhoIsNextReel names={rotation} target={order.current?.name ?? ''} status={actions.spinStatus} onLanded={actions.onLanded} />
               </>
             )}
-            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} />}
-            {phase === 'reveal' && <PresenterRevealSlide reveal={view.reveal} />}
-            {phase === 'end' && <PresenterTitleSlide title={t('present.end-title')} hint={t('present.end-hint')} />}
+            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} />}
+            {phase === 'reveal' && <PresenterRevealSlide reveal={view.reveal} guessing={view.guessing} />}
+            {phase === 'end' && (
+              <>
+                <PresenterTitleSlide title={t('present.end-title')} hint={t('present.end-hint')} />
+                {/* Without the big reveal, the Santas shown at the turns are the scoreboard (62). */}
+                {!canRevealIn(view) && view.guessing && view.guessing.results.length > 0 && <GuessScoreboard guessing={view.guessing} large />}
+              </>
+            )}
           </m.div>
         </AnimatePresence>
       </div>

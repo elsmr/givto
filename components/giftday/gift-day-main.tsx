@@ -15,11 +15,11 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
   return (
     <>
       <GiftDayHero groupSlug={groupSlug} canPresent={manage}>
-        {order?.started && <UnwrapNow order={order} className="w-full bg-surface text-left" />}
+        {order?.started && <UnwrapNow order={order} guessing={giftDay.data?.guessing} className="w-full bg-surface text-left" />}
         <GiftsToOpen {...input} />
         <GifteeLine {...input} />
       </GiftDayHero>
-      {giftDay.data && <BigRevealCard {...input} reveal={giftDay.data.reveal} status={edition.status} manage={manage} />}
+      {giftDay.data && <BigRevealCard {...input} reveal={giftDay.data.reveal} guessing={giftDay.data.guessing} status={edition.status} manage={manage} />}
     </>
   );
 };

@@ -1,0 +1,55 @@
+{
+  "card": {
+    "title": "Raad je Santa",
+    "open": "Wie denk jij dat jouw cadeau koopt? Eén gok, en terugnemen kan niet.",
+    "when": "Je hoort het als jij aan de beurt bent op pakjesdag.",
+    "make": "Doe je gok",
+    "you-guessed": "Jij gokte <name>{guess}</name>",
+    "locked": "Vastgelegd",
+    "closed": "Gokken kon tot pakjesdag begon.",
+    "from": "Je cadeau kwam van <name>{santa}</name>",
+    "no-guess": "Je hebt deze keer niet gegokt.",
+    "so-far": "Gokken tot nu toe"
+  },
+  "dialog": {
+    "title": "Wie is jouw Santa?",
+    "description": "Kies één persoon. Eenmaal vastgelegd kun je het niet meer veranderen. Niemand ziet je gok tot jij aan de beurt bent op pakjesdag.",
+    "people": "Jouw gok",
+    "lock": "Leg vast",
+    "cancel": "Nog niet",
+    "locked": "Vastgelegd! Je hoort het als jij aan de beurt bent op pakjesdag."
+  },
+  "result": {
+    "list-label": "Wie raadde zijn Santa",
+    "guessed": "gokte <name>{guess}</name>",
+    "no-guess": "niet gegokt",
+    "right": "Raak!",
+    "wrong": "Net niet",
+    "score": "{right} van de {total} raadden hun Santa"
+  },
+  "present": {
+    "show": "Van wie was het?",
+    "from": "Van <name>{santa}</name>",
+    "you-guessed": "Jij gokte <name>{guess}</name>",
+    "no-guess": "Deze keer niet gegokt",
+    "keys": "→ of spatie: van wie was het? · ← terug"
+  },
+  "settings": {
+    "title": "Raad je Santa",
+    "switch": "Raad je Santa",
+    "description": "Iedereen kan één geheime gok doen wie zijn Santa is. Op pakjesdag zie je in de presentatieweergave bij elke beurt wie de Santa was, met de gok erbij. Zet het uit om de Santa's geheim te houden.",
+    "on": "Raad je Santa staat aan",
+    "off": "Raad je Santa staat uit: de Santa's blijven geheim"
+  },
+  "panel": {
+    "note": "Bij elke beurt zie je wie de Santa was. Zet Raad je Santa uit om de Santa's geheim te houden.",
+    "settings": "Instellingen van Raad je Santa"
+  },
+  "errors": {
+    "GUESS_LOCKED": "Je hebt al een gok vastgelegd.",
+    "GUESSING_CLOSED": "Gokken kan niet meer.",
+    "NOT_FOUND": "Die persoon zit niet in deze trekking.",
+    "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
+    "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
+  }
+}

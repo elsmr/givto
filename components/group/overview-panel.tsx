@@ -2,6 +2,7 @@ import { ForYouSection } from '@/components/between/for-you-section';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
+import { GuessCard } from '@/components/guess/guess-card';
 import { NotebookText } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
@@ -31,6 +32,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
         {manage && <PendingRequests group={group} />}
         {input && <ForYouSection input={input} />}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
+        {edition?.guessing && !isBeforeDraw(edition) && <GuessCard group={group} edition={edition} />}
         {manage && edition && !isBeforeDraw(edition) && <NextEditionCard groupSlug={slug} edition={edition} />}
       </div>
       <div className="min-w-0 lg:row-span-2">
