@@ -23,6 +23,7 @@
     "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",
     "account": "Your account and wishlist stay until you delete them.",
     "errors": "Error reports are deleted after {days} days at most.",
+    "emails": "The record of which email went to whom is deleted after {days} days.",
     "logs": "Server logs never contain names, email addresses or wishes."
   },
   "processors": {
@@ -31,7 +32,8 @@
     "vercel": "<b>Vercel:</b> hosting and server logs.",
     "mongodb": "<b>MongoDB Atlas:</b> the database.",
     "mailgun": "<b>Mailgun:</b> sending emails.",
-    "sentry": "<b>Sentry:</b> error reports, so we can fix bugs."
+    "sentry": "<b>Sentry:</b> error reports, so we can fix bugs.",
+    "own-logs": "Mailgun, our hosting and the database backups keep their own logs and backups for a limited time, under their own terms."
   },
   "rights": {
     "title": "Your rights",

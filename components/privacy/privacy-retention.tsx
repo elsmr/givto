@@ -18,6 +18,7 @@ export const PrivacyRetention = () => {
           t('groups', { months: retention.inactiveGroupMonths }),
           t('account'),
           t('errors', { days: retention.errorReportDays }),
+          t('emails', { days: retention.sentEmailsDays }),
           t('logs'),
         ]}
       />

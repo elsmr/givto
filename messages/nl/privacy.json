@@ -23,6 +23,7 @@
     "groups": "Groepen zonder activiteit in {months} maanden wissen we. We mailen de organisator eerst.",
     "account": "Je account en verlanglijstje blijven tot je ze zelf verwijdert.",
     "errors": "Foutmeldingen wissen we na hooguit {days} dagen.",
+    "emails": "Het overzicht van welke mail naar wie ging, wissen we na {days} dagen.",
     "logs": "Serverlogs bevatten nooit namen, e-mailadressen of wensen."
   },
   "processors": {
@@ -31,7 +32,8 @@
     "vercel": "<b>Vercel:</b> hosting en serverlogs.",
     "mongodb": "<b>MongoDB Atlas:</b> de database.",
     "mailgun": "<b>Mailgun:</b> mails versturen.",
-    "sentry": "<b>Sentry:</b> foutmeldingen, zodat we bugs kunnen oplossen."
+    "sentry": "<b>Sentry:</b> foutmeldingen, zodat we bugs kunnen oplossen.",
+    "own-logs": "Mailgun, onze hosting en de databaseback-ups bewaren hun eigen logs en back-ups een beperkte tijd, volgens hun eigen voorwaarden."
   },
   "rights": {
     "title": "Je rechten",

@@ -307,6 +307,16 @@ await step('retention: addresses after gift day; messages after 3 months; old dr
   assert.equal(mongo(`db.getCollection('wishImages.files').countDocuments({ _id: { $in: [${orphan}, ${used}] } })`), '1');
 });
 
+await step('retention: bounce records go once no account or pending invite uses the address', async () => {
+  const gone = `s7-gone-${Date.now()}@example.test`, declined = `s7-declined-${Date.now()}@example.test`;
+  insert('invites', [{ _id: id(), groupId: family._id, memberId: id(), email: declined, tokenHash: `used-${id()}`, createdAt: new Date(), expiresAt: new Date(Date.now() + 3 * DAY), usedAt: new Date() }]);
+  const kept = [inviteeEmail, dan.email];
+  insert('emailSuppressions', [gone, declined, inviteeEmail].map((_id) => ({ _id, reason: 'bounce', at: new Date() })));
+  await run('retention');
+  const left = JSON.parse(mongo(`JSON.stringify(db.emailSuppressions.find({ _id: { $in: ${JSON.stringify([gone, declined, ...kept])} } }).toArray().map((s) => s._id).sort())`));
+  assert.deepEqual(left, [...kept].sort(), 'pending invite and account keep theirs');
+});
+
 await step('retention: an inactive group gets one warning, then goes 30 days later', async () => {
   const people = trio();
   const stale = new Date(Date.now() - 25 * 30 * DAY);

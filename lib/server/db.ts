@@ -10,6 +10,7 @@ import type { RateLimitCounter } from '../schema/rate-limit';
 import type { Tip } from '../schema/tip';
 import type { User } from '../schema/user';
 import type { Wish } from '../schema/wish';
+import { retention } from '../privacy';
 import { requireEnv } from './env';
 
 /** Better Auth owns `users` and keys it by ObjectId; every other collection uses `newId()` strings. */
@@ -71,7 +72,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.invites.createIndex({ tokenHash: 1 }, { unique: true }),
     c.invites.createIndex({ groupId: 1 }),
     c.invites.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),
-    c.sentNotifications.createIndex({ sentAt: 1 }, { expireAfterSeconds: 400 * DAY }),
+    c.sentNotifications.createIndex({ sentAt: 1 }, { expireAfterSeconds: retention.sentEmailsDays * DAY }),
     c.wishlistNotifications.createIndex({ editionId: 1, gifteeMemberId: 1 }, { unique: true }),
     c.wishlistNotifications.createIndex({ notifyAfter: 1 }, { sparse: true }),
     c.rateLimits.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 }),

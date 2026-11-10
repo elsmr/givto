@@ -4,6 +4,7 @@ import { retention } from '../../privacy';
 import type { Collections } from '../db';
 import { getMongoDb } from '../db';
 import { deleteWishImage } from '../import/wish-images';
+import { deleteUnusedSuppressions } from '../mail/suppression';
 import { isoDate, monthsBefore } from './dates';
 import { cleanUpInactiveGroups } from './inactive-groups';
 
@@ -86,5 +87,6 @@ export const runRetention = async (db: Collections, now: Date) => ({
   editionMessages: await deleteEditionMessages(db, now),
   draws: await deleteOldDraws(db, now),
   orphanImages: await deleteOrphanImages(now),
+  suppressions: await deleteUnusedSuppressions(db, now),
   ...(await cleanUpInactiveGroups(db, now)),
 });
