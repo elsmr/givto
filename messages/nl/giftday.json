@@ -37,10 +37,10 @@
   },
   "reveal": {
     "title": "De grote onthulling",
-    "switch": "Afsluiten met de grote onthulling",
-    "switch-help": "Vanaf pakjesdag kun je iedereen laten zien wie wiens Santa was.",
-    "teaser": "Op pakjesdag onthult de organisator wie wiens Santa was.",
-    "ready": "Onthul het als iedereen heeft uitgepakt: dan ziet iedereen wie wiens Santa was.",
+    "switch": "Na de cadeaus onthullen wie wiens Santa was",
+    "description": "Op het einde van de presentatieweergave ziet iedereen wie wiens Santa was. Gebruik je de presentatieweergave niet? Dan wordt het onthuld als pakjesdag voorbij is.",
+    "on": "De Santa's worden onthuld na de cadeaus",
+    "off": "De Santa's blijven geheim",
     "button": "Onthul wie wiens Santa was",
     "revealed": "Dit is wie wiens Santa was.",
     "pairs-label": "Wie wiens Santa was",
@@ -91,7 +91,6 @@
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   },
   "panel": {
-    "order": "Uitpakvolgorde",
-    "with-reveal": "Pakjesdag: uitpakvolgorde en de grote onthulling"
+    "order": "Uitpakvolgorde"
   }
 }

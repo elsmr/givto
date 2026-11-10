@@ -4,9 +4,12 @@ import type { Group } from '../../schema/group';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
 import { guessingOn, santaStepOn } from '../guess/guesses';
 
-/** The big reveal (31) is out once the organizer turned it on and revealed it, from gift day on. */
+/**
+ * The big reveal (31), when it's on: out once the presenter revealed it on gift day, or when gift
+ * day is over, for groups that never opened the presenter.
+ */
 export const isRevealed = (edition: Edition) =>
-  edition.reveal.enabled && Boolean(edition.reveal.revealedAt) && isFromGiftDay(edition);
+  edition.reveal.enabled && ((Boolean(edition.reveal.revealedAt) && isFromGiftDay(edition)) || edition.status === 'done');
 
 /**
  * The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed.

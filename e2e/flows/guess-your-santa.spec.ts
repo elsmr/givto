@@ -88,7 +88,7 @@ test('the organizer switches Guess your Santa off in settings: the card goes', a
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
   await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toBeVisible();
-  await page.goto(`/g/${group.slug}/settings#guess`);
+  await page.goto(`/g/${group.slug}/settings#gift-day`);
   const toggle = page.getByRole('switch', { name: 'Guess your Santa' });
   await expect(toggle).toBeChecked();
   await expect(page.getByText(/each person's Santa is shown at their turn/)).toBeVisible();
