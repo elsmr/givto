@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Secret Santa voor familie en vrienden",
     "title": "Secret Santa, geregeld met één link",
-    "lead": "Start een Secret Santa, zet de link in de familie-appgroep en laat iedereen meedoen. Givto trekt de namen, bewaart de verlanglijstjes en telt af naar pakjesdag.",
+    "lead": "Start een Secret Santa, deel de link met je familie of vrienden en laat iedereen meedoen. Givto loot, bewaart de verlanglijstjes en telt af naar pakjesdag.",
     "cta": "Start een Secret Santa",
     "how-it-works": "Zo werkt het",
     "note": "Gratis. Geen wachtwoorden, geen app nodig."
@@ -15,7 +15,7 @@
     },
     "share": {
       "title": "Deel één link",
-      "description": "Zet de link in de familie-appgroep. Je hebt niemands e-mailadres nodig."
+      "description": "Deel de link met je familie of vrienden. Je hebt niemands e-mailadres nodig."
     },
     "join": {
       "title": "Iedereen doet mee",

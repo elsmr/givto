@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Secret Santa for family and friends",
     "title": "Secret Santa, sorted with one link",
-    "lead": "Start a Secret Santa, drop the link in the family group chat and let everyone join. Givto draws the names, keeps the wishlists and counts down to gift day.",
+    "lead": "Start a Secret Santa, share the link with your family or friends and let everyone join. Givto draws the names, keeps the wishlists and counts down to gift day.",
     "cta": "Start a Secret Santa",
     "how-it-works": "How it works",
     "note": "Free. No passwords, no app to install."
@@ -15,7 +15,7 @@
     },
     "share": {
       "title": "Share one link",
-      "description": "Drop the link in the family group chat. You don't need anyone's email address."
+      "description": "Share the link with your family or friends. You don't need anyone's email address."
     },
     "join": {
       "title": "Everyone joins",

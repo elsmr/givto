@@ -52,7 +52,7 @@
   },
   "share": {
     "title": "{group} is ready!",
-    "description": "Share this link in your group chat. Everyone who opens it can join.",
+    "description": "Share this link with your family or friends. Everyone who opens it can join.",
     "later": "You'll find the link on the group page too, where you can also invite people by email.",
     "go-to-group": "Go to your Secret Santa"
   }
