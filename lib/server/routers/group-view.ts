@@ -85,8 +85,8 @@ export const groupView = async (
             requiresApproval: group.joinLink.requiresApproval,
             maxMembers: group.joinLink.maxMembers,
           },
-          households: group.households.map((h) => h.memberIds),
-          keepApartPairs: toKeepApartPairs(group.exclusions),
+          /** Keep-apart rows; older pairs as rows of two. */
+          households: [...group.households.map((h) => h.memberIds), ...toKeepApartPairs(group.exclusions)],
         }
       : undefined,
   };

@@ -24,9 +24,12 @@ export const CreateGroupInput = v.object({
   budget: v.optional(Price),
 });
 
+/** Keep-apart rows: 2+ people who don't draw each other; a person can be in several. */
 const KeepApartInput = v.object({
-  households: v.pipe(v.array(v.pipe(v.array(Id), v.minLength(2))), v.maxLength(MAX_MEMBERS)),
-  pairs: v.pipe(v.array(v.tuple([Id, Id])), v.maxLength(MAX_MEMBERS * MAX_MEMBERS)),
+  households: v.pipe(
+    v.array(v.pipe(v.array(Id), v.minLength(2), v.maxLength(MAX_MEMBERS))),
+    v.maxLength(MAX_MEMBERS * MAX_MEMBERS)
+  ),
 });
 
 export const compactGiftDay = ({ date, time, place }: GiftDay): GiftDay => ({
@@ -112,18 +115,15 @@ export const groupRouter = router({
       return groupView(ctx.db, ctx.group, ctx.member, edition, editions);
     }),
 
-  /** Households + keep-apart pairs (26). Before the draw; refuses sets that make the draw impossible. */
+  /** Keep-apart rows (26), replacing older pairs. Before the draw; refuses rows that make the draw impossible. */
   setKeepApart: organizerProcedure.input(KeepApartInput).mutation(async ({ ctx, input }) => {
     const edition = await currentEdition(ctx.db, ctx.group._id);
     if (edition && isDrawn(edition)) throw new AppError('ALREADY_DRAWN');
     const joined = new Set(ctx.group.members.filter((m) => m.status === 'joined').map((m) => m.id));
-    const ids = [...input.households.flat(), ...input.pairs.flat()];
-    const inOneHousehold = new Set(input.households.flat()).size === input.households.flat().length;
-    const distinctPairs = input.pairs.every(([a, b]) => a !== b);
-    if (!ids.every((id) => joined.has(id)) || !inOneHousehold || !distinctPairs) {
-      throw new AppError('INVALID_INPUT');
-    }
-    const exclusions = toExclusions(input.households, input.pairs);
+    const allJoined = input.households.flat().every((id) => joined.has(id));
+    const distinct = input.households.every((ids) => new Set(ids).size === ids.length);
+    if (!allJoined || !distinct) throw new AppError('INVALID_INPUT');
+    const exclusions = toExclusions(input.households);
     const participants = (edition?.participants ?? [])
       .filter((p) => p.participates && p.status === 'joined')
       .map((p) => p.memberId);
@@ -134,7 +134,7 @@ export const groupRouter = router({
       {
         $set: {
           households: input.households.map((memberIds) => ({ id: newId(), memberIds })),
-          exclusions: toExclusions([], input.pairs),
+          exclusions: [],
           updatedAt: new Date(),
         },
       }

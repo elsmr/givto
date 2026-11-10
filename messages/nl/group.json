@@ -92,33 +92,24 @@
   },
   "keep-apart": {
     "title": "Niet samen",
-    "description": "Stelletjes en huisgenoten kopen toch al iets voor elkaar. Zet ze in een huishouden, dan trekken ze elkaar niet.",
+    "description": "Wie mag elkaar niet trekken? Stelletjes en gezinnen kopen toch al iets voor elkaar. Wie in dezelfde rij staat, trekt elkaar nooit.",
     "save": "Opslaan",
     "saved": "Opgeslagen",
     "errors": {
-      "DRAW_IMPOSSIBLE": "Met deze regels kunnen de namen niet getrokken worden. Haal een regel weg en probeer het opnieuw.",
+      "DRAW_IMPOSSIBLE": "Met deze rijen kunnen de namen niet getrokken worden. Haal iemand uit een rij en probeer het opnieuw.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     },
-    "households": {
-      "title": "Huishoudens",
-      "label": "Huishouden {number}",
-      "add": "Nieuw huishouden",
+    "rows": {
+      "label": "Rij {number}",
+      "add": "Rij toevoegen",
       "add-person": "Iemand toevoegen…",
       "remove-person": "{name} eruit halen",
-      "remove": "Huishouden weghalen",
-      "needs-two": "Een huishouden heeft minstens twee mensen nodig."
-    },
-    "pairs": {
-      "title": "Trekken elkaar niet",
-      "pair": "{first} ↔ {second}",
-      "remove": "{first} en {second} weghalen",
-      "first": "Iemand…",
-      "second": "…en iemand",
-      "add": "Toevoegen"
+      "remove": "Rij weghalen",
+      "needs-two": "Zet minstens twee mensen in deze rij."
     },
     "feasibility": {
       "too-few": "Om namen te trekken zijn minstens {min} mensen nodig.",
-      "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal een regel weg."
+      "stuck": "{count, plural, =0 {{givers} kunnen aan niemand geven} other {{givers} kunnen alleen aan {receivers} geven}}. Haal iemand uit een rij."
     }
   },
   "not-found": {

@@ -43,7 +43,7 @@
     "cancel": "Keep",
     "drawn": "Names are drawn, so who's in can't change here anymore. People who join now are slotted in."
   },
-  "keep-apart-drawn": "Names are drawn, so households and pairs can't change for this edition.",
+  "keep-apart-drawn": "Names are drawn, so who's kept apart can't change for this edition.",
   "redraw": {
     "title": "Re-draw",
     "description": "Draw all names again. Everyone may get someone new, and Dibs! of people whose giftee changes are cleared. If people already bought gifts, they'll have to start over.",

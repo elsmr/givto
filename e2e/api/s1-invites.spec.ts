@@ -48,7 +48,7 @@ test('invited email joining via the link = the same person', async ({ signIn }) 
   expect(members.find((m) => m.name === 'Hal')?.status).toBe('joined');
 });
 
-test('keep apart: households saved; impossible sets refused', async ({ signIn }) => {
+test('keep apart: rows saved, overlapping too; older pairs read as rows; impossible or repeated refused', async ({ signIn, db }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const group = await createFamily(ann);
   await joinAll(group, [[bob, 'Bob'], [cee, 'Cee'], [dan, 'Dan']]);
@@ -56,11 +56,21 @@ test('keep apart: households saved; impossible sets refused', async ({ signIn })
   const joinedIds = ok(await ann.trpc.query('group.get', { groupSlug: slug }))
     .members.filter((m) => m.status === 'joined')
     .map((m) => m.id);
-  const [annId, bobId] = joinedIds;
-  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, bobId]], pairs: [] }));
-  const everyone = await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [joinedIds], pairs: [] });
+  const [annId, bobId, ceeId] = joinedIds;
+  const rows = async () => ok(await ann.trpc.query('group.get', { groupSlug: slug })).organizer?.households;
+  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, bobId], [bobId, ceeId]] }));
+  expect(await rows()).toEqual([[annId, bobId], [bobId, ceeId]]);
+  const everyone = await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [joinedIds] });
   expect(codeOf(everyone)).toBe('DRAW_IMPOSSIBLE');
-  expect(ok(await ann.trpc.query('group.get', { groupSlug: slug })).organizer?.households).toHaveLength(1);
+  expect(codeOf(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, annId]] }))).toBe('INVALID_INPUT');
+  expect(await rows()).toHaveLength(2);
+
+  await db.groups.updateOne({ slug }, { $set: { households: [], exclusions: [{ from: annId, to: ceeId }, { from: ceeId, to: annId }] } });
+  expect(await rows()).toEqual([[annId, ceeId].toSorted()]);
+  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, ceeId]] }));
+  const stored = (await db.groups.findOne({ slug }))!;
+  expect(stored.exclusions, 'saved as a row').toEqual([]);
+  expect(stored.households.map((h) => h.memberIds)).toEqual([[annId, ceeId]]);
 });
 
 test('leave before the draw; organizer can’t leave; leaving after the draw works (S4 patches the draw)', async ({ signIn, db }) => {
@@ -70,7 +80,7 @@ test('leave before the draw; organizer can’t leave; leaving after the draw wor
   const { slug } = group;
   const annId = (await memberByEmail(ann, slug, ann.email))!.id;
   const bobId = (await memberByEmail(ann, slug, bob.email))!.id;
-  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, bobId]], pairs: [] }));
+  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, bobId]] }));
   expect(codeOf(await ann.trpc.mutate('membership.leave', { groupSlug: slug }))).toBe('ORGANIZER_CANNOT_LEAVE');
   expect((await bob.trpc.mutate('membership.leave', { groupSlug: slug })).status).toBe(200);
   expect(codeOf(await bob.trpc.query('group.get', { groupSlug: slug }))).toBe('GROUP_NOT_FOUND');
