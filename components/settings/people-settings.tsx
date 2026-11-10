@@ -35,7 +35,7 @@ export const PeopleSettings = ({ group, edition }: { group: GroupData; edition: 
         <CardDescription>{t('people.in-edition', { count: edition.participantIds.length })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        {!beforeDraw && <p className="text-muted">{t('people.drawn')}</p>}
+        {!beforeDraw && <p className="text-sm text-muted">{t('people.drawn')}</p>}
         {setParticipants.error && <FieldError>{t(`errors.${settingsErrorKey(setParticipants.error)}`)}</FieldError>}
         <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
           {people.map((person) => (

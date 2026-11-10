@@ -55,6 +55,8 @@ const scanGroupTabs = async (page: Page, slug: string) => {
     if (await reveal.isVisible()) {
       await reveal.click();
       await expect(page.getByRole('button', { name: 'Hide' })).toBeVisible();
+      // Hide lands under the pointer; its hover transition would never count as settled.
+      await page.mouse.move(0, 0);
       await scan(page, `/g/${slug} › ${name} (revealed)`);
     }
   }
