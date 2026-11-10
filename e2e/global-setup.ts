@@ -25,7 +25,10 @@ export default async function globalSetup() {
   } catch {
     // no leftover container
   }
-  docker('run', '-d', '--rm', '--name', MONGO_CONTAINER, '-p', `${MONGO_PORT}:27017`, 'mongo:latest', '--replSet', 'rs0');
+  // No TTL monitor: it deletes expired documents about once a minute, so a test that expires a
+  // code or session in the database would race it.
+  docker('run', '-d', '--rm', '--name', MONGO_CONTAINER, '-p', `${MONGO_PORT}:27017`, 'mongo:latest',
+    '--replSet', 'rs0', '--setParameter', 'ttlMonitorEnabled=false');
   await waitFor(() => mongosh('db.runCommand({ ping: 1 }).ok') === '1', 'ping');
   mongosh('rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] })');
   await waitFor(() => mongosh('db.hello().isWritablePrimary') === 'true', 'primary');

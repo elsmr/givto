@@ -15,6 +15,8 @@ export * from './support/mail';
 export * from './support/server';
 export * from './support/trpc';
 
+type StorageState = Awaited<ReturnType<APIRequestContext['storageState']>>;
+
 /** Its own cookie jar (a session, once signed in) and IP. */
 export interface Client {
   request: APIRequestContext;
@@ -32,8 +34,8 @@ export type TestDb = Collections & { raw: Db };
 interface TestFixtures {
   /** Emails, codes and tokens that must not show up in the server log; checked after the test. */
   secrets: string[];
-  /** A fresh anonymous API client. */
-  newClient: () => Promise<Client>;
+  /** A fresh API client: anonymous, or with the cookies of an earlier `request.storageState()`. */
+  newClient: (options?: { storageState?: StorageState }) => Promise<Client>;
   /** A new account (unique email `e2e-<name>-…`), signed in through the emailed code. */
   signIn: (name: string, options?: AuthOptions) => Promise<User>;
   /** Puts the user's session cookie into the page's browser context. */
@@ -58,9 +60,10 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 
   newClient: async ({ playwright }, use) => {
     const contexts: APIRequestContext[] = [];
-    await use(async () => {
+    await use(async ({ storageState } = {}) => {
       const request = await playwright.request.newContext({
         baseURL: BASE_URL,
+        storageState,
         extraHTTPHeaders: { 'x-forwarded-for': randomIp() },
       });
       contexts.push(request);
