@@ -47,7 +47,7 @@ test('add, edit, reorder by drag and by keyboard, archive, restore, delete for g
   });
 
   await test.step('drag the last wish to the top', async () => {
-    await saved(page, page.getByTitle('Drag to reorder “Cookbook”').dragTo(wishItem(page, 'Wool socks')));
+    await saved(page, wishItem(page, 'Cookbook').locator('[data-slot="drag-handle"]').dragTo(wishItem(page, 'Wool socks')));
     await expect(wishTitles(page)).toHaveText(['Cookbook', 'Wool socks', 'Board game for two']);
   });
 

@@ -10,7 +10,7 @@ test('create without a session → UNAUTHENTICATED, no mail sent', async ({ newC
   expect(codeOf(result)).toBe('UNAUTHENTICATED');
   const victim = uniqueEmail('victim');
   secrets.push(victim);
-  const invite = await trpc.mutate('invite.send', { groupSlug: 'abcdefgh', name: 'Vic', email: victim });
+  const invite = await trpc.mutate('invite.send', { groupSlug: 'abcdefgh', email: victim });
   expect(codeOf(invite)).toBe('UNAUTHENTICATED');
   expect(await mailsTo(victim)).toHaveLength(0);
 });
@@ -75,7 +75,7 @@ test('non-organizer can’t manage; outsiders don’t see the group', async ({ s
     ['join.revokeLink', {}],
     ['join.regenerateLink', {}],
     ['join.updateLink', { requiresApproval: true, maxMembers: null }],
-    ['invite.send', { name: 'Zed', email: zed }],
+    ['invite.send', { email: zed }],
     ['membership.approve', { memberId: '0'.repeat(24) }],
     ['group.setKeepApart', { households: [] }],
   ] as [MutationPath, object][]) {

@@ -22,9 +22,7 @@
       "legend": "When's gift day?",
       "help": "Optional. You can set or change it later.",
       "date": "Date",
-      "time": "Time",
-      "place": "Place",
-      "place-placeholder": "Grandma's house"
+      "time": "Time"
     },
     "exchange": {
       "label": "How do gifts change hands?",
@@ -51,8 +49,8 @@
   },
   "share": {
     "title": "{group} is ready!",
-    "description": "Share this link with your family or friends. Everyone who opens it can join.",
-    "later": "You'll find the link on the group page too, where you can also invite people by email.",
+    "description": "Share the link with your family or friends, or invite them by email.",
+    "later": "You'll find the link on the group page too.",
     "go-to-group": "Go to your Secret Santa"
   }
 }

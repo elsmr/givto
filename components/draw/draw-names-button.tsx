@@ -10,27 +10,29 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/toast';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTRPC } from '@/lib/client/trpc';
+import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shuffle } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useRef, useState } from 'react';
-import type { GroupMember } from '../group/group-data';
+import { useId, useRef, useState } from 'react';
+import type { GroupData, GroupEdition } from '../group/group-data';
 import { DrawError } from './draw-error';
 import { useRefreshEdition } from './use-refresh-edition';
 
-type DrawNamesButtonProps = {
-  groupSlug: string;
-  editionNumber: number;
-  members: GroupMember[];
-  /** Names of people in the group but not in this draw (invited, asking to join, sitting out): the draw doesn't wait for them. */
-  leftOut: string[];
-  primary: boolean;
-};
-
-/** Organizer: "Draw names" now, after a confirmation that says who's not in (34, 64). */
-export const DrawNamesButton = ({ groupSlug, editionNumber, members, leftOut, primary }: DrawNamesButtonProps) => {
+/**
+ * Organizer, open edition: "Draw names" now, after a confirmation that says who's not in (34, 64).
+ * Too few people: disabled, with how many more as its tooltip and description.
+ */
+export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('draw.before');
+  const reasonId = useId();
+  const missing = MIN_PARTICIPANTS - group.members.filter((m) => edition.participantIds.includes(m.id)).length;
+  // In the group but not in this draw (invited, asking to join, sitting out): the draw doesn't wait for them.
+  const leftOut = group.members.filter((m) => m.status !== 'removed' && !edition.participantIds.includes(m.id)).map((m) => m.name);
+  const { slug: groupSlug, members } = group;
+  const editionNumber = edition.number;
   const format = useFormatter();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -38,7 +40,7 @@ export const DrawNamesButton = ({ groupSlug, editionNumber, members, leftOut, pr
   const [open, setOpen] = useState(false);
   const input = { groupSlug, editionNumber };
   const drawn = useRef(false);
-  // This dialog lives in the card the draw replaces. So: load what the drawn page shows first (no
+  // The button goes once the edition is drawn. So: load what the drawn page shows first (no
   // skeletons), close with the exit animation, and only then let the page switch to drawn.
   const run = useMutation(
     trpc.draw.run.mutationOptions({
@@ -59,6 +61,24 @@ export const DrawNamesButton = ({ groupSlug, editionNumber, members, leftOut, pr
     toast.add({ title: t('drawn'), type: 'success' });
   };
 
+  if (missing > 0) {
+    // A disabled button gets no pointer events: the wrapper shows the tooltip on hover, and on focus of the button inside.
+    return (
+      <Tooltip>
+        <TooltipTrigger render={<span className="inline-flex" />}>
+          <Button focusableWhenDisabled disabled aria-describedby={reasonId}>
+            <Shuffle aria-hidden="true" />
+            {t('draw')}
+          </Button>
+          <span id={reasonId} className="sr-only">
+            {t('too-few', { count: missing })}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent>{t('too-few', { count: missing })}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <Dialog
       open={open}
@@ -70,7 +90,7 @@ export const DrawNamesButton = ({ groupSlug, editionNumber, members, leftOut, pr
         if (!isOpen) void onClosed();
       }}
     >
-      <DialogTrigger render={<Button size="lg" variant={primary ? 'default' : 'neutral'} />}>
+      <DialogTrigger render={<Button />}>
         <Shuffle aria-hidden="true" />
         {t('draw')}
       </DialogTrigger>

@@ -52,8 +52,8 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
   return [
     { name: 'sign-in', subject: signInSubject(locale), body: <SignInEmail locale={locale} otp="482913" url="https://givto.example/auth/link#t=abc" />, url: 'https://givto.example/auth/link#t=abc' },
     { name: 'delete-account', subject: deleteAccountSubject(locale), body: <DeleteAccountEmail locale={locale} code="771204" /> },
-    { name: 'invite', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} name="Ann" organizer="Olive" />, url },
-    { name: 'join-reminder', subject: joinReminderSubject({ locale, group }), body: <JoinReminderEmail {...base} name="Ann" organizer="Olive" />, url },
+    { name: 'invite', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} organizer="Olive" />, url },
+    { name: 'join-reminder', subject: joinReminderSubject({ locale, group }), body: <JoinReminderEmail {...base} organizer="Olive" />, url },
     { name: 'join-request', subject: joinRequestSubject({ locale, name: 'Bob', group }), body: <JoinRequestEmail {...base} name="Bob" />, url },
     { name: 'joined', subject: joinedSubject(base), body: <JoinedEmail {...base} />, url },
     { name: 'names-drawn', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} giftDay={giftDay} budget="€25" />, url, mustNotContain: ['Ann'] },

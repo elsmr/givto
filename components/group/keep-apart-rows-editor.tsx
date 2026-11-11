@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { withTooltip } from '@/components/ui/tooltip';
 import { Plus, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { GroupMember } from './group-data';
@@ -26,9 +27,12 @@ export const KeepApartRowsEditor = ({ rows, members, onChange }: KeepApartRowsEd
               {row.map((id) => (
                 <span key={id} className="inline-flex items-center gap-1 border-2 border-outline bg-primary-muted py-0.5 pl-2">
                   {nameOf(id)}
-                  <Button variant="ghost" size="icon-sm" aria-label={t('remove-person', { name: nameOf(id) })} onClick={() => replace(index, row.filter((r) => r !== id))}>
-                    <X aria-hidden="true" />
-                  </Button>
+                  {withTooltip(
+                    t('remove-person', { name: nameOf(id) }),
+                    <Button variant="ghost" size="icon-sm" onClick={() => replace(index, row.filter((r) => r !== id))}>
+                      <X aria-hidden="true" />
+                    </Button>
+                  )}
                 </span>
               ))}
               {others.length > 0 && (

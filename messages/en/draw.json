@@ -2,6 +2,7 @@
   "before": {
     "title": "Get everyone in",
     "who": "{count, plural, =0 {Nobody's in yet} one {# person is in} other {# people are in}}",
+    "who-names": "{count, plural, one {# person is in} other {# people are in}}: {names}",
     "scheduled": "Names will be drawn on {date}.",
     "too-few": "Drawing names needs {count, plural, one {# more person} other {# more people}}.",
     "draw": "Draw names",

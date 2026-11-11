@@ -62,19 +62,23 @@
       "cap-help": "Zitten er zoveel mensen in, dan kan er via de link niemand meer bij.",
       "revoke": "Link uitzetten",
       "regenerate": "Nieuwe link maken"
-    }
+    },
+    "or": "of"
   },
   "invite": {
-    "legend": "Of nodig iemand uit per e-mail",
-    "name": "Naam",
-    "email": "E-mailadres",
-    "send": "Uitnodiging sturen",
-    "sent": "Uitnodiging gestuurd naar {email}",
+    "label": "Uitnodigen per e-mail",
+    "placeholder": "naam@voorbeeld.be",
+    "help": "Scheid adressen met een komma of een spatie. Ze kiezen zelf hun naam als ze meedoen.",
+    "remove": "{email} weghalen",
+    "send": "{count, plural, =0 {Uitnodigingen sturen} one {Uitnodiging sturen} other {# uitnodigingen sturen}}",
+    "sent": "{count, plural, one {Uitnodiging gestuurd} other {# uitnodigingen gestuurd}}",
+    "failed": "{email}: {reason}",
+    "invalid": "Dat is geen e-mailadres.",
     "errors": {
       "ALREADY_MEMBER": "Die doet al mee met deze Secret Santa.",
       "RATE_LIMITED": "Dat zijn veel uitnodigingen voor één dag. Deel de link, of probeer het morgen opnieuw.",
       "GROUP_FULL": "Deze Secret Santa zit vol.",
-      "INVALID_INPUT": "Check de naam en het e-mailadres en probeer opnieuw.",
+      "INVALID_INPUT": "Check het e-mailadres en probeer opnieuw.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     }
   },

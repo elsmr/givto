@@ -22,9 +22,7 @@
       "legend": "Wanneer is pakjesdag?",
       "help": "Mag je overslaan. Je kunt het later nog instellen of wijzigen.",
       "date": "Datum",
-      "time": "Tijd",
-      "place": "Plek",
-      "place-placeholder": "Bij oma thuis"
+      "time": "Tijd"
     },
     "exchange": {
       "label": "Hoe geven jullie de cadeaus?",
@@ -51,8 +49,8 @@
   },
   "share": {
     "title": "{group} staat klaar!",
-    "description": "Deel deze link met je familie of vrienden. Iedereen die hem opent, kan meedoen.",
-    "later": "Je vindt de link ook op de groepspagina. Daar kun je mensen ook per e-mail uitnodigen.",
+    "description": "Deel de link met je familie of vrienden, of nodig ze uit per e-mail.",
+    "later": "Je vindt de link ook op de groepspagina.",
     "go-to-group": "Naar je Secret Santa"
   }
 }

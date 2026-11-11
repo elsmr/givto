@@ -53,8 +53,8 @@ test('a new group starts with the wishes no other active group shows; a rejoin k
   expect(await shownTitles(bob, fresh.slug)).toEqual([]);
 
   ok(await cee.trpc.mutate('wish.create', { title: 'Z' }));
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: fresh.slug, name: 'Cee', email: cee.email }));
-  ok(await cee.trpc.mutate('invite.accept', { groupSlug: fresh.slug, token: await inviteTokenFrom(cee.email) }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: fresh.slug, email: cee.email }));
+  ok(await cee.trpc.mutate('invite.accept', { groupSlug: fresh.slug, token: await inviteTokenFrom(cee.email), name: 'Cee' }));
   expect(await shownTitles(cee, fresh.slug)).toEqual(['Z']);
 });
 

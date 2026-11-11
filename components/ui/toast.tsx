@@ -16,6 +16,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
+import { withTooltip } from './tooltip';
 
 const toast = ToastPrimitive.createToastManager();
 
@@ -125,14 +126,9 @@ function ToastClose({
   ...props
 }: ToastPrimitive.Close.Props) {
   const t = useTranslations('ui');
-  return (
-    <ToastPrimitive.Close
-      data-slot="toast-close"
-      aria-label={t('close-toast')}
-      render={render}
-      className={cn('relative shrink-0', className)}
-      {...props}
-    >
+  return withTooltip(
+    t('close-toast'),
+    <ToastPrimitive.Close data-slot="toast-close" render={render} className={cn('relative shrink-0', className)} {...props}>
       {children ?? <XIcon aria-hidden="true" />}
     </ToastPrimitive.Close>
   );

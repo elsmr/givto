@@ -5,7 +5,6 @@ export type CreateDraft = {
   name: string;
   giftDate: string;
   giftTime: string;
-  place: string;
   exchangeMode: ExchangeMode;
   currency: string;
   budgetAmount: string;
@@ -17,14 +16,13 @@ export type CreateDraft = {
 /** The edition details the create flow and the settings share (gift day, exchange, budget). */
 export type EditionDetailsDraft = Pick<
   CreateDraft,
-  'giftDate' | 'giftTime' | 'place' | 'exchangeMode' | 'currency' | 'budgetAmount' | 'budgetMax'
+  'giftDate' | 'giftTime' | 'exchangeMode' | 'currency' | 'budgetAmount' | 'budgetMax'
 >;
 
 export const emptyDraft: CreateDraft = {
   name: '',
   giftDate: '',
   giftTime: '',
-  place: '',
   exchangeMode: 'inPerson',
   currency: 'EUR',
   budgetAmount: '',

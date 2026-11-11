@@ -1,4 +1,4 @@
-// The "Get everyone in" card (61, 72): one link row (copy, QR, share), how many are in, one action. The
+// The "Get everyone in" card (61, 72): who's in as avatars, the invite part; Draw names in the header. The
 // join QR code (45) scans: its rendered pixels decode to the join link, light and dark, at phone size.
 import { createRequire } from 'node:module';
 import { expect, ok, test } from '../fixtures';
@@ -41,7 +41,7 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('Get everyone in: the link row, how many are in and Draw names; a member sees the count only', async ({ page, newPage, signIn, signInPage }) => {
+test('Get everyone in: avatars with names on hover and the invite part; Draw names in the header, disabled with why until enough people', async ({ page, newPage, signIn, signInPage }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = ok(
     await ann.trpc.mutate('group.create', { name: 'Card', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' })
@@ -49,23 +49,27 @@ test('Get everyone in: the link row, how many are in and Draw names; a member se
   const join = (person: typeof bob, name: string) => person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name });
   ok(await join(bob, 'Bob'));
   const card = (on: typeof page) => on.locator('[data-slot="card"]').filter({ has: on.getByRole('heading', { name: 'Get everyone in' }) });
+  const draw = page.getByRole('button', { name: 'Draw names' });
   await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
 
-  await test.step('two people in: the card says how many more the draw needs', async () => {
-    await expect(card(page).getByText('Drawing names needs 1 more person.')).toBeVisible();
+  await test.step('two people in: Draw names is disabled and says how many more on hover', async () => {
+    await expect(draw).toBeDisabled();
+    await expect(draw).toHaveAccessibleDescription('Drawing names needs 1 more person.');
+    await draw.hover({ force: true });
+    await expect(page.locator('[data-slot="tooltip-content"]')).toHaveText('Drawing names needs 1 more person.');
     ok(await join(cee, 'Cee'));
     await page.reload();
-    await expect(card(page).getByText('Drawing names needs')).toHaveCount(0);
+    await expect(draw).toBeEnabled();
+    await expect(card(page).getByRole('button', { name: 'Draw names' }), 'not in the card').toHaveCount(0);
   });
 
-  await test.step('organizer: a count instead of names, the link row, one Draw names', async () => {
-    await expect(card(page).getByText('3 people are in', { exact: true })).toBeVisible();
-    await expect(card(page).getByText('Bob', { exact: true }), 'names are in the People tab').toHaveCount(0);
-    await expect(card(page).getByText("when everyone's in"), 'no hint lines without a draw date').toHaveCount(0);
-    await expect(card(page).getByRole('link', { name: 'Invites and settings' })).toHaveCount(0);
-    await expect(card(page).getByRole('button', { name: 'Draw names' })).toHaveCount(1);
+  await test.step('organizer: avatars named on hover, the link row', async () => {
+    const avatars = card(page).getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' });
+    await expect(avatars).toBeVisible();
+    await avatars.locator('[data-slot="avatar"]').nth(1).hover();
+    await expect(page.locator('[data-slot="tooltip-content"]')).toHaveText('Bob');
     for (const name of ['Copy link', 'Show QR code']) {
       const box = (await card(page).getByRole('button', { name }).boundingBox())!;
       expect(Math.min(box.width, box.height), `${name}: 44px target`).toBeGreaterThanOrEqual(44);
@@ -76,13 +80,12 @@ test('Get everyone in: the link row, how many are in and Draw names; a member se
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(link);
   });
 
-  await test.step('member: the count, no link and no draw', async () => {
+  await test.step('member: the avatars, no link and no draw', async () => {
     const bobPage = await newPage();
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${group.slug}`);
-    await expect(card(bobPage).getByText('3 people are in', { exact: true })).toBeVisible();
-    await expect(card(bobPage).getByText("when everyone's in")).toHaveCount(0);
+    await expect(card(bobPage).getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' })).toBeVisible();
     await expect(card(bobPage).getByLabel('Join link')).toHaveCount(0);
-    await expect(card(bobPage).getByRole('button', { name: 'Draw names' })).toHaveCount(0);
+    await expect(bobPage.getByRole('button', { name: 'Draw names' })).toHaveCount(0);
   });
 });

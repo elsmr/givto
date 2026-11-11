@@ -9,7 +9,6 @@ export const editionDetailsInput = (draft: EditionDetailsDraft) => ({
     giftDay: {
       date: draft.giftDate,
       ...(draft.giftTime && { time: draft.giftTime }),
-      ...(draft.place.trim() && { place: draft.place }),
     },
   }),
   ...(draft.budgetAmount && {

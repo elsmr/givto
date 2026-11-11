@@ -20,7 +20,6 @@ export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   title: edition.title,
   giftDate: edition.giftDay?.date ?? '',
   giftTime: edition.giftDay?.time ?? '',
-  place: edition.giftDay?.place ?? '',
   exchangeMode: edition.exchangeMode,
   currency: edition.budget?.currency ?? 'EUR',
   budgetAmount: edition.budget ? amount(edition.budget.amount) : '',

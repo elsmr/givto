@@ -6,8 +6,9 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
+// Once one tooltip is open, the next one opens without the delay (base-ui's delay group).
 function TooltipProvider({
-  delay = 0,
+  delay = 500,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
@@ -68,4 +69,14 @@ function TooltipContent({
   );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider };
+/** An icon-only control: `label` is its accessible name and its tooltip. */
+function withTooltip(label: string, trigger: React.ReactElement) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={trigger} aria-label={label} />
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, withTooltip };

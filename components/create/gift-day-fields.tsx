@@ -1,22 +1,19 @@
-import { Field, FieldDescription, FieldError, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { ExchangeMode } from '@/lib/schema/group';
 import { useTranslations } from 'next-intl';
-import type { FieldIssue } from '../group/field-issue';
 import type { EditionDetailsDraft } from './use-create-draft';
 
 type GiftDayFieldsProps = {
   draft: EditionDetailsDraft;
   today: string;
-  placeIssue: FieldIssue | null;
   onChange: (patch: Partial<EditionDetailsDraft>) => void;
 };
 
-/** Gift day (28): optional date, time and place, plus how gifts change hands. */
-export const GiftDayFields = ({ draft, today, placeIssue, onChange }: GiftDayFieldsProps) => {
+/** Gift day (28): optional date and time, plus how gifts change hands. */
+export const GiftDayFields = ({ draft, today, onChange }: GiftDayFieldsProps) => {
   const t = useTranslations('create.details');
-  const tIssues = useTranslations('group.issues');
 
   return (
     <>
@@ -45,19 +42,6 @@ export const GiftDayFields = ({ draft, today, placeIssue, onChange }: GiftDayFie
             />
           </Field>
         </div>
-        <Field data-invalid={placeIssue ? 'true' : undefined}>
-          <FieldLabel htmlFor="gift-place">{t('gift-day.place')}</FieldLabel>
-          <Input
-            id="gift-place"
-            disabled={!draft.giftDate}
-            maxLength={200}
-            placeholder={t('gift-day.place-placeholder')}
-            value={draft.place}
-            aria-invalid={placeIssue ? 'true' : undefined}
-            onChange={(event) => onChange({ place: event.target.value })}
-          />
-          {placeIssue && <FieldError>{tIssues(placeIssue)}</FieldError>}
-        </Field>
       </FieldSet>
       <Field>
         <FieldLabel htmlFor="exchange-mode">{t('exchange.label')}</FieldLabel>

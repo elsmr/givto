@@ -40,7 +40,6 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
     const editionCard = card(page, 'Secret Santa 2099');
     await editionCard.getByLabel('Date', { exact: true }).fill('2099-12-20');
     await editionCard.getByLabel('Time').fill('18:00');
-    await editionCard.getByLabel('Place').fill("Grandma's house");
     await editionCard.getByLabel('Wishlists ready by').fill('2099-12-01');
     await editionCard.getByLabel('Amount').fill('25');
     await editionCard.getByLabel('Currency').selectOption('EUR');
@@ -63,7 +62,7 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
     await expect(page.getByRole('heading', { level: 1, name: 'After' })).toBeVisible();
     await expect(page.getByText('Budget €25', { exact: true })).toBeVisible();
     await page.getByRole('heading', { name: 'Dates, budget and notes' }).click();
-    await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00 · Grandma's house`)).toBeVisible();
+    await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00`)).toBeVisible();
     await expect(page.getByText(fullDate('2099-12-01'))).toBeVisible();
   });
 });
@@ -122,7 +121,7 @@ test('join link settings: a cap, turn the link off, make a new one', async ({ pa
   const group = await openGroup(people, 'Link');
   await signInPage(page, people[0]);
   await page.goto(`/g/${group.slug}/settings`);
-  const invite = card(page, 'Invite people');
+  const invite = card(page, 'People');
   const oldLink = await invite.getByLabel('Join link').inputValue();
   expect(oldLink).toContain(group.joinToken);
 

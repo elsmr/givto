@@ -19,14 +19,17 @@ const INVITES_PER_GROUP_PER_DAY = { window: 24 * 60 * 60, max: 50 };
 
 const TokenInput = v.object({ groupSlug: Slug, token: v.string() });
 
+/** Until they accept and say their name, an invitee goes by their email's local part ("jan.peeters" → "jan peeters"): no dots, so never link-like. */
+export const standInName = (email: string) => email.split('@')[0].replace(/[._+-]+/g, ' ').trim().slice(0, 50) || 'Guest';
+
 export const inviteRouter = router({
-  /** Secondary to the join link (45): one email, single-use token bound to it, 7 days. */
+  /** Secondary to the join link (45): one email, single-use token bound to it, 7 days. The invitee names themselves on accept. */
   send: organizerProcedure
-    .input(v.object({ name: PersonName, email: Email }))
+    .input(v.object({ email: Email }))
     .mutation(async ({ ctx, input }) => {
       await enforceRateLimit(`invite:user:${ctx.user.id}`, INVITES_PER_USER_PER_DAY);
       await enforceRateLimit(`invite:group:${ctx.group._id}`, INVITES_PER_GROUP_PER_DAY);
-      const account = await ctx.db.users.findOne({ email: input.email }, { projection: { locale: 1 } });
+      const account = await ctx.db.users.findOne({ email: input.email }, { projection: { locale: 1, name: 1 } });
       const accountId = account?._id.toHexString();
       if (ctx.group.members.some((m) => m.userId === accountId && placeHolding.includes(m.status))) {
         throw new AppError('ALREADY_MEMBER');
@@ -40,7 +43,7 @@ export const inviteRouter = router({
       } else {
         const member: Member = {
           id: memberId,
-          name: input.name,
+          name: account?.name || standInName(input.email),
           role: 'member',
           status: 'invited',
           invitedAt: now,
@@ -69,7 +72,7 @@ export const inviteRouter = router({
       await sendMail({
         to: input.email,
         subject: inviteSubject(names),
-        body: InviteEmail({ ...names, name: input.name, url: inviteUrl(locale, ctx.group.slug, token) }),
+        body: InviteEmail({ ...names, url: inviteUrl(locale, ctx.group.slug, token) }),
       });
       return { memberId };
     }),
@@ -79,8 +82,8 @@ export const inviteRouter = router({
     return found && invitePreview(found);
   }),
 
-  /** Lands on the group. The session must be the invited email. */
-  accept: authedProcedure.input(TokenInput).mutation(async ({ ctx, input }) => {
+  /** Lands on the group under the name they give. The session must be the invited email. */
+  accept: authedProcedure.input(v.object({ ...TokenInput.entries, name: PersonName })).mutation(async ({ ctx, input }) => {
     const found = await findPendingInvite(ctx.db, input.groupSlug, input.token);
     if (!found) throw new AppError('INVITE_INVALID');
     if (found.invite.email !== ctx.user.email.toLowerCase()) throw new AppError('INVITE_EMAIL_MISMATCH');
@@ -99,6 +102,7 @@ export const inviteRouter = router({
           $set: {
             'members.$.userId': ctx.user.id,
             'members.$.status': 'joined',
+            'members.$.name': input.name,
             'members.$.joinedAt': now,
             'members.$.wishlistView.shownWishIds': await unshownWishIds(ctx.db, ctx.user.id, group._id),
             updatedAt: now,
@@ -106,8 +110,7 @@ export const inviteRouter = router({
         }
       );
       await addToCurrentEdition(ctx.db, group._id, invite.memberId);
-      const name = group.members.find((m) => m.id === invite.memberId)?.name;
-      if (name) await nameUserIfUnnamed(ctx.db, ctx.user.id, name);
+      await nameUserIfUnnamed(ctx.db, ctx.user.id, input.name);
     }
     return { slug: group.slug };
   }),

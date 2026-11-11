@@ -2,6 +2,7 @@
   "before": {
     "title": "Iedereen erbij",
     "who": "{count, plural, =0 {Nog niemand doet mee} one {# persoon doet mee} other {# mensen doen mee}}",
+    "who-names": "{count, plural, one {# persoon doet mee} other {# mensen doen mee}}: {names}",
     "scheduled": "Er wordt geloot op {date}.",
     "too-few": "Om te loten {count, plural, one {is er nog # persoon} other {zijn er nog # mensen}} nodig.",
     "draw": "Loten",

@@ -1,3 +1,4 @@
+import { DrawNamesButton } from '@/components/draw/draw-names-button';
 import { ManageMenu } from '@/components/manage/manage-menu';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
@@ -8,7 +9,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 
-/** Greeting, group name, the edition with its budget and exchange chips, and Settings + Manage for the organizer (61, 64). */
+/** Greeting, group name, the edition with its budget and exchange chips; for the organizer Draw names (while open), Settings and Manage (61, 64). */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
   const locale = useLocale();
@@ -22,6 +23,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
       actions={
         group.me.isOrganizer && (
           <>
+            {edition?.isCurrent && edition.status === 'open' && <DrawNamesButton group={group} edition={edition} />}
             <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
               <Settings aria-hidden="true" />
               {t('settings-link')}

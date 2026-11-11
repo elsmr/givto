@@ -63,7 +63,7 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, ticked, drawn
             variant="neutral"
             size="sm"
             disabled={resend.isPending}
-            onClick={() => resend.mutate({ groupSlug, name: person.name, email: person.email! })}
+            onClick={() => resend.mutate({ groupSlug, email: person.email! })}
           >
             {t('resend')}
           </Button>

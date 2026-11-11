@@ -72,6 +72,7 @@ export const joinRouter = router({
             {
               $set: {
                 'members.$.userId': ctx.user.id,
+                'members.$.name': input.name,
                 'members.$.status': status,
                 'members.$.joinedAt': now,
                 ...(shownWishIds && { 'members.$.wishlistView.shownWishIds': shownWishIds }),

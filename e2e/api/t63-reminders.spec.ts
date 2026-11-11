@@ -74,12 +74,12 @@ test('ready to draw: once everyone invited by email joined, again 14 days before
   const group = ok(await ann.trpc.mutate('group.create', { name: 'Ready', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' }));
   ok(await ann.trpc.mutate('wish.create', { title: 'Tea', groupSlugs: [group.slug] }));
   for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, name: 'Dee', email: dee.email }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, email: dee.email }));
   const editionIds = [(await editionOf(db, group.slug))._id];
   await runAt(ann, '2099-01-10T10:00:00.000Z', { editionIds });
   expect(await count(ann, 'reminderReadyToDraw'), 'Dee still invited').toBe(0);
   const token = (await mailsTo(dee.email)).at(-1)!.text.match(/[?&]invite=([A-Za-z0-9_-]+)/)![1];
-  ok(await dee.trpc.mutate('invite.accept', { groupSlug: group.slug, token }));
+  ok(await dee.trpc.mutate('invite.accept', { groupSlug: group.slug, token, name: 'Dee' }));
   await runAt(ann, '2099-01-11T10:00:00.000Z', { editionIds });
   await runAt(ann, '2099-01-20T10:00:00.000Z', { editionIds });
   const [ready] = await mailsTo(ann.email, 'reminderReadyToDraw');
@@ -100,9 +100,9 @@ test('join digest: the morning after, who joined through the link (not email inv
   const [first, second] = [ok(await create(ann, 'Digest', 'Ann')), ok(await create(olive, 'Overzicht', 'Olive'))];
   for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) ok(await user.trpc.mutate('join.accept', { groupSlug: first.slug, token: first.joinToken, name }));
   ok(await bob.trpc.mutate('join.accept', { groupSlug: second.slug, token: second.joinToken, name: 'Bob' }));
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: first.slug, name: 'Dee', email: dee.email }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: first.slug, email: dee.email }));
   const token = (await mailsTo(dee.email)).at(-1)!.text.match(/[?&]invite=([A-Za-z0-9_-]+)/)![1];
-  ok(await dee.trpc.mutate('invite.accept', { groupSlug: first.slug, token }));
+  ok(await dee.trpc.mutate('invite.accept', { groupSlug: first.slug, token, name: 'Dee' }));
   await db.users.updateOne({ email: olive.email }, { $set: { locale: 'nl' } });
   const groupIds = await Promise.all([first, second].map(async ({ slug }) => (await db.groups.findOne({ slug }))!._id));
   const tomorrow = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Brussels' }).format(new Date(Date.now() + 24 * 3600_000));

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { withTooltip } from '@/components/ui/tooltip';
 import {
   Dialog,
   DialogClose,
@@ -42,8 +43,9 @@ export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: G
   const show = (shown: boolean) => setShown.mutate({ groupSlug, wishId: wish.id, shown });
 
   if (wish.shown) {
-    return (
-      <Button variant="neutral" size="icon-sm" aria-label={t('hide', { title: wish.title })} onClick={() => show(false)}>
+    return withTooltip(
+      t('hide', { title: wish.title }),
+      <Button variant="neutral" size="icon-sm" onClick={() => show(false)}>
         <EyeOff aria-hidden="true" />
       </Button>
     );

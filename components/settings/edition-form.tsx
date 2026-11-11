@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
-import { EditionTitle, GiftDay, isBeforeDraw } from '@/lib/schema/edition';
+import { EditionTitle, isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { CalendarDays } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -29,7 +29,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
   const trpc = useTRPC();
   const refresh = useRefreshEdition(groupSlug);
   const [draft, setDraft] = useState(() => draftFromEdition(edition));
-  const [issues, setIssues] = useState<{ title: FieldIssue | null; place: FieldIssue | null }>({ title: null, place: null });
+  const [titleIssue, setTitleIssue] = useState<FieldIssue | null>(null);
   const save = useMutation(
     trpc.settings.updateEdition.mutationOptions({
       onSuccess: () => {
@@ -43,12 +43,9 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    const next = {
-      title: fieldIssue(EditionTitle, draft.title),
-      place: draft.giftDate && draft.place.trim() ? fieldIssue(GiftDay.entries.place, draft.place) : null,
-    };
-    setIssues(next);
-    if (!next.title && !next.place) save.mutate(toEditionInput(draft, groupSlug, edition.number));
+    const issue = fieldIssue(EditionTitle, draft.title);
+    setTitleIssue(issue);
+    if (!issue) save.mutate(toEditionInput(draft, groupSlug, edition.number));
   };
 
   return (
@@ -64,12 +61,12 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         ) : (
           <form onSubmit={submit} className="flex flex-col gap-8">
             <FieldGroup>
-              <Field data-invalid={issues.title ? 'true' : undefined}>
+              <Field data-invalid={titleIssue ? 'true' : undefined}>
                 <FieldLabel htmlFor="edition-title">{t('edition.name')}</FieldLabel>
                 <Input id="edition-title" required maxLength={80} value={draft.title} onChange={(event) => update({ title: event.target.value })} />
-                {issues.title && <FieldError>{tIssues(issues.title)}</FieldError>}
+                {titleIssue && <FieldError>{tIssues(titleIssue)}</FieldError>}
               </Field>
-              <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} placeIssue={issues.place} onChange={update} />
+              <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
               <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={beforeDraw} onChange={update} />
               <BudgetFields draft={draft} onChange={update} />
               <Field>

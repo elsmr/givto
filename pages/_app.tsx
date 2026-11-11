@@ -1,5 +1,6 @@
 import { AppHead } from '@/components/shell/app-head';
 import { MotionProvider } from '@/components/shell/motion-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { Providers } from '@/lib/client/providers';
 import { NextIntlClientProvider, type Messages } from 'next-intl';
 import type { AppProps } from 'next/app';
@@ -29,7 +30,9 @@ export default function GivtoApp({
       <AppHead />
       <MotionProvider>
         <Providers>
-          <Component {...pageProps} />
+          <TooltipProvider>
+            <Component {...pageProps} />
+          </TooltipProvider>
         </Providers>
       </MotionProvider>
       <Toaster />

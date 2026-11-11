@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { withTooltip } from '@/components/ui/tooltip';
 import type { WishLink } from '@/lib/schema/wish';
 import { ImageOff, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -35,20 +36,19 @@ export const WishFormLinks = ({ links, onChange }: WishFormLinksProps) => {
                 <span className="line-clamp-2 text-sm break-words">{link.title ?? link.url}</span>
                 {link.price && <span className="mono text-sm text-muted">{formatPrice(link.price, locale)}</span>}
               </div>
-              {link.imageId && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={t('remove-image', { shop })}
-                  onClick={() => replace(index, { ...link, imageId: undefined })}
-                >
-                  <ImageOff aria-hidden="true" />
+              {link.imageId &&
+                withTooltip(
+                  t('remove-image', { shop }),
+                  <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index, { ...link, imageId: undefined })}>
+                    <ImageOff aria-hidden="true" />
+                  </Button>
+                )}
+              {withTooltip(
+                t('remove-link', { shop }),
+                <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index)}>
+                  <X aria-hidden="true" />
                 </Button>
               )}
-              <Button type="button" variant="ghost" size="icon-sm" aria-label={t('remove-link', { shop })} onClick={() => replace(index)}>
-                <X aria-hidden="true" />
-              </Button>
             </li>
           );
         })}

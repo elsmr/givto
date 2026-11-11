@@ -20,7 +20,6 @@ import { GroupTimeZoneForm } from './group-time-zone-form';
 import { KeepApartSection } from './keep-apart-section';
 import { PeopleSettings } from './people-settings';
 import { RedrawSection } from './redraw-section';
-import { ShareSection } from './share-section';
 import { PageHeader } from '@/components/ui/page-header';
 
 /** /g/[slug]/settings (27): the organizer's place for the group and its current edition. Members are sent back to the group; others get not-found. */
@@ -62,19 +61,19 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
         </>
       ),
     },
+    ...(edition ? [{ id: 'edition', title: edition.title, content: <EditionForm key={edition.number} groupSlug={slug} edition={edition} /> }] : []),
+    {
+      id: 'people',
+      title: t('people.title'),
+      content: (
+        <>
+          <PendingRequests group={data} />
+          <PeopleSettings group={data} edition={edition} />
+        </>
+      ),
+    },
     ...(edition
       ? [
-          { id: 'edition', title: edition.title, content: <EditionForm key={edition.number} groupSlug={slug} edition={edition} /> },
-          {
-            id: 'people',
-            title: t('people.title'),
-            content: (
-              <>
-                <PendingRequests group={data} />
-                <PeopleSettings group={data} edition={edition} />
-              </>
-            ),
-          },
           {
             id: 'gift-day',
             title: t('gift-day'),
@@ -87,7 +86,6 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
           },
         ]
       : []),
-    { id: 'invite', title: tGroup('share.title'), content: <ShareSection group={data} /> },
     { id: 'keep-apart', title: tGroup('keep-apart.title'), content: <KeepApartSection group={data} edition={edition} organizer={organizer} /> },
     ...(edition?.status === 'drawn'
       ? [{ id: 'redraw', title: t('redraw.title'), content: <RedrawSection group={data} edition={edition} /> }]

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { withTooltip } from '@/components/ui/tooltip';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { MAX_GIFT_LINES } from '@/lib/schema/gift';
@@ -48,15 +49,12 @@ export const GiftLines = ({ lines, onChange }: GiftLinesProps) => {
           {lines.map((item, index) => (
             <li key={`${index}-${item}`} className="flex items-center justify-between gap-2 border-b-2 border-dashed border-outline py-1">
               <span className="min-w-0 break-words">{item}</span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                aria-label={t('remove-line', { line: item })}
-                onClick={() => onChange(lines.filter((_, i) => i !== index))}
-              >
-                <X aria-hidden="true" />
-              </Button>
+              {withTooltip(
+                t('remove-line', { line: item }),
+                <Button type="button" variant="ghost" size="icon" onClick={() => onChange(lines.filter((_, i) => i !== index))}>
+                  <X aria-hidden="true" />
+                </Button>
+              )}
             </li>
           ))}
         </ul>

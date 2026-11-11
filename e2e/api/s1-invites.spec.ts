@@ -10,19 +10,21 @@ test('email invite: bound to the email, single-use, lands on the group', async (
   const { slug } = group;
   const fay = uniqueEmail('fay');
   secrets.push(fay);
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, name: 'Fay', email: fay }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: fay }));
   expect((await latestMail(fay)).subject).toBe('Ann.Smith invited you to Family on Givto');
+  expect((await memberByEmail(ann, slug, fay))?.name, 'a stand-in until Fay says her name').toMatch(/^e2e fay [0-9a-f]{8}$/);
   const token = await inviteTokenFrom(fay);
   const anonymous = await newClient();
   expect((await anonymous.trpc.query('invite.preview', { groupSlug: slug, token })).data?.invite?.email).toBe(fay);
-  expect(codeOf(await bob.trpc.mutate('invite.accept', { groupSlug: slug, token }))).toBe('INVITE_EMAIL_MISMATCH');
+  expect(codeOf(await bob.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' }))).toBe('INVITE_EMAIL_MISMATCH');
   const fayClient = await signInEmail(await newClient(), fay, secrets);
-  expect((await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token })).data).toEqual({ slug });
-  expect(codeOf(await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token }))).toBe('INVITE_INVALID');
+  expect(codeOf(await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'fay@example.test' }))).toBe('INVALID_INPUT');
+  expect((await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' })).data).toEqual({ slug });
+  expect(codeOf(await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' }))).toBe('INVITE_INVALID');
   expect((await anonymous.trpc.query('invite.preview', { groupSlug: slug, token })).data).toBeNull();
   expect((await fayClient.trpc.query('group.get', { groupSlug: slug })).status).toBe(200);
-  expect((await memberByEmail(ann, slug, fay))?.status).toBe('joined');
-  expect(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, name: 'Fay', email: fay }))).toBe('ALREADY_MEMBER');
+  expect((await memberByEmail(ann, slug, fay))).toMatchObject({ status: 'joined', name: 'Fay' });
+  expect(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: fay }))).toBe('ALREADY_MEMBER');
 });
 
 test('decline an email invite without an account', async ({ signIn, newClient, secrets }) => {
@@ -30,7 +32,7 @@ test('decline an email invite without an account', async ({ signIn, newClient, s
   const { slug } = await createFamily(ann);
   const gus = uniqueEmail('gus');
   secrets.push(gus);
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, name: 'Gus', email: gus }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: gus }));
   const token = await inviteTokenFrom(gus);
   const anonymous = await newClient();
   expect((await anonymous.trpc.mutate('invite.decline', { groupSlug: slug, token })).status).toBe(200);
@@ -41,7 +43,7 @@ test('decline an email invite without an account', async ({ signIn, newClient, s
 test('invited email joining via the link = the same person', async ({ signIn }) => {
   const [ann, hal] = await Promise.all([signIn('ann'), signIn('hal')]);
   const { slug, joinToken: token } = await createFamily(ann);
-  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, name: 'Hal', email: hal.email }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: hal.email }));
   expect(ok(await hal.trpc.mutate('join.accept', { groupSlug: slug, token, name: 'Hal' })).status).toBe('joined');
   const { members } = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
   expect(members.filter((m) => m.name === 'Hal')).toHaveLength(1);
@@ -100,7 +102,7 @@ test('invites rate limited per organizer', async ({ signIn, secrets }) => {
   secrets.push(...guests);
   const codes = [];
   for (const [i, email] of guests.entries()) {
-    codes.push(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, name: `Guest ${i}`, email })) ?? 'ok');
+    codes.push(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, email })) ?? 'ok');
   }
   expect(codes, codes.join(',')).toContain('RATE_LIMITED');
   expect(await mailsTo(guests[30])).toHaveLength(0);

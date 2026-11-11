@@ -115,6 +115,29 @@
     outline-offset: 3px;
   }
 
+  /* Tailwind v4 leaves buttons on the default cursor. */
+  button,
+  summary,
+  select,
+  label[for],
+  input[type='checkbox'],
+  input[type='radio'],
+  [role='button'],
+  [role='tab'],
+  [role='switch'],
+  [role='checkbox'],
+  [role='radio'],
+  [role='menuitem'],
+  [role='menuitemcheckbox'],
+  [role='menuitemradio'],
+  [role='option'] {
+    cursor: pointer;
+  }
+
+  :is(button, select, input, summary, [role]):is(:disabled, [aria-disabled='true'], [data-disabled]) {
+    cursor: not-allowed;
+  }
+
   a {
     color: var(--color-link);
     text-decoration-line: underline;

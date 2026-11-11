@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { withTooltip } from '@/components/ui/tooltip';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { WishView } from './wish-draft';
@@ -26,26 +27,18 @@ export const WishMoveButtons = ({ wish, index, count, onMove }: WishMoveButtonsP
 
   return (
     <>
-      <Button
-        id={buttonId(wish.id, 'up')}
-        variant="ghost"
-        size="icon-sm"
-        aria-label={t('move-up', { title: wish.title })}
-        disabled={index === 0}
-        onClick={() => move('up')}
-      >
-        <ArrowUp aria-hidden="true" />
-      </Button>
-      <Button
-        id={buttonId(wish.id, 'down')}
-        variant="ghost"
-        size="icon-sm"
-        aria-label={t('move-down', { title: wish.title })}
-        disabled={index === count - 1}
-        onClick={() => move('down')}
-      >
-        <ArrowDown aria-hidden="true" />
-      </Button>
+      {withTooltip(
+        t('move-up', { title: wish.title }),
+        <Button id={buttonId(wish.id, 'up')} variant="ghost" size="icon-sm" disabled={index === 0} onClick={() => move('up')}>
+          <ArrowUp aria-hidden="true" />
+        </Button>
+      )}
+      {withTooltip(
+        t('move-down', { title: wish.title }),
+        <Button id={buttonId(wish.id, 'down')} variant="ghost" size="icon-sm" disabled={index === count - 1} onClick={() => move('down')}>
+          <ArrowDown aria-hidden="true" />
+        </Button>
+      )}
     </>
   );
 };

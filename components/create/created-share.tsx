@@ -6,11 +6,11 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
-import { SharePanel } from '../group/share-panel';
+import { InvitePeople } from '../group/invite-people';
 
 type CreatedShareProps = { slug: string; token: string; groupName: string };
 
-/** Last step: the Secret Santa exists; share the link in the group chat. */
+/** Last step: the Secret Santa exists; get people in by link or QR, or by email. */
 export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
   const t = useTranslations('create.share');
   // A new group's language is the organizer's (the account setting the UI follows).
@@ -28,7 +28,7 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
     >
       <Card>
         <CardContent>
-          <SharePanel slug={slug} token={token} groupName={groupName} locale={locale} primary />
+          <InvitePeople slug={slug} groupName={groupName} locale={locale} joinLink={{ token, revoked: false }} primary />
         </CardContent>
         <CardDivider />
         <CardContent className="flex flex-col gap-4">

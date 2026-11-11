@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/toast';
+import { Tooltip, TooltipContent, TooltipTrigger, withTooltip } from '@/components/ui/tooltip';
 import { useTRPCClient } from '@/lib/client/trpc';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
@@ -79,34 +80,29 @@ export const SortableWishItem = ({ wish, index, count, onMove, status, actions }
         <WishCard wish={wish} position={index + 1} status={status}>
           <div className="flex items-center gap-1">
             {/* Pointer only; keyboard users have the move buttons. */}
-            <div
-              ref={handleRef}
-              title={t('item.drag', { title: wish.title })}
-              className="grid size-11 cursor-grab place-items-center text-muted sm:size-9"
-            >
-              <GripVertical aria-hidden="true" className="size-5" />
-            </div>
+            <Tooltip>
+              <TooltipTrigger
+                render={<div ref={handleRef} data-slot="drag-handle" className="grid size-11 cursor-grab place-items-center text-muted sm:size-9" />}
+              >
+                <GripVertical aria-hidden="true" className="size-5" />
+              </TooltipTrigger>
+              <TooltipContent>{t('item.drag', { title: wish.title })}</TooltipContent>
+            </Tooltip>
             <WishMoveButtons wish={wish} index={index} count={count} onMove={onMove} />
             <div className="ml-auto flex items-center gap-2">
               {actions}
-              <Button
-                ref={editButton}
-                variant="neutral"
-                size="icon-sm"
-                aria-label={t('item.edit', { title: wish.title })}
-                onClick={() => setEditing(true)}
-              >
-                <Pencil aria-hidden="true" />
-              </Button>
-              <Button
-                variant="neutral"
-                size="icon-sm"
-                aria-label={t('item.archive', { title: wish.title })}
-                disabled={archive.isPending}
-                onClick={archiveWish}
-              >
-                <Archive aria-hidden="true" />
-              </Button>
+              {withTooltip(
+                t('item.edit', { title: wish.title }),
+                <Button ref={editButton} variant="neutral" size="icon-sm" onClick={() => setEditing(true)}>
+                  <Pencil aria-hidden="true" />
+                </Button>
+              )}
+              {withTooltip(
+                t('item.archive', { title: wish.title }),
+                <Button variant="neutral" size="icon-sm" disabled={archive.isPending} onClick={archiveWish}>
+                  <Archive aria-hidden="true" />
+                </Button>
+              )}
             </div>
           </div>
         </WishCard>

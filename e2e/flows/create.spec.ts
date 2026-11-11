@@ -1,7 +1,8 @@
 // Link-first create (45): name the Secret Santa, verify the organizer's email with the code from the
 // mail mock, share the link; a second browser joins through it, with and without the organizer's approval.
 import type { Page } from '@playwright/test';
-import { expect, latestMail, readSignInMail, test, uniqueEmail } from '../fixtures';
+import { expect, latestMail, ok, readSignInMail, test, uniqueEmail } from '../fixtures';
+import { inviteTokenFrom } from '../api/s1-group';
 
 /** Enters the code from the newest sign-in mail to `email`. */
 const enterCode = async (page: Page, email: string, secrets: string[]) => {
@@ -64,6 +65,44 @@ test('create, copy the link, and a second person joins through it', async ({ pag
     await page.getByRole('link', { name: 'Go to your Secret Santa' }).click();
     await page.getByRole('tab', { name: 'People' }).click();
     await expect(page.getByRole('tabpanel', { name: 'People' }).getByText('Bob', { exact: true })).toBeVisible();
+  });
+});
+
+test('signed in with a name, the details step creates; invite by email with tags; the invitee picks their name', async ({ page, newPage, signIn, signInPage }) => {
+  const [ann, dee] = await Promise.all([signIn('ann'), signIn('dee')]);
+  ok(await ann.trpc.mutate('group.create', { name: 'First', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
+  await signInPage(page, ann);
+  await page.goto('/new');
+  await page.getByLabel("What's your Secret Santa called?").fill('Second');
+  await page.getByRole('button', { name: 'Create Secret Santa' }).click();
+  await expect(page.getByRole('heading', { level: 1, name: 'Second is ready!' })).toBeVisible();
+  const groupSlug = new URL(await page.getByLabel('Join link').inputValue()).pathname.split('/')[2];
+  expect(ok(await ann.trpc.query('group.get', { groupSlug })).members.map((m) => m.name)).toEqual(['Ann']);
+
+  await test.step('emails become tags: × and Backspace remove them, a non-address stays with a hint', async () => {
+    const emails = page.getByLabel('Invite by email');
+    await emails.fill(`${dee.email} extra@example.test,`);
+    await page.getByRole('button', { name: 'Remove extra@example.test' }).click();
+    await emails.fill('oops@example.test,');
+    await emails.press('Backspace');
+    await expect(page.getByRole('button', { name: 'Remove oops@example.test' })).toHaveCount(0);
+    await emails.fill('nope');
+    await emails.press('Enter');
+    await expect(page.getByText("That's not an email address.")).toBeVisible();
+    await emails.fill('');
+    await page.getByRole('button', { name: 'Send invite', exact: true }).click();
+    await expect(page.getByText('Invite sent', { exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: `Remove ${dee.email}` })).toHaveCount(0);
+  });
+
+  const deePage = await newPage();
+  await test.step('Dee accepts under the name she gives', async () => {
+    await signInPage(deePage, dee);
+    await deePage.goto(`/g/${groupSlug}/join?invite=${await inviteTokenFrom(dee.email)}`);
+    await deePage.getByLabel('Your name').fill('Dee');
+    await deePage.getByRole('button', { name: 'Join' }).click();
+    await expect(deePage).toHaveURL(`/g/${groupSlug}`);
+    expect(ok(await ann.trpc.query('group.get', { groupSlug })).members.map((m) => m.name)).toEqual(['Ann', 'Dee']);
   });
 });
 

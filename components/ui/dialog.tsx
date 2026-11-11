@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip';
 
 function Dialog({
   ...props
@@ -68,13 +69,20 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            className="absolute right-2 top-2 flex size-11 items-center justify-center text-ink hover:bg-primary-muted disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
-          >
-            <X />
-            <span className="sr-only">{t('close')}</span>
-          </DialogPrimitive.Close>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <DialogPrimitive.Close
+                  data-slot="dialog-close"
+                  className="absolute right-2 top-2 flex size-11 items-center justify-center text-ink hover:bg-primary-muted disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5"
+                />
+              }
+            >
+              <X />
+              <span className="sr-only">{t('close')}</span>
+            </TooltipTrigger>
+            <TooltipContent>{t('close')}</TooltipContent>
+          </Tooltip>
         )}
       </DialogPrimitive.Popup>
     </DialogPortal>

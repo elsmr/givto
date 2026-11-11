@@ -48,7 +48,7 @@ const StepTrack = ({ step, total }: { step: number; total: number }) => {
   );
 };
 
-/** /new, link-first (PLAN-v2 "Create flow"): details → organizer → emailed code → share. */
+/** /new, link-first (PLAN-v2 "Create flow"): details → organizer → emailed code → share; signed in with a name, details → share. */
 export const CreateFlow = () => {
   const t = useTranslations('create');
   const tCode = useTranslations('join.code');
@@ -75,18 +75,14 @@ export const CreateFlow = () => {
     if (restored === 'saved' && resuming) setStep('organizer');
   }, [restored, resuming]);
 
-  // Signed in: start from the account's name.
-  const accountName = session.data?.user.name;
-  useEffect(() => {
-    if (restored !== 'pending' && accountName && !draft.organizerName) update({ organizerName: accountName });
-  }, [restored, accountName]);
-
   if (restored === 'pending' || session.isPending) return <LogoAnimation variant="loading" />;
   if (create.data) {
     return <CreatedShare slug={create.data.slug} token={create.data.joinToken} groupName={create.variables.name} />;
   }
 
   const signedInEmail = session.data?.user.email ?? null;
+  // Signed in with a name: there's nothing left to ask, so the details step creates.
+  const accountName = signedInEmail ? session.data?.user.name : undefined;
   const submitCreate = () => create.mutate(toCreateInput(draft, timeZone()));
   const sendCode = async () => {
     if (await emailCode.send(draft.email)) setStep('code');
@@ -101,7 +97,7 @@ export const CreateFlow = () => {
 
   return (
     <FlowPage
-      eyebrow={<StepTrack step={stepNumber} total={signedInEmail ? 2 : 3} />}
+      eyebrow={accountName ? undefined : <StepTrack step={stepNumber} total={signedInEmail ? 2 : 3} />}
       title={t(`titles.${step}`)}
       headingRef={heading}
     >
@@ -113,7 +109,18 @@ export const CreateFlow = () => {
             </Alert>
           )}
           {step === 'details' && (
-            <DetailsStep draft={draft} timeZone={timeZone()} onChange={update} onNext={() => setStep('organizer')} />
+            <DetailsStep
+              draft={draft}
+              timeZone={timeZone()}
+              onChange={update}
+              submitLabel={accountName ? t('create') : t('details.next')}
+              busy={create.isPending}
+              onNext={
+                accountName
+                  ? () => create.mutate(toCreateInput({ ...draft, organizerName: accountName }, timeZone()))
+                  : () => setStep('organizer')
+              }
+            />
           )}
           {step === 'organizer' && (
             <NameEmailForm

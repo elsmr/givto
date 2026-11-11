@@ -72,7 +72,7 @@ export const AvatarsSection = () => (
       ))}
     </StyleguideRow>
     <StyleguideRow label="AvatarStack">
-      <AvatarStack people={people} />
+      <AvatarStack people={people} label="7 people" />
       <span className="text-sm text-muted">7 people</span>
     </StyleguideRow>
   </StyleguideSection>
