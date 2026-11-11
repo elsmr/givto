@@ -5,8 +5,7 @@ import {
   NativeSelectOption,
 } from '@/components/ui/native-select';
 import { locales, type Locale } from '@/lib/schema/common';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
+import { useLocale, useTranslations } from 'next-intl';
 
 // Endonyms: each language is named in itself, whatever the UI language.
 const localeNames: Record<string, string> = {
@@ -16,7 +15,7 @@ const localeNames: Record<string, string> = {
 
 export const LanguageSwitch = () => {
   const t = useTranslations('shell');
-  const router = useRouter();
+  const current = useLocale();
   const setLocale = useSetLocale();
 
   return (
@@ -24,13 +23,13 @@ export const LanguageSwitch = () => {
       <Label htmlFor="language-switch">{t('language')}</Label>
       <NativeSelect
         id="language-switch"
-        value={router.locale}
+        value={current}
         onChange={(event) => {
           const locale = event.target.value as Locale;
           if (locales.includes(locale)) void setLocale(locale);
         }}
       >
-        {(router.locales ?? []).map((locale) => (
+        {locales.map((locale) => (
           <NativeSelectOption key={locale} value={locale} lang={locale}>
             {localeNames[locale] ?? locale}
           </NativeSelectOption>

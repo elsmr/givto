@@ -196,3 +196,8 @@
     color: var(--color-ink);
   }
 }
+
+/* App pages' static HTML is English; another language waits for _app (components/shell/use-preferred-locale.ts). */
+[data-locale-pending] body {
+  visibility: hidden;
+}

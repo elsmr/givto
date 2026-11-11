@@ -1,10 +1,12 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { LanguageSwitch } from './language-switch';
+import { localePath } from './public-pages';
 
 /** `language`: off in the app, where Account has the language setting. */
 export const Footer = ({ language = true }: { language?: boolean }) => {
   const t = useTranslations('shell');
+  const locale = useLocale();
 
   return (
     <footer className="border-t-(length:--border-width) border-outline bg-surface">
@@ -12,7 +14,7 @@ export const Footer = ({ language = true }: { language?: boolean }) => {
         {language && <LanguageSwitch />}
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <Link
-            href="/privacy"
+            href={localePath('/privacy', locale)}
             className="inline-flex min-h-11 items-center font-semibold"
           >
             {t('privacy')}

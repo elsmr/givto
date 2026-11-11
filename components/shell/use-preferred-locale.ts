@@ -1,49 +1,42 @@
 import { useCurrentUser } from '@/lib/client/session';
+import { locales, type Locale } from '@/lib/schema/common';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { isPublicPath } from './public-pages';
-import { localeCookie } from './remember-locale';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { publicPathOf } from './public-pages';
+import { browserLocale, rememberLocale } from './remember-locale';
 
-// Account setting is applied once per page load, so a manual switch sticks for the visit.
+const isLocale = (value: string | undefined): value is Locale => locales.includes(value as Locale);
+
+/**
+ * The language of app pages, which have none in the URL (81). Null until the browser is known
+ * (the first render matches the English static HTML). A server-rendered page (join) brings its own.
+ */
+export const useClientLocaleState = (serverLocale: Locale | undefined) => {
+  const [locale, setLocale] = useState<Locale | null>(serverLocale ?? null);
+  useEffect(() => {
+    if (!locale) setLocale(browserLocale());
+  }, []);
+  return [locale, setLocale] as const;
+};
+
+export const ClientLocale = createContext<(locale: Locale) => void>(() => undefined);
+
+// Applied once per account value per page load, so a manual switch sticks even if saving it failed.
 let appliedAccountLocale: string | undefined;
 
-// Account setting > remembered switch > browser preference > default locale.
-// Next only detects the browser language on `/`; deep links from emails and
-// group chats land elsewhere, so the client applies the same rule after load.
+/**
+ * The account's language wins once the session arrives, and is remembered so the next load
+ * paints in it from the start. Marketing pages keep their URL's language: crawlers must see /nl in Dutch.
+ */
 export const usePreferredLocale = () => {
-  const router = useRouter();
+  const setLocale = useContext(ClientLocale);
+  const isPublicPage = Boolean(publicPathOf(useRouter().pathname));
   const accountLocale = useCurrentUser()?.locale ?? undefined;
 
   useEffect(() => {
-    if (!router.isReady) return;
-    const { locales = [], locale, defaultLocale } = router;
-    const hasRememberedLocale = document.cookie
-      .split('; ')
-      .some((cookie) => cookie.startsWith(`${localeCookie}=`));
-    // Indexable pages keep their URL's language: crawlers (en-US) must see /nl in Dutch.
-    const browserLocale = isPublicPath(router.pathname)
-      ? undefined
-      : (navigator.languages
-          .map((language) => language.split('-')[0].toLowerCase())
-          .find((language) => locales.includes(language)) ?? defaultLocale);
-    const isNewAccountLocale =
-      accountLocale !== undefined && accountLocale !== appliedAccountLocale;
+    if (isPublicPage || !isLocale(accountLocale) || accountLocale === appliedAccountLocale) return;
     appliedAccountLocale = accountLocale;
-    const preferred = accountLocale
-      ? isNewAccountLocale
-        ? accountLocale
-        : undefined
-      : hasRememberedLocale
-        ? undefined
-        : browserLocale;
-
-    if (preferred && locales.includes(preferred) && preferred !== locale) {
-      router.replace(
-        { pathname: router.pathname, query: router.query },
-        router.asPath,
-        { locale: preferred },
-      );
-    }
-    // Re-run on navigation and when the account arrives, not on every router update.
-  }, [router.isReady, router.asPath, router.locale, accountLocale]);
+    rememberLocale(accountLocale);
+    setLocale(accountLocale);
+  }, [isPublicPage, accountLocale]);
 };

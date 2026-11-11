@@ -39,7 +39,7 @@ test('name, language and theme', async ({ page, newPage, signIn, signInPage }) =
 
   await test.step('language: switched here, saved on the account', async () => {
     await page.getByLabel('Language', { exact: true }).selectOption('Nederlands');
-    await expect(page).toHaveURL('/nl/account');
+    await expect(page).toHaveURL('/account');
     await expect(page.getByRole('heading', { name: 'Profiel' })).toBeVisible();
     expect(ok(await ann.trpc.query('me.get')).locale).toBe('nl');
   });
@@ -48,7 +48,7 @@ test('name, language and theme', async ({ page, newPage, signIn, signInPage }) =
     const other = await newPage();
     await signInPage(other, ann);
     await other.goto('/account');
-    await expect(other).toHaveURL('/nl/account');
+    await expect(other).toHaveURL('/account');
     await expect(other.getByRole('heading', { name: 'Profiel' })).toBeVisible();
   });
 });

@@ -4,7 +4,6 @@ import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDivider } from '@/components/ui/card';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useEffect, useRef } from 'react';
 import { InvitePeople } from '../group/invite-people';
 
@@ -14,7 +13,6 @@ type CreatedShareProps = { slug: string; token: string; groupName: string };
 export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
   const t = useTranslations('create.share');
   // A new group's language is the organizer's (the account setting the UI follows).
-  const locale = useRouter().locale ?? 'en';
   // Replaces the form that had focus: start from the heading (49).
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => heading.current?.focus(), []);
@@ -28,7 +26,7 @@ export const CreatedShare = ({ slug, token, groupName }: CreatedShareProps) => {
     >
       <Card>
         <CardContent>
-          <InvitePeople slug={slug} groupName={groupName} locale={locale} joinLink={{ token, revoked: false }} primary />
+          <InvitePeople slug={slug} groupName={groupName} joinLink={{ token, revoked: false }} primary />
         </CardContent>
         <CardDivider />
         <CardContent className="flex flex-col gap-4">

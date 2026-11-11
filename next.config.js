@@ -2,10 +2,7 @@ import { withSentryConfig } from '@sentry/nextjs/config';
 
 export default withSentryConfig(
   {
-    i18n: {
-      locales: ['en', 'nl'],
-      defaultLocale: 'en',
-    },
+    // No `i18n`: only the indexable pages have the language in the URL, as pages/nl/ (81).
     // The dashboard moved; old links and bookmarks keep working.
     redirects: async () => [{ source: '/groups', destination: '/app', permanent: true }],
   },

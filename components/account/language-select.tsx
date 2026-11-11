@@ -1,15 +1,14 @@
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { locales, type Locale } from '@/lib/schema/common';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
+import { useLocale, useTranslations } from 'next-intl';
 import { useSetLocale } from './use-set-locale';
 
 const localeNames: Record<Locale, string> = { en: 'English', nl: 'Nederlands' };
 
 export const LanguageSelect = () => {
   const t = useTranslations('account');
-  const router = useRouter();
+  const locale = useLocale();
   const setLocale = useSetLocale();
 
   return (
@@ -17,7 +16,7 @@ export const LanguageSelect = () => {
       <FieldLabel htmlFor="account-language">{t('language.label')}</FieldLabel>
       <NativeSelect
         id="account-language"
-        value={router.locale}
+        value={locale}
         onChange={(event) => void setLocale(event.target.value as Locale)}
       >
         {locales.map((locale) => (
