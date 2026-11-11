@@ -1,12 +1,14 @@
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Users } from 'lucide-react';
+import { Flame, Sparkles, Target, Trophy, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { PersonAvatar } from './person-avatar';
+
+const badgeIcons = { champion: Trophy, backToBack: Flame, perfect: Sparkles, nailed: Target };
 
 /** Everyone sees names; only the organizer sees emails and invite statuses (privacy rules), and gets to the people settings. */
 export const PeopleList = ({ group }: { group: GroupData }) => {
@@ -32,6 +34,15 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
                   {person.id === group.me.memberId && <Badge>{t('you')}</Badge>}
                   {person.status !== 'joined' && <Badge variant="coral">{t(`status.${person.status}`)}</Badge>}
                   {person.bounced && <Badge variant="coral">{t('bounced')}</Badge>}
+                  {person.badges.map(({ kind, count }) => {
+                    const Icon = badgeIcons[kind];
+                    return (
+                      <Badge key={kind} variant="primary-muted">
+                        <Icon aria-hidden="true" />
+                        {t(`badges.${kind}`, { count })}
+                      </Badge>
+                    );
+                  })}
                 </div>
                 {person.email && <span className="text-sm text-muted break-all">{person.email}</span>}
               </div>

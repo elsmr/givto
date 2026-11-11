@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { toKeepApartPairs } from '../../exclusions';
+import { badgesOf, champions } from '../../guess-results';
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
@@ -24,7 +25,7 @@ const memberEmails = async (db: Collections, group: Group): Promise<Map<string, 
   );
 };
 
-type EditionListItem = Pick<Edition, 'number' | 'title' | 'status'>;
+type EditionListItem = Pick<Edition, 'number' | 'title' | 'status' | 'results'>;
 
 export const groupView = async (
   db: Collections,
@@ -39,6 +40,8 @@ export const groupView = async (
   );
   const emails = isOrganizer ? await memberEmails(db, group) : new Map<string, string>();
   const bounced = isOrganizer ? await suppressedEmails(db, [...emails.values()]) : new Set<string>();
+  const badges = badgesOf(editions);
+  const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   return {
     slug: group.slug,
     name: group.name,
@@ -50,11 +53,18 @@ export const groupView = async (
       name: m.name,
       role: m.role,
       status: m.status,
+      /** Champions and badges (86), over the group's editions. */
+      badges: badges[m.id] ?? [],
       ...(isOrganizer && { email: emails.get(m.id), bounced: bounced.has(emails.get(m.id) ?? '') }),
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,
-    /** Newest first; the group home lists them once there's history (33). */
-    editions: editions.map(({ number, title, status }) => ({ number, title, status })),
+    /** Newest first; the group home lists them once there's history (33). `champions`: names, shared on a tie (86). */
+    editions: editions.map(({ number, title, status, results }) => ({
+      number,
+      title,
+      status,
+      champions: results ? champions(results.points).map(nameOf) : [],
+    })),
     edition: edition && {
       number: edition.number,
       isCurrent: edition.number === editions[0]?.number,

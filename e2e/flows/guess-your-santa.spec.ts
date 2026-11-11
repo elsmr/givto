@@ -113,6 +113,8 @@ test('guess, locked in; phones vote; the presenter shows the tally, then "From â
     }
     await presenter.getByRole('button', { name: 'Next' }).click();
     await expect(presenter.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
+    // Bob had his own Santa and his one row right (86).
+    await expect(presenter.getByText('Champion: Bob')).toBeVisible();
     await presenter.close();
   });
 });

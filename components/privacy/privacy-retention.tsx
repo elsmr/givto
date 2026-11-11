@@ -14,6 +14,7 @@ export const PrivacyRetention = () => {
           t('sign-in', { minutes: retention.signInCodeMinutes }),
           t('sessions', { days: retention.sessionDays }),
           t('edition-messages', { months: retention.editionMessagesMonths }),
+          t('results'),
           t('draw', { months: retention.drawMaxMonths }),
           t('groups', { months: retention.inactiveGroupMonths }),
           t('account'),
