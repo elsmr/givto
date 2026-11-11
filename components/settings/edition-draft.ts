@@ -3,10 +3,12 @@ import { editionDetailsInput } from '@/components/create/create-input';
 import type { GroupEdition } from '@/components/group/group-data';
 import type { RouterInputs } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
+import { drawsNames, type EditionKind } from '@/lib/schema/edition';
 
 /** The edition form's fields as typed text; the gift day and budget fields are the create flow's. */
 export type EditionDraft = EditionDetailsDraft & {
   title: string;
+  kind: EditionKind;
   drawOn: string;
   wishlistBy: string;
   postBy: string;
@@ -18,6 +20,7 @@ const amount = (cents: number) => String(cents / 100);
 
 export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   title: edition.title,
+  kind: edition.kind,
   giftDate: edition.giftDay?.date ?? '',
   giftTime: edition.giftDay?.time ?? '',
   exchangeMode: edition.exchangeMode,
@@ -33,20 +36,26 @@ export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
 
 type EditionInput = RouterInputs['settings']['updateEdition'];
 
-/** Empty fields are left out (the server unsets them); post-by and the call link only for posted exchanges. */
+/**
+ * Empty fields are left out (the server unsets them); post-by and the call link only for posted exchanges. Without a
+ * draw (88) the form hides the draw date and wishlist deadline, a white elephant also the exchange: those are left out too.
+ */
 export const toEditionInput = (draft: EditionDraft, groupSlug: string, editionNumber: number): EditionInput => {
+  const draws = drawsNames(draft);
+  const exchangeMode = draft.kind === 'whiteElephant' ? 'inPerson' : draft.exchangeMode;
   const details = editionDetailsInput(draft);
-  const callUrl = draft.exchangeMode !== 'inPerson' && draft.callUrl.trim();
+  const callUrl = exchangeMode !== 'inPerson' && draft.callUrl.trim();
   return {
     groupSlug,
     editionNumber,
     title: draft.title,
-    exchangeMode: draft.exchangeMode,
+    kind: draft.kind,
+    exchangeMode,
     ...details,
     ...(details.giftDay && callUrl && { giftDay: { ...details.giftDay, callUrl } }),
-    ...(draft.drawOn && { drawOn: draft.drawOn }),
-    ...(draft.wishlistBy && { wishlistBy: draft.wishlistBy }),
-    ...(draft.postBy && draft.exchangeMode !== 'inPerson' && { postBy: draft.postBy }),
+    ...(draws && draft.drawOn && { drawOn: draft.drawOn }),
+    ...(draws && draft.wishlistBy && { wishlistBy: draft.wishlistBy }),
+    ...(draft.postBy && exchangeMode !== 'inPerson' && { postBy: draft.postBy }),
     ...(draft.notes.trim() && { notes: draft.notes }),
   };
 };

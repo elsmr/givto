@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { SettingsGroup, SettingsRow } from '@/components/ui/settings-group';
 import { Switch } from '@/components/ui/switch';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { UnwrapMode } from '@/lib/schema/edition';
+import { drawsNames, type UnwrapMode } from '@/lib/schema/edition';
 import { Settings } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId } from 'react';
@@ -42,12 +42,17 @@ export const PresenterSettings = ({ groupSlug, edition, mode, inProgress, skipSp
           <SettingsRow label={t('skip-spin')} htmlFor={id}>
             <Switch id={id} checked={skipSpin} onCheckedChange={onSkipSpinChange} />
           </SettingsRow>
-          <UnwrapModeSetting groupSlug={groupSlug} editionNumber={edition.number} mode={mode} inProgress={inProgress} />
+          {/* A white elephant (88): one gift each. Without a draw: no Santas. */}
+          {edition.kind !== 'whiteElephant' && (
+            <UnwrapModeSetting groupSlug={groupSlug} editionNumber={edition.number} mode={mode} inProgress={inProgress} />
+          )}
         </SettingsGroup>
-        <SettingsGroup variant="plain" title={t('settings-santas')}>
-          <GuessSetting groupSlug={groupSlug} edition={edition} />
-          <RevealSetting groupSlug={groupSlug} edition={edition} />
-        </SettingsGroup>
+        {drawsNames(edition) && (
+          <SettingsGroup variant="plain" title={t('settings-santas')}>
+            <GuessSetting groupSlug={groupSlug} edition={edition} />
+            <RevealSetting groupSlug={groupSlug} edition={edition} />
+          </SettingsGroup>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -164,6 +164,19 @@
       "body-soon": "Pakjesdag voor “{group}” is {date} en er is nog niet geloot. Doe het nu, dan heeft iedereen tijd om te shoppen.",
       "late": "Wie na de loting nog meedoet, krijgt toch iemand om een cadeau voor te kopen.",
       "button": "Loten"
+    },
+    "bring": {
+      "subject": "Neem een cadeau mee",
+      "title": "Neem een cadeau mee",
+      "body": "Pakjesdag voor “{group}” is {date}. Neem één ingepakt cadeau mee: op pakjesdag kiest iedereen er een, of steelt er een.",
+      "button": "Open de groep"
+    },
+    "lock-in": {
+      "subject": "Klaar om vast te leggen",
+      "title": "Klaar om vast te leggen",
+      "body": "Iedereen die je per e-mail uitnodigde, doet mee met “{group}”: {count, plural, one {# deelnemer} other {# deelnemers}}. Leg het vast wanneer je wilt; wie later nog meedoet, is er ook bij.",
+      "body-soon": "Pakjesdag voor “{group}” is {date} en het is nog niet vastgelegd. Doe het nu, dan weet iedereen dat er een cadeau mee moet.",
+      "button": "Vastleggen"
     }
   },
   "reminder-gift-day": {

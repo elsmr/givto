@@ -25,5 +25,6 @@ export const toCreateInput = (draft: CreateDraft, timeZone: string): RouterInput
   organizerName: draft.organizerName,
   timeZone,
   exchangeMode: draft.exchangeMode,
+  ...(draft.kind !== 'secretSanta' && { kind: draft.kind }),
   ...editionDetailsInput(draft),
 });

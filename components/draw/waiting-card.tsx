@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { IconTile } from '@/components/ui/icon-tile';
 import { useTRPC } from '@/lib/client/trpc';
+import { drawsNames } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { Check, Heart, PartyPopper } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -14,6 +15,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 /**
  * Open edition, for a member who's in (79): all set once this group shows a wish of theirs and, when gifts
  * go by post, their address is in (80). Then nothing until the organizer draws names; the draw email tells them.
+ * Without a draw (88) you're all set once you're in: nobody sees your wishes, and locking in sends nothing.
  */
 export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edition: GroupEdition; showTab: (tab: GroupTab) => void }) => {
   const t = useTranslations('draw');
@@ -21,17 +23,21 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
   const format = useFormatter();
   const trpc = useTRPC();
   const posted = edition.exchangeMode !== 'inPerson';
-  const wishes = useQuery(trpc.wish.groupView.queryOptions({ groupSlug: group.slug }));
+  const draws = drawsNames(edition);
+  const wishes = useQuery({ ...trpc.wish.groupView.queryOptions({ groupSlug: group.slug }), enabled: draws });
   const address = useQuery({ ...trpc.address.mine.queryOptions({ groupSlug: group.slug }), enabled: posted });
-  if (wishes.isPending || (posted && address.isPending)) return null;
+  if ((draws && wishes.isPending) || (posted && address.isPending)) return null;
 
   const wishCount = wishes.data?.filter((wish) => wish.shown).length ?? 0;
-  const hasWishes = wishCount > 0;
+  // Without a draw nobody sees them, so they're never a to-do.
+  const wishesDone = !draws || wishCount > 0;
   const hasAddress = !posted || Boolean(address.data);
-  const ready = hasWishes && hasAddress;
+  const ready = wishesDone && hasAddress;
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
   const organizer = group.members.find((m) => m.role === 'organizer')?.name.split(' ')[0] ?? tGroup('people.organizer');
-  const waiting = (
+  const waiting = !draws ? (
+    <p>{t('lock-in.wait', { organizer })}</p>
+  ) : (
     <p>
       {edition.drawAt
         ? t('waiting.wait-on', { organizer, date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })
@@ -46,7 +52,7 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
     <Card>
       <CardHeader>
         <IconCardTitle icon={ready ? PartyPopper : Heart} tone={ready ? 'mint' : 'coral'}>
-          {ready ? t('waiting.ready') : hasWishes ? t('waiting.todo-address') : t('waiting.todo')}
+          {ready ? t('waiting.ready') : wishesDone ? t('waiting.todo-address') : t('waiting.todo')}
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
@@ -56,11 +62,13 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
             {done}
             {t('waiting.in')}
           </li>
-          <li className="flex flex-wrap items-center gap-3">
-            {hasWishes ? done : todo}
-            {hasWishes ? t('waiting.wishes', { count: wishCount }) : t('waiting.no-wishes')}
-            {!hasWishes && <Button onClick={() => showTab('wishlist')}>{t('waiting.add')}</Button>}
-          </li>
+          {draws && (
+            <li className="flex flex-wrap items-center gap-3">
+              {wishesDone ? done : todo}
+              {wishesDone ? t('waiting.wishes', { count: wishCount }) : t('waiting.no-wishes')}
+              {!wishesDone && <Button onClick={() => showTab('wishlist')}>{t('waiting.add')}</Button>}
+            </li>
+          )}
           {posted && (
             <li className="flex flex-wrap items-center gap-3">
               {hasAddress ? done : todo}

@@ -3,6 +3,7 @@ import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { InvitePeople } from '@/components/group/invite-people';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { drawsNames } from '@/lib/schema/edition';
 import { UserPlus } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { DrawRules } from './draw-rules';
@@ -37,7 +38,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
             label={t('who-names', { count: people.length, names: format.list(people.map((person) => person.name)) })}
           />
         )}
-        <DrawRules group={group} edition={edition} />
+        {drawsNames(edition) && <DrawRules group={group} edition={edition} />}
         {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} joinLink={joinLink} />}
       </CardContent>
     </Card>

@@ -94,6 +94,7 @@ export const CreateFlow = () => {
   };
   const errorCode = create.error && knownAppError(create.error, knownErrors);
   const stepNumber = { details: 1, organizer: 2, code: 3 }[step];
+  const createLabel = draft.kind === 'whiteElephant' ? t('create-white-elephant') : t('create');
 
   return (
     <FlowPage
@@ -113,7 +114,7 @@ export const CreateFlow = () => {
               draft={draft}
               timeZone={timeZone()}
               onChange={update}
-              submitLabel={accountName ? t('create') : t('details.next')}
+              submitLabel={accountName ? createLabel : t('details.next')}
               busy={create.isPending}
               onNext={
                 accountName
@@ -130,7 +131,7 @@ export const CreateFlow = () => {
                 email: t('organizer.email'),
                 emailHelp: t('organizer.email-help'),
                 signedIn: t('organizer.signed-in', { email: signedInEmail ?? '' }),
-                submit: signedInEmail ? t('create') : t('organizer.send-code'),
+                submit: signedInEmail ? createLabel : t('organizer.send-code'),
               }}
               name={draft.organizerName}
               email={draft.email}
@@ -154,7 +155,7 @@ export const CreateFlow = () => {
               email={draft.email}
               busy={emailCode.busy || create.isPending}
               error={emailCode.error}
-              submitLabel={t('create')}
+              submitLabel={createLabel}
               onVerify={verify}
               onResend={() => void emailCode.send(draft.email)}
               onChangeEmail={() => setStep('organizer')}

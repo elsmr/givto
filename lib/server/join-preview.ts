@@ -49,6 +49,8 @@ export type JoinPreview = {
   /** The current edition's, for the join page (not the tRPC previews); null when unset or over. */
   giftDay?: string | null;
   budget?: Price | null;
+  /** The current edition is a white elephant (88): no wishlist, nobody to buy for. */
+  whiteElephant?: boolean;
 };
 
 export const joinLinkPreview = (group: Group): JoinPreview => ({

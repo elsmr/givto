@@ -17,7 +17,7 @@ import { UnwrapModeSetting } from '@/components/giftday/unwrap-mode-setting';
 import { useGiftDay } from '@/components/giftday/use-gift-day';
 import { SettingsGroup } from '@/components/ui/settings-group';
 import type { GroupEdition } from '@/components/group/group-data';
-import { isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
 import { AvoidPreviousSetting } from './avoid-previous-setting';
 import { DangerZone } from './danger-zone';
 import { EditionForm } from './edition-form';
@@ -79,18 +79,23 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
         </>
       ),
     },
-    {
-      id: 'draw',
-      title: t('draw-title'),
-      content: (
-        <SettingsGroup id="draw" title={t('draw-title')} icon={Shuffle} tone="yellow">
-          {edition?.hasPreviousEdition && isBeforeDraw(edition) && <AvoidPreviousSetting groupSlug={slug} edition={edition} />}
-          <KeepApartSection group={data} edition={edition} organizer={organizer} />
-          {edition?.status === 'drawn' && <RedrawSection group={data} edition={edition} />}
-        </SettingsGroup>
-      ),
-    },
-    ...(edition ? [{ id: 'gift-day', title: t('gift-day'), content: <GiftDaySettings groupSlug={slug} edition={edition} /> }] : []),
+    // A white elephant (88) has no draw, and nothing to set for gift day but its date.
+    ...(edition && !drawsNames(edition)
+      ? []
+      : [
+          {
+            id: 'draw',
+            title: t('draw-title'),
+            content: (
+              <SettingsGroup id="draw" title={t('draw-title')} icon={Shuffle} tone="yellow">
+                {edition?.hasPreviousEdition && isBeforeDraw(edition) && <AvoidPreviousSetting groupSlug={slug} edition={edition} />}
+                <KeepApartSection group={data} edition={edition} organizer={organizer} />
+                {edition?.status === 'drawn' && <RedrawSection group={data} edition={edition} />}
+              </SettingsGroup>
+            ),
+          },
+          ...(edition ? [{ id: 'gift-day', title: t('gift-day'), content: <GiftDaySettings groupSlug={slug} edition={edition} /> }] : []),
+        ]),
     {
       id: 'group',
       title: t('group-name.title'),

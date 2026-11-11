@@ -4,6 +4,7 @@ import { editionResults } from '../../guess-results';
 import { todayIn } from '../../local-date';
 import { isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
+import { playerIds } from '../draw/rules';
 import { guessesOf, santaStepOn } from '../guess/guesses';
 import { log } from '../log';
 import { isRevealed } from '../routers/giftday-view';
@@ -57,19 +58,17 @@ export const runGiftDayTransitions = async (db: Collections, now: Date, editionI
     })
     .toArray();
   const groups = await db.groups
-    .find({ _id: { $in: [...new Set(editions.map((edition) => edition.groupId))] } }, { projection: { timeZone: 1 } })
+    .find({ _id: { $in: [...new Set(editions.map((edition) => edition.groupId))] } }, { projection: { timeZone: 1, members: 1 } })
     .toArray();
-  const timeZones = new Map(groups.map((group) => [group._id, group.timeZone]));
+  const groupsById = new Map(groups.map((group) => [group._id, group]));
   const moved = { giftday: [] as string[], done: [] as string[] };
   for (const edition of editions) {
-    const timeZone = timeZones.get(edition.groupId);
-    if (!edition.giftDay || !timeZone) continue;
-    const next = giftDayStatus(edition.status, edition.giftDay.date, todayIn(timeZone, now));
+    const group = groupsById.get(edition.groupId);
+    if (!edition.giftDay || !group) continue;
+    const next = giftDayStatus(edition.status, edition.giftDay.date, todayIn(group.timeZone, now));
     if ((next !== 'giftday' && next !== 'done') || next === edition.status) continue;
-    const order =
-      next === 'giftday' && !edition.unwrapOrder && edition.draw
-        ? { unwrapOrder: newUnwrapOrder(Object.keys(edition.draw.assignments), now) }
-        : {};
+    const players = next === 'giftday' && !edition.unwrapOrder ? playerIds(group, edition) : [];
+    const order = players.length > 0 ? { unwrapOrder: newUnwrapOrder(players, now) } : {};
     const changedAt = next === 'giftday' ? { 'statusChangedAt.giftday': now } : { 'statusChangedAt.done': now };
     const result = await db.editions.updateOne(
       { _id: edition._id, status: edition.status },

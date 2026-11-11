@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import type { Edition } from '../../schema/edition';
+import { drawsNames, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { TipFields, type Tip } from '../../schema/tip';
@@ -12,8 +12,8 @@ import { editionProcedure, router } from '../trpc';
 
 const TipInput = v.object({ tipId: Id });
 
-/** Tips can be written from the moment people join until gift day is over (before the draw too). */
-const tipsOpen = (edition: Edition) => ['open', 'drawn', 'giftday'].includes(edition.status);
+/** Tips can be written from the moment people join until gift day is over (before the draw too), for a Santa (88). */
+const tipsOpen = (edition: Edition) => drawsNames(edition) && ['open', 'drawn', 'giftday'].includes(edition.status);
 
 /** Everyone in this edition's draw except the caller: the people the caller can leave a tip about. */
 const tippablePeople = (group: Group, edition: Edition, caller: Member) =>

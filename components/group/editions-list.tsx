@@ -1,3 +1,4 @@
+import { drawsNames } from '@/lib/schema/edition';
 import { statusTone } from './edition-phase';
 import { Badge } from '@/components/ui/badge';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
@@ -24,7 +25,9 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
             >
               {edition.title}
             </Link>
-            <Badge variant={statusTone[edition.status]}>{t(`status.${edition.status}`)}</Badge>
+            <Badge variant={statusTone[edition.status]}>
+              {edition.status === 'drawn' && !drawsNames(edition) ? t('status.locked') : t(`status.${edition.status}`)}
+            </Badge>
             {index === 0 && <Badge variant="mint">{t('editions.current')}</Badge>}
             {edition.champions.length > 0 && (
               <span className="flex items-center gap-1 text-sm">

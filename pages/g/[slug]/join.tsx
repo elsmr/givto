@@ -65,7 +65,12 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
       slug,
       token,
       kind: invite ? 'invite' : 'link',
-      preview: preview && { ...preview, giftDay: upcoming?.giftDay?.date ?? null, budget: upcoming?.budget ?? null },
+      preview: preview && {
+        ...preview,
+        giftDay: upcoming?.giftDay?.date ?? null,
+        budget: upcoming?.budget ?? null,
+        whiteElephant: upcoming?.kind === 'whiteElephant',
+      },
       origin: new URL(requireEnv('BETTER_AUTH_URL')).origin,
       locale,
       messages: await loadMessages(locale, ['join', 'group']),

@@ -3,7 +3,7 @@ import { ReminderEmail, reminderSubject, type ReminderParts } from '../../../ema
 import { siteUrl } from '../../../emails/ui/site';
 import { daysBetween, formatLocalDate, hourIn, todayIn } from '../../local-date';
 import { dueReminder, type DueReminder, type ReminderPart } from '../../reminder-schedule';
-import { isDrawn, type Edition } from '../../schema/edition';
+import { drawsNames, isDrawn, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
@@ -36,13 +36,16 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
   const home = groupUrl(to.locale, group.slug);
   const giftDay = edition.giftDay?.date;
   const postBy = edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined;
+  const whiteElephant = !drawsNames(edition);
   return {
     ...(parts.includes('wishlist') && { wishlist: { url: to.forName ? home : siteUrl(to.locale, '/wishlist'), by: date(edition.wishlistBy) } }),
     ...(parts.includes('address') && { address: { url: home, postBy: date(postBy) } }),
-    ...(parts.includes('gift') && giftDay && { gift: { url: `${home}#giftee`, giftDay: date(giftDay)!, postBy: date(postBy) } }),
+    ...(parts.includes('gift') &&
+      giftDay && { gift: { url: whiteElephant ? home : `${home}#giftee`, giftDay: date(giftDay)!, postBy: date(postBy), whiteElephant } }),
     ...(parts.includes('readyToDraw') && {
       readyToDraw: {
         url: home,
+        whiteElephant,
         people: edition.participants.filter((p) => p.participates && p.status === 'joined').length,
         giftDay: date(giftDay),
         soon: Boolean(giftDay && daysBetween(today, giftDay) <= READY_SOON_DAYS),

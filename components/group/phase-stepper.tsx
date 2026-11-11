@@ -1,5 +1,6 @@
+import { drawsNames, type EditionKind } from '@/lib/schema/edition';
 import { cn } from '@/lib/utils';
-import { Check, Gift, PartyPopper, ShoppingBag, Shuffle, UserPlus } from 'lucide-react';
+import { Check, Gift, Lock, PartyPopper, ShoppingBag, Shuffle, UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { phases, type Phase } from './edition-phase';
 
@@ -9,14 +10,16 @@ const icons = { join: UserPlus, draw: Shuffle, shop: ShoppingBag, giftday: Gift,
  * Where an edition is (61), drawn as a progress track so it doesn't read as tabs: past phases
  * filled and ticked, the current one raised, the rest dashed. A status, not navigation.
  */
-export const PhaseStepper = ({ phase, className }: { phase: Phase; className?: string }) => {
+export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: EditionKind; className?: string }) => {
   const t = useTranslations('group.phase');
   const current = phases.indexOf(phase);
+  // No draw (88): the step is locking it in.
+  const lockIn = !drawsNames({ kind });
 
   return (
     <ol aria-label={t('label')} className={cn('grid grid-cols-5 gap-1 sm:gap-1.5', className)}>
       {phases.map((step, index) => {
-        const Icon = index < current ? Check : icons[step];
+        const Icon = index < current ? Check : step === 'draw' && lockIn ? Lock : icons[step];
         return (
           <li
             key={step}
@@ -34,7 +37,7 @@ export const PhaseStepper = ({ phase, className }: { phase: Phase; className?: s
             />
             <span className="flex min-w-0 items-center gap-1">
               <Icon aria-hidden="true" className="size-4 shrink-0 max-[22rem]:hidden" />
-              <span className="break-words hyphens-auto">{t(step)}</span>
+              <span className="break-words hyphens-auto">{step === 'draw' && lockIn ? t('lock-in') : t(step)}</span>
             </span>
             {index < current && <span className="sr-only">{t('done-state')}</span>}
           </li>

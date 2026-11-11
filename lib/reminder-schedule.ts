@@ -12,7 +12,7 @@ export interface ReminderPerson {
   joinedOn: string;
   /** Wishes their Santa sees in this group: none = wishlist reminders. */
   wishCount: number;
-  /** A Santa in this edition's draw. */
+  /** A Santa in this edition's draw, or anyone in a white elephant (88): brings a gift. */
   isSanta: boolean;
   /** Marked "I've got my gift": no more gift reminders. */
   hasGift: boolean;

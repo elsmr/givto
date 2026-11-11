@@ -1,9 +1,10 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
+import { drawsNames, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { GiftCounts } from '../../unwrap-turns';
 import { isDuplicateKey, newId, type Collections } from '../db';
+import { playerIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
 import { guessesOf } from '../guess/guesses';
@@ -68,7 +69,7 @@ export const giftdayRouter = router({
   shuffle: organizerEditionProcedure.mutation(async ({ ctx }) => {
     const { edition } = ctx;
     if (edition.status === 'done') throw new AppError('EDITION_CLOSED');
-    const inDraw = Object.keys(edition.draw?.assignments ?? {});
+    const inDraw = playerIds(ctx.group, edition);
     if (!isDrawn(edition) || inDraw.length < 2) throw new AppError('NOT_DRAWN');
     const now = new Date();
     const saved = await ctx.db.editions.updateOne(
@@ -82,6 +83,8 @@ export const giftdayRouter = router({
   /** All at once (default) or one by one. Starts the unwrapping over. */
   setMode: organizerEditionProcedure.input(v.object({ mode: UnwrapMode })).mutation(async ({ ctx, input }) => {
     if (ctx.edition.status === 'done') throw new AppError('EDITION_CLOSED');
+    // A white elephant brings one gift each (88).
+    if (ctx.edition.kind === 'whiteElephant' && input.mode !== 'allAtOnce') throw new AppError('FORBIDDEN');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
       { $set: { unwrapMode: input.mode, updatedAt: new Date() }, $unset: { 'unwrapOrder.progress': true } }
@@ -97,6 +100,7 @@ export const giftdayRouter = router({
 
   /** The big reveal on or off (off by default), any time. Off again hides it from everyone. */
   setReveal: organizerEditionProcedure.input(v.object({ enabled: v.boolean() })).mutation(async ({ ctx, input }) => {
+    if (!drawsNames(ctx.edition) && input.enabled) throw new AppError('FORBIDDEN');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
       input.enabled

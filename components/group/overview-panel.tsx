@@ -5,7 +5,7 @@ import { GiftArrivalCard } from '@/components/gift/gift-arrival-card';
 import { StillShoppingStat } from '@/components/gift/still-shopping-stat';
 import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
 import { GuessCard } from '@/components/guess/guess-card';
-import { isBeforeDraw, isDrawn, isPosted } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw, isDrawn, isPosted } from '@/lib/schema/edition';
 import { AddressCard, MissingAddressesStat } from './address-card';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
@@ -52,7 +52,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
           <EditionDetails edition={edition}>
             {current && <AddToCalendar groupSlug={slug} groupName={group.name} edition={edition} />}
           </EditionDetails>
-          {edition.status === 'drawn' && group.organizer && edition.isCurrent && (
+          {edition.status === 'drawn' && drawsNames(edition) && group.organizer && edition.isCurrent && (
             <StillShoppingStat groupSlug={slug} editionNumber={edition.number} />
           )}
           {input && addresses && group.organizer && edition.isCurrent && <MissingAddressesStat {...input} />}

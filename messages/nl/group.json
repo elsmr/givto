@@ -5,6 +5,7 @@
     "draft": "Concept",
     "open": "Open om mee te doen",
     "drawn": "Geloot",
+    "locked": "Vastgelegd",
     "giftday": "Pakjesdag",
     "done": "Afgelopen"
   },
@@ -151,6 +152,7 @@
     "label": "Waar deze Secret Santa staat",
     "join": "Meedoen",
     "draw": "Loten",
+    "lock-in": "Vastleggen",
     "shop": "Shoppen",
     "giftday": "Pakjesdag",
     "done": "Klaar",

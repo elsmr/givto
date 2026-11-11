@@ -52,7 +52,8 @@
     "remove-confirm": "Remove {name}",
     "removed": "{name} removed",
     "cancel": "Keep",
-    "drawn": "Names are drawn, so who's in can't change here anymore. People who join now are slotted in."
+    "drawn": "Names are drawn, so who's in can't change here anymore. People who join now are slotted in.",
+    "locked": "It's locked in, so who's in can't change here anymore. People who join now are in too."
   },
   "keep-apart-drawn": "Names are drawn, so who's kept apart can't change for this edition.",
   "redraw": {

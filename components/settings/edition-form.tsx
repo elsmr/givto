@@ -1,5 +1,5 @@
 import { BudgetFields } from '@/components/create/budget-fields';
-import { ExchangeField, GiftDayFields } from '@/components/create/gift-day-fields';
+import { ExchangeField, GiftDayFields, KindField } from '@/components/create/gift-day-fields';
 import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import type { GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
-import { EditionTitle, isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, EditionTitle, isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
@@ -18,7 +18,7 @@ import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-d
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
 
-/** Edition title, gift day, exchange and the call link by post (87), dates, budget, notes (28). */
+/** Edition title, kind until the draw (88), gift day, exchange and the call link by post (87), dates, budget, notes (28). A white elephant has no exchange or dates but gift day. */
 export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('settings');
   const tIssues = useTranslations('group.issues');
@@ -53,9 +53,10 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
           <Input id="edition-title" required maxLength={80} value={draft.title} onChange={(event) => update({ title: event.target.value })} />
           {titleIssue && <FieldError>{tIssues(titleIssue)}</FieldError>}
         </Field>
+        {isBeforeDraw(edition) && <KindField kind={draft.kind} onChange={(kind) => update({ kind })} />}
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
-        <ExchangeField draft={draft} onChange={update} />
-        {draft.exchangeMode !== 'inPerson' && draft.giftDate && (
+        {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={update} />}
+        {draft.kind !== 'whiteElephant' && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
           <Field>
             <FieldLabel htmlFor="edition-call-url">{t('edition.call-url')}</FieldLabel>
             <Input
@@ -70,7 +71,9 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
             <FieldDescription>{t('edition.call-url-help')}</FieldDescription>
           </Field>
         )}
-        <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={isBeforeDraw(edition)} onChange={update} />
+        {drawsNames(draft) && (
+          <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={isBeforeDraw(edition)} onChange={update} />
+        )}
         <BudgetFields draft={draft} onChange={update} />
         <Field>
           <FieldLabel htmlFor="edition-notes">{t('edition.notes')}</FieldLabel>

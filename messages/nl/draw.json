@@ -13,6 +13,19 @@
     "cancel": "Nog niet",
     "drawn": "Er is geloot!"
   },
+  "lock-in": {
+    "draw": "Vastleggen",
+    "too-few": "Om vast te leggen {count, plural, one {is er nog # persoon} other {zijn er nog # mensen}} nodig.",
+    "confirm-title": "Nu vastleggen?",
+    "confirm-description": "Iedereen die meedoet, brengt één cadeau mee naar pakjesdag. Wie later meedoet, is er ook bij.",
+    "left-out": "Doet niet mee: {names}.",
+    "confirm": "Vastleggen",
+    "cancel": "Nog niet",
+    "drawn": "Vastgelegd!",
+    "wait": "Niks te doen tot {organizer} het vastlegt. Breng daarna één ingepakt cadeau mee naar pakjesdag.",
+    "locked-title": "Het ligt vast",
+    "locked-body": "Breng één ingepakt cadeau mee naar pakjesdag. Op pakjesdag kiest Givto wie er aan de beurt is: een nieuw cadeau openen, of er een stelen dat al open is."
+  },
   "rules": {
     "title": "Regels voor de loting",
     "avoid-previous": "Niet dezelfde persoon als vorige keer",

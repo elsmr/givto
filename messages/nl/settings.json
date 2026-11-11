@@ -52,7 +52,8 @@
     "remove-confirm": "{name} verwijderen",
     "removed": "{name} verwijderd",
     "cancel": "Laten staan",
-    "drawn": "Er is al geloot, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen."
+    "drawn": "Er is al geloot, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen.",
+    "locked": "Het ligt vast, dus wie meedoet kan hier niet meer veranderen. Wie nu nog meedoet, is er ook bij."
   },
   "keep-apart-drawn": "Er is al geloot, dus wie niet samen mag, verandert voor deze editie niet meer.",
   "redraw": {

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { EditionKind } from '@/lib/schema/edition';
 import { ExchangeMode } from '@/lib/schema/group';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -72,6 +73,24 @@ export const ExchangeField = ({ draft, onChange }: FieldsProps) => {
         {ExchangeMode.options.map((mode) => (
           <NativeSelectOption key={mode} value={mode}>
             {t(mode)}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    </Field>
+  );
+};
+
+/** Secret Santa or white elephant (88); the settings show it until names are drawn or it's locked in. */
+export const KindField = ({ kind, onChange }: { kind: EditionKind; onChange: (kind: EditionKind) => void }) => {
+  const t = useTranslations('create.details.kind');
+
+  return (
+    <Field>
+      <FieldLabel htmlFor="edition-kind">{t('label')}</FieldLabel>
+      <NativeSelect id="edition-kind" className="w-full" value={kind} onChange={(event) => onChange(event.target.value as EditionKind)}>
+        {EditionKind.options.map((option) => (
+          <NativeSelectOption key={option} value={option}>
+            {t(option)}
           </NativeSelectOption>
         ))}
       </NativeSelect>

@@ -3,7 +3,7 @@ import { findStuckGivers } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { todayIn } from '../../local-date';
 import { Id, PersonName, Price, TimeZone } from '../../schema/common';
-import { GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
+import { defaultEditionTitle, EditionKind, GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
@@ -23,6 +23,7 @@ export const CreateGroupInput = v.object({
   giftDay: v.optional(GiftDay),
   exchangeMode: ExchangeMode,
   budget: v.optional(Price),
+  kind: v.optional(EditionKind),
 });
 
 /** Keep-apart rows: 2+ people who don't draw each other; a person can be in several. */
@@ -57,6 +58,8 @@ export const groupRouter = router({
     const now = new Date();
     // The driver stores `undefined` as null, which the schemas reject: leave absent fields out.
     const optional = input.budget ? { budget: compactPrice(input.budget) } : {};
+    // A white elephant is played together, never by post.
+    const exchangeMode = input.kind === 'whiteElephant' ? 'inPerson' : input.exchangeMode;
     const organizer: Member = {
       id: newId(),
       userId: ctx.user.id,
@@ -72,7 +75,7 @@ export const groupRouter = router({
       name: input.name,
       locale: ctx.user.locale === 'nl' ? 'nl' : 'en',
       timeZone: input.timeZone,
-      defaults: { exchangeMode: input.exchangeMode, ...optional },
+      defaults: { exchangeMode, ...optional },
       createdBy: ctx.user.id,
       members: [organizer],
       exclusions: [],
@@ -87,8 +90,9 @@ export const groupRouter = router({
       groupId: group._id,
       number: 1,
       year,
-      title: `Secret Santa ${year}`,
-      exchangeMode: input.exchangeMode,
+      title: defaultEditionTitle(year, [], input.kind),
+      ...(input.kind && { kind: input.kind }),
+      exchangeMode,
       ...optional,
       ...(input.giftDay && { giftDay: compactGiftDay(input.giftDay, input.exchangeMode) }),
       avoidPreviousGiftees: false,
@@ -110,7 +114,7 @@ export const groupRouter = router({
     .input(v.object({ editionNumber: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))) }))
     .query(async ({ ctx, input }) => {
       const editions = await ctx.db.editions
-        .find({ groupId: ctx.group._id }, { projection: { number: 1, title: 1, status: 1, results: 1 }, sort: { number: -1 } })
+        .find({ groupId: ctx.group._id }, { projection: { number: 1, title: 1, kind: 1, status: 1, results: 1 }, sort: { number: -1 } })
         .toArray();
       const number = input.editionNumber ?? editions[0]?.number;
       const edition = number === undefined ? null : await ctx.db.editions.findOne({ groupId: ctx.group._id, number });

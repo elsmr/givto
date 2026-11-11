@@ -80,6 +80,9 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
     reminder('reminder-address-post', { address: { url, postBy }, gift: { ...gift, postBy } }),
     reminder('reminder-ready', { readyToDraw: { url, people: 6, giftDay, soon: false } }),
     reminder('reminder-ready-soon', { wishlist, readyToDraw: { url, people: 6, giftDay, soon: true } }),
+    reminder('reminder-bring', { gift: { ...gift, whiteElephant: true } }),
+    reminder('reminder-lock-in', { readyToDraw: { url, people: 6, giftDay, soon: false, whiteElephant: true } }),
+    reminder('reminder-lock-in-soon', { readyToDraw: { url, people: 6, giftDay, soon: true, whiteElephant: true } }),
     {
       name: 'join-digest',
       subject: joinDigestSubject({ ...base, names: ['Bob', 'Cee'] }),

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { formatBudget } from '@/lib/format-budget';
 import { formatLocalDate } from '@/lib/local-date';
-import { isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
 import { NotebookText } from 'lucide-react';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
@@ -16,7 +16,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
   const locale = useLocale();
   const { giftDay, budget, timeZone } = edition;
   const localDate = (date: string) => formatLocalDate(date, locale);
-  const draw = !isBeforeDraw(edition)
+  const draw = !drawsNames(edition) ? null : !isBeforeDraw(edition)
     ? t('drawn')
     : edition.drawAt && t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) });
   const posted = edition.exchangeMode !== 'inPerson';
