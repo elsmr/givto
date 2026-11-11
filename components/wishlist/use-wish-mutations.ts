@@ -2,13 +2,18 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { moveItem } from '@/lib/move-item';
 
-/** Create, update, archive, restore, delete and move the signed-in person's wishes; moves are optimistic. */
+/** Create, update, archive, restore, delete, move and show/hide the signed-in person's wishes; moves and show/hide are optimistic. */
 export const useWishMutations = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const listKey = trpc.wish.list.queryKey();
-  // Also refreshes the per-group views (wish.groupView).
-  const refresh = () => queryClient.invalidateQueries({ queryKey: trpc.wish.pathKey() });
+  const groupsKey = trpc.account.groups.queryKey();
+  // Also refreshes the per-group views (wish.groupView) and what each group shows (account.groups).
+  const refresh = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: trpc.wish.pathKey() }),
+      queryClient.invalidateQueries({ queryKey: groupsKey }),
+    ]);
 
   const create = useMutation(trpc.wish.create.mutationOptions({ onSuccess: refresh }));
   const update = useMutation(trpc.wish.update.mutationOptions({ onSuccess: refresh }));
@@ -30,5 +35,20 @@ export const useWishMutations = () => {
       },
     })
   );
-  return { create, update, archive, restore, remove, move, refresh };
+  const setShown = useMutation(
+    trpc.wish.setShown.mutationOptions({
+      onMutate: async ({ groupSlug, wishId, shown }) => {
+        await queryClient.cancelQueries({ queryKey: groupsKey });
+        queryClient.setQueryData(groupsKey, (groups) =>
+          groups?.map((group) =>
+            group.slug !== groupSlug
+              ? group
+              : { ...group, shownWishIds: shown ? [...group.shownWishIds, wishId] : group.shownWishIds.filter((id) => id !== wishId) }
+          )
+        );
+      },
+      onSettled: refresh,
+    })
+  );
+  return { create, update, archive, restore, remove, move, setShown, refresh };
 };

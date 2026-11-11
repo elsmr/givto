@@ -1,8 +1,8 @@
 // The personal wishlist on /wishlist (38, 73, 76): add, edit, links, reorder by drag and by keyboard, archive.
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { Binary, ObjectId } from 'mongodb';
 import superjson from 'superjson';
-import { expect, test, type TrpcOutput } from '../fixtures';
+import { expect, ok, test, type TrpcOutput } from '../fixtures';
 
 const wishTitles = (page: Page) => page.getByRole('region', { name: 'Your wishes' }).getByRole('heading', { level: 3 });
 const wishItem = (page: Page, title: string) =>
@@ -20,20 +20,23 @@ const addWish = async (page: Page, title: string) => {
 };
 
 test('add, edit, reorder by drag and by keyboard, archive, restore, delete for good', async ({ page, signIn, signInPage }) => {
-  await signInPage(page, await signIn('olive'));
+  const olive = await signIn('olive');
+  await signInPage(page, olive);
   await page.goto('/wishlist');
   await expect(page.getByRole('heading', { name: 'Your wishlist is empty' })).toBeVisible();
 
-  await test.step('add three wishes, one with details; each new one goes on top', async () => {
-    await page.getByLabel('Wish', { exact: true }).fill('Cookbook');
-    await page.getByLabel('Notes').fill('Anything vegetarian, like https://example.com/ottolenghi.');
-    await page.getByRole('button', { name: 'Add wish' }).click();
+  await test.step('add three wishes, one with a link in its notes; each new one goes on top', async () => {
+    // The form turns links into link cards, so this one comes in as an older wish would.
+    ok(await olive.trpc.mutate('wish.create', { title: 'Cookbook', description: 'Anything vegetarian, like https://example.com/ottolenghi.' }));
+    await page.reload();
     await expect(wishItem(page, 'Cookbook')).toContainText('Anything vegetarian');
     const inNotes = wishItem(page, 'Cookbook').getByRole('link', { name: 'https://example.com/ottolenghi' });
     await expect(inNotes).toHaveAttribute('href', 'https://example.com/ottolenghi');
     await expect(inNotes).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');
     await addWish(page, 'Board game');
-    await addWish(page, 'Wool socks');
+    await page.getByLabel('Wish', { exact: true }).fill('Wool socks');
+    await page.getByLabel('Wish', { exact: true }).press('Enter');
+    await expect(wishItem(page, 'Wool socks')).toBeVisible();
     await expect(wishTitles(page)).toHaveText(['Wool socks', 'Board game', 'Cookbook']);
     await expect(page.getByText('3 wishes')).toBeVisible();
   });
@@ -106,7 +109,7 @@ test('add, edit, reorder by drag and by keyboard, archive, restore, delete for g
   });
 });
 
-test('links: paste links, the first one fills in the wish; a walled shop keeps its link; remove a link', async ({ page, signIn, signInPage, db }) => {
+test('links: pasted or typed into the wish or notes become link cards; a walled shop keeps its link; remove a link', async ({ page, signIn, signInPage, db }) => {
   const olive = await signIn('olive');
   await signInPage(page, olive);
   // The imported picture: stored for Olive, as the server's import would.
@@ -136,35 +139,37 @@ test('links: paste links, the first one fills in the wish; a walled shop keeps i
     return route.fulfill({ status: 422, json: [{ error: superjson.serialize(error) }] });
   });
   await page.goto('/wishlist');
-  const link = page.getByLabel('Link to a shop (optional)');
+  const wishField = page.getByLabel('Wish', { exact: true });
+  const notes = page.getByLabel('Notes');
+  const paste = async (field: Locator, text: string) => {
+    await field.focus();
+    await page.evaluate((pasted) => {
+      const data = new DataTransfer();
+      data.setData('text/plain', pasted);
+      document.activeElement?.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+    }, text);
+  };
 
-  await test.step('the wish comes first, the link field is optional', async () => {
-    const fields = page.locator('form').first().getByRole('textbox');
-    await expect(fields.first()).toHaveAccessibleName('Wish');
+  await test.step('the add form is the wish and notes, nothing more', async () => {
+    const form = page.locator('form').first();
+    await expect(form.getByRole('textbox')).toHaveCount(2);
+    await expect(form.getByRole('textbox').first()).toHaveAccessibleName('Wish');
+    await expect(form.getByRole('button', { name: 'More details' })).toHaveCount(0);
   });
 
   await test.step('paste a link into the wish field: it is filled in from the page, with the picture', async () => {
-    const wishField = page.getByLabel('Wish', { exact: true });
-    await wishField.focus();
-    await page.evaluate((text) => {
-      const data = new DataTransfer();
-      data.setData('text/plain', text);
-      document.activeElement?.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
-    }, socks);
+    await paste(wishField, socks);
     await expect(page.getByRole('status').filter({ hasText: 'Link added' })).toBeAttached();
-    await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
-    await expect(page.getByLabel('Notes')).toHaveValue('Warm socks, size 42');
-    await expect(page.getByLabel('Price', { exact: true })).toHaveValue('19.95');
+    await expect(wishField).toHaveValue('Merino wool socks');
+    await expect(notes).toHaveValue('Warm socks, size 42');
     await expect(page.getByRole('img', { name: 'Picture of Merino wool socks' })).toBeVisible();
-    await expect(link).toHaveValue('');
   });
 
-  await test.step('a second link from a shop that walls us off: kept quietly, the wish stays as it is', async () => {
-    await link.fill(walled);
-    await link.press('Enter');
+  await test.step('a second link, pasted into the notes, from a shop that walls us off: kept quietly, the wish stays as it is', async () => {
+    await paste(notes, walled);
     await expect(page.getByText('2 links')).toBeVisible();
-    await expect(page.getByText("doesn't let us read", { exact: false })).toHaveCount(0);
-    await expect(page.getByLabel('Wish', { exact: true })).toHaveValue('Merino wool socks');
+    await expect(notes).toHaveValue('Warm socks, size 42');
+    await expect(wishField).toHaveValue('Merino wool socks');
     await page.getByRole('button', { name: 'Add wish' }).click();
   });
 
@@ -179,35 +184,31 @@ test('links: paste links, the first one fills in the wish; a walled shop keeps i
     await expect(shopLinks.nth(1)).toHaveAttribute('href', walled);
   });
 
-  await test.step('edit: remove a link', async () => {
+  await test.step('edit: remove a link; the price is under "More details"', async () => {
     await page.getByRole('button', { name: 'Edit “Merino wool socks”' }).click();
+    await expect(page.getByLabel('Price', { exact: true })).toHaveValue('19.95');
     await page.getByRole('button', { name: 'Remove the link to zalando.nl' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(wish.getByRole('list', { name: 'Links' }).getByRole('link')).toHaveCount(1);
   });
 
-  await test.step('a link typed but not added yet is added on save', async () => {
-    await link.fill(socks);
-    await addWish(page, 'Socks for Dad');
+  await test.step('a link typed into the wish is taken out of the text and added on save', async () => {
+    await wishField.fill(`Socks for Dad ${socks}`);
+    await page.getByRole('button', { name: 'Add wish' }).click();
     await expect(wishItem(page, 'Socks for Dad').getByRole('link', { name: /^shop\.example/ })).toHaveAttribute('href', socks);
-    await expect(link).toHaveValue('');
+    await expect(wishField).toHaveValue('');
   });
 
-  await test.step('a blocked address (the real server answer): say so, also on save; clear it to type the wish yourself', async () => {
+  await test.step('a blocked address (the real server answer) stays in the notes as text', async () => {
     await page.unroute('**/api/trpc/import.fromUrl?*');
-    const blocked = page.getByText("That address can't be used. Try a link to a shop or web page.");
-    await link.fill('http://127.0.0.1/admin');
-    await page.getByRole('button', { name: 'Add link' }).click();
-    await expect(blocked).toBeVisible();
-    await page.getByLabel('Wish', { exact: true }).fill('Typed by hand');
+    await wishField.fill('Typed by hand');
+    await notes.fill('See http://127.0.0.1/admin');
     await Promise.all([
       page.waitForResponse((res) => res.url().includes('/api/trpc/import.fromUrl')),
       page.getByRole('button', { name: 'Add wish' }).click(),
     ]);
-    await expect(blocked).toBeVisible();
-    await expect(wishTitles(page)).toHaveText(['Socks for Dad', 'Merino wool socks']);
-    await link.clear();
-    await page.getByRole('button', { name: 'Add wish' }).click();
     await expect(wishTitles(page)).toHaveText(['Typed by hand', 'Socks for Dad', 'Merino wool socks']);
+    await expect(wishItem(page, 'Typed by hand')).toContainText('See http://127.0.0.1/admin');
+    await expect(wishItem(page, 'Typed by hand').getByRole('list', { name: 'Links' })).toHaveCount(0);
   });
 });

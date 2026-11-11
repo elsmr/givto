@@ -20,38 +20,36 @@ export const ArchivedWishes = () => {
   if (wishes.length === 0) return null;
 
   return (
-    <div className="lg:col-start-1">
-      <DisclosureCard title={`${t('title')} (${wishes.length})`} icon={Archive} tone="primary-muted">
-        <ul className="flex flex-col gap-4">
-          {wishes.map((wish) => (
-            <li key={wish.id}>
-              <WishCard wish={wish} className="bg-page shadow-none">
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    variant="neutral"
-                    size="sm"
-                    aria-label={t('restore-label', { title: wish.title })}
-                    disabled={restore.isPending}
-                    onClick={() =>
-                      restore.mutate(
-                        { wishId: wish.id },
-                        {
-                          onSuccess: () => toast.add({ title: t('restored', { title: wish.title }), type: 'success' }),
-                          onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
-                        }
-                      )
-                    }
-                  >
-                    <ArchiveRestore aria-hidden="true" />
-                    {t('restore')}
-                  </Button>
-                  <DeleteWishDialog wishId={wish.id} title={wish.title} />
-                </div>
-              </WishCard>
-            </li>
-          ))}
-        </ul>
-      </DisclosureCard>
-    </div>
+    <DisclosureCard title={`${t('title')} (${wishes.length})`} icon={Archive} tone="primary-muted">
+      <ul className="flex flex-col gap-4">
+        {wishes.map((wish) => (
+          <li key={wish.id}>
+            <WishCard wish={wish} className="bg-page shadow-none">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  variant="neutral"
+                  size="sm"
+                  aria-label={t('restore-label', { title: wish.title })}
+                  disabled={restore.isPending}
+                  onClick={() =>
+                    restore.mutate(
+                      { wishId: wish.id },
+                      {
+                        onSuccess: () => toast.add({ title: t('restored', { title: wish.title }), type: 'success' }),
+                        onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
+                      }
+                    )
+                  }
+                >
+                  <ArchiveRestore aria-hidden="true" />
+                  {t('restore')}
+                </Button>
+                <DeleteWishDialog wishId={wish.id} title={wish.title} />
+              </div>
+            </WishCard>
+          </li>
+        ))}
+      </ul>
+    </DisclosureCard>
   );
 };

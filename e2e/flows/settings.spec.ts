@@ -60,8 +60,8 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await test.step('the group page shows them', async () => {
     await page.getByRole('link', { name: 'Back to After' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'After' })).toBeVisible();
-    await expect(page.getByText('Budget €25', { exact: true })).toBeVisible();
-    await page.getByRole('heading', { name: 'Dates, budget and notes' }).click();
+    await expect(page.getByRole('heading', { name: 'Dates, budget and notes' })).toBeVisible();
+    await expect(page.getByText('€25', { exact: true })).toBeVisible();
     await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00`)).toBeVisible();
     await expect(page.getByText(fullDate('2099-12-01'))).toBeVisible();
   });

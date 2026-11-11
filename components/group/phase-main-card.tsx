@@ -1,6 +1,7 @@
 import { DraftCard } from '@/components/draw/draft-card';
 import { GetEveryoneInCard } from '@/components/draw/get-everyone-in-card';
 import { RevealCard } from '@/components/draw/reveal-card';
+import { WaitingCard } from '@/components/draw/waiting-card';
 import { AfterGiftDayMain } from '@/components/giftday/after-gift-day-main';
 import { GiftDayMain } from '@/components/giftday/gift-day-main';
 import { Confetti } from '@/components/giftday/presenter/confetti';
@@ -24,7 +25,11 @@ export const PhaseMainCard = ({ group, edition, manage, showTab }: PhaseMainCard
     case 'draft':
       return <DraftCard group={group} edition={edition} />;
     case 'open':
-      return <GetEveryoneInCard group={group} edition={edition} />;
+      return group.me.isOrganizer || !edition.participantIds.includes(group.me.memberId) ? (
+        <GetEveryoneInCard group={group} edition={edition} />
+      ) : (
+        <WaitingCard group={group} edition={edition} showTab={showTab} />
+      );
     case 'drawn':
       // Names drawn just now: confetti, and the card pops in where the draw card was.
       return (

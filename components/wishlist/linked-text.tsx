@@ -1,6 +1,4 @@
-const URL_PATTERN = /https?:\/\/[^\s<>"']+/g;
-// Sentence punctuation right after a URL ("see https://x.com/a.") belongs to the sentence.
-const TRAILING_PUNCTUATION = /[.,;:!?)\]]+$/;
+import { TRAILING_PUNCTUATION, URL_PATTERN } from './text-urls';
 
 type Part = { text: string; href?: string };
 

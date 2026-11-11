@@ -1,22 +1,20 @@
 import { Doodle } from '@/components/group/doodle';
-import { Badge } from '@/components/ui/badge';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
-import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { moveItem } from '@/lib/move-item';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, Heart } from 'lucide-react';
-import { useFormatter, useTranslations } from 'next-intl';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import { AddWish } from './add-wish';
 import { ShowWishButton } from './show-wish-button';
+import { AlsoInNote } from './wish-groups';
 import { WishListEditor } from './wish-list-editor';
 
-/** "My wishlist in this group" (61): what this group sees in its own order, editable like /wishlist; the hidden ones folded away under it. */
+/** "My wishlist in this group" (61): add a wish for this group, what it sees in its own order, editable like /wishlist; the hidden ones folded away under it. */
 export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('wishlist.group');
-  const format = useFormatter();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const viewKey = trpc.wish.groupView.queryKey({ groupSlug });
@@ -46,6 +44,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         <CardDescription>{t('intro')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
+        <AddWish groupSlug={groupSlug} />
         {view.isPending ? (
           <Skeleton className="h-24" />
         ) : wishes.length === 0 ? (
@@ -61,11 +60,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
               <WishListEditor
                 wishes={shown}
                 onMove={(wishId, toIndex) => move.mutate({ groupSlug, wishId, toIndex })}
-                status={(wish) =>
-                  wish.alsoIn.length > 0 && (
-                    <Badge variant="yellow">{t('also-in', { groups: format.list(wish.alsoIn.map(({ name }) => name)) })}</Badge>
-                  )
-                }
+                status={(wish) => wish.alsoIn.length > 0 && <AlsoInNote groups={wish.alsoIn.map(({ name }) => name)} />}
                 actions={(wish) => <ShowWishButton groupSlug={groupSlug} wish={wish} />}
               />
             )}
@@ -87,12 +82,6 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
             )}
           </>
         )}
-        <Link
-          href={{ pathname: '/wishlist', query: { group: groupSlug } }}
-          className={buttonVariants({ variant: wishes.length === 0 ? 'default' : 'neutral', className: 'xs:w-fit' })}
-        >
-          {t('add')}
-        </Link>
       </CardContent>
     </Card>
   );

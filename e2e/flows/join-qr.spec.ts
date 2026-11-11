@@ -41,7 +41,7 @@ for (const theme of ['light', 'dark'] as const) {
   });
 }
 
-test('Get everyone in: avatars with names on hover and the invite part; Draw names in the header, disabled with why until enough people', async ({ page, newPage, signIn, signInPage }) => {
+test('Get everyone in: avatars with names on hover and the invite part; Draw names in the header, disabled with why until enough people; a member waits instead', async ({ page, newPage, signIn, signInPage }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = ok(
     await ann.trpc.mutate('group.create', { name: 'Card', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' })
@@ -80,12 +80,14 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(link);
   });
 
-  await test.step('member: the avatars, no link and no draw', async () => {
+  await test.step('member: the waiting card with who is in, no link and no draw', async () => {
     const bobPage = await newPage();
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${group.slug}`);
-    await expect(card(bobPage).getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' })).toBeVisible();
-    await expect(card(bobPage).getByLabel('Join link')).toHaveCount(0);
+    await expect(bobPage.getByRole('heading', { name: 'Add your wishes' })).toBeVisible();
+    await expect(card(bobPage)).toHaveCount(0);
+    await expect(bobPage.getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' })).toBeVisible();
+    await expect(bobPage.getByLabel('Join link')).toHaveCount(0);
     await expect(bobPage.getByRole('button', { name: 'Draw names' })).toHaveCount(0);
   });
 });

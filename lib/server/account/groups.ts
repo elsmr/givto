@@ -8,7 +8,7 @@ import { listWishes } from '../wishlist/wish-view';
 // Wishes nobody gave stay unreceived on purpose, so the reminder to tick off gifts has to end.
 const MARK_RECEIVED_DAYS = 14;
 
-/** The dashboard: groups I've joined, each with its latest edition and my to-dos there. */
+/** The dashboard: groups I've joined, each with its latest edition, my to-dos there and which of my wishes it shows. */
 export const accountGroups = async (db: Collections, userId: string) => {
   const groups = await db.groups
     .find({ deletedAt: { $exists: false }, members: { $elemMatch: { userId, status: 'joined' } } })
@@ -101,6 +101,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
         gifteeReady: isDrawn(edition) && Boolean(edition.draw?.assignments[member.id]),
       },
       todos,
+      shownWishIds: member.wishlistView?.shownWishIds ?? [],
     };
   });
 };
