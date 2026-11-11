@@ -20,23 +20,25 @@
     "next": "Volgende",
     "gift-day": {
       "legend": "Wanneer is pakjesdag?",
-      "help": "Mag je overslaan. Je kunt het later nog instellen of wijzigen.",
-      "date": "Datum",
       "time": "Tijd"
     },
     "exchange": {
       "label": "Hoe geven jullie de cadeaus?",
       "inPerson": "Persoonlijk",
       "byPost": "Per post",
-      "both": "Persoonlijk of per post"
+      "both": "Persoonlijk of per post",
+      "ask": "Cadeaus per post?"
     },
     "budget": {
       "legend": "Budget",
-      "help": "Mag je overslaan. Iedereen ziet het.",
+      "help": "Iedereen ziet het.",
       "amount": "Bedrag",
-      "max": "Tot (optioneel)",
-      "currency": "Munteenheid"
-    }
+      "max": "Tot",
+      "currency": "Munteenheid",
+      "from": "Van",
+      "range": "Van–tot"
+    },
+    "later": "Alleen de naam is nodig. De rest kun je later nog aanpassen."
   },
   "organizer": {
     "name": "Je naam",

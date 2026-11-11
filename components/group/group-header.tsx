@@ -1,24 +1,19 @@
 import { DrawNamesButton } from '@/components/draw/draw-names-button';
 import { ManageMenu } from '@/components/manage/manage-menu';
-import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
-import { formatBudget } from '@/lib/format-budget';
 import { Settings } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 
-/** Greeting, group name, the edition with its budget and exchange chips; for the organizer Draw names (while open), Settings and Manage (61, 64). */
+/** Group name and edition; for the organizer Draw names (while open), Settings and Manage (61, 64). Budget and exchange are in the details. */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
-  const locale = useLocale();
-  const me = group.members.find((m) => m.id === group.me.memberId);
   const { edition } = group;
 
   return (
     <PageHeader
-      eyebrow={me && t('hi', { name: me.name.split(' ')[0] })}
       title={group.name}
       actions={
         group.me.isOrganizer && (
@@ -33,13 +28,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
         )
       }
     >
-      {edition && (
-        <>
-          <p className="font-semibold">{edition.title}</p>
-          {edition.budget && <Badge variant="mint">{t('budget-chip', { budget: formatBudget(edition.budget, locale) })}</Badge>}
-          <Badge variant="primary-muted">{t(`summary.exchange-modes.${edition.exchangeMode}`)}</Badge>
-        </>
-      )}
+      {edition && <p className="font-semibold">{edition.title}</p>}
     </PageHeader>
   );
 };

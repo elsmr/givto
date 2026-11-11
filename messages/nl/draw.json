@@ -20,6 +20,17 @@
     "none": "Iedereen kan iedereen trekken.",
     "edit": "Regels aanpassen"
   },
+  "waiting": {
+    "ready": "Je bent helemaal klaar",
+    "todo": "Voeg je wensen toe",
+    "wait": "Niks te doen tot {organizer} de lootjes trekt.",
+    "wait-on": "Niks te doen tot {organizer} de lootjes trekt op {date}.",
+    "email": "We mailen je zodra er geloot is.",
+    "in": "Je doet mee",
+    "wishes": "{count, plural, one {# wens} other {# wensen}} in deze groep",
+    "no-wishes": "Nog geen wensen in deze groep",
+    "add": "Wens toevoegen"
+  },
   "draft": {
     "title": "Er is nog niets verstuurd",
     "description": "Kijk wie er meedoet en of de data kloppen, en open hem dan zodat mensen kunnen meedoen.",

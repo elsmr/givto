@@ -1,63 +1,80 @@
-import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { ExchangeMode } from '@/lib/schema/group';
+import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import type { EditionDetailsDraft } from './use-create-draft';
 
-type GiftDayFieldsProps = {
+type FieldsProps = {
   draft: EditionDetailsDraft;
-  today: string;
   onChange: (patch: Partial<EditionDetailsDraft>) => void;
 };
 
-/** Gift day (28): optional date and time, plus how gifts change hands. */
-export const GiftDayFields = ({ draft, today, onChange }: GiftDayFieldsProps) => {
-  const t = useTranslations('create.details');
+/** Gift day (28): an optional date; the time only once asked for, or when there is one. */
+export const GiftDayFields = ({ draft, today, onChange }: FieldsProps & { today: string }) => {
+  const t = useTranslations('create.details.gift-day');
+  const [timeAsked, setTimeAsked] = useState(false);
 
   return (
-    <>
-      <FieldSet>
-        <FieldLegend>{t('gift-day.legend')}</FieldLegend>
-        <FieldDescription>{t('gift-day.help')}</FieldDescription>
-        <div className="grid grid-cols-2 gap-4">
-          <Field>
-            <FieldLabel htmlFor="gift-date">{t('gift-day.date')}</FieldLabel>
-            <Input
-              id="gift-date"
-              type="date"
-              min={today}
-              value={draft.giftDate}
-              onChange={(event) => onChange({ giftDate: event.target.value })}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor="gift-time">{t('gift-day.time')}</FieldLabel>
-            <Input
-              id="gift-time"
-              type="time"
-              disabled={!draft.giftDate}
-              value={draft.giftTime}
-              onChange={(event) => onChange({ giftTime: event.target.value })}
-            />
-          </Field>
-        </div>
-      </FieldSet>
-      <Field>
-        <FieldLabel htmlFor="exchange-mode">{t('exchange.label')}</FieldLabel>
-        <NativeSelect
-          id="exchange-mode"
-          className="w-full"
-          value={draft.exchangeMode}
-          onChange={(event) => onChange({ exchangeMode: event.target.value as EditionDetailsDraft['exchangeMode'] })}
-        >
-          {ExchangeMode.options.map((mode) => (
-            <NativeSelectOption key={mode} value={mode}>
-              {t(`exchange.${mode}`)}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
+    <div className="flex items-end gap-3">
+      <Field className="min-w-0 flex-1">
+        <FieldLabel htmlFor="gift-date">{t('legend')}</FieldLabel>
+        <Input id="gift-date" type="date" min={today} value={draft.giftDate} onChange={(event) => onChange({ giftDate: event.target.value })} />
       </Field>
-    </>
+      {(timeAsked || draft.giftTime) && (
+        <Field className="w-32 shrink-0">
+          <FieldLabel htmlFor="gift-time">{t('time')}</FieldLabel>
+          <Input
+            id="gift-time"
+            type="time"
+            autoFocus={timeAsked && !draft.giftTime}
+            disabled={!draft.giftDate}
+            value={draft.giftTime}
+            onChange={(event) => onChange({ giftTime: event.target.value })}
+          />
+        </Field>
+      )}
+      {!timeAsked && !draft.giftTime && draft.giftDate && (
+        <Button type="button" variant="ghost" size="sm" className="mb-0.5" onClick={() => setTimeAsked(true)}>
+          <Plus aria-hidden="true" />
+          {t('time')}
+        </Button>
+      )}
+    </div>
+  );
+};
+
+/** How gifts change hands: in person unless said otherwise, so the choice only shows once asked for. */
+export const ExchangeField = ({ draft, onChange }: FieldsProps) => {
+  const t = useTranslations('create.details.exchange');
+  const [asked, setAsked] = useState(false);
+
+  if (!asked && draft.exchangeMode === 'inPerson') {
+    return (
+      <button type="button" className="w-fit text-sm text-muted underline underline-offset-4 hover:text-ink" onClick={() => setAsked(true)}>
+        {t('ask')}
+      </button>
+    );
+  }
+  return (
+    <Field>
+      <FieldLabel htmlFor="exchange-mode">{t('label')}</FieldLabel>
+      <NativeSelect
+        id="exchange-mode"
+        className="w-full"
+        autoFocus={asked}
+        value={draft.exchangeMode}
+        onChange={(event) => onChange({ exchangeMode: event.target.value as EditionDetailsDraft['exchangeMode'] })}
+      >
+        {ExchangeMode.options.map((mode) => (
+          <NativeSelectOption key={mode} value={mode}>
+            {t(mode)}
+          </NativeSelectOption>
+        ))}
+      </NativeSelect>
+    </Field>
   );
 };

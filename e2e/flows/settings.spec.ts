@@ -42,9 +42,11 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
 
   await test.step('gift day, wishlist deadline and budget', async () => {
     const editionSettings = settingsGroup(page, 'Secret Santa 2099');
-    await editionSettings.getByLabel('Date', { exact: true }).fill('2099-12-20');
+    await editionSettings.getByLabel("When's gift day?").fill('2099-12-20');
+    await editionSettings.getByRole('button', { name: 'Time' }).click();
     await editionSettings.getByLabel('Time').fill('18:00');
     await editionSettings.getByLabel('Wishlists ready by').fill('2099-12-01');
+    await editionSettings.getByRole('button', { name: 'Budget' }).click();
     await editionSettings.getByLabel('Amount').fill('25');
     await editionSettings.getByLabel('Currency').selectOption('EUR');
     await Promise.all([
@@ -56,7 +58,8 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await test.step('saved: the settings keep them after a reload', async () => {
     await page.reload();
     const editionSettings = settingsGroup(page, 'Secret Santa 2099');
-    await expect(editionSettings.getByLabel('Date', { exact: true })).toHaveValue('2099-12-20');
+    await expect(editionSettings.getByLabel("When's gift day?")).toHaveValue('2099-12-20');
+    await expect(editionSettings.getByLabel('Time')).toHaveValue('18:00');
     await expect(editionSettings.getByLabel('Wishlists ready by')).toHaveValue('2099-12-01');
     await expect(editionSettings.getByLabel('Amount')).toHaveValue('25');
   });
@@ -64,8 +67,8 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await test.step('the group page shows them', async () => {
     await page.getByRole('link', { name: 'Back to After' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'After' })).toBeVisible();
-    await expect(page.getByText('Budget €25', { exact: true })).toBeVisible();
-    await page.getByRole('heading', { name: 'Dates, budget and notes' }).click();
+    await expect(page.getByRole('heading', { name: 'Dates, budget and notes' })).toBeVisible();
+    await expect(page.getByText('€25', { exact: true })).toBeVisible();
     await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00`)).toBeVisible();
     await expect(page.getByText(fullDate('2099-12-01'))).toBeVisible();
   });

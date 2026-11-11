@@ -138,7 +138,6 @@
     "go-current": "Go to the current edition",
     "not-found": "This edition doesn't exist."
   },
-  "hi": "Hi {name}",
   "budget-chip": "Budget {budget}",
   "phase": {
     "label": "Where this Secret Santa is",
@@ -162,8 +161,6 @@
     "days-to-go": "{count, plural, one {day to go} other {days to go}} · {date}",
     "today": "Today!",
     "over": "Over",
-    "wishes": "My wishes",
-    "people": "People",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift"
