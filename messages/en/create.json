@@ -38,7 +38,6 @@
     },
     "budget": {
       "legend": "Budget",
-      "help": "Everyone sees it.",
       "amount": "Amount",
       "max": "Up to",
       "currency": "Currency",

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
+import { Field, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Plus } from 'lucide-react';
@@ -32,7 +32,6 @@ export const BudgetFields = ({ draft, onChange }: BudgetFieldsProps) => {
   return (
     <FieldSet>
       <FieldLegend variant="label">{t('legend')}</FieldLegend>
-      <FieldDescription>{t('help')}</FieldDescription>
       <div className="flex flex-wrap items-end gap-3">
         <Field className="w-28">
           <FieldLabel htmlFor="budget-amount" className={range ? undefined : 'sr-only'}>
