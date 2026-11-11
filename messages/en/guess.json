@@ -39,8 +39,7 @@
     "show": "Who was it from?",
     "from": "From <name>{santa}</name>",
     "you-guessed": "You guessed <name>{guess}</name>",
-    "no-guess": "No guess this time",
-    "keys": "→ or space: who was it from? · ← back"
+    "no-guess": "No guess this time"
   },
   "vote": {
     "ask": "Who do you think it's from?",
@@ -52,9 +51,7 @@
     "votes": "{votes, plural, one {# vote} other {# votes}}",
     "on-phones": "Vote on your phones: who's it from?",
     "start": "Start the vote",
-    "close": "Close the vote",
-    "keys-start": "→ or space: start the vote · ← back",
-    "keys-close": "→ or space: close the vote · ← back"
+    "close": "Close the vote"
   },
   "settings": {
     "switch": "Guess your Santa",

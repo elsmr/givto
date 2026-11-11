@@ -39,8 +39,7 @@
     "show": "Van wie was het?",
     "from": "Van <name>{santa}</name>",
     "you-guessed": "Jij gokte <name>{guess}</name>",
-    "no-guess": "Deze keer niet gegokt",
-    "keys": "→ of spatie: van wie was het? · ← terug"
+    "no-guess": "Deze keer niet gegokt"
   },
   "vote": {
     "ask": "Van wie denk jij dat het is?",
@@ -52,9 +51,7 @@
     "votes": "{votes, plural, one {# stem} other {# stemmen}}",
     "on-phones": "Stem op je telefoon: van wie is het?",
     "start": "Start de stemming",
-    "close": "Sluit de stemming",
-    "keys-start": "→ of spatie: start de stemming · ← terug",
-    "keys-close": "→ of spatie: sluit de stemming · ← terug"
+    "close": "Sluit de stemming"
   },
   "settings": {
     "switch": "Raad je Santa",

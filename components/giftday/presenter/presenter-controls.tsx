@@ -6,7 +6,7 @@ import type { usePresenterActions } from './use-presenter-actions';
 
 type PresenterControlsProps = { actions: ReturnType<typeof usePresenterActions>; oneByOne: boolean };
 
-/** Previous and the action for this phase, with its key hint. */
+/** Previous and the action for this phase. */
 export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps) => {
   const t = useTranslations('giftday');
   const tGuess = useTranslations('guess.present');
@@ -16,7 +16,6 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
   // White elephant (89): the turn ends with an opened gift (or, at the final steal, keeping theirs); steals are on the table.
   const swapTurn = phase === 'turn' && actions.swap;
   const byHand = phase === 'turn' && oneByOne && !actions.counted;
-  const hint = swapTurn ? tSwap(swapTurn.final ? 'keys-final' : 'keys') : phase === 'spin' ? t('present.keys-spin') : voteStep === 'ready' ? tVote('keys-start') : voteStep === 'open' ? tVote('keys-close') : santaToShow ? tGuess('keys') : byHand ? t('present.keys-one-by-one') : phase === 'turn' && oneByOne ? t('present.keys-counted') : t('present.keys');
   const toSpin = phase === 'spin' && spinStatus === 'idle';
   const toReveal = phase === 'reveal' && !actions.revealed;
   const nextLabel = swapTurn
@@ -43,7 +42,6 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
         <ArrowLeft aria-hidden="true" />
         {t('present.previous')}
       </Button>
-      <p className="hidden text-muted sm:block">{hint}</p>
       <form
         className="flex flex-wrap items-center gap-3"
         onSubmit={(event) => {

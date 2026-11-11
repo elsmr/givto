@@ -76,7 +76,6 @@
     "no-order": "Er is nog geen uitpakvolgorde.",
     "previous": "Vorige",
     "next": "Volgende",
-    "keys": "← → of spatie om verder te gaan",
     "whos-next": "Wie is er nu?",
     "spin": "Draaien",
     "skip": "Overslaan",
@@ -84,11 +83,8 @@
     "round": "Ronde {round}",
     "more": "Nog meer uit te pakken",
     "last": "Dat was de laatste",
-    "keys-spin": "Spatie of → om te draaien · ← terug",
-    "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug",
     "gift-of": "Cadeau {current} van {total}",
     "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
-    "keys-counted": "→ of spatie: volgende · ← terug",
     "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
   },
   "swap": {
@@ -111,8 +107,6 @@
     "swap": "Ruilen",
     "swap-label": "Ruilen voor cadeau {no} van {name}",
     "keep": "Eigen cadeau houden",
-    "keys": "→ of spatie: nieuw cadeau uitgepakt · ← terug",
-    "keys-final": "→ of spatie: eigen cadeau houden · ← terug",
     "now-robbed": "Bestolen, dus nog een keer aan de beurt",
     "now-final": "Laatste keer stelen: ruilen of houden"
   },

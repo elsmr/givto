@@ -76,7 +76,6 @@
     "no-order": "There's no unwrap order yet.",
     "previous": "Previous",
     "next": "Next",
-    "keys": "← → or space to step through",
     "whos-next": "Who's next?",
     "spin": "Spin",
     "skip": "Skip",
@@ -84,11 +83,8 @@
     "round": "Round {round}",
     "more": "More to open",
     "last": "That was the last one",
-    "keys-spin": "Space or → to spin · ← back",
-    "keys-one-by-one": "→ or space: more to open · L: that was the last one · ← back",
     "gift-of": "Gift {current} of {total}",
     "gifts": "{count, plural, one {# gift} other {# gifts}}",
-    "keys-counted": "→ or space: next · ← back",
     "champion": "{count, plural, one {Champion} other {Champions}}: {names}"
   },
   "swap": {
@@ -111,8 +107,6 @@
     "swap": "Swap",
     "swap-label": "Swap for gift {no} from {name}",
     "keep": "Keep their gift",
-    "keys": "→ or space: opened a new gift · ← back",
-    "keys-final": "→ or space: keep their gift · ← back",
     "now-robbed": "Stolen from, so they go again",
     "now-final": "Final steal: swap or keep"
   },
