@@ -30,6 +30,7 @@ test('the organizer draws names from the overview; a member reveals, hides and r
     await expect(stepper(page).locator('[aria-current="step"]')).toContainText('Draw');
     await page.getByRole('button', { name: 'Draw names' }).click();
     const dialog = page.getByRole('dialog', { name: 'Draw names now?' });
+    await expect(dialog).toContainText('Anyone can draw anyone.');
     await expect(dialog).toContainText('Not in this draw: Dan.');
     await dialog.getByRole('button', { name: 'Draw names' }).click();
     await expect(dialog).toBeHidden();

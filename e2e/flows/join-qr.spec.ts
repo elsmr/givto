@@ -65,7 +65,8 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     await expect(card(page).getByRole('button', { name: 'Draw names' }), 'not in the card').toHaveCount(0);
   });
 
-  await test.step('organizer: avatars named on hover, the link row', async () => {
+  await test.step('organizer: avatars named on hover, the draw rules, the link row', async () => {
+    await expect(card(page)).toContainText('Anyone can draw anyone.');
     const avatars = card(page).getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' });
     await expect(avatars).toBeVisible();
     await avatars.locator('[data-slot="avatar"]').nth(1).hover();
@@ -80,12 +81,13 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(link);
   });
 
-  await test.step('member: the avatars, no link and no draw', async () => {
+  await test.step('member: the avatars, no link, no rules and no draw', async () => {
     const bobPage = await newPage();
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${group.slug}`);
     await expect(card(bobPage).getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' })).toBeVisible();
     await expect(card(bobPage).getByLabel('Join link')).toHaveCount(0);
+    await expect(card(bobPage).getByText('Anyone can draw anyone.')).toHaveCount(0);
     await expect(bobPage.getByRole('button', { name: 'Draw names' })).toHaveCount(0);
   });
 });
