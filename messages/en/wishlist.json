@@ -37,6 +37,7 @@
     "show-in": "Show in",
     "show-in-hint": "Only the groups you tick see this wish.",
     "also-in": "<b>Also in {groups}.</b> Santas see each other's Dibs!, but not everyone calls it.",
+    "shown-in": "<b>Shown in {groups}.</b> Santas see each other's Dibs!, but not everyone calls it.",
     "groups": "Groups",
     "groups-label": "Groups that see “{title}”",
     "groups-more": "+{count}",

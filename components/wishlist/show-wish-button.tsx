@@ -8,7 +8,7 @@ import type { WishView } from './wish-draft';
 
 type GroupWish = WishView & { shown: boolean; alsoIn: { name: string }[] };
 
-/** Hide a wish in this group, or show it at the end of the group's list; one another active group shows too says so on its card. */
+/** Hide a wish in this group, or show it at the end of the group's list. A wish another active group shows too says so on its card. */
 export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: GroupWish }) => {
   const t = useTranslations('wishlist.group');
   const trpc = useTRPC();

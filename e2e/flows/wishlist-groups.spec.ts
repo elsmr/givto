@@ -50,7 +50,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await expect(tab.getByText('1 wish hidden here')).toBeVisible();
   });
 
-  await test.step('on /wishlist, each wish shows its groups; ticking one there shows it right away, with the same note', async () => {
+  await test.step('on /wishlist, each wish shows its groups; ticking one there shows it right away, with one note while more than one group shows it', async () => {
     await page.goto('/wishlist');
     const card = (title: string) => page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: title }) });
     await expect(card('Cookbook')).toContainText(/Family\s*Friends/);
@@ -58,10 +58,10 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     const popover = page.getByRole('dialog', { name: 'Show in' });
     await expect(popover.getByRole('checkbox', { name: 'Friends' })).toBeChecked();
     await popover.getByRole('checkbox', { name: 'Family' }).click();
-    await expect(popover.getByText('Also in Friends.')).toBeVisible();
+    await expect(popover.getByText(/^Shown in (Family and Friends|Friends and Family)\.$/)).toBeVisible();
     await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook', 'Wool socks']);
     await popover.getByRole('checkbox', { name: 'Family' }).click();
-    await expect(popover.getByText('Also in Friends.')).toHaveCount(0);
+    await expect(popover.getByText(/^Shown in /)).toHaveCount(0);
     await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook']);
     await page.keyboard.press('Escape');
     await expect(card('Wool socks')).not.toContainText('Family');

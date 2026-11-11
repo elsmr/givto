@@ -37,6 +37,7 @@
     "show-in": "Tonen in",
     "show-in-hint": "Alleen de groepen die je aanvinkt zien deze wens.",
     "also-in": "<b>Ook in {groups}.</b> Santa's zien elkaars claims, maar niet iedereen claimt.",
+    "shown-in": "<b>Zichtbaar in {groups}.</b> Santa's zien elkaars claims, maar niet iedereen claimt.",
     "groups": "Groepen",
     "groups-label": "Groepen die “{title}” zien",
     "groups-more": "+{count}",

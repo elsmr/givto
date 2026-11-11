@@ -1,5 +1,5 @@
 import { BudgetFields } from '@/components/create/budget-fields';
-import { GiftDayFields } from '@/components/create/gift-day-fields';
+import { ExchangeField, GiftDayFields } from '@/components/create/gift-day-fields';
 import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import type { GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
@@ -67,6 +67,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
                 {titleIssue && <FieldError>{tIssues(titleIssue)}</FieldError>}
               </Field>
               <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
+              <ExchangeField draft={draft} onChange={update} />
               <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={beforeDraw} onChange={update} />
               <BudgetFields draft={draft} onChange={update} />
               <Field>

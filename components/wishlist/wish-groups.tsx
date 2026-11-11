@@ -14,13 +14,11 @@ type AccountGroup = RouterOutputs['account']['groups'][number];
 /** Not archived and not done: its Santas may still buy a wish it shows. */
 export const isActiveGroup = (group: AccountGroup) => !group.archived && group.edition?.status !== 'done';
 
-/** "Also in Family." for a wish more than one active group shows: two Santas might buy it. */
-export const AlsoInNote = ({ groups }: { groups: string[] }) => {
+/** For a wish more than one active group shows, as two Santas might buy it: "Also in Family." (also-in) or "Shown in Family and Work." (shown-in). */
+export const AlsoInNote = ({ groups, kind = 'also-in' }: { groups: string[]; kind?: 'also-in' | 'shown-in' }) => {
   const t = useTranslations('wishlist.form');
   const format = useFormatter();
-  return (
-    <p className="w-full text-sm">{t.rich('also-in', { groups: format.list(groups), b: (chunks) => <b>{chunks}</b> })}</p>
-  );
+  return <p className="w-full text-sm">{t.rich(kind, { groups: format.list(groups), b: (chunks) => <b>{chunks}</b> })}</p>;
 };
 
 interface WishGroupsProps {
@@ -43,8 +41,7 @@ export const WishGroups = ({ shownIn, onChange, wishTitle }: WishGroupsProps) =>
   if (choices.length === 0) return null;
   const shown = choices.filter((group) => shownIn.includes(group.slug));
   const more = shown.slice(2).map(({ name }) => name);
-  const alsoIn = (group: AccountGroup) =>
-    isActiveGroup(group) ? shown.filter((other) => other !== group && isActiveGroup(other)).map(({ name }) => name) : [];
+  const activeShown = shown.filter(isActiveGroup).map(({ name }) => name);
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
@@ -69,25 +66,22 @@ export const WishGroups = ({ shownIn, onChange, wishTitle }: WishGroupsProps) =>
             <PopoverDescription>{t('show-in-hint')}</PopoverDescription>
           </PopoverHeader>
           <ul className="-m-1 flex max-h-72 flex-col gap-3 overflow-y-auto p-1">
-            {choices.map((group) => {
-              const others = shownIn.includes(group.slug) ? alsoIn(group) : [];
-              return (
-                <li key={group.slug} className="flex flex-col gap-1">
-                  <Field orientation="horizontal">
-                    <Checkbox
-                      id={`${id}-${group.slug}`}
-                      checked={shownIn.includes(group.slug)}
-                      onCheckedChange={(checked) => onChange(group.slug, checked)}
-                    />
-                    <FieldLabel htmlFor={`${id}-${group.slug}`} className="font-normal break-words">
-                      {group.name}
-                    </FieldLabel>
-                  </Field>
-                  {others.length > 0 && <AlsoInNote groups={others} />}
-                </li>
-              );
-            })}
+            {choices.map((group) => (
+              <li key={group.slug}>
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id={`${id}-${group.slug}`}
+                    checked={shownIn.includes(group.slug)}
+                    onCheckedChange={(checked) => onChange(group.slug, checked)}
+                  />
+                  <FieldLabel htmlFor={`${id}-${group.slug}`} className="font-normal break-words">
+                    {group.name}
+                  </FieldLabel>
+                </Field>
+              </li>
+            ))}
           </ul>
+          {activeShown.length > 1 && <AlsoInNote kind="shown-in" groups={activeShown} />}
         </PopoverContent>
       </Popover>
     </div>

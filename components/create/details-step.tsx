@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { CardDivider } from '@/components/ui/card';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { todayIn } from '@/lib/local-date';
 import { GroupName } from '@/lib/schema/group';
@@ -8,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { fieldIssue, type FieldIssue } from '../group/field-issue';
 import { BudgetFields } from './budget-fields';
-import { GiftDayFields } from './gift-day-fields';
+import { ExchangeField, GiftDayFields } from './gift-day-fields';
 import type { CreateDraft } from './use-create-draft';
 
 type DetailsStepProps = {
@@ -20,7 +19,7 @@ type DetailsStepProps = {
   onNext: () => void;
 };
 
-/** Step 1: name the Secret Santa; gift day and budget are optional. */
+/** Step 1: name the Secret Santa. Gift day is optional; time, budget and posting only show when asked for. */
 export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNext }: DetailsStepProps) => {
   const t = useTranslations('create.details');
   const tIssues = useTranslations('group.issues');
@@ -50,10 +49,10 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
           />
           {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
         </Field>
-        <CardDivider className="-mx-(--card-spacing) w-auto" />
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
-        <CardDivider className="-mx-(--card-spacing) w-auto" />
         <BudgetFields draft={draft} onChange={onChange} />
+        <ExchangeField draft={draft} onChange={onChange} />
+        <FieldDescription>{t('later')}</FieldDescription>
       </FieldGroup>
       <Button type="submit" size="lg" className="xs:self-start" disabled={busy}>
         {submitLabel}
