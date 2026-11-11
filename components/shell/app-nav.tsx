@@ -1,4 +1,4 @@
-import { GivtoLogo } from '@/components/givto-logo';
+import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { cn } from '@/lib/utils';
 import { CircleUser, Heart, House } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -27,7 +27,7 @@ export const AppNav = ({ className }: { className?: string }) => {
       )}
     >
       <Link href="/app" className="mb-6 hidden justify-center md:flex" aria-label="Givto">
-        <GivtoLogo aria-hidden="true" className="size-11 -rotate-6" />
+        <LogoAnimation variant="hover" className="size-11 -rotate-6" />
       </Link>
       <ul className="grid grid-cols-3 gap-1.5 md:grid-cols-1 md:gap-3">
         {items.map(({ href, key, icon: Icon, match }) => {
