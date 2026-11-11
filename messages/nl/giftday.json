@@ -3,7 +3,8 @@
     "title": "Het is pakjesdag!",
     "description": "Tijd om uit te pakken. Veel plezier, allemaal.",
     "present": "Presentatieweergave openen",
-    "to-open": "{count, plural, one {# cadeau om uit te pakken} other {# cadeaus om uit te pakken}}"
+    "to-open": "{count, plural, one {# cadeau om uit te pakken} other {# cadeaus om uit te pakken}}",
+    "join-call": "Naar het videogesprek"
   },
   "order": {
     "title": "Uitpakvolgorde",

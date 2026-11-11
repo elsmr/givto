@@ -17,6 +17,7 @@ export type GiftFields = v.InferOutput<typeof GiftFields>;
  * wish or line is marked. Private to the Santa: never returned to the giftee or the organizer;
  * the organizer only learns who is still shopping, the giftee only a count from gift day on.
  * Counts only while `gifteeMemberId` is still the Santa's giftee.
+ * By post (87): `postedAt` set by the Santa on a marked gift, then `arrivedAt` by the giftee; both go with the mark.
  */
 export const Gift = v.object({
   _id: Id,
@@ -24,6 +25,8 @@ export const Gift = v.object({
   santaMemberId: Id,
   gifteeMemberId: Id,
   ...GiftFields.entries,
+  postedAt: v.optional(v.date()),
+  arrivedAt: v.optional(v.date()),
   createdAt: v.date(),
   updatedAt: v.date(),
 });

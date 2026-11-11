@@ -23,12 +23,13 @@ export const exportAccount = async (db: Collections, userId: string) => {
   const mine = { $in: memberIds };
   const raw = getMongoDb();
 
-  const [editions, wishes, claims, gifts, guesses, votes, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
+  const [editions, wishes, claims, gifts, arrived, guesses, votes, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
     await Promise.all([
       db.editions.find({ 'participants.memberId': mine }).toArray(),
       db.wishes.find({ ownerId: userId }).sort({ position: 1 }).toArray(),
       db.claims.find({ santaMemberId: mine }).toArray(),
       db.gifts.find({ santaMemberId: mine }).toArray(),
+      db.gifts.find({ gifteeMemberId: mine, arrivedAt: { $exists: true } }, { projection: { editionId: 1, arrivedAt: 1 } }).toArray(),
       db.guesses.find({ guesserMemberId: mine }).toArray(),
       db.votes.find({ voterMemberId: mine }).toArray(),
       db.tips.find({ authorMemberId: mine }).toArray(),
@@ -95,7 +96,9 @@ export const exportAccount = async (db: Collections, userId: string) => {
       voted: nameOf(votedMemberId),
       createdAt,
     })),
-    giftsMarked: gifts.map(({ editionId, wishIds, lines, createdAt, updatedAt }) => ({ editionId, wishIds, lines, createdAt, updatedAt })),
+    giftsMarked: gifts.map(({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt }) => ({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt })),
+    // By post (87): only when, never who sent it or what.
+    giftsArrived: arrived.map(({ editionId, arrivedAt }) => ({ editionId, arrivedAt })),
     tipsWritten: tips.map(({ text, anonymous, createdAt, updatedAt }) => ({ text, anonymous, createdAt, updatedAt })),
     questionsAsked: asked.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),
     questionsReceived: received.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),

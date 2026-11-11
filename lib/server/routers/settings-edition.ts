@@ -55,7 +55,7 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
   const next = {
     title: input.title,
     exchangeMode: input.exchangeMode,
-    giftDay: input.giftDay && compactGiftDay(input.giftDay),
+    giftDay: input.giftDay && compactGiftDay(input.giftDay, input.exchangeMode),
     drawAt: input.drawOn ? zonedInstant(input.drawOn, DRAW_TIME, timeZone) : undefined,
     wishlistBy: input.wishlistBy,
     postBy: input.postBy,
@@ -63,7 +63,7 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
     notes: input.notes,
   } satisfies Partial<Edition>;
   const calendarKey = (e: Pick<Edition, 'title' | 'giftDay' | 'postBy' | 'exchangeMode'>) =>
-    JSON.stringify([e.title, e.giftDay?.date, e.giftDay?.time, e.giftDay?.place, e.postBy, e.exchangeMode]);
+    JSON.stringify([e.title, e.giftDay?.date, e.giftDay?.time, e.giftDay?.place, e.giftDay?.callUrl, e.postBy, e.exchangeMode]);
   const calendarChanged = calendarKey(next) !== calendarKey(edition);
   // The driver stores `undefined` as null, which the schemas reject: unset absent fields instead.
   const set: Partial<Edition> = Object.fromEntries(Object.entries(next).filter(([, value]) => value !== undefined));

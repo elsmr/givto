@@ -173,6 +173,7 @@
     "body": "Today's the day for “{group}”. Have fun unwrapping!",
     "when": "Time: {time}",
     "where": "Place: {place}",
+    "call": "Video call:",
     "button": "Open the group"
   },
   "group-deletion": {

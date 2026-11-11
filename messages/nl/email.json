@@ -173,6 +173,7 @@
     "body": "Vandaag is het zover voor “{group}”. Veel uitpakplezier!",
     "when": "Hoe laat: {time}",
     "where": "Waar: {place}",
+    "call": "Videogesprek:",
     "button": "Open de groep"
   },
   "group-deletion": {

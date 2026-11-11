@@ -8,7 +8,7 @@ import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import type { GroupEdition } from './group-data';
 
-/** Gift day, the draw, deadlines, exchange mode, budget and notes (28, 51), always open (79). `children`: actions below. */
+/** Gift day and its call link (87), the draw, deadlines, exchange mode, budget and notes (28, 51), always open (79). `children`: actions below. */
 export const EditionDetails = ({ edition, children }: { edition: GroupEdition; children?: ReactNode }) => {
   const t = useTranslations('group.summary');
   const tOverview = useTranslations('group.overview');
@@ -38,6 +38,16 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
                 {giftDay.time && ` · ${giftDay.time}`}
                 {giftDay.place && ` · ${giftDay.place}`}
               </dd>
+              {giftDay.callUrl && (
+                <>
+                  <dt className="font-semibold">{t('call')}</dt>
+                  <dd>
+                    <a href={giftDay.callUrl} target="_blank" rel="noopener noreferrer nofollow ugc" className="break-all underline">
+                      {giftDay.callUrl}
+                    </a>
+                  </dd>
+                </>
+              )}
             </>
           )}
           {draw && (

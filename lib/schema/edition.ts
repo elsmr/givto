@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { Id, LocalDate, LocalTime, MultiLine, Price, SingleLine } from './common';
+import { HttpUrl, Id, LocalDate, LocalTime, MultiLine, Price, SingleLine } from './common';
 import { ExchangeMode } from './group';
 
 export const editionStatuses = ['draft', 'open', 'drawn', 'giftday', 'done'] as const;
@@ -13,6 +13,9 @@ export const isBeforeDraw = ({ status }: { status: EditionStatus }) => status ==
 export const isDrawn = ({ status }: { status: EditionStatus }) => status === 'drawn' || status === 'giftday';
 /** Gift day has started (by date or by hand), also once it's over. */
 export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status === 'giftday' || status === 'done';
+
+/** Gifts go by post (80, 87): `byPost` or `both`. */
+export const isPosted = ({ exchangeMode }: { exchangeMode: ExchangeMode }) => exchangeMode !== 'inPerson';
 
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);
@@ -28,6 +31,8 @@ export const GiftDay = v.object({
   date: LocalDate,
   time: v.optional(LocalTime),
   place: v.optional(SingleLine(200)),
+  /** By post (87): a video call to unwrap together; dropped when gifts change hands in person. */
+  callUrl: v.optional(HttpUrl),
 });
 export type GiftDay = v.InferOutput<typeof GiftDay>;
 

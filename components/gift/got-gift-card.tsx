@@ -8,12 +8,15 @@ import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Check, PackageCheck } from 'lucide-react';
+import { Check, PackageCheck, Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { GotGiftForm } from './got-gift-form';
 
-/** "I've got my gift" on the giftee tab (63): what I got, private to me; stops the gift reminders. */
+/**
+ * "I've got my gift" on the giftee tab (63): what I got, private to me; stops the gift reminders. By post (87), once
+ * marked: "I've posted it", then whether my giftee said it arrived.
+ */
 export const GotGiftCard = ({ groupSlug, editionNumber }: { groupSlug: string; editionNumber: number }) => {
   const t = useTranslations('wishlist.got-gift');
   const errorMessage = useErrorMessage();
@@ -25,6 +28,19 @@ export const GotGiftCard = ({ groupSlug, editionNumber }: { groupSlug: string; e
   const list = useQuery(trpc.claim.gifteeWishlist.queryOptions(input));
   const canMark = Boolean(list.data?.canClaim);
   const mine = useQuery({ ...trpc.gift.mine.queryOptions(input), enabled: canMark });
+  const invalidate = () =>
+    Promise.all([
+      queryClient.invalidateQueries(trpc.gift.pathFilter()),
+      queryClient.invalidateQueries(trpc.claim.gifteeWishlist.pathFilter()),
+      queryClient.invalidateQueries(trpc.account.groups.pathFilter()),
+    ]);
+  const post = useMutation(
+    trpc.gift.setPosted.mutationOptions({
+      onSuccess: ({ posted }) => toast.add({ title: posted ? t('posted-saved') : t('posted-undone'), type: 'success' }),
+      onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
+      onSettled: invalidate,
+    })
+  );
   const save = useMutation(
     trpc.gift.set.mutationOptions({
       onSuccess: ({ marked, wishIds, lines }) => {
@@ -32,18 +48,14 @@ export const GotGiftCard = ({ groupSlug, editionNumber }: { groupSlug: string; e
         toast.add({ title: marked ? t('saved', { count: wishIds.length + lines.length }) : t('cleared'), type: 'success' });
       },
       onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
-      onSettled: () =>
-        Promise.all([
-          queryClient.invalidateQueries(trpc.gift.pathFilter()),
-          queryClient.invalidateQueries(trpc.claim.gifteeWishlist.pathFilter()),
-          queryClient.invalidateQueries(trpc.account.groups.pathFilter()),
-        ]),
+      onSettled: invalidate,
     })
   );
 
   if (!list.data || !revealed || !canMark || !mine.data) return null;
   const { giftee } = list.data;
   const count = mine.data.marked ? mine.data.wishIds.length + mine.data.lines.length : 0;
+  const posted = count > 0 && mine.data.post;
 
   return (
     <Card>
@@ -75,6 +87,31 @@ export const GotGiftCard = ({ groupSlug, editionNumber }: { groupSlug: string; e
           </DialogContent>
         </Dialog>
       </CardContent>
+      {posted && (
+        <CardContent className="flex flex-wrap items-center gap-3">
+          {posted.arrived ? (
+            <Badge variant="mint">
+              <Check aria-hidden="true" />
+              {t('arrived', { name: giftee.name })}
+            </Badge>
+          ) : posted.posted ? (
+            <>
+              <Badge variant="yellow">
+                <Send aria-hidden="true" />
+                {t('posted')}
+              </Badge>
+              <Button variant="ghost" size="sm" disabled={post.isPending} onClick={() => post.mutate({ ...input, posted: false })}>
+                {t('posted-undo')}
+              </Button>
+            </>
+          ) : (
+            <Button variant="neutral" disabled={post.isPending} onClick={() => post.mutate({ ...input, posted: true })}>
+              <Send aria-hidden="true" />
+              {t('post')}
+            </Button>
+          )}
+        </CardContent>
+      )}
     </Card>
   );
 };
