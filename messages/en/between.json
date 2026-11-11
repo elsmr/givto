@@ -50,14 +50,11 @@
     "wishes-empty": "{name} hasn't added wishes here yet."
   },
   "santa": {
-    "title": "Shopping for {name}",
-    "tips-title": "Tips for you",
-    "tips-empty": "No tips about {name} yet.",
+    "tips-title": "Tips from others",
     "tip-from": "From {name}",
     "tip-anonymous": "Anonymous tip",
     "tip-yours": "Your note",
     "mark-used": "Mark as used",
-    "used": "Used",
     "unmark-used": "Undo"
   },
   "ask": {
@@ -70,7 +67,7 @@
     "asked-title": "Your questions",
     "waiting": "No answer yet",
     "answer-label": "Answer",
-    "unanswerable": "You look after {name}, so their answers would come back to you. Questions are off here."
+    "button": "Ask a question"
   },
   "psst": {
     "title": "Psst!",
@@ -78,8 +75,7 @@
     "moreDetails": "Send a Psst! and {name} will hear their Santa would love more detail on their wishes.",
     "send": "Send Psst!",
     "sent": "Psst! sent. {name} hears about it shortly, without your name.",
-    "next": "You can send another Psst! from {date}.",
-    "unanswerable": "You look after {name}, so a Psst! would come back to you."
+    "next": "You can send another Psst! from {date}."
   },
   "for-you": {
     "psst-emptyWishlist": "Your Santa would love some ideas. Add a few wishes to your wishlist.",

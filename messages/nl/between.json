@@ -50,14 +50,11 @@
     "wishes-empty": "{name} heeft hier nog geen wensen."
   },
   "santa": {
-    "title": "Cadeau voor {name}",
-    "tips-title": "Tips voor jou",
-    "tips-empty": "Nog geen tips over {name}.",
+    "tips-title": "Tips van anderen",
     "tip-from": "Van {name}",
     "tip-anonymous": "Anonieme tip",
     "tip-yours": "Je eigen notitie",
     "mark-used": "Markeer als gebruikt",
-    "used": "Gebruikt",
     "unmark-used": "Ongedaan maken"
   },
   "ask": {
@@ -70,7 +67,7 @@
     "asked-title": "Jouw vragen",
     "waiting": "Nog geen antwoord",
     "answer-label": "Antwoord",
-    "unanswerable": "Jij zorgt voor {name}, dus hun antwoorden komen bij jou terug. Vragen staan hier uit."
+    "button": "Stel een vraag"
   },
   "psst": {
     "title": "Psst!",
@@ -78,8 +75,7 @@
     "moreDetails": "Stuur een Psst! en {name} hoort dat hun Santa graag wat meer details over hun wensen wil.",
     "send": "Psst! sturen",
     "sent": "Psst! verstuurd. {name} hoort het zo, zonder je naam.",
-    "next": "Je kunt vanaf {date} weer een Psst! sturen.",
-    "unanswerable": "Jij zorgt voor {name}, dus een Psst! komt bij jou terug."
+    "next": "Je kunt vanaf {date} weer een Psst! sturen."
   },
   "for-you": {
     "psst-emptyWishlist": "Je Santa wil graag wat ideeën. Zet een paar wensen op je verlanglijstje.",

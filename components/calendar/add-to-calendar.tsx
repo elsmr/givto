@@ -2,7 +2,9 @@ import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuLinkItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -42,18 +44,15 @@ export const AddToCalendar = ({ groupSlug, groupName, edition }: AddToCalendarPr
         {t('button')}
         <ChevronDown aria-hidden="true" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-72">
+      <DropdownMenuContent align="start">
         <DropdownMenuItem onClick={download}>{t('ics')}</DropdownMenuItem>
         <DropdownMenuSeparator />
         {events.map((event) => (
-          <DropdownMenuLinkItem key={`google-${event.uid}`} render={external(googleCalendarUrl(event))}>
-            {t('google', { event: event.title })}
-          </DropdownMenuLinkItem>
-        ))}
-        {events.map((event) => (
-          <DropdownMenuLinkItem key={`outlook-${event.uid}`} render={external(outlookCalendarUrl(event))}>
-            {t('outlook', { event: event.title })}
-          </DropdownMenuLinkItem>
+          <DropdownMenuGroup key={event.uid}>
+            {events.length > 1 && <DropdownMenuLabel>{event.title}</DropdownMenuLabel>}
+            <DropdownMenuLinkItem render={external(googleCalendarUrl(event))}>{t('google')}</DropdownMenuLinkItem>
+            <DropdownMenuLinkItem render={external(outlookCalendarUrl(event))}>{t('outlook')}</DropdownMenuLinkItem>
+          </DropdownMenuGroup>
         ))}
       </DropdownMenuContent>
     </DropdownMenu>

@@ -64,7 +64,7 @@ test('the organizer draws names from the overview; a member reveals, hides and r
   });
 });
 
-test("My giftee: their wishlist, tips for you, ask a question and Psst!; the giftee sees them once delivered", async ({ page, newPage, signIn, signInPage, db }) => {
+test("My giftee: their wishlist, tips from others, ask a question and Psst!; the giftee sees them once delivered", async ({ page, newPage, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann] = people;
   const group = await drawnGroup(people, 'Giftee tab');
@@ -86,26 +86,33 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   await test.step('their wishlist and the tips for me', async () => {
     await expect(panel.getByRole('heading', { name: `${name}'s wishlist` })).toBeVisible();
     await expect(panel.getByRole('heading', { name: 'Moomin mug' })).toBeVisible();
-    await expect(panel.getByRole('heading', { name: `Shopping for ${name}` })).toBeVisible();
+    await expect(panel.getByRole('heading', { name: 'Tips from others' })).toBeVisible();
     await expect(panel.getByText('Loves green tea')).toBeVisible();
     await expect(panel.getByText(`From ${draw.nameOf(tipper)}`)).toBeVisible();
   });
 
   await test.step('ask a question anonymously', async () => {
-    await panel.getByLabel('Your question').fill('What size are you?');
-    await panel.getByRole('button', { name: 'Ask anonymously' }).click();
+    await panel.getByRole('button', { name: 'Ask a question' }).click();
+    const dialog = page.getByRole('dialog', { name: `Ask ${name} a question` });
+    await dialog.getByLabel('Your question').fill('What size are you?');
+    await dialog.getByRole('button', { name: 'Ask anonymously' }).click();
     await expect(page.getByText(`Question on its way. ${name} gets it shortly.`)).toBeVisible();
+    await expect(dialog).toHaveCount(0);
     await expect(panel.getByRole('heading', { name: 'Your questions' })).toBeVisible();
     await expect(panel.getByText('What size are you?')).toBeVisible();
     await expect(panel.getByText('No answer yet')).toBeVisible();
   });
 
   await test.step('send a Psst!: one per few days', async () => {
-    await expect(panel.getByText(`Send a Psst! and ${name} will hear their Santa would love more detail on their wishes.`)).toBeVisible();
-    await panel.getByRole('button', { name: 'Send Psst!' }).click();
+    await panel.getByRole('button', { name: 'Psst!' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Psst!' });
+    await expect(dialog.getByText(`Send a Psst! and ${name} will hear their Santa would love more detail on their wishes.`)).toBeVisible();
+    await dialog.getByRole('button', { name: 'Send Psst!' }).click();
     await expect(page.getByText(`Psst! sent. ${name} hears about it shortly, without your name.`)).toBeVisible();
-    await expect(panel.getByText(/^You can send another Psst! from /)).toBeVisible();
-    await expect(panel.getByRole('button', { name: 'Send Psst!' })).toHaveCount(0);
+    await panel.getByRole('button', { name: 'Psst!' }).click();
+    await expect(dialog.getByText(/^You can send another Psst! from /)).toBeVisible();
+    await expect(dialog.getByRole('button', { name: 'Send Psst!' })).toHaveCount(0);
+    await page.keyboard.press('Escape');
   });
 
   const gifteePage = await newPage();

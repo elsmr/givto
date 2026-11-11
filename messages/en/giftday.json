@@ -7,7 +7,6 @@
     "join-call": "Join the video call"
   },
   "order": {
-    "title": "Unwrap order",
     "intro": "Picked at random and kept a surprise: the presenter spins for who's next.",
     "none": "No unwrap order yet: it's shuffled by gift day.",
     "none-organizer": "The order stays a surprise: you spin for each turn in the presenter view. If you don't shuffle, it's shuffled on gift day.",

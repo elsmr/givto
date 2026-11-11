@@ -11,21 +11,18 @@
   },
   "summary": {
     "gift-day": "Gift day",
-    "call": "Video call",
-    "exchange": "Gifts",
+    "no-gift-day": "Not set yet",
     "exchange-modes": {
-      "inPerson": "In person",
-      "byPost": "By post",
-      "both": "In person or by post"
+      "inPerson": "Gifts in person",
+      "byPost": "Gifts by post",
+      "both": "Gifts in person or by post"
     },
-    "budget": "Budget",
+    "budget": "{budget} budget",
     "no-budget": "No budget",
-    "draw": "The draw",
     "draw-on": "Names are drawn on {date}",
     "drawn": "Names are drawn",
-    "wishlist-by": "Wishlists ready by",
-    "post-by": "Post gifts by",
-    "notes": "Notes"
+    "wishlist-by": "Wishlists ready by {date}",
+    "post-by": "Post gifts by {date}"
   },
   "people": {
     "title": "People ({count} in)",
@@ -167,11 +164,6 @@
     "people": "People"
   },
   "stats": {
-    "gift-day": "Gift day",
-    "no-gift-day": "Not set yet",
-    "days-to-go": "{count, plural, one {day to go} other {days to go}} · {date}",
-    "today": "Today!",
-    "over": "Over",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
     "gifts-all": "Everyone has a gift",
@@ -183,7 +175,6 @@
     "posted-all": "Everyone has posted theirs"
   },
   "overview": {
-    "details": "Dates, budget and notes",
     "to-giftee": "Their wishlist and tips",
     "to-boards": "To the boards"
   },

@@ -9,7 +9,6 @@ import { drawsNames, isBeforeDraw, isDrawn, isPosted } from '@/lib/schema/editio
 import { AddressCard, MissingAddressesStat } from './address-card';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
-import { GiftDayStat } from './gift-day-stat';
 import type { GroupData } from './group-data';
 import { PendingRequests } from './pending-requests';
 import { PhaseMainCard } from './phase-main-card';
@@ -17,8 +16,8 @@ import type { GroupTab } from './use-group-tab';
 
 /**
  * The overview tab (61): notices only when there are any, the phase's main card, gift day and past
- * editions; by post, your address (80) and whether your gift is on its way (87). Wide: a side column with the gift
- * day countdown, the details and, for organizers, who's still shopping (63), hasn't posted or has no address; phones:
+ * editions; by post, your address (80) and whether your gift is on its way (87). Wide: a side column with gift day
+ * and its details, then, for organizers, who's still shopping (63), hasn't posted or has no address; phones:
  * that column after the rest.
  */
 export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (tab: GroupTab) => void }) => {
@@ -48,7 +47,6 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
       </div>
       {edition && (
         <div className="flex min-w-0 flex-col gap-4">
-          <GiftDayStat edition={edition} />
           <EditionDetails edition={edition}>
             {current && <AddToCalendar groupSlug={slug} groupName={group.name} edition={edition} />}
           </EditionDetails>

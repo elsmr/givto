@@ -11,13 +11,15 @@ import { PackageCheck } from 'lucide-react';
 import { ClaimButton } from './claim-button';
 import { isInBudget } from './format-price';
 import { WishCard } from './wish-card';
+import { GifteeTips } from '@/components/between/giftee-tips';
+import { SantaQuestions } from '@/components/between/santa-questions';
 
 interface GifteeWishlistProps {
   groupSlug: string;
   editionNumber: number;
 }
 
-/** "Your giftee's wishlist" with Dibs!. Renders nothing before the draw or when you're not in it. */
+/** "Your giftee's wishlist" with Dibs!, then tips from others and your questions. Renders nothing before the draw or when you're not in it. */
 export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps) => {
   const t = useTranslations('wishlist.giftee');
   const trpc = useTRPC();
@@ -40,15 +42,16 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
         </IconCardTitle>
         <CardDescription>{t('intro', { name: giftee.name })}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col gap-6">
         {wishes.length === 0 ? (
           <p>{t('empty', { name: giftee.name })}</p>
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col divide-y-2 divide-dashed divide-outline">
             {wishes.map((wish) => (
-              <li key={wish.id}>
+              <li key={wish.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                 <WishCard
                   wish={wish}
+                  className="min-w-0 flex-1 bg-transparent shadow-none data-[size=sm]:border-0 data-[size=sm]:[--card-spacing:0]"
                   inBudget={isInBudget(wish.price, budget)}
                   status={
                     (wish.archived || bought.has(wish.id)) && (
@@ -63,18 +66,16 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
                       </>
                     )
                   }
-                >
-                  <ClaimButton
-                    input={{ groupSlug, editionNumber, wishId: wish.id }}
-                    title={wish.title}
-                    claim={wish.claim}
-                    canClaim={canClaim}
-                  />
-                </WishCard>
+                />
+                <div className="flex max-w-[45%] shrink-0 justify-end text-right">
+                  <ClaimButton input={{ groupSlug, editionNumber, wishId: wish.id }} title={wish.title} claim={wish.claim} canClaim={canClaim} />
+                </div>
               </li>
             ))}
           </ul>
         )}
+        <GifteeTips input={{ groupSlug, editionNumber }} />
+        <SantaQuestions input={{ groupSlug, editionNumber }} />
       </CardContent>
     </Card>
   );

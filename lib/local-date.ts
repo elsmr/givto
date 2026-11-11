@@ -44,3 +44,13 @@ export const formatLocalDate = (date: string, locale: string, options: Intl.Date
 /** `date` (YYYY-MM-DD) plus `days`. */
 export const addDays = (date: string, days: number): string =>
   new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
+
+export type CountdownUnit = 'day' | 'week' | 'month' | 'year';
+
+/** `days` in the unit people would say: days under two weeks, then weeks, months and years. Keeps the sign. */
+export const countdown = (days: number): { value: number; unit: CountdownUnit } => {
+  const abs = Math.abs(days);
+  const [value, unit]: [number, CountdownUnit] =
+    abs < 14 ? [abs, 'day'] : abs < 30 ? [Math.round(abs / 7), 'week'] : abs < 365 ? [Math.round(abs / 30.44), 'month'] : [Math.round(abs / 365), 'year'];
+  return { value: days < 0 ? -value : value, unit };
+};

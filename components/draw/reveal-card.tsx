@@ -1,8 +1,7 @@
-import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { IconTile } from '@/components/ui/icon-tile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useTRPC } from '@/lib/client/trpc';
@@ -53,11 +52,6 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
   };
   return (
     <Card>
-      <CardHeader>
-        <IconCardTitle icon={Gift} tone="primary-muted">
-          {t('title')}
-        </IconCardTitle>
-      </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {changedAt && (
           <Alert>
@@ -70,14 +64,21 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
             inert={!shown}
             initial={false}
             animate={shown ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            className={cn('flex flex-col items-center gap-2 py-4 text-center', !shown && 'invisible')}
+            className={cn('relative flex flex-col items-center gap-2 py-4 text-center', !shown && 'invisible')}
           >
-            <p className="font-semibold text-muted">{t('buying-for')}</p>
-            <p className="font-heading text-4xl font-extrabold break-words sm:text-5xl">{shown ? giftee.name : '\u00a0'}</p>
+            <p className="px-12 font-semibold text-muted">{t('buying-for')}</p>
+            <p className="max-w-full px-12 font-heading text-4xl font-extrabold break-words sm:text-5xl">{shown ? giftee.name : '\u00a0'}</p>
             {children}
-            <Button ref={shown ? toggleButton : undefined} variant="neutral" size="sm" onClick={() => toggle(false)}>
+            <Button
+              ref={shown ? toggleButton : undefined}
+              variant="ghost"
+              size="icon-sm"
+              aria-label={t('hide')}
+              title={t('hide')}
+              className="absolute top-0 right-0"
+              onClick={() => toggle(false)}
+            >
               <EyeOff aria-hidden="true" />
-              {t('hide')}
             </Button>
           </m.div>
           <button

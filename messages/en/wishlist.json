@@ -97,12 +97,9 @@
     "gone": "No longer on the list"
   },
   "got-gift": {
-    "title": "Got your gift?",
     "private": "Only you see this. {name} never does; on gift day the presenter only knows how many gifts to unwrap.",
-    "not-yet": "Got something for {name}? Mark it and the gift reminders stop.",
     "marked": "{count, plural, one {You've got # gift} other {You've got # gifts}}",
     "open": "I've got my gift",
-    "change": "Change",
     "dialog-title": "What did you get?",
     "dialog-description": "Tick the wishes you got (that calls Dibs! too) and add anything that isn't on the list. Untick everything to undo.",
     "wishes": "From {name}'s wishlist",

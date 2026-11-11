@@ -6,7 +6,7 @@ import { Head, Html, Main, NextScript, type DocumentProps } from 'next/document'
 export default function Document({ __NEXT_DATA__ }: DocumentProps) {
   const locale = __NEXT_DATA__.props?.pageProps?.locale;
   return (
-    <Html lang={locale ?? 'en'}>
+    <Html lang={locale ?? 'en'} data-scroll-behavior="smooth">
       <Head>
         <ThemeScript />
         {!locale && <script dangerouslySetInnerHTML={{ __html: localeScript }} />}

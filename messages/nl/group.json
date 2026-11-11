@@ -11,21 +11,18 @@
   },
   "summary": {
     "gift-day": "Pakjesdag",
-    "call": "Videogesprek",
-    "exchange": "Cadeaus",
+    "no-gift-day": "Nog niet gekozen",
     "exchange-modes": {
-      "inPerson": "Persoonlijk",
-      "byPost": "Per post",
-      "both": "Persoonlijk of per post"
+      "inPerson": "Cadeaus persoonlijk geven",
+      "byPost": "Cadeaus per post",
+      "both": "Cadeaus persoonlijk of per post"
     },
-    "budget": "Budget",
+    "budget": "Budget: {budget}",
     "no-budget": "Geen budget",
-    "draw": "Loting",
     "draw-on": "Er wordt geloot op {date}",
     "drawn": "Er is geloot",
-    "wishlist-by": "Verlanglijstjes klaar op",
-    "post-by": "Cadeaus op de post op",
-    "notes": "Notities"
+    "wishlist-by": "Verlanglijstjes klaar op {date}",
+    "post-by": "Cadeaus op de post op {date}"
   },
   "people": {
     "title": "Deelnemers ({count} doen mee)",
@@ -167,11 +164,6 @@
     "people": "Deelnemers"
   },
   "stats": {
-    "gift-day": "Pakjesdag",
-    "no-gift-day": "Nog niet gekozen",
-    "days-to-go": "{count, plural, one {dag te gaan} other {dagen te gaan}} · {date}",
-    "today": "Vandaag!",
-    "over": "Voorbij",
     "gifts": "Cadeau gekocht",
     "gifts-still": "Nog aan het shoppen: {names}",
     "gifts-all": "Iedereen heeft een cadeau",
@@ -183,7 +175,6 @@
     "posted-all": "Iedereen heeft het zijne opgestuurd"
   },
   "overview": {
-    "details": "Data, budget en notities",
     "to-giftee": "Hun verlanglijstje en tips",
     "to-boards": "Naar de prikborden"
   },
