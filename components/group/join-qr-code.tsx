@@ -1,4 +1,5 @@
 import { GivtoLogo } from '@/components/givto-logo';
+import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 import { encode, QrCodeDataType } from 'uqr';
 
@@ -13,7 +14,7 @@ const BORDER = 4;
  * The join link as a QR code for showing on a phone or screen: square ink modules on cream, the finder
  * eyes in primary, the logo in the middle. Error correction H leaves room for the modules the logo covers.
  */
-export const JoinQrCode = ({ url, label }: { url: string; label: string }) => {
+export const JoinQrCode = ({ url, label, className }: { url: string; label: string; className?: string }) => {
   const { size, path, finders, logo } = useMemo(() => {
     const { size, data, types } = encode(url, { ecc: 'H', border: BORDER });
     const inner = size - 2 * BORDER;
@@ -39,7 +40,7 @@ export const JoinQrCode = ({ url, label }: { url: string; label: string }) => {
   }, [url]);
 
   return (
-    <svg role="img" aria-label={label} viewBox={`0 0 ${size} ${size}`} className="size-56 bordered shadow-md">
+    <svg role="img" aria-label={label} viewBox={`0 0 ${size} ${size}`} className={cn('size-56 bordered shadow-md', className)}>
       <rect width={size} height={size} fill={CREAM} />
       <path d={path} fill={INK} shapeRendering="crispEdges" />
       {finders.map(([x, y]) => (

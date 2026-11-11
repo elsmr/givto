@@ -1,3 +1,5 @@
+import { JoinQrCode } from '@/components/group/join-qr-code';
+import { liveUrl } from '@/components/group/join-url';
 import { champions } from '@/lib/guess-results';
 import { Trophy } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
@@ -42,7 +44,16 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
             className="flex w-full max-w-7xl flex-col items-center gap-8 text-center"
           >
             {phase === 'intro' && (
-              <PresenterTitleSlide title={view.status === 'drawn' ? view.title : t('hero.title')} hint={t('present.intro-hint')} />
+              <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-20">
+                <div className="flex flex-col items-center gap-8">
+                  <PresenterTitleSlide title={view.status === 'drawn' ? view.title : t('hero.title')} hint={t('present.intro-hint')} />
+                </div>
+                <div className="flex flex-col items-center gap-3">
+                  <JoinQrCode url={liveUrl(groupSlug)} label={t('present.live-qr')} className="size-48 sm:size-64 lg:size-96 2xl:size-128" />
+                  <p className="text-xl font-semibold sm:text-3xl">{t('present.live')}</p>
+                  <p className="mono text-lg break-all sm:text-2xl">{liveUrl(groupSlug)}</p>
+                </div>
+              </div>
             )}
             {phase === 'spin' && (
               <>

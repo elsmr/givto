@@ -1,7 +1,7 @@
 // Gift day (31, 32, 63, 69): the presenter for the organizer: intro, spin (or skip it), turns with
 // gift counts all at once and one by one ("Gift 2 of 3", the manual fallback), the big reveal one
 // pair at a time; members can't open it but follow it on /live (95); reduced motion still shows everything.
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import type { UnwrapMode } from '@/lib/schema/edition';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
@@ -46,8 +46,9 @@ const giftDayGroup = async (
 /** Names on the stage are paragraphs; the spinning reel's strip is aria-hidden, so it never matches. */
 const shownName = (page: Page, name: string) => page.getByRole('paragraph').filter({ hasText: new RegExp(`^${name}$`) });
 const button = (page: Page, name: string) => page.getByRole('button', { name, exact: true });
+const liveQr = (scope: Page | Locator) => scope.getByRole('img', { name: 'QR code to follow along on your phone' });
 
-/** From the group page's gift day card to the presenter's intro. */
+/** From the group page's gift day card to the presenter's intro, with the QR for /live (96). */
 const openPresenter = async (page: Page, slug: string) => {
   await page.goto(`/g/${slug}`);
   await expect(page.getByRole('heading', { level: 2, name: "It's gift day!" })).toBeVisible();
@@ -55,6 +56,8 @@ const openPresenter = async (page: Page, slug: string) => {
   await expect(page).toHaveURL(`/g/${slug}/present`);
   await expect(page.getByText('Press → or space for the first person.')).toBeVisible();
   await expect(button(page, 'Previous')).toBeDisabled();
+  await expect(liveQr(page)).toBeVisible();
+  await expect(page.getByText(new RegExp(`^https?://[^/]+/g/${slug}/live$`))).toBeVisible();
 };
 
 const skipSpin = async (page: Page) => {
@@ -96,6 +99,11 @@ test('presenter, all at once: intro, spin or skip it, turns with gift counts, th
     else await expect(toOpen).toHaveText(`${count} ${count === 1 ? 'gift' : 'gifts'} to open`);
     await openPresenter(page, giftDay.slug);
     await expect(page.getByRole('heading', { level: 2, name: "It's gift day!" })).toBeVisible();
+    await button(page, 'Follow along on your phone').click();
+    const qrDialog = page.getByRole('dialog', { name: 'Follow along on your phone' });
+    await expect(liveQr(qrDialog)).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(qrDialog).toHaveCount(0);
   });
 
   await test.step('→ starts; the highlight hops and lands on the first person: 1 of 3 · 2 gifts', async () => {

@@ -1,7 +1,13 @@
+import { JoinQrCode } from '@/components/group/join-qr-code';
+import { liveUrl } from '@/components/group/join-url';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTRPC } from '@/lib/client/trpc';
 import { isDrawn } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
+import { QrCode } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
@@ -37,15 +43,33 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
   const [skipSpin, setSkipSpin] = useState(false);
   const edition = group.data?.edition;
   const order = view.data?.unwrapOrder;
+  // The intro's QR again, for whoever joins late or drops off.
   const settings = edition && view.data && (
-    <PresenterSettings
-      groupSlug={groupSlug}
-      edition={edition}
-      mode={view.data.unwrapMode}
-      inProgress={Boolean(order?.started && !order.finished)}
-      skipSpin={skipSpin}
-      onSkipSpinChange={setSkipSpin}
-    />
+    <>
+      <Dialog>
+        <Tooltip>
+          <DialogTrigger render={<TooltipTrigger render={<Button variant="ghost" size="icon" aria-label={t('present.live')} />} />}>
+            <QrCode aria-hidden="true" />
+          </DialogTrigger>
+          <TooltipContent side="bottom">{t('present.live')}</TooltipContent>
+        </Tooltip>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('present.live')}</DialogTitle>
+          </DialogHeader>
+          <JoinQrCode url={liveUrl(groupSlug)} label={t('present.live-qr')} className="mx-auto size-72" />
+          <p className="mono text-center break-all">{liveUrl(groupSlug)}</p>
+        </DialogContent>
+      </Dialog>
+      <PresenterSettings
+        groupSlug={groupSlug}
+        edition={edition}
+        mode={view.data.unwrapMode}
+        inProgress={Boolean(order?.started && !order.finished)}
+        skipSpin={skipSpin}
+        onSkipSpinChange={setSkipSpin}
+      />
+    </>
   );
 
   const frame = (children: ReactNode) => (
