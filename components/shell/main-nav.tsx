@@ -10,11 +10,11 @@ export const MainNav = ({ user }: { user: CurrentUser | null }) => {
   return (
     <nav aria-label={t('main-navigation')} className="flex items-center gap-4">
       {user ? (
-        <Link href="/app" className={buttonVariants({ variant: 'neutral' })}>
+        <Link href="/app" prefetch={false} className={buttonVariants({ variant: 'neutral' })}>
           {t('open-app')}
         </Link>
       ) : (
-        <Link href="/auth/sign-in" className={buttonVariants()}>
+        <Link href="/auth/sign-in" prefetch={false} className={buttonVariants()}>
           {t('sign-in')}
         </Link>
       )}

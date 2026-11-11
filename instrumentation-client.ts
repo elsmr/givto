@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
 import { SENTRY_DSN, sentryOptions } from './lib/sentry-options';
 
 // Browser errors: uncaught errors and unhandled rejections; render errors go through pages/_error.tsx.
-if (SENTRY_DSN) Sentry.init(sentryOptions);
+// Loaded on its own so it never holds up the first render; errors before it loads go unreported.
+if (SENTRY_DSN) void import('@sentry/nextjs').then((Sentry) => Sentry.init(sentryOptions));

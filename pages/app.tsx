@@ -18,7 +18,10 @@ import Link from 'next/link';
 export default function AppHomePage() {
   const t = useTranslations('dashboard');
   const user = useRequireSession();
-  const groups = useQuery({ ...useTRPC().account.groups.queryOptions(), enabled: Boolean(user), staleTime: 0 });
+  const trpc = useTRPC();
+  const groups = useQuery({ ...trpc.account.groups.queryOptions(), staleTime: 0 });
+  // The dashboard's wishlist count, asked for in the same request as the groups instead of after them.
+  useQuery(trpc.wish.list.queryOptions());
 
   return (
     <AppShell app>
@@ -38,10 +41,10 @@ export default function AppHomePage() {
             )
           }
         />
-        {groups.isError ? (
+        {groups.isError && user ? (
           <LoadFailed message={t('load-failed')} onRetry={() => void groups.refetch()} />
         ) : !groups.data ? (
-          <div className="flex flex-col gap-6">
+          <div data-page-loading className="flex flex-col gap-6">
             <Skeleton className="h-32" />
             <Skeleton className="h-64" />
           </div>

@@ -18,7 +18,7 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
   const t = useTranslations('group');
   const trpc = useTRPC();
   const user = useRequireSession();
-  const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }), enabled: !!user });
+  const group = useQuery(trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }));
 
   if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error) {

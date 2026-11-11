@@ -10,6 +10,8 @@ export default function Document({ __NEXT_DATA__ }: DocumentProps) {
       <Head>
         <ThemeScript />
         {!locale && <script dangerouslySetInnerHTML={{ __html: localeScript }} />}
+        {/* Every page asks who's signed in; asking while the scripts load saves a round trip after them. */}
+        <link rel="preload" href="/api/auth/get-session" as="fetch" crossOrigin="use-credentials" />
       </Head>
       <body>
         <Main />

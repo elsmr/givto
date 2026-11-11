@@ -27,7 +27,7 @@ export const AppNav = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <Link href="/app" className="mb-6 hidden justify-center md:flex" aria-label="Givto">
+      <Link href="/app" prefetch={false} className="mb-6 hidden justify-center md:flex" aria-label="Givto">
         <LogoAnimation variant="hover" className="size-11 -rotate-6" />
       </Link>
       <ul className="grid grid-cols-3 gap-1.5 md:grid-cols-1 md:gap-3">
@@ -37,6 +37,7 @@ export const AppNav = ({ className }: { className?: string }) => {
             <li key={href}>
               <Link
                 href={href}
+                prefetch={false}
                 aria-current={pathname === href ? 'page' : active ? 'true' : undefined}
                 className={cn(
                   'relative flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold break-words hyphens-auto text-ink no-underline',

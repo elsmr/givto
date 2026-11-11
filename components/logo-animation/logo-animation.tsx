@@ -66,7 +66,7 @@ export const LogoAnimation = ({ variant, className }: LogoAnimationProps) => {
   );
   if (variant !== 'loading') return logo;
   return (
-    <span role="status" className="flex justify-center py-8">
+    <span role="status" data-page-loading className="flex justify-center py-8">
       {logo}
       <span className="sr-only">{t('loading')}</span>
     </span>
