@@ -27,7 +27,7 @@ export interface ReminderScope {
 
 const kindOf = (parts: ReminderPart[], posted: boolean) => {
   if (parts.length > 1) return 'reminderCombined';
-  return { wishlist: 'reminderWishlist', gift: posted ? 'reminderPost' : 'reminderGift', readyToDraw: 'reminderReadyToDraw' }[parts[0]];
+  return { wishlist: 'reminderWishlist', address: 'reminderAddress', gift: posted ? 'reminderPost' : 'reminderGift', readyToDraw: 'reminderReadyToDraw' }[parts[0]];
 };
 
 /** The email for one due reminder: its parts, each with its own link. */
@@ -38,6 +38,7 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
   const postBy = edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined;
   return {
     ...(parts.includes('wishlist') && { wishlist: { url: to.forName ? home : siteUrl(to.locale, '/wishlist'), by: date(edition.wishlistBy) } }),
+    ...(parts.includes('address') && { address: { url: home, postBy: date(postBy) } }),
     ...(parts.includes('gift') && giftDay && { gift: { url: `${home}#giftee`, giftDay: date(giftDay)!, postBy: date(postBy) } }),
     ...(parts.includes('readyToDraw') && {
       readyToDraw: {
@@ -50,7 +51,7 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
   };
 };
 
-/** Wishlist, gift and ready-to-draw reminders by the schedule (lib/reminder-schedule.ts): at most one email a week per person. */
+/** Wishlist, address, gift and ready-to-draw reminders by the schedule (lib/reminder-schedule.ts): at most one email a week per person. */
 const scheduledReminders = async (db: Collections, group: Group, edition: Edition, now: Date) => {
   const today = todayIn(group.timeZone, now);
   const schedule = reminderEditionOf(edition, group.timeZone);

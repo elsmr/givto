@@ -8,7 +8,7 @@
     "sign-in": "<b>Inloggen:</b> inlogcodes en -links (alleen versleuteld, nooit leesbaar), je passkeys (alleen het publieke deel) en je sessies met het IP-adres en de browser van je toestel. Om je account veilig te houden.",
     "groups": "<b>Groepen en Secret Santa's:</b> groepsnamen, namen van deelnemers, Niet samen-rijen, data, budget, de loting en je gok wie je Santa is. De organisator ziet ook ieders e-mailadres. Om je Secret Santa te laten draaien.",
     "wishes": "<b>Verlanglijstjes:</b> je wensen met de links, afbeeldingen en prijzen die je toevoegt, en ook Geclaimd!, wat je aanduidt met “Ik heb mijn cadeau”, tips, vragen en Psst!-berichten. Zodat je Santa weet wat je wil.",
-    "addresses": "<b>Postadressen:</b> alleen als cadeaus met de post gaan, en alleen zichtbaar voor je Santa.",
+    "addresses": "<b>Postadressen:</b> alleen als cadeaus met de post gaan, en alleen zichtbaar voor je Santa, zodra er geloot is. De organisator ziet wie er nog geen heeft ingevuld, nooit het adres zelf.",
     "emails": "<b>Verstuurde mails:</b> welke mail naar wie ging en wanneer. Zodat we nooit twee keer dezelfde mail sturen.",
     "cookies": "<b>Cookies:</b> één om je ingelogd te houden en één om je taal te onthouden. Geen tracking- of advertentiecookies en geen analytics, dus ook geen cookiebanner."
   },

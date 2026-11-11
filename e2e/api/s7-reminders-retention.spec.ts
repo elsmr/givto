@@ -94,7 +94,7 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const old = trio(olive, ann, bob);
   const oldGroup = groupDoc(olive, 'Old', old);
-  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' };
+  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' as const };
   const withAddress = (edition: ReturnType<typeof editionDoc>) => ({ ...edition, participants: edition.participants.map((p) => ({ ...p, address })) });
   const past = withAddress(editionDoc(oldGroup, 1, 'drawn', old, { giftDay: { date: today('UTC', -120) }, draw: circle(old) }));
   const recent = withAddress(editionDoc(oldGroup, 2, 'drawn', old, { giftDay: { date: today('UTC', -2) }, draw: circle(old) }));
@@ -146,7 +146,7 @@ test('retention without a gift day: counted from done or the next edition; the l
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const people = trio(olive, ann, bob);
   const [nextGroup, doneGroup] = [groupDoc(olive, 'Superseded, no gift day', people), groupDoc(olive, 'Done, no gift day', people)];
-  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' };
+  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' as const };
   const seeded = (group: ReturnType<typeof groupDoc>, number: number, status: 'drawn' | 'done', extra: Partial<ReturnType<typeof editionDoc>>) => {
     const edition = editionDoc(group, number, status, people, { draw: circle(people), ...extra });
     return { ...edition, participants: edition.participants.map((p) => ({ ...p, address })) };

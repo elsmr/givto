@@ -22,7 +22,11 @@
     "in": "Je doet mee",
     "wishes": "{count, plural, one {# wens} other {# wensen}} in deze groep",
     "no-wishes": "Nog geen wensen in deze groep",
-    "add": "Wens toevoegen"
+    "add": "Wens toevoegen",
+    "todo-address": "Vul je adres in",
+    "address": "Adres ingevuld",
+    "no-address": "Nog geen adres",
+    "add-address": "Adres invullen"
   },
   "draft": {
     "title": "Er is nog niets verstuurd",

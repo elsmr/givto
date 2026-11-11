@@ -4,8 +4,8 @@
 import { addDays, daysBetween } from './local-date';
 import type { EditionStatus } from './schema/edition';
 
-export type ReminderPart = 'wishlist' | 'gift' | 'readyToDraw';
-const parts: ReminderPart[] = ['wishlist', 'gift', 'readyToDraw'];
+export type ReminderPart = 'wishlist' | 'address' | 'gift' | 'readyToDraw';
+const parts: ReminderPart[] = ['wishlist', 'address', 'gift', 'readyToDraw'];
 
 export interface ReminderPerson {
   /** The later of being added to the edition and the edition opening. */
@@ -16,6 +16,8 @@ export interface ReminderPerson {
   isSanta: boolean;
   /** Marked "I've got my gift": no more gift reminders. */
   hasGift: boolean;
+  /** Added their postal address (posted editions): no address reminders. */
+  hasAddress: boolean;
   /** The organizer, drawing by hand, with enough people in to draw. */
   canDraw: boolean;
   /** …and everyone they invited by email has joined. */
@@ -27,6 +29,8 @@ export interface ReminderEdition {
   drawnOn?: string;
   giftDay?: string;
   wishlistBy?: string;
+  /** Gifts go by post (byPost or both). */
+  posted: boolean;
   /** Posted exchanges only: gifts in the post by then. */
   postBy?: string;
 }
@@ -48,6 +52,8 @@ export const REMINDER_GAP_DAYS = 7;
 const PERIODIC_EVERY_DAYS = 14;
 const PERIODIC_MAX = 3;
 const LAST_TWO = [14, 7];
+const ADDRESS_AFTER_JOINING_DAYS = 3;
+const ADDRESS_BEFORE_DAYS = 14;
 
 type Slot = { id: string; part: ReminderPart; on: string; until?: string };
 
@@ -68,6 +74,10 @@ const slotsOf = (person: ReminderPerson, edition: ReminderEdition, today: string
     if (deadline) for (const days of LAST_TWO) slots.push({ id: `wishlist-${days}`, part: 'wishlist', on: addDays(deadline, -days), until: deadline });
   }
   const target = edition.postBy ?? giftDay;
+  if ((status === 'open' || status === 'drawn') && edition.posted && !person.hasAddress) {
+    slots.push({ id: 'address-joined', part: 'address', on: addDays(person.joinedOn, ADDRESS_AFTER_JOINING_DAYS), until: target });
+    if (target) slots.push({ id: `address-${ADDRESS_BEFORE_DAYS}`, part: 'address', on: addDays(target, -ADDRESS_BEFORE_DAYS), until: target });
+  }
   if (status === 'drawn' && person.isSanta && !person.hasGift && target) {
     const from = later(person.joinedOn, edition.drawnOn);
     for (const days of LAST_TWO) {
@@ -84,7 +94,7 @@ const slotsOf = (person: ReminderPerson, edition: ReminderEdition, today: string
 };
 
 /**
- * The reminder due today, or null. Per part (wishlist, gift, ready to draw) the latest slot of the
+ * The reminder due today, or null. Per part (wishlist, address, gift, ready to draw) the latest slot of the
  * past week counts, once; an older one it replaces is never sent. When one part is due, a part due
  * within the coming week comes along in the same email. Never two emails within the gap.
  */

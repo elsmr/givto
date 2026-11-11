@@ -45,7 +45,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     reveal: { enabled: false }, createdAt: now, updatedAt: now, ...(draw && { draw }),
   });
   const assignments = { [m.ann]: m.bob, [m.bob]: m.cee, [m.cee]: m.kid, [m.kid]: m.ann };
-  const address = { lines: [`Annstraat ${tag}`], postalCode: '1000', city: 'Brussel', country: 'BE' };
+  const address = { lines: [`Annstraat ${tag}`], postalCode: '1000', city: 'Brussel', country: 'BE' as const };
   await db.editions.insertMany([
     edition(e.family, g.family, 'drawn', [participant(m.ann, { address }), participant(m.bob), participant(m.cee), participant(m.kid)], {
       assignments, drawnAt: now, history: [],

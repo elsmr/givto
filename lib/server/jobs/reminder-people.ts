@@ -14,6 +14,7 @@ export const reminderEditionOf = (edition: Edition, timeZone: string): ReminderE
   drawnOn: edition.draw?.drawnAt && todayIn(timeZone, edition.draw.drawnAt),
   giftDay: edition.giftDay?.date,
   wishlistBy: edition.wishlistBy,
+  posted: edition.exchangeMode !== 'inPerson',
   postBy: edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined,
 });
 
@@ -50,6 +51,8 @@ export const reminderPeople = async (db: Collections, group: Group, edition: Edi
         wishCount: participant ? (await visibleWishes(db, member)).length : 1,
         isSanta: Boolean(edition.draw?.assignments[member.id]),
         hasGift: gifts.has(member.id),
+        // Not in this edition, or managed (their manager can't add it for them): no address reminders.
+        hasAddress: !participant || !member.userId || Boolean(participant.address),
         canDraw: isOrganizer && manualDraw,
         everyoneIn: isOrganizer && everyoneIn,
       },

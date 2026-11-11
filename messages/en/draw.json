@@ -22,7 +22,11 @@
     "in": "You're in",
     "wishes": "{count, plural, one {# wish} other {# wishes}} in this group",
     "no-wishes": "No wishes in this group yet",
-    "add": "Add a wish"
+    "add": "Add a wish",
+    "todo-address": "Add your address",
+    "address": "Address added",
+    "no-address": "No address yet",
+    "add-address": "Add your address"
   },
   "draft": {
     "title": "Nothing's sent yet",

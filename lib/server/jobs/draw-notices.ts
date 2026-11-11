@@ -45,7 +45,9 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
         if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);
         const budget = edition.budget && formatBudget(edition.budget, to.locale);
-        return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget }) };
+        const addAddress =
+          edition.exchangeMode !== 'inPerson' && !to.forName && !edition.participants.some((p) => p.memberId === santa.id && p.address);
+        return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget, addAddress }) };
       },
     });
   });

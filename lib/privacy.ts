@@ -21,4 +21,4 @@ export const retention = {
   sentEmailsDays: 400,
 };
 
-export const privacyUpdatedOn = '2026-11-10';
+export const privacyUpdatedOn = '2026-11-11';

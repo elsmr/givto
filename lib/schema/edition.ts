@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { countryCodes } from '../countries';
 import { Id, LocalDate, LocalTime, MultiLine, Price, SingleLine } from './common';
 import { ExchangeMode } from './group';
 
@@ -39,7 +40,7 @@ export const PostalAddress = v.object({
   city: SingleLine(100),
   region: v.optional(SingleLine(100)),
   /** ISO 3166-1 alpha-2, e.g. NL. */
-  country: v.pipe(v.string(), v.regex(/^[A-Z]{2}$/, 'invalid_country')),
+  country: v.picklist(countryCodes, 'invalid_country'),
 });
 export type PostalAddress = v.InferOutput<typeof PostalAddress>;
 

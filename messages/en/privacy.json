@@ -8,7 +8,7 @@
     "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part) and your sessions with the device's IP address and browser. To keep your account safe.",
     "groups": "<b>Groups and Secret Santas:</b> group names, people's names, Keep apart rows, dates, budget, the draw and your guess at who your Santa is. The organizer also sees everyone's email address. To run your Secret Santa.",
     "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, what you marked with “I've got my gift”, tips, questions and Psst! messages. So your Santa knows what to get you.",
-    "addresses": "<b>Postal addresses:</b> only when a Secret Santa sends gifts by post, and only shown to your Santa.",
+    "addresses": "<b>Postal addresses:</b> only when a Secret Santa sends gifts by post, and only shown to your Santa, once names are drawn. The organizer sees who hasn't added one yet, never the address itself.",
     "emails": "<b>Emails we sent:</b> which email went to whom and when. So we never send the same email twice.",
     "cookies": "<b>Cookies:</b> one to keep you signed in and one to remember your language. No tracking or advertising cookies and no analytics, so no cookie banner."
   },

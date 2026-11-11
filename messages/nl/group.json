@@ -163,10 +163,33 @@
     "over": "Voorbij",
     "gifts": "Cadeau gekocht",
     "gifts-still": "Nog aan het shoppen: {names}",
-    "gifts-all": "Iedereen heeft een cadeau"
+    "gifts-all": "Iedereen heeft een cadeau",
+    "addresses": "Adres ingevuld",
+    "addresses-missing": "Nog geen adres: {names}",
+    "addresses-all": "Iedereen heeft een adres ingevuld"
   },
   "overview": {
     "details": "Data, budget en notities",
     "to-giftee": "Hun verlanglijstje en tips"
+  },
+  "address": {
+    "title": "Je adres",
+    "private": "De cadeaus gaan met de post. Alleen je Santa ziet je adres, zodra er geloot is.",
+    "recipient": "Naam op het pakje (optioneel)",
+    "line1": "Straat en huisnummer",
+    "line2": "Extra adresregel (optioneel)",
+    "postal-code": "Postcode",
+    "city": "Woonplaats",
+    "region": "Provincie of staat (optioneel)",
+    "country": "Land",
+    "choose-country": "Kies een land",
+    "save": "Adres opslaan",
+    "saved": "Adres opgeslagen",
+    "change": "Wijzigen",
+    "remove": "Verwijderen",
+    "removed": "Adres verwijderd",
+    "cancel": "Annuleren",
+    "post-to": "Stuur het naar",
+    "giftee-missing": "{name} heeft nog geen adres ingevuld."
   }
 }

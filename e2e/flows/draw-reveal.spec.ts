@@ -128,3 +128,54 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
     await expect(panel.getByText('No answer yet')).toHaveCount(0);
   });
 });
+
+test('by post: a member adds their address from the overview; after the draw only their Santa sees where to post it', async ({ page, newPage, signIn, signInPage, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Posting', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'byPost' })
+  );
+  for (const [person, name] of [[bob, 'Bob'], [people[2], 'Cee']] as const) {
+    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  ok(await bob.trpc.mutate('wish.create', { title: 'Moomin mug', groupSlugs: [group.slug] }));
+
+  await test.step('Bob adds his address from the waiting card', async () => {
+    await signInPage(page, bob);
+    await page.goto(`/g/${group.slug}`);
+    await expect(page.getByText('No address yet')).toBeVisible();
+    await page.getByRole('button', { name: 'Add your address' }).click();
+    await expect(page.getByLabel('Street and number')).toBeFocused();
+    await page.getByLabel('Street and number').fill('Bobstraat 12');
+    await page.getByLabel('Postal code').fill('1000');
+    await page.getByLabel('City').fill('Brussel');
+    await page.getByLabel('Country').selectOption({ label: 'Belgium' });
+    await page.getByRole('button', { name: 'Save address' }).click();
+    await expect(page.getByText('Address saved')).toBeVisible();
+    await expect(page.getByText("You're all set")).toBeVisible();
+    await expect(page.getByText('Address added')).toBeVisible();
+    await expect(page.locator('address')).toContainText('Bobstraat 12');
+  });
+
+  ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
+  const draw = await drawOf(db, group.slug, people);
+  const santa = draw.santaOf(bob);
+  const giftee = draw.gifteeOf(bob);
+
+  await test.step("Bob's Santa sees where to post it", async () => {
+    const santaPage = await newPage();
+    await signInPage(santaPage, santa);
+    await santaPage.goto(`/g/${group.slug}#giftee`);
+    await tapToReveal(santaPage).click();
+    const postTo = santaPage.getByRole('tabpanel', { name: 'My giftee' }).locator('address');
+    await expect(postTo).toContainText('Bobstraat 12');
+    await expect(postTo).toContainText('Belgium');
+  });
+
+  await test.step('Bob sees his giftee has no address yet', async () => {
+    await page.reload();
+    await tapToReveal(page).click();
+    await page.getByRole('button', { name: 'Their wishlist and tips' }).click();
+    await expect(page.getByText(`${draw.nameOf(giftee)} hasn't added their address yet.`)).toBeVisible();
+  });
+});

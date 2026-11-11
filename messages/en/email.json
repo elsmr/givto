@@ -80,6 +80,7 @@
     "body": "The draw for “{group}” is done. Open Givto to find out who your giftee is. Don't tell anyone!",
     "gift-day": "Gift day: {date}.",
     "budget": "Budget: {budget}.",
+    "address": "Gifts go by post: add your address in Givto, so your Santa knows where to send yours.",
     "button": "Show my giftee"
   },
   "giftee-changed": {
@@ -138,6 +139,13 @@
       "body": "Your Santa in “{group}” doesn't know what to get you yet. Add a few wishes: big or small, a link or just an idea.",
       "by": "Wishlists ready by {date}.",
       "button": "Add a wish"
+    },
+    "address": {
+      "subject": "Add your address",
+      "title": "Where should your gift go?",
+      "body": "Gifts in “{group}” go by post. Add your address so your Santa knows where to send yours. Only your Santa sees it.",
+      "by": "Santas post their gifts by {date}.",
+      "button": "Add my address"
     },
     "gift": {
       "subject": "Got your gift yet?",

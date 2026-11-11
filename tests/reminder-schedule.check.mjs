@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 import { addDays, daysBetween } from '../lib/local-date.ts';
 import { dueReminder, REMINDER_GAP_DAYS } from '../lib/reminder-schedule.ts';
 
-const person = (extra = {}) => ({ joinedOn: '2026-02-01', wishCount: 0, isSanta: false, hasGift: false, canDraw: false, everyoneIn: false, ...extra });
-const edition = (extra = {}) => ({ status: 'open', giftDay: '2026-12-24', ...extra });
+const person = (extra = {}) => ({ joinedOn: '2026-02-01', wishCount: 0, isSanta: false, hasGift: false, hasAddress: false, canDraw: false, everyoneIn: false, ...extra });
+const edition = (extra = {}) => ({ status: 'open', giftDay: '2026-12-24', posted: false, ...extra });
 
 /**
  * Ticks `ticksPerDay` times a day from `from` to `to`. `change(day)` may return overrides for that
@@ -107,6 +107,21 @@ assert.deepEqual(
   []
 );
 
+// Address (80), posted only: 3 days after joining, then 14 days before the post-by date (else gift day).
+const posted = edition({ posted: true });
+const listedMember = person({ wishCount: 1 });
+assert.deepEqual(when(play({ who: listedMember, what: posted })), ['2026-02-04 address', '2026-12-10 address']);
+assert.deepEqual(when(play({ who: listedMember, what: { ...posted, postBy: '2026-12-15' } })), ['2026-02-04 address', '2026-12-01 address']);
+assert.deepEqual(when(play({ who: listedMember, what: edition({ postBy: '2026-12-15' }) })), [], 'in person: none');
+assert.deepEqual(when(play({ who: { ...listedMember, hasAddress: true }, what: posted })), [], 'none once there is an address');
+assert.deepEqual(when(play({ who: listedMember, what: posted, change: (day) => (day >= '2026-02-10' ? { person: { hasAddress: true } } : {}) })), ['2026-02-04 address']);
+assert.deepEqual(when(play({ who: { ...listedMember, joinedOn: '2026-12-12' }, what: posted })), ['2026-12-15 address'], 'late joiner');
+// …combined with the other parts by the same rules.
+assert.deepEqual(when(play({ who: santa, what: { ...drawn, posted: true, postBy: '2026-12-15' } })), ['2026-02-04 address', '2026-12-01 address+gift', '2026-12-08 gift']);
+assert.deepEqual(when(play({ who: person(), what: posted })), [
+  '2026-02-04 address', '2026-02-15 wishlist', '2026-03-01 wishlist', '2026-03-15 wishlist', '2026-12-10 wishlist+address', '2026-12-17 wishlist',
+]);
+
 // No duplicates across ticks: hourly ticks send the same as daily ones.
 assert.deepEqual(play({ who: emptySanta, what: drawn, from: '2026-11-02', ticksPerDay: 24 }), play({ who: emptySanta, what: drawn, from: '2026-11-02' }));
 // …nor when the date moves after a slot went out: Dec 10's "14 days before" isn't sent again for Dec 31.
@@ -117,4 +132,4 @@ assert.deepEqual(when(play({ who: santa, what: { ...drawn, giftDay: '2026-12-31'
 assert.equal(dueReminder(person(), edition(), [{ sentOn: '2026-12-08', slots: [] }], '2026-12-10'), null);
 assert.deepEqual(dueReminder(person(), edition(), [{ sentOn: '2026-12-01', slots: [] }], '2026-12-10'), { parts: ['wishlist'], slots: ['wishlist-14'] });
 
-console.log('ok  reminder-schedule: periodic + last two, deadline vs gift day, late joiners, gap, combine, cap, got my gift, ready to draw, no dupes');
+console.log('ok  reminder-schedule: periodic + last two, deadline vs gift day, late joiners, gap, combine, cap, got my gift, ready to draw, address, no dupes');
