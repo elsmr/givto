@@ -100,9 +100,12 @@ export const wishRouter = router({
       return toWishView(updated);
     }),
 
-  /** My archive, last archived first. Archived wishes reach no group and no Santa, except a Santa's own Dibs! (santaWishes). */
+  /** My archive (archived and got-it wishes), last archived first. Archived wishes reach no group and no Santa, except a Santa's own Dibs! (santaWishes). */
   archived: authedProcedure.query(async ({ ctx }) =>
-    (await ctx.db.wishes.find({ ownerId: ctx.user.id, ...inArchive }).sort({ updatedAt: -1, _id: 1 }).toArray()).map(toWishView)
+    (await ctx.db.wishes.find({ ownerId: ctx.user.id, ...inArchive }).sort({ updatedAt: -1, _id: 1 }).toArray()).map((wish) => ({
+      ...toWishView(wish),
+      received: Boolean(wish.receivedAt),
+    }))
   ),
 
   /** Claims, gift marks and per-group showing stay, so a restore brings the wish back as it was. */

@@ -1,17 +1,26 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { formatBudget } from '@/lib/format-budget';
-import { formatLocalDate } from '@/lib/local-date';
+import { countdown, daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
 import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
-import { NotebookText } from 'lucide-react';
+import { CalendarDays, Gift, ListChecks, Mailbox, NotebookText, Shuffle, Video, Wallet, type LucideIcon } from 'lucide-react';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import type { GroupEdition } from './group-data';
 
-/** Gift day and its call link (87), the draw, deadlines, exchange mode, budget and notes (28, 51), always open (79). `children`: actions below. */
+const Fact = ({ icon: Icon, children, className }: { icon: LucideIcon; children: ReactNode; className?: string }) => (
+  <li className="flex items-start gap-3">
+    <Icon aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-muted" />
+    <span className={className}>{children}</span>
+  </li>
+);
+
+/**
+ * Gift day with a countdown and its call link (87), then the draw, deadlines, exchange mode, budget and notes (28, 51)
+ * as icon rows that read without labels. `children`: actions under gift day.
+ */
 export const EditionDetails = ({ edition, children }: { edition: GroupEdition; children?: ReactNode }) => {
   const t = useTranslations('group.summary');
-  const tOverview = useTranslations('group.overview');
   const format = useFormatter();
   const locale = useLocale();
   const { giftDay, budget, timeZone } = edition;
@@ -20,66 +29,54 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
     ? t('drawn')
     : edition.drawAt && t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) });
   const posted = edition.exchangeMode !== 'inPerson';
+  const when = giftDay && countdown(daysBetween(todayIn(timeZone), giftDay.date));
 
   return (
     <Card>
       <CardHeader>
-        <IconCardTitle icon={NotebookText} tone="mint">
-          {tOverview('details')}
+        <IconCardTitle icon={CalendarDays} tone="yellow">
+          {t('gift-day')}
         </IconCardTitle>
       </CardHeader>
-      <CardContent className="@container flex flex-col gap-5">
-        <dl className="grid gap-x-6 gap-y-3 @max-sm:gap-y-1 @max-sm:[&>dt:not(:first-child)]:mt-3 @sm:grid-cols-[auto_1fr]">
-          {giftDay && (
-            <>
-              <dt className="font-semibold">{t('gift-day')}</dt>
-              <dd>
-                {localDate(giftDay.date)}
-                {giftDay.time && ` · ${giftDay.time}`}
-                {giftDay.place && ` · ${giftDay.place}`}
-              </dd>
-              {giftDay.callUrl && (
-                <>
-                  <dt className="font-semibold">{t('call')}</dt>
-                  <dd>
-                    <a href={giftDay.callUrl} target="_blank" rel="noopener noreferrer nofollow ugc" className="break-all underline">
-                      {giftDay.callUrl}
-                    </a>
-                  </dd>
-                </>
-              )}
-            </>
-          )}
-          {draw && (
-            <>
-              <dt className="font-semibold">{t('draw')}</dt>
-              <dd>{draw}</dd>
-            </>
-          )}
-          {edition.wishlistBy && (
-            <>
-              <dt className="font-semibold">{t('wishlist-by')}</dt>
-              <dd>{localDate(edition.wishlistBy)}</dd>
-            </>
-          )}
-          <dt className="font-semibold">{t('exchange')}</dt>
-          <dd>{t(`exchange-modes.${edition.exchangeMode}`)}</dd>
-          {posted && edition.postBy && (
-            <>
-              <dt className="font-semibold">{t('post-by')}</dt>
-              <dd>{localDate(edition.postBy)}</dd>
-            </>
-          )}
-          <dt className="font-semibold">{t('budget')}</dt>
-          <dd>{budget ? formatBudget(budget, locale) : t('no-budget')}</dd>
-          {edition.notes && (
-            <>
-              <dt className="font-semibold">{t('notes')}</dt>
-              <dd className="whitespace-pre-line break-words">{edition.notes}</dd>
-            </>
-          )}
-        </dl>
+      <CardContent className="flex flex-col gap-5">
+        {giftDay && when ? (
+          <div className="flex flex-col gap-1">
+            <p className="font-heading text-3xl leading-tight font-extrabold first-letter:uppercase">
+              {new Intl.RelativeTimeFormat(locale, { numeric: when.unit === 'day' ? 'auto' : 'always' }).format(when.value, when.unit)}
+            </p>
+            <p>
+              {localDate(giftDay.date)}
+              {giftDay.time && ` · ${giftDay.time}`}
+              {giftDay.place && ` · ${giftDay.place}`}
+            </p>
+            {giftDay.callUrl && (
+              <a
+                href={giftDay.callUrl}
+                target="_blank"
+                rel="noopener noreferrer nofollow ugc"
+                className="flex items-center gap-2 break-all underline"
+              >
+                <Video aria-hidden="true" className="size-4 shrink-0" />
+                {giftDay.callUrl}
+              </a>
+            )}
+          </div>
+        ) : (
+          <p className="text-muted">{t('no-gift-day')}</p>
+        )}
         {children}
+        <ul className="flex flex-col gap-3 border-t-2 border-dashed border-outline pt-5">
+          {draw && <Fact icon={Shuffle}>{draw}</Fact>}
+          {edition.wishlistBy && <Fact icon={ListChecks}>{t('wishlist-by', { date: localDate(edition.wishlistBy) })}</Fact>}
+          <Fact icon={Gift}>{t(`exchange-modes.${edition.exchangeMode}`)}</Fact>
+          {posted && edition.postBy && <Fact icon={Mailbox}>{t('post-by', { date: localDate(edition.postBy) })}</Fact>}
+          <Fact icon={Wallet}>{budget ? t('budget', { budget: formatBudget(budget, locale) }) : t('no-budget')}</Fact>
+          {edition.notes && (
+            <Fact icon={NotebookText} className="whitespace-pre-line break-words">
+              {edition.notes}
+            </Fact>
+          )}
+        </ul>
       </CardContent>
     </Card>
   );

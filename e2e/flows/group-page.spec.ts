@@ -76,13 +76,13 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
 
   await test.step('before the draw: no My giftee tab', async () => {
     await page.goto(`/g/${group.slug}#giftee`);
-    await expect(tabs, 'my wishes here and who is in as counts').toHaveText(['Overview', 'My wishlist 0', 'People 3']);
+    await expect(tabs, 'my wishes here and who is in as counts').toHaveText(['Overview', 'My wishlist', 'People 3']);
     await expect(tab(page, 'Overview'), 'an unknown tab falls back to the overview').toHaveAttribute('aria-selected', 'true');
   });
 
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   await page.goto(`/g/${group.slug}`);
-  await expect(tabs).toHaveText(['Overview', 'My giftee', 'My wishlist 0', 'People 3']);
+  await expect(tabs).toHaveText(['Overview', 'My giftee', 'My wishlist', 'People 3']);
 
   await test.step('switching keeps the tab in the hash, and a reload keeps it', async () => {
     for (const [name, hash] of [['People', '#people'], ['My wishlist', '#wishlist'], ['My giftee', '#giftee']] as const) {

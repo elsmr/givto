@@ -19,7 +19,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
     <Card>
       <CardHeader>
         <IconCardTitle icon={Users} tone="primary-muted">
-          {t('title', { count: group.joinedCount })}
+          {t('title')}
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

@@ -60,7 +60,6 @@
     "opened": "Edition opened"
   },
   "reveal": {
-    "title": "Your giftee",
     "tap": "Tap to see who you're buying for",
     "hint": "Check nobody's looking over your shoulder.",
     "buying-for": "You're buying for",
@@ -86,9 +85,9 @@
   },
   "calendar": {
     "button": "Add to calendar",
-    "ics": "Download for Apple or Outlook (.ics)",
-    "google": "Google Calendar: {event}",
-    "outlook": "Outlook.com: {event}",
+    "ics": "Apple or Outlook (.ics)",
+    "google": "Google Calendar",
+    "outlook": "Outlook.com",
     "gift-day": "{group}: gift day",
     "post-by": "{group}: post your gift",
     "description": "Your Secret Santa on Givto: {url}"

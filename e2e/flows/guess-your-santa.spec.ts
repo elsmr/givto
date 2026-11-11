@@ -22,7 +22,7 @@ test('guess and change it; phones guess at the turn; the presenter shows "From â
     await signInPage(page, bob);
     await page.goto(`/g/${group.slug}`);
     await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toBeVisible();
-    await expect(page.getByText(/You'll find out at your turn on gift day\./)).toBeVisible();
+    await expect(page.getByText("Who's buying your gift? You can change your guesses until the Santas are shown.")).toBeVisible();
     await page.getByRole('button', { name: 'Make your guess' }).click();
     const dialog = page.getByRole('dialog', { name: "Who's your Santa?" });
     await expect(dialog.getByRole('combobox', { name: 'Your Santa' }).getByRole('option', { name: 'Bob' })).toHaveCount(0);

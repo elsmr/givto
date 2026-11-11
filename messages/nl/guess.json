@@ -1,8 +1,7 @@
 {
   "card": {
     "title": "Raad je Santa",
-    "open": "Wie denk jij dat jouw cadeau koopt? Gok ook de rest van de loting als je wilt. Je kunt je gokken aanpassen tot die Santa's op pakjesdag bekend zijn.",
-    "when": "Je hoort het als jij aan de beurt bent op pakjesdag.",
+    "open": "Wie koopt jouw cadeau? Je kunt je gokken aanpassen tot de Santa's bekend zijn.",
     "make": "Doe je gok",
     "change": "Pas je gokken aan",
     "you-guessed": "Jij gokte <name>{guess}</name>",
@@ -54,8 +53,8 @@
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
   },
   "panel": {
-    "note": "Bij elke beurt zie je wie de Santa was. Zet Raad je Santa uit om de Santa's geheim te houden.",
-    "settings": "Instellingen van Raad je Santa"
+    "note": "Bij elke beurt zie je wie de Santa was.",
+    "settings": "Wijzigen"
   },
   "errors": {
     "GUESSING_CLOSED": "Gokken kan niet meer.",

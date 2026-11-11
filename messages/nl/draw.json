@@ -60,7 +60,6 @@
     "opened": "Editie geopend"
   },
   "reveal": {
-    "title": "Je persoon",
     "tap": "Tik om te zien voor wie je een cadeau koopt",
     "hint": "Kijk even of er niemand over je schouder meekijkt.",
     "buying-for": "Je koopt een cadeau voor",
@@ -86,9 +85,9 @@
   },
   "calendar": {
     "button": "Zet in je agenda",
-    "ics": "Downloaden voor Apple of Outlook (.ics)",
-    "google": "Google Agenda: {event}",
-    "outlook": "Outlook.com: {event}",
+    "ics": "Apple of Outlook (.ics)",
+    "google": "Google Agenda",
+    "outlook": "Outlook.com",
     "gift-day": "{group}: pakjesdag",
     "post-by": "{group}: cadeau op de post doen",
     "description": "Je Secret Santa op Givto: {url}"

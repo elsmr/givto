@@ -36,8 +36,11 @@ export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: 
               )}
             />
             <span className="flex min-w-0 items-center gap-1">
-              <Icon aria-hidden="true" className="size-4 shrink-0 max-[22rem]:hidden" />
-              <span className="break-words hyphens-auto">{step === 'draw' && lockIn ? t('lock-in') : t(step)}</span>
+              <Icon aria-hidden="true" className="size-4 shrink-0" />
+              {/* Phones: only the current step is named; the icons carry the rest. */}
+              <span className={cn('break-words hyphens-auto', index === current ? 'max-sm:whitespace-nowrap' : 'max-sm:sr-only')}>
+                {step === 'draw' && lockIn ? t('lock-in') : t(step)}
+              </span>
             </span>
             {index < current && <span className="sr-only">{t('done-state')}</span>}
           </li>

@@ -89,7 +89,7 @@ export const giftdayRouter = router({
     return { ok: true };
   }),
 
-  /** After gift day: "I got this" (owner only). Received wishes leave every list and every Santa's view. */
+  /** "I got this" (owner only): after gift day, or any time from the wishlist. Received wishes leave every list and every Santa's view. */
   markReceived: authedProcedure
     .input(v.object({ wishId: Id, received: v.boolean() }))
     .mutation(async ({ ctx, input }) => {

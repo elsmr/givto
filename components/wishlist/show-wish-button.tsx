@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { withTooltip } from '@/components/ui/tooltip';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Eye, EyeOff } from 'lucide-react';
+import { EyeOff, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { WishView } from './wish-draft';
 
@@ -43,9 +43,9 @@ export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: G
     );
   }
   return (
-    <Button variant="neutral" size="sm" aria-label={t('show', { title: wish.title })} onClick={() => show(true)}>
-      <Eye aria-hidden="true" />
-      {t('show-short')}
+    <Button variant="neutral" size="sm" className="max-w-full" aria-label={t('show', { title: wish.title })} onClick={() => show(true)}>
+      <Plus aria-hidden="true" />
+      <span className="truncate">{wish.title}</span>
     </Button>
   );
 };

@@ -8,7 +8,7 @@ const icons = { overview: LayoutGrid, giftee: Gift, boards: StickyNote, wishlist
 
 /**
  * The group home's tabs (61), a segmented control under the stepper; the app nav owns the bottom of the screen.
- * `counts`: a small badge after the label, e.g. my wishes in this group (79).
+ * `counts`: a small badge after the label, e.g. my wishes in this group (79); none for 0.
  */
 export const GroupTabBar = ({ tabs, counts = {} }: { tabs: readonly GroupTab[]; counts?: Partial<Record<GroupTab, number>> }) => {
   const t = useTranslations('group.tabs');
@@ -28,13 +28,19 @@ export const GroupTabBar = ({ tabs, counts = {} }: { tabs: readonly GroupTab[]; 
             id={`group-tab-${tab}`}
             className="h-auto min-h-14 flex-1 basis-0 flex-col gap-0.5 px-1 py-1.5 text-xs leading-tight whitespace-normal sm:min-h-11 sm:flex-row sm:gap-2 sm:text-base [&_svg:not([class*='size-'])]:size-5"
           >
-            <Icon aria-hidden="true" />
+            {/* Phones: the count sits on the icon (CSS content, so the tab's text stays "My wishlist 1"), keeping the label on one line. */}
+            <span
+              data-count={counts[tab] || undefined}
+              className="relative max-sm:data-count:after:absolute max-sm:data-count:after:-top-1.5 max-sm:data-count:after:left-full max-sm:data-count:after:-ml-0.5 max-sm:data-count:after:border-2 max-sm:data-count:after:border-outline max-sm:data-count:after:bg-surface max-sm:data-count:after:px-1 max-sm:data-count:after:font-mono max-sm:data-count:after:text-[0.625rem] max-sm:data-count:after:leading-tight max-sm:data-count:after:text-ink max-sm:data-count:after:content-[attr(data-count)]"
+            >
+              <Icon aria-hidden="true" />
+            </span>
             <span>
               {t(tab)}
-              {counts[tab] !== undefined && (
+              {Boolean(counts[tab]) && (
                 <>
                   {' '}
-                  <Badge className="align-middle">{counts[tab]}</Badge>
+                  <Badge className="align-middle max-sm:sr-only">{counts[tab]}</Badge>
                 </>
               )}
             </span>

@@ -1,9 +1,10 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { Archive, ArchiveRestore } from 'lucide-react';
+import { Archive, ArchiveRestore, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { DeleteWishDialog } from './delete-wish-dialog';
 import { useErrorMessage } from './use-error-message';
@@ -24,7 +25,18 @@ export const ArchivedWishes = () => {
       <ul className="flex flex-col gap-4">
         {wishes.map((wish) => (
           <li key={wish.id}>
-            <WishCard wish={wish} className="bg-page shadow-none">
+            <WishCard
+              wish={wish}
+              className="bg-page shadow-none"
+              status={
+                wish.received && (
+                  <Badge variant="mint">
+                    <Check aria-hidden="true" />
+                    {t('got')}
+                  </Badge>
+                )
+              }
+            >
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="neutral"

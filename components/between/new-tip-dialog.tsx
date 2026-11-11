@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -46,7 +46,6 @@ export const NewTipDialog = ({ input, people }: NewTipDialogProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('add')}</DialogTitle>
-          <DialogDescription>{t('dialog-description')}</DialogDescription>
         </DialogHeader>
         <TipForm
           initial={emptyTip}

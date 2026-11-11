@@ -6,7 +6,7 @@ type PageHeaderProps = {
   /** Above the title: a greeting, a step, a back link. */
   eyebrow?: ReactNode;
   description?: ReactNode;
-  /** Right of the title from xs, under it on phones. */
+  /** Right of the title while they fit, else under it. */
   actions?: ReactNode;
   /** Under the title: chips, meta. */
   children?: ReactNode;
@@ -18,11 +18,11 @@ type PageHeaderProps = {
 export const PageHeader = ({ title, eyebrow, description, actions, children, headingRef, className }: PageHeaderProps) => (
   <header className={cn('flex flex-col gap-2', className)}>
     {eyebrow && <div className="font-semibold text-muted">{eyebrow}</div>}
-    <div className="flex flex-col gap-4 xs:flex-row xs:items-end xs:justify-between">
+    <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
       <h1
         ref={headingRef}
         tabIndex={headingRef ? -1 : undefined}
-        className="min-w-0 text-4xl font-extrabold break-words outline-none sm:text-5xl"
+        className="max-w-full text-4xl font-extrabold break-words outline-none sm:text-5xl"
       >
         {title}
       </h1>

@@ -1,33 +1,33 @@
-import { SantaSection } from '@/components/between/santa-section';
+import { PsstButton } from '@/components/between/psst-button';
+import { AskQuestionButton } from '@/components/between/santa-questions';
 import { RevealCard } from '@/components/draw/reveal-card';
 import { useGifteeRevealed } from '@/components/draw/use-giftee-revealed';
-import { GotGiftCard } from '@/components/gift/got-gift-card';
+import { GotGiftAction } from '@/components/gift/got-gift-action';
 import { GifteeWishlist } from '@/components/wishlist/giftee-wishlist';
-import { GifteeAddressCard } from './address-card';
+import { GifteeAddress } from './address-card';
 import type { GroupEdition } from './group-data';
 
-/** The "My giftee" tab (61): tap to reveal, then where to post it (80), "I've got my gift" (63), their wishlist with Dibs! and, next to it, tips, Psst! and questions. */
+/**
+ * The "My giftee" tab (61): tap to reveal, with what you can do next to the name ("I've got my gift" (63), Psst!,
+ * ask a question) and where to post it (80); their wishlist with Dibs!, tips from others and your questions.
+ */
 export const GifteePanel = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const input = { groupSlug, editionNumber: edition.number };
   const [revealed] = useGifteeRevealed(groupSlug, edition.number);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-start">
-      <div className="flex min-w-0 flex-col gap-6">
-        <RevealCard {...input} timeZone={edition.timeZone} />
+    <div className="flex flex-col gap-6">
+      <RevealCard {...input} timeZone={edition.timeZone}>
         {revealed && (
-          <>
-            {edition.exchangeMode !== 'inPerson' && <GifteeAddressCard {...input} />}
-            <GotGiftCard {...input} />
-            <GifteeWishlist {...input} />
-          </>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+            <GotGiftAction {...input} />
+            <PsstButton input={input} />
+            <AskQuestionButton input={input} />
+          </div>
         )}
-      </div>
-      {revealed && (
-        <div className="min-w-0">
-          <SantaSection input={input} />
-        </div>
-      )}
+        {revealed && edition.exchangeMode !== 'inPerson' && <GifteeAddress {...input} />}
+      </RevealCard>
+      {revealed && <GifteeWishlist {...input} />}
     </div>
   );
 };
