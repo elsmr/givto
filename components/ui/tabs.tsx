@@ -38,9 +38,27 @@ const tabsListVariants = cva(
   },
 );
 
+// The active look lives on this indicator rather than the tab, so it can slide between tabs.
+const tabsIndicatorVariants = cva(
+  'absolute transition-[left,top,width,height] duration-200 ease-out motion-reduce:transition-none',
+  {
+    variants: {
+      variant: {
+        default: 'top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width) border-2 border-outline bg-primary',
+        segmented: 'top-(--active-tab-top) left-(--active-tab-left) h-(--active-tab-height) w-(--active-tab-width) -translate-x-0.5 -translate-y-0.5 border-2 border-outline bg-yellow shadow-sm',
+        line: 'bg-primary data-[orientation=horizontal]:-bottom-0.5 data-[orientation=horizontal]:left-(--active-tab-left) data-[orientation=horizontal]:h-1 data-[orientation=horizontal]:w-(--active-tab-width) data-[orientation=vertical]:top-(--active-tab-top) data-[orientation=vertical]:-right-0.5 data-[orientation=vertical]:h-(--active-tab-height) data-[orientation=vertical]:w-1',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  },
+);
+
 function TabsList({
   className,
   variant = 'default',
+  children,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
   VariantProps<typeof tabsListVariants>) {
@@ -48,9 +66,12 @@ function TabsList({
     <TabsPrimitive.List
       data-slot="tabs-list"
       data-variant={variant}
-      className={cn(tabsListVariants({ variant }), className)}
+      className={cn(tabsListVariants({ variant }), 'relative', className)}
       {...props}
-    />
+    >
+      {children}
+      <TabsPrimitive.Indicator renderBeforeHydration className={tabsIndicatorVariants({ variant })} />
+    </TabsPrimitive.List>
   );
 }
 
@@ -62,10 +83,9 @@ function TabsTrigger({
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
       className={cn(
-        "relative inline-flex items-center justify-center whitespace-nowrap h-full border-2 border-transparent px-3 gap-1.5 text-sm font-bold disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-active:bg-primary data-active:text-white data-active:border-outline data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        'after:pointer-events-none after:absolute after:bg-primary after:opacity-0 after:transition-opacity after:hidden group-data-[variant=line]/tabs-list:after:block data-[orientation=horizontal]:after:inset-x-0 data-[orientation=horizontal]:after:-bottom-0.5 data-[orientation=horizontal]:after:h-1 data-[orientation=vertical]:after:inset-y-0 data-[orientation=vertical]:after:-right-0.5 data-[orientation=vertical]:after:w-1',
-        'group-data-[variant=segmented]/tabs-list:hover:bg-surface group-data-[variant=segmented]/tabs-list:data-active:bg-yellow group-data-[variant=segmented]/tabs-list:data-active:text-outline group-data-[variant=segmented]/tabs-list:data-active:shadow-sm group-data-[variant=segmented]/tabs-list:data-active:-translate-x-0.5 group-data-[variant=segmented]/tabs-list:data-active:-translate-y-0.5',
-        'group-data-[variant=line]/tabs-list:data-active:border-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent group-data-[variant=line]/tabs-list:data-active:text-ink group-data-[variant=line]/tabs-list:data-active:after:opacity-100',
+        "relative z-1 inline-flex items-center justify-center whitespace-nowrap h-full border-2 border-transparent px-3 gap-1.5 text-sm font-bold disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 data-active:text-white data-[orientation=vertical]:w-full data-[orientation=vertical]:justify-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        'group-data-[variant=segmented]/tabs-list:not-data-active:hover:bg-surface group-data-[variant=segmented]/tabs-list:data-active:text-outline',
+        'group-data-[variant=line]/tabs-list:data-active:text-ink',
         className,
       )}
       {...props}
@@ -81,7 +101,7 @@ function TabsContent({
     <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn(
-        'mt-2 data-[orientation=vertical]:mt-0 data-[orientation=vertical]:flex-1',
+        'mt-2 data-[orientation=vertical]:mt-0 data-[orientation=vertical]:flex-1 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-200',
         className,
       )}
       {...props}
@@ -89,4 +109,4 @@ function TabsContent({
   );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants };
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants, tabsIndicatorVariants };

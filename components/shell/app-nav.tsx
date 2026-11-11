@@ -4,6 +4,7 @@ import { CircleUser, Heart, House } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { ViewTransition } from 'react';
 
 // Group pages and starting a group live under Home.
 const items = [
@@ -38,12 +39,22 @@ export const AppNav = ({ className }: { className?: string }) => {
                 href={href}
                 aria-current={pathname === href ? 'page' : active ? 'true' : undefined}
                 className={cn(
-                  'flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold break-words hyphens-auto text-ink no-underline',
-                  active ? '-translate-x-0.5 -translate-y-0.5 border-outline bg-yellow shadow-sm' : 'hover:bg-page',
+                  'relative flex min-h-14 flex-col items-center justify-center gap-1 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold break-words hyphens-auto text-ink no-underline',
+                  // The label sits beside the yellow highlight, not in it, so it skips the dark theme's dark-on-yellow rule.
+                  active ? '-translate-x-0.5 -translate-y-0.5 text-outline' : 'hover:bg-page',
                 )}
               >
-                <Icon aria-hidden="true" className="size-5" />
-                {t(key)}
+                {active && (
+                  // One name across pages, so the highlight slides from the old item to the new one.
+                  <ViewTransition name="app-nav-active" share="auto" default="none">
+                    <span aria-hidden="true" className="absolute -inset-0.5 border-2 border-outline bg-yellow shadow-sm" />
+                  </ViewTransition>
+                )}
+                {/* Its own layer, painted after the highlight's, so the label stays on top while it slides. */}
+                <span className="relative flex flex-col items-center gap-1" style={{ viewTransitionName: `app-nav-${key}` }}>
+                  <Icon aria-hidden="true" className="size-5" />
+                  {t(key)}
+                </span>
               </Link>
             </li>
           );
