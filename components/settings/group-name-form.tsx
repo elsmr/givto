@@ -38,7 +38,17 @@ export const GroupNameForm = ({ slug, name }: { slug: string; name: string }) =>
     <form onSubmit={submit} className="flex flex-col gap-4">
       <Field data-invalid={issue ? 'true' : undefined}>
         <FieldLabel htmlFor="settings-group-name">{t('group-name.label')}</FieldLabel>
-        <Input id="settings-group-name" required maxLength={80} value={value} onChange={(event) => setValue(event.target.value)} />
+        <Input
+          id="settings-group-name"
+          autoComplete="off"
+          data-1p-ignore
+          data-lpignore="true"
+          data-bwignore
+          required
+          maxLength={80}
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
         <FieldDescription>{t('group-name.help')}</FieldDescription>
         {issue && <FieldError>{tIssues(issue)}</FieldError>}
         {rename.error && <FieldError>{t('errors.INTERNAL')}</FieldError>}

@@ -50,7 +50,17 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
       <FieldGroup>
         <Field data-invalid={titleIssue ? 'true' : undefined}>
           <FieldLabel htmlFor="edition-title">{t('edition.name')}</FieldLabel>
-          <Input id="edition-title" required maxLength={80} value={draft.title} onChange={(event) => update({ title: event.target.value })} />
+          <Input
+            id="edition-title"
+            autoComplete="off"
+            data-1p-ignore
+            data-lpignore="true"
+            data-bwignore
+            required
+            maxLength={80}
+            value={draft.title}
+            onChange={(event) => update({ title: event.target.value })}
+          />
           {titleIssue && <FieldError>{tIssues(titleIssue)}</FieldError>}
         </Field>
         {isBeforeDraw(edition) && <KindField kind={draft.kind} onChange={(kind) => update({ kind })} />}

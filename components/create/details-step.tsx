@@ -43,6 +43,10 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
           <FieldLabel htmlFor="group-name">{draft.kind === 'whiteElephant' ? t('name-white-elephant') : t('name')}</FieldLabel>
           <Input
             id="group-name"
+            autoComplete="off"
+            data-1p-ignore
+            data-lpignore="true"
+            data-bwignore
             required
             maxLength={80}
             autoFocus
