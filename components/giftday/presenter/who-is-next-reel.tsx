@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useEffect, useRef, useState } from 'react';
@@ -45,18 +46,19 @@ const reelStrip = (names: string[], target: string) => {
   return [...rows, target, shuffled(others)[0] ?? target];
 };
 
-type WhoIsNextReelProps = { names: string[]; target: string; status: SpinStatus; onLanded: () => void };
+type WhoIsNextReelProps = { names: string[]; target: string; status: SpinStatus; onLanded: () => void; className?: string };
 
 /**
  * "Who's next?" with 4+ people left: the names spin by like a roulette wheel and slow down onto
- * `target`, which the server already decided (32). Skipped or reduced motion: a quick fade to the name.
- * The turn that follows announces the name (the stage is a live region), so the reel stays aria-hidden.
+ * `target`, already decided (by the server on gift day, 32; by the name picker, 70). Skipped or reduced
+ * motion: a quick fade to the name. The caller announces the name, so the reel stays aria-hidden.
  */
-export const WhoIsNextReel = ({ names, target, status, onLanded }: WhoIsNextReelProps) => {
+export const WhoIsNextReel = ({ names, target, status, onLanded, className }: WhoIsNextReelProps) => {
   const reduced = useReducedMotion();
   // One strip per turn (the stage remounts the reel for each): a re-render mid-spin must not reshuffle it.
   const [strip] = useState(() => reelStrip(names, target));
   const quick = status === 'skipped' || (status === 'spinning' && reduced);
+  const frame = cn(box, className);
   const landed = useRef(onLanded);
   useEffect(() => {
     landed.current = onLanded;
@@ -68,10 +70,10 @@ export const WhoIsNextReel = ({ names, target, status, onLanded }: WhoIsNextReel
     return () => clearTimeout(timer);
   }, [quick]);
 
-  if (status === 'idle') return <p className={box}>?</p>;
+  if (status === 'idle') return <p className={frame}>?</p>;
   if (quick) {
     return (
-      <div className={box} aria-hidden="true">
+      <div className={frame} aria-hidden="true">
         <m.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="truncate">
           {target}
         </m.p>
@@ -81,7 +83,7 @@ export const WhoIsNextReel = ({ names, target, status, onLanded }: WhoIsNextReel
   const targetRow = strip.length - 2;
   const rowsUp = (rows: number) => `-${(rows / strip.length) * 100}%`;
   return (
-    <div className={box} aria-hidden="true">
+    <div className={frame} aria-hidden="true">
       <m.div
         initial={{ y: '0%' }}
         animate={{ y: ['0%', rowsUp(targetRow), rowsUp(targetRow + OVERSHOOT_ROWS), rowsUp(targetRow)] }}

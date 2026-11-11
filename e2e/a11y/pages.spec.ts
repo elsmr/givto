@@ -97,7 +97,7 @@ for (const theme of ['light', 'dark'] as const) {
     test('public pages', async ({ page, signIn }) => {
       const ann = await signIn('ann');
       const group = ok(await ann.trpc.mutate('group.create', { name: 'A11y join', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
-      for (const path of ['/', '/nl', '/privacy', '/new', '/auth/sign-in', '/unsubscribe', `/g/${group.slug}/join?token=${group.joinToken}`, '/no-such-page']) {
+      for (const path of ['/', '/nl', '/privacy', '/pick', '/new', '/auth/sign-in', '/unsubscribe', `/g/${group.slug}/join?token=${group.joinToken}`, '/no-such-page']) {
         await visit(page, path);
       }
     });

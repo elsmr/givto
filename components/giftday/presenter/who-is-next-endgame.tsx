@@ -26,14 +26,21 @@ const hopPath = (count: number, end: number) => {
   return path;
 };
 
-type WhoIsNextEndgameProps = { names: string[]; target: string; status: SpinStatus; onLanded: () => void };
+type WhoIsNextEndgameProps = {
+  names: string[];
+  target: string;
+  status: SpinStatus;
+  onLanded: () => void;
+  /** Each card's: their size outside the presenter. */
+  className?: string;
+};
 
 /**
  * "Who's next?" with 2 or 3 people left: their names as cards, a highlight hops between them and
- * settles on `target` (decided by the server, 32), which pops. Skipped or reduced motion: the
+ * settles on `target` (already decided, like the reel's), which pops. Skipped or reduced motion: the
  * target lights up straight away. Cards in name order: the unwrap order stays a surprise.
  */
-export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextEndgameProps) => {
+export const WhoIsNextEndgame = ({ names, target, status, onLanded, className }: WhoIsNextEndgameProps) => {
   const reduced = useReducedMotion();
   const [cards] = useState(() => names.toSorted((a, b) => a.localeCompare(b)));
   const end = cards.indexOf(target);
@@ -70,7 +77,8 @@ export const WhoIsNextEndgame = ({ names, target, status, onLanded }: WhoIsNextE
           transition={won ? { type: 'spring', stiffness: 400, damping: 12, opacity: { duration: 0.3 } } : { duration: 0.08 }}
           className={cn(
             'max-w-full px-5 py-4 font-heading text-[clamp(2rem,5vw,5rem)] leading-none font-extrabold break-words text-ink bordered sm:px-8 sm:py-6',
-            i === lit ? 'bg-yellow shadow-brand' : 'bg-surface shadow-lg dark:border-control dark:shadow-brand'
+            i === lit ? 'bg-yellow shadow-brand' : 'bg-surface shadow-lg dark:border-control dark:shadow-brand',
+            className
           )}
         >
           {name}
