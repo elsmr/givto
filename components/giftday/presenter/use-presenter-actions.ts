@@ -22,8 +22,11 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const phase = presenterPhase(order, view, showEnd);
   const spinStatus: SpinStatus = spin.turn === order.turn ? spin.status : 'idle';
   const step = (action: Parameters<typeof advance>[0]) => advance(action, order.turnsTaken);
-  // White elephant (89): what the presenter typed for the gift opened now.
-  const [label, setLabel] = useState('');
+  // White elephant (89): what the presenter typed for the gift opened now; kept per turn, like the reel, so it survives a
+  // failed open and doesn't carry over to the next person.
+  const [typed, setTyped] = useState({ turn: 0, text: '' });
+  const label = typed.turn === order.turn ? typed.text : '';
+  const setLabel = (text: string) => setTyped({ turn: order.turn, text });
   const onLanded = () => advance('spin', order.turnsTaken);
   const oneByOne = view.unwrapMode === 'oneByOne';
   // A known gift count (63) decides when they're done: no "that was the last one".
@@ -36,7 +39,6 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
     else if (phase === 'turn' && view.swap) {
       if (isPending) return;
       advance('open', order.turnsTaken, label.trim() ? { label: label.trim() } : undefined);
-      setLabel('');
     } else if (phase === 'turn' && order.santaToShow) step(order.voteStep === 'ready' ? 'vote' : order.voteStep === 'open' ? 'tally' : 'santa');
     else if (phase === 'turn') step(oneByOne ? 'more' : 'last');
     else if (phase === 'reveal' && !view.reveal.revealed) reveal.mutate({ groupSlug, editionNumber });

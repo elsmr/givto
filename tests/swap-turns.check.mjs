@@ -71,4 +71,15 @@ assert.equal(swapped.gifts.length, order.length);
 const labelled = swapState(order, true, [{ memberId: 'ann', action: 'open', giftNo: 1, label: 'Red scarf' }, { memberId: 'bob', action: 'steal', giftNo: 1 }]);
 assert.deepEqual(labelled.gifts[0], { no: 1, label: 'Red scarf', holderId: 'bob', steals: 1, frozen: false });
 
+// Someone leaves mid-swap: nobody still in it loses their turn, and the final steal waits for everyone.
+const left = ['bob', 'cee', 'dan'];
+const afterLeave = swapState(left, true, play([['open'], ['open']]));
+assert.equal(afterLeave.current, 'cee');
+assert.equal(afterLeave.wrapped, 2);
+assert.equal(swapState(left, true, play([['open'], ['open']]).concat({ memberId: 'cee', action: 'open' })).current, 'dan');
+const robbedLeft = swapState(left, true, play([['open'], ['steal', 1]]));
+assert.equal(robbedLeft.current, 'cee');
+assert.equal(robbedLeft.robbed, false);
+assert.equal(robbedLeft.wrapped, 2);
+
 console.log('swap-turns: ok');

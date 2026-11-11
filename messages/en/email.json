@@ -136,7 +136,7 @@
     "wishlist": {
       "subject": "Add a few wishes",
       "title": "Your wishlist is empty",
-      "body": "Your Santa in “{group}” doesn't know what to get you yet. Add a few wishes: big or small, a link or just an idea.",
+      "body": "Nobody in “{group}” knows what to get you yet. Add a few wishes: big or small, a link or just an idea.",
       "by": "Wishlists ready by {date}.",
       "button": "Add a wish"
     },
@@ -175,7 +175,7 @@
       "subject": "Ready to lock in",
       "title": "Ready to lock in",
       "body": "Everyone you invited by email has joined “{group}”: {count, plural, one {# person is} other {# people are}} in. Lock it in whenever you're ready; anyone who joins later is still in.",
-      "body-soon": "Gift day for “{group}” is {date} and it isn't locked in yet. Lock it in now, so everyone knows to bring a gift.",
+      "body-soon": "Gift day for “{group}” is {date} and it isn't locked in yet. Lock it in now, so everyone has time to get ready.",
       "button": "Lock in"
     }
   },

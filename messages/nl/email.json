@@ -136,7 +136,7 @@
     "wishlist": {
       "subject": "Zet een paar wensen klaar",
       "title": "Je verlanglijstje is leeg",
-      "body": "Je Santa in “{group}” weet nog niet wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
+      "body": "Niemand in “{group}” weet nog wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
       "by": "Verlanglijstjes klaar vóór {date}.",
       "button": "Wens toevoegen"
     },
@@ -175,7 +175,7 @@
       "subject": "Klaar om vast te leggen",
       "title": "Klaar om vast te leggen",
       "body": "Iedereen die je per e-mail uitnodigde, doet mee met “{group}”: {count, plural, one {# deelnemer} other {# deelnemers}}. Leg het vast wanneer je wilt; wie later nog meedoet, is er ook bij.",
-      "body-soon": "Pakjesdag voor “{group}” is {date} en het is nog niet vastgelegd. Doe het nu, dan weet iedereen dat er een cadeau mee moet.",
+      "body-soon": "Pakjesdag voor “{group}” is {date} en het is nog niet vastgelegd. Doe het nu, dan heeft iedereen tijd om zich voor te bereiden.",
       "button": "Vastleggen"
     }
   },

@@ -94,7 +94,7 @@ export const groupRouter = router({
       ...(input.kind && { kind: input.kind }),
       exchangeMode,
       ...optional,
-      ...(input.giftDay && { giftDay: compactGiftDay(input.giftDay, input.exchangeMode) }),
+      ...(input.giftDay && { giftDay: compactGiftDay(input.giftDay, exchangeMode) }),
       avoidPreviousGiftees: false,
       status: 'open',
       statusChangedAt: { open: now },

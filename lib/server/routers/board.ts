@@ -103,6 +103,7 @@ export const boardRouter = router({
     }),
 
   delete: editionProcedure.input(PostInput).mutation(async ({ ctx, input }) => {
+    if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
     const { deletedCount } = await ctx.db.tips.deleteOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true });
     if (deletedCount === 0) throw new AppError('NOT_FOUND');
     return { postId: input.postId };

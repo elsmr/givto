@@ -54,14 +54,20 @@ const play = ({ gifts }: Table, move: SwapMove): Table => {
  * next (open or steal, but not straight back the gift just taken from them); a gift's third steal freezes it; the turn
  * moves on with every opened gift. Once all are open, the first player may swap theirs for any gift that isn't frozen
  * or keep it, and the game ends. Assumes the moves were legal (`canMove` at each step).
+ * Turns go by who has moved, not by counting gifts: people can leave mid-swap (their gift stays on the table).
  */
 export const swapState = (order: string[], started: boolean, moves: SwapMove[]): SwapState => {
-  const { gifts, robbedId } = moves.reduce(play, { gifts: [], robbedId: null });
-  const allOpen = order.length > 0 && gifts.length >= order.length;
+  const table = moves.reduce(play, { gifts: [], robbedId: null });
+  const { gifts } = table;
+  const robbedId = table.robbedId && order.includes(table.robbedId) ? table.robbedId : null;
+  const moved = new Set(moves.map((move) => move.memberId));
+  const waiting = order.filter((id) => !moved.has(id));
+  const wrapped = waiting.length + (robbedId ? 1 : 0);
+  const allOpen = order.length > 0 && wrapped === 0;
   const lastOpen = moves.findLastIndex((move) => move.action === 'open');
   const finished = started && allOpen && lastOpen < moves.length - 1;
   const final = started && allOpen && !finished;
-  const current = !started || finished ? null : final ? order[0] : (robbedId ?? order[gifts.length] ?? null);
+  const current = !started || finished ? null : final ? order[0] : (robbedId ?? waiting[0] ?? null);
   const justTaken = robbedId ? moves.at(-1)!.giftNo : null;
   const stealable = current
     ? gifts.filter((gift) => !gift.frozen && gift.holderId !== current && gift.no !== justTaken).map((gift) => gift.no)
@@ -73,10 +79,10 @@ export const swapState = (order: string[], started: boolean, moves: SwapMove[]):
     turn: moves.length + 1,
     currentGift: 0,
     // Who had their turn in the order: the reel spins between the others.
-    doneIds: finished ? [...order] : order.slice(0, gifts.length),
+    doneIds: finished ? [...order] : order.filter((id) => moved.has(id)),
     finished,
     gifts,
-    wrapped: Math.max(order.length - gifts.length, 0),
+    wrapped,
     robbed: robbedId !== null,
     final,
     stealable,

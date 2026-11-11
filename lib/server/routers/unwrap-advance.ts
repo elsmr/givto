@@ -71,7 +71,13 @@ const advanceSwap = async (db: Collections, group: Group, edition: Edition, { ac
   const saved = await db.editions.findOneAndUpdate(
     action === 'start'
       ? { _id: edition._id, 'unwrapOrder.shuffledAt': order.shuffledAt, 'unwrapOrder.progress': { $exists: false } }
-      : { _id: edition._id, 'unwrapOrder.shuffledAt': order.shuffledAt, 'unwrapOrder.progress.moves': { $size: turnsTaken } },
+      : {
+          _id: edition._id,
+          'unwrapOrder.shuffledAt': order.shuffledAt,
+          'unwrapOrder.progress': { $exists: true },
+          // A swap started before moves existed (88) has none yet.
+          $or: [{ 'unwrapOrder.progress.moves': { $size: turnsTaken } }, ...(turnsTaken === 0 ? [{ 'unwrapOrder.progress.moves': { $exists: false } }] : [])],
+        },
     update,
     { returnDocument: 'after' }
   );
