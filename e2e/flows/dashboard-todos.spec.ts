@@ -62,7 +62,7 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
     await followTodo(page, "Your Santa can't see any wishes here yet", 'Waiting');
     await expect(page).toHaveURL(`/g/${waiting.slug}#wishlist`);
     await expect(page.getByRole('tab', { name: 'My wishlist' })).toHaveAttribute('aria-selected', 'true');
-    await expect(page.getByRole('tabpanel', { name: 'My wishlist' }).getByText(/hidden here/)).toBeVisible();
+    await expect(page.getByRole('tabpanel', { name: 'My wishlist' }).getByText('Or add one from your wishlist')).toBeVisible();
   });
 
   await test.step('draft → open the next edition', async () => {

@@ -38,7 +38,7 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
         <IconCardTitle icon={VenetianMask} tone="primary-muted">
           {t('title')}
         </IconCardTitle>
-        {open && <CardDescription>{`${t('open')} ${t('when')}`}</CardDescription>}
+        {open && <CardDescription>{t('open')}</CardDescription>}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         {open && board && <GuessDialog input={input} people={people} board={board} />}

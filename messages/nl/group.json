@@ -25,7 +25,7 @@
     "post-by": "Cadeaus op de post op {date}"
   },
   "people": {
-    "title": "Deelnemers ({count} doen mee)",
+    "title": "Deelnemers",
     "organizer": "Organisator",
     "you": "Jij",
     "status": {

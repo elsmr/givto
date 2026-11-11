@@ -2,7 +2,7 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { moveItem } from '@/lib/move-item';
 
-/** Create, update, archive, restore, delete, move and show/hide the signed-in person's wishes; moves and show/hide are optimistic. */
+/** Create, update, archive, mark received (got it), restore, delete, move and show/hide the signed-in person's wishes; moves and show/hide are optimistic. */
 export const useWishMutations = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -18,6 +18,7 @@ export const useWishMutations = () => {
   const create = useMutation(trpc.wish.create.mutationOptions({ onSuccess: refresh }));
   const update = useMutation(trpc.wish.update.mutationOptions({ onSuccess: refresh }));
   const archive = useMutation(trpc.wish.archive.mutationOptions({ onSuccess: refresh }));
+  const receive = useMutation(trpc.giftday.markReceived.mutationOptions({ onSuccess: refresh }));
   const restore = useMutation(trpc.wish.restore.mutationOptions({ onSuccess: refresh }));
   const remove = useMutation(trpc.wish.delete.mutationOptions({ onSuccess: refresh }));
   const move = useMutation(
@@ -50,5 +51,5 @@ export const useWishMutations = () => {
       onSettled: refresh,
     })
   );
-  return { create, update, archive, restore, remove, move, setShown, refresh };
+  return { create, update, archive, receive, restore, remove, move, setShown, refresh };
 };

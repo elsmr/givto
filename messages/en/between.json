@@ -1,13 +1,12 @@
 {
   "tips": {
     "title": "Tips for someone's Santa",
-    "intro": "Know what someone would love? Leave a tip for their Santa. Only their Santa reads it: never the person it's about, never the organizer, and you won't find out who their Santa is.",
+    "intro": "Know what someone would love? Leave a tip for their Santa.",
     "about": "Who is it about?",
     "about-placeholder": "Pick someone",
     "text": "Your tip",
     "text-placeholder": "e.g. collects Moomin mugs, wears size M",
     "anonymous": "Post anonymously",
-    "anonymous-hint": "Their Santa won't see your name.",
     "add": "Leave a tip",
     "added": "Tip saved. Only {name}'s Santa will see it.",
     "mine-title": "Your tips",
@@ -21,8 +20,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "closed": "Tips are closed for this Secret Santa.",
-    "nobody": "Nobody to leave a tip about yet.",
-    "dialog-description": "Only their Santa reads it: never the person it's about, never the organizer."
+    "nobody": "Nobody to leave a tip about yet."
   },
   "boards": {
     "intro": "Everyone has a board where the others plan one gift for them, together. Nobody ever sees their own board.",
@@ -32,7 +30,6 @@
     "text": "Your post",
     "text-placeholder": "e.g. I found the camera they want, shall we?",
     "anonymous": "Post anonymously",
-    "anonymous-hint": "The others won't see your name.",
     "add": "Post",
     "post-from": "From {name}",
     "post-anonymous": "Anonymous",
@@ -67,7 +64,8 @@
     "asked-title": "Your questions",
     "waiting": "No answer yet",
     "answer-label": "Answer",
-    "button": "Ask a question"
+    "button": "Ask a question",
+    "unanswerable": "You look after {name}, so questions and Psst! would come back to you."
   },
   "psst": {
     "title": "Psst!",

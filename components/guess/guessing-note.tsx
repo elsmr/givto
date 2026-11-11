@@ -7,7 +7,7 @@ export const GuessingNote = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('guess.panel');
 
   return (
-    <p className="flex items-start gap-2 border-2 border-dashed border-outline p-3 text-sm">
+    <p className="flex items-start gap-2 text-sm text-muted">
       <VenetianMask aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
       <span>
         {t('note')}{' '}

@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { Field, FieldLabel } from '@/components/ui/field';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
-import { StatCard } from '@/components/ui/stat-card';
+import { ProgressRow } from '@/components/ui/progress-row';
 import { useTRPC, useTRPCClient } from '@/lib/client/trpc';
 import { MAX_ADDRESSES, type PostalAddress } from '@/lib/schema/user';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -106,8 +106,8 @@ export const AddressCard = ({ groupSlug }: { groupSlug: string }) => {
   );
 };
 
-/** "Post it to" on the giftee tab (80): my giftee's address, or that they haven't added one yet. */
-export const GifteeAddressCard = (input: EditionInput) => {
+/** "Post it to" next to my giftee's name (80): their address, or that they haven't added one yet. */
+export const GifteeAddress = (input: EditionInput) => {
   const t = useTranslations('group.address');
   const trpc = useTRPC();
   const giftee = useQuery(trpc.address.giftee.queryOptions(input));
@@ -115,19 +115,18 @@ export const GifteeAddressCard = (input: EditionInput) => {
   if (!giftee.data) return null;
   const { name, address } = giftee.data;
   return (
-    <Card>
-      <CardHeader>
-        <IconCardTitle icon={Mailbox} tone="yellow">
-          {t('post-to')}
-        </IconCardTitle>
-      </CardHeader>
-      <CardContent>{address ? <AddressLines address={address} name={name} /> : <p>{t('giftee-missing', { name })}</p>}</CardContent>
-    </Card>
+    <div className="mt-2 flex flex-col items-center gap-1 text-sm">
+      <p className="flex items-center gap-1.5 font-semibold text-muted">
+        <Mailbox aria-hidden="true" className="size-4" />
+        {t('post-to')}
+      </p>
+      {address ? <AddressLines address={address} name={name} /> : <p>{t('giftee-missing', { name })}</p>}
+    </div>
   );
 };
 
 /** Organizer (80): how many people added their address, and who hasn't. Never an address. */
-export const MissingAddressesStat = (input: EditionInput) => {
+export const MissingAddressesRow = (input: EditionInput) => {
   const t = useTranslations('group.stats');
   const format = useFormatter();
   const trpc = useTRPC();
@@ -136,12 +135,12 @@ export const MissingAddressesStat = (input: EditionInput) => {
   if (!missing.data) return null;
   const { people, missing: names } = missing.data;
   return (
-    <StatCard
+    <ProgressRow
       icon={Mailbox}
       tone="yellow"
       title={t('addresses')}
       value={`${people - names.length}/${people}`}
-      unit={names.length > 0 ? t('addresses-missing', { names: format.list(names) }) : t('addresses-all')}
+      detail={names.length > 0 ? t('addresses-missing', { names: format.list(names) }) : t('addresses-all')}
     />
   );
 };

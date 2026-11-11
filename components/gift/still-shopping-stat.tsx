@@ -1,4 +1,4 @@
-import { StatCard } from '@/components/ui/stat-card';
+import { ProgressRow } from '@/components/ui/progress-row';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { Send, ShoppingBag } from 'lucide-react';
@@ -8,7 +8,7 @@ import { useFormatter, useTranslations } from 'next-intl';
  * Organizer (63): how many Santas have their gift, and who's still shopping; by post (87), who hasn't posted theirs.
  * Never what, for whom, or whether it arrived.
  */
-export const StillShoppingStat = ({ groupSlug, editionNumber, className }: { groupSlug: string; editionNumber: number; className?: string }) => {
+export const StillShoppingRows = ({ groupSlug, editionNumber }: { groupSlug: string; editionNumber: number }) => {
   const t = useTranslations('group.stats');
   const format = useFormatter();
   const trpc = useTRPC();
@@ -18,22 +18,20 @@ export const StillShoppingStat = ({ groupSlug, editionNumber, className }: { gro
   const { santas, stillShopping, notPosted } = shopping.data;
   return (
     <>
-      <StatCard
+      <ProgressRow
         icon={ShoppingBag}
         tone="mint"
         title={t('gifts')}
-        className={className}
         value={`${santas - stillShopping.length}/${santas}`}
-        unit={stillShopping.length > 0 ? t('gifts-still', { names: format.list(stillShopping) }) : t('gifts-all')}
+        detail={stillShopping.length > 0 ? t('gifts-still', { names: format.list(stillShopping) }) : t('gifts-all')}
       />
       {notPosted && (
-        <StatCard
+        <ProgressRow
           icon={Send}
           tone="yellow"
           title={t('posted')}
-          className={className}
           value={`${santas - notPosted.length}/${santas}`}
-          unit={notPosted.length > 0 ? t('posted-not-yet', { names: format.list(notPosted) }) : t('posted-all')}
+          detail={notPosted.length > 0 ? t('posted-not-yet', { names: format.list(notPosted) }) : t('posted-all')}
         />
       )}
     </>

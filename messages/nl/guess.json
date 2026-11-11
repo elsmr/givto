@@ -1,7 +1,7 @@
 {
   "card": {
     "title": "Raad je Santa",
-    "open": "Wie denk jij dat jouw cadeau koopt? Gok ook de rest van de loting als je wilt. Eén keer, en terugnemen kan niet.",
+    "open": "Wie koopt jouw cadeau? Eén keer, terugnemen kan niet.",
     "when": "Je hoort het als jij aan de beurt bent op pakjesdag.",
     "make": "Doe je gok",
     "you-guessed": "Jij gokte <name>{guess}</name>",
@@ -63,8 +63,8 @@
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
   },
   "panel": {
-    "note": "Bij elke beurt zie je wie de Santa was. Zet Raad je Santa uit om de Santa's geheim te houden.",
-    "settings": "Instellingen van Raad je Santa"
+    "note": "Bij elke beurt zie je wie de Santa was.",
+    "settings": "Wijzigen"
   },
   "errors": {
     "GUESS_LOCKED": "Je hebt al een gok vastgelegd.",

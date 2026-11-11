@@ -22,7 +22,7 @@ test('guess, locked in; phones vote; the presenter shows the tally, then "From â
     await page.goto(`/g/${group.slug}`);
     const card = page.getByRole('heading', { name: 'Guess your Santa' });
     await expect(card).toBeVisible();
-    await expect(page.getByText("You'll find out at your turn on gift day.")).toBeVisible();
+    await expect(page.getByText("Who's buying your gift? One go, no take-backs.")).toBeVisible();
     await page.getByRole('button', { name: 'Make your guess' }).click();
     const dialog = page.getByRole('dialog', { name: "Who's your Santa?" });
     await expect(dialog.getByRole('radio', { name: 'Bob' })).toHaveCount(0);

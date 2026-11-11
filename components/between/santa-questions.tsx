@@ -8,15 +8,18 @@ import { useState } from 'react';
 import { AskQuestionForm } from './ask-question-form';
 import type { EditionInput } from './edition-input';
 
-/** Ask your giftee anonymously (52), in a dialog. Nothing when asking is off. */
+/** Ask your giftee anonymously (52), in a dialog. When you look after your giftee, why there's no asking (or Psst!). */
 export const AskQuestionButton = ({ input }: { input: EditionInput }) => {
   const t = useTranslations('between.ask');
   const trpc = useTRPC();
   const asked = useQuery(trpc.question.asked.queryOptions(input));
   const [open, setOpen] = useState(false);
 
-  if (!asked.data || asked.data.answersOwnQuestions || !asked.data.canAsk) return null;
-  const { giftee } = asked.data;
+  if (!asked.data) return null;
+  const { giftee, answersOwnQuestions, canAsk } = asked.data;
+  // Psst! is off for the same reason; this one line explains both.
+  if (answersOwnQuestions) return <p className="w-full text-sm text-muted">{t('unanswerable', { name: giftee.name })}</p>;
+  if (!canAsk) return null;
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<Button variant="neutral" size="sm" />}>

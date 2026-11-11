@@ -7,9 +7,9 @@
     "join-call": "Naar het videogesprek"
   },
   "order": {
-    "intro": "Willekeurig gekozen en een verrassing: de presentator draait wie er aan de beurt is.",
+    "intro": "Een verrassing: de presentator draait wie er aan de beurt is.",
     "none": "Nog geen uitpakvolgorde: die wordt uiterlijk op pakjesdag geschud.",
-    "none-organizer": "De volgorde blijft een verrassing: in de presentatieweergave draai je voor elke beurt. Schud je niet, dan gebeurt het op pakjesdag.",
+    "none-organizer": "Een verrassing: in de presentatieweergave draai je voor elke beurt.",
     "you": "jij",
     "shuffle": "Uitpakvolgorde schudden",
     "reshuffle": "Opnieuw schudden",

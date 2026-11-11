@@ -44,10 +44,11 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await signInPage(page, olive);
     await page.goto(`/g/${family.slug}#wishlist`);
     const tab = page.getByRole('tabpanel', { name: 'My wishlist' });
-    await tab.getByText('2 wishes hidden here').click();
-    await tab.getByRole('button', { name: 'Show “Cookbook” in this group' }).click();
+    const pick = tab.getByRole('region', { name: 'Or add one from your wishlist' });
+    await expect(pick.getByRole('button')).toHaveCount(2);
+    await pick.getByRole('button', { name: 'Add “Cookbook” to this group' }).click();
     await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends.')).toBeVisible();
-    await expect(tab.getByText('1 wish hidden here')).toBeVisible();
+    await expect(pick.getByRole('button')).toHaveText(['Wool socks']);
     await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook']);
   });
 

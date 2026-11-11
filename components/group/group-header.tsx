@@ -22,7 +22,7 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
               {edition?.isCurrent && edition.status === 'open' && <DrawNamesButton group={group} edition={edition} />}
               <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
                 <Settings aria-hidden="true" />
-                {t('settings-link')}
+                <span className="max-sm:sr-only">{t('settings-link')}</span>
               </Link>
             </>
           )}

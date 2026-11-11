@@ -1,5 +1,5 @@
 import { IconCardTitle } from '@/components/ui/icon-card-title';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -40,7 +40,6 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
         <IconCardTitle icon={Heart} tone="coral">
           {t('title', { name: giftee.name })}
         </IconCardTitle>
-        <CardDescription>{t('intro', { name: giftee.name })}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         {wishes.length === 0 ? (

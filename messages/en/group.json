@@ -25,7 +25,7 @@
     "post-by": "Post gifts by {date}"
   },
   "people": {
-    "title": "People ({count} in)",
+    "title": "People",
     "organizer": "Organizer",
     "you": "You",
     "status": {
