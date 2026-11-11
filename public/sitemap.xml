@@ -25,4 +25,16 @@
     <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl/privacy"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/privacy"/>
   </url>
+  <url>
+    <loc>https://givto.app/pick</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/pick"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl/pick"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/pick"/>
+  </url>
+  <url>
+    <loc>https://givto.app/nl/pick</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://givto.app/pick"/>
+    <xhtml:link rel="alternate" hreflang="nl" href="https://givto.app/nl/pick"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://givto.app/pick"/>
+  </url>
 </urlset>

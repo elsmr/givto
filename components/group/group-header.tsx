@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 
-/** Group name and edition; for the organizer Draw names (while open), Settings and Manage (61, 64). Budget and exchange are in the details. */
+/** Group name and edition; for the organizer Draw names (while open) and Settings (61); ⋯ for everyone (64, 70). Budget and exchange are in the details. */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
   const { edition } = group;
@@ -16,16 +16,18 @@ export const GroupHeader = ({ group }: { group: GroupData }) => {
     <PageHeader
       title={group.name}
       actions={
-        group.me.isOrganizer && (
-          <>
-            {edition?.isCurrent && edition.status === 'open' && <DrawNamesButton group={group} edition={edition} />}
-            <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
-              <Settings aria-hidden="true" />
-              {t('settings-link')}
-            </Link>
-            {edition?.isCurrent && <ManageMenu group={group} edition={edition} />}
-          </>
-        )
+        <>
+          {group.me.isOrganizer && (
+            <>
+              {edition?.isCurrent && edition.status === 'open' && <DrawNamesButton group={group} edition={edition} />}
+              <Link href={`/g/${group.slug}/settings`} className={buttonVariants({ variant: 'neutral' })}>
+                <Settings aria-hidden="true" />
+                {t('settings-link')}
+              </Link>
+            </>
+          )}
+          <ManageMenu group={group} />
+        </>
       }
     >
       {edition && <p className="font-semibold">{edition.title}</p>}
