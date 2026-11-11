@@ -26,7 +26,8 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
   const giftDay = useGiftDay(input, edition.status);
 
   if (!mine.data) return null;
-  const { open, guess, people, result } = mine.data;
+  const { open, guess, people, result, board } = mine.data;
+  const myRows = board?.rows.flatMap((row) => (row.santa ? [{ memberId: row.memberId, giftee: row.name, santa: row.santa.name }] : [])) ?? [];
   const guessing = giftDay.data?.guessing;
   // Once the big reveal is out, its card is the scoreboard.
   const soFar = !giftDay.data?.reveal.revealed && guessing && guessing.results.length > 0 ? guessing : null;
@@ -40,7 +41,7 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
         {open && <CardDescription>{`${t('open')} ${t('when')}`}</CardDescription>}
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {open && <GuessDialog input={input} people={people} />}
+        {open && board && <GuessDialog input={input} people={people} board={board} />}
         {result ? (
           <div className="flex flex-col gap-2">
             <p className="text-lg">{t.rich('from', { santa: result.santa, name })}</p>
@@ -66,6 +67,16 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
           </div>
         ) : (
           !open && <p className="text-muted">{t('closed')}</p>
+        )}
+        {myRows.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <h3 className="font-heading font-bold">{t('board')}</h3>
+            <ul className="flex flex-col gap-1">
+              {myRows.map((row) => (
+                <li key={row.memberId}>{t.rich('pair', { giftee: row.giftee, santa: row.santa, name })}</li>
+              ))}
+            </ul>
+          </div>
         )}
         {soFar && (
           <>

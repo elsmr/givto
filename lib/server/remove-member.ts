@@ -21,6 +21,11 @@ export const removeMember = async (db: Collections, group: Group, memberId: stri
     await db.gifts.deleteMany({ editionId: edition._id, $or: [{ santaMemberId: memberId }, { gifteeMemberId: memberId }] });
     // Their guess, and guesses naming them: those people may guess again (it hints nothing about who's right).
     await db.guesses.deleteMany({ editionId: edition._id, $or: [{ guesserMemberId: memberId }, { guessedMemberId: memberId }] });
+    // Rows naming them on the other boards (82) go; the rest of those boards stays.
+    await db.guesses.updateMany(
+      { editionId: edition._id },
+      { $pull: { pairs: { $or: [{ gifteeMemberId: memberId }, { santaMemberId: memberId }] } } }
+    );
   }
   await db.invites.deleteMany({ memberId, usedAt: { $exists: false } });
   await db.groups.updateOne(

@@ -87,6 +87,10 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
     db.claims.deleteMany({ $or: [{ wishId: { $in: wishIds } }, { santaMemberId: mine }] }),
     db.gifts.deleteMany({ $or: [{ santaMemberId: mine }, { gifteeMemberId: mine }] }),
     db.guesses.deleteMany({ $or: [{ guesserMemberId: mine }, { guessedMemberId: mine }] }),
+    db.guesses.updateMany(
+      { $or: [{ 'pairs.gifteeMemberId': mine }, { 'pairs.santaMemberId': mine }] },
+      { $pull: { pairs: { $or: [{ gifteeMemberId: mine }, { santaMemberId: mine }] } } }
+    ),
     db.tips.deleteMany({ $or: [{ authorMemberId: mine }, { aboutMemberId: mine }] }),
     db.questions.deleteMany({ $or: [{ askerMemberId: mine }, { gifteeMemberId: mine }] }),
     db.nudges.deleteMany({ $or: [{ santaMemberId: mine }, { gifteeMemberId: mine }] }),

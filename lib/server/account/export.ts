@@ -79,7 +79,12 @@ export const exportAccount = async (db: Collections, userId: string) => {
     })),
     wishes: wishes.map(({ ownerId: _ownerId, ...wish }) => wish),
     claims: claims.map(({ wishId, editionId, createdAt }) => ({ wishId, editionId, createdAt })),
-    guessesMade: guesses.map(({ editionId, guessedMemberId, createdAt }) => ({ editionId, guessed: nameOf(guessedMemberId), createdAt })),
+    guessesMade: guesses.map(({ editionId, guessedMemberId, pairs, createdAt }) => ({
+      editionId,
+      guessed: nameOf(guessedMemberId),
+      board: (pairs ?? []).map(({ gifteeMemberId, santaMemberId }) => ({ giftee: nameOf(gifteeMemberId), santa: nameOf(santaMemberId) })),
+      createdAt,
+    })),
     giftsMarked: gifts.map(({ editionId, wishIds, lines, createdAt, updatedAt }) => ({ editionId, wishIds, lines, createdAt, updatedAt })),
     tipsWritten: tips.map(({ text, anonymous, createdAt, updatedAt }) => ({ text, anonymous, createdAt, updatedAt })),
     questionsAsked: asked.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),

@@ -1,4 +1,4 @@
-// Guess your Santa (62): the guess dialog locks one guess; on gift day the presenter shows the Santa
+// Guess your Santa (62): the guess dialog locks one guess, with the rest of the draw (82); on gift day the presenter shows the Santa
 // and the guess after the person unwrapped, the group page follows; the organizer can switch it off.
 import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
@@ -14,6 +14,8 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
   const nameOf = (memberId: string) => members.find((m) => m.id === memberId)!.name;
   const santaOf = (memberId: string) => Object.entries(draw!.assignments).find(([, giftee]) => giftee === memberId)![0];
   const bobsSanta = santaOf(idOf(bob.id));
+  // Three people: Bob's one board row (82) is the person he doesn't give to, whose Santa is his giftee.
+  const bobsGiftee = draw!.assignments[idOf(bob.id)];
 
   await test.step('Bob makes his guess and it locks', async () => {
     await signInPage(page, bob);
@@ -25,9 +27,12 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     const dialog = page.getByRole('dialog', { name: "Who's your Santa?" });
     await expect(dialog.getByRole('radio', { name: 'Bob' })).toHaveCount(0);
     await dialog.getByRole('radio', { name: nameOf(bobsSanta) }).check();
+    await expect(dialog.getByText(`${nameOf(bobsGiftee)}'s Santa`)).toBeVisible();
+    await dialog.getByRole('combobox', { name: `${nameOf(bobsSanta)}'s Santa` }).selectOption({ label: nameOf(bobsGiftee) });
     await dialog.getByRole('button', { name: 'Lock it in' }).click();
     await expect(dialog).toBeHidden();
     await expect(page.getByText(`You guessed ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(page.getByText(`${nameOf(bobsSanta)} from ${nameOf(bobsGiftee)}`)).toBeVisible();
     await expect(page.getByText('Locked in', { exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Make your guess' })).toHaveCount(0);
   });
@@ -52,6 +57,7 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     await expect(presenter.getByText(`From ${nameOf(bobsSanta)}`)).toBeVisible();
     await expect(presenter.getByText(`You guessed ${nameOf(bobsSanta)}`)).toBeVisible();
     await expect(presenter.getByText('Nailed it!')).toBeVisible();
+    await expect(presenter.getByRole('list', { name: 'Leaderboard' }).getByText('1 point')).toBeVisible();
     await expect(presenter.getByRole('button', { name: 'Next' })).toBeVisible();
     await presenter.close();
   });

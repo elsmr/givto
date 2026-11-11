@@ -1,25 +1,37 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FieldLegend, FieldSet } from '@/components/ui/field';
+import { FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { toast } from '@/components/ui/toast';
 import type { EditionInput } from '@/components/between/edition-input';
-import { useTRPC } from '@/lib/client/trpc';
+import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Lock, VenetianMask } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { Fragment, useState, type FormEvent } from 'react';
 import { useGuessError } from './use-guess-error';
 
-type GuessDialogProps = { input: EditionInput; people: { memberId: string; name: string }[] };
+type Mine = NonNullable<RouterOutputs['guess']['mine']>;
+type GuessDialogProps = { input: EditionInput; people: Mine['people']; board: NonNullable<Mine['board']> };
 
-/** Pick who you think your Santa is (62) and lock it in: one guess, no changes. */
-export const GuessDialog = ({ input, people }: GuessDialogProps) => {
+/**
+ * Pick who you think your Santa is (62), and optionally the rest of the draw (82), and lock it in:
+ * one go, no changes. Each person can be picked as Santa once; your own giftee's row is yours.
+ */
+export const GuessDialog = ({ input, people, board }: GuessDialogProps) => {
   const t = useTranslations('guess');
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const onError = useGuessError();
   const [open, setOpen] = useState(false);
   const [choice, setChoice] = useState<string | null>(null);
+  /** Giftee member id → guessed Santa. */
+  const [pairs, setPairs] = useState<Record<string, string>>({});
+  const taken = new Set([choice, ...Object.values(pairs)]);
+  const pick = (memberId: string) => {
+    setChoice(memberId);
+    setPairs((current) => Object.fromEntries(Object.entries(current).filter(([, santa]) => santa !== memberId)));
+  };
   const make = useMutation(
     trpc.guess.make.mutationOptions({
       onSuccess: () => {
@@ -32,7 +44,8 @@ export const GuessDialog = ({ input, people }: GuessDialogProps) => {
   );
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (choice) make.mutate({ ...input, memberId: choice });
+    const rows = Object.entries(pairs).map(([gifteeMemberId, santaMemberId]) => ({ gifteeMemberId, santaMemberId }));
+    if (choice) make.mutate({ ...input, memberId: choice, pairs: rows });
   };
 
   return (
@@ -62,7 +75,7 @@ export const GuessDialog = ({ input, people }: GuessDialogProps) => {
                     name="guess"
                     value={person.memberId}
                     checked={choice === person.memberId}
-                    onChange={() => setChoice(person.memberId)}
+                    onChange={() => pick(person.memberId)}
                     className="size-5 shrink-0 accent-primary"
                   />
                   {person.name}
@@ -70,6 +83,49 @@ export const GuessDialog = ({ input, people }: GuessDialogProps) => {
               ))}
             </div>
           </FieldSet>
+          {board.rows.length > 0 && (
+            <FieldSet>
+              <FieldLegend variant="label" className="font-semibold">
+                {t('dialog.board')}
+              </FieldLegend>
+              <FieldDescription>{t('dialog.board-hint')}</FieldDescription>
+              <dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-3 gap-y-2">
+                <dt className="font-semibold break-words">{t('dialog.row', { giftee: board.myGiftee.name })}</dt>
+                <dd className="flex h-11 items-center border-2 border-dashed border-outline px-3 text-muted">{t('dialog.you')}</dd>
+                {board.rows.map((row) => (
+                  <Fragment key={row.memberId}>
+                    <dt className="font-semibold break-words">
+                      <label htmlFor={`board-${row.memberId}`}>{t('dialog.row', { giftee: row.name })}</label>
+                    </dt>
+                    <dd>
+                      <NativeSelect
+                        id={`board-${row.memberId}`}
+                        className="w-full"
+                        value={pairs[row.memberId] ?? ''}
+                        onChange={(event) => {
+                          const { value } = event.target;
+                          setPairs(({ [row.memberId]: _, ...rest }) => (value ? { ...rest, [row.memberId]: value } : rest));
+                        }}
+                      >
+                        <NativeSelectOption value="">{t('dialog.no-guess')}</NativeSelectOption>
+                        {people
+                          .filter((person) => person.memberId !== row.memberId)
+                          .map((person) => (
+                            <NativeSelectOption
+                              key={person.memberId}
+                              value={person.memberId}
+                              disabled={taken.has(person.memberId) && pairs[row.memberId] !== person.memberId}
+                            >
+                              {person.name}
+                            </NativeSelectOption>
+                          ))}
+                      </NativeSelect>
+                    </dd>
+                  </Fragment>
+                ))}
+              </dl>
+            </FieldSet>
+          )}
           <DialogFooter>
             <DialogClose render={<Button variant="neutral" />}>{t('dialog.cancel')}</DialogClose>
             <Button type="submit" disabled={!choice || make.isPending}>

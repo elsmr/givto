@@ -4,6 +4,9 @@ import type { Assignments } from './schema/edition';
 /** Guesser member id → the member they guessed. */
 export type Guesses = Record<string, string>;
 
+/** Guess the whole draw (82): guesser member id → giftee → the Santa they guessed, their own row included. */
+export type Boards = Record<string, Record<string, string>>;
+
 export interface GuessResult {
   memberId: string;
   santaMemberId: string;
@@ -24,4 +27,20 @@ export const guessResults = (revealedIds: string[], assignments: Assignments, gu
     const guessedMemberId = guesses[memberId] ?? null;
     return [{ memberId, santaMemberId, guessedMemberId, right: guessedMemberId === santaMemberId }];
   });
+};
+
+/**
+ * Guess the whole draw (82): a point per right pair among `revealedIds`, for everyone with a board.
+ * Empty until something is out, so it doesn't even say who played. The row for your own giftee never
+ * scores: you know it.
+ */
+export const boardScores = (revealedIds: string[], assignments: Assignments, boards: Boards) => {
+  if (revealedIds.length === 0) return [];
+  const santaOf = new Map(Object.entries(assignments).map(([santa, giftee]) => [giftee, santa]));
+  return Object.entries(boards).map(([memberId, board]) => ({
+    memberId,
+    points: revealedIds.filter(
+      (giftee) => giftee !== assignments[memberId] && santaOf.has(giftee) && board[giftee] === santaOf.get(giftee)
+    ).length,
+  }));
 };
