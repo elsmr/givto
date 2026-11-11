@@ -73,13 +73,6 @@ export const activeGroupsOf = async (db: Collections, userId: string, exceptGrou
     }));
 };
 
-/** Where a new group's view starts: my current wishes no other active group shows, so none shows twice. */
-export const unshownWishIds = async (db: Collections, userId: string, exceptGroupId?: string) => {
-  const [wishes, active] = await Promise.all([listWishes(db, userId), activeGroupsOf(db, userId, exceptGroupId)]);
-  const shown = new Set(active.flatMap((group) => group.shownWishIds));
-  return wishes.filter((wish) => !shown.has(wish._id)).map((wish) => wish._id);
-};
-
 /**
  * What a Santa sees of their giftee's list: the group's view, plus archived wishes this Santa has
  * Dibs! on in this edition (76), flagged, since they may have bought them already.

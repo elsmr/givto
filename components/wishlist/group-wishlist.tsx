@@ -1,4 +1,3 @@
-import { Doodle } from '@/components/group/doodle';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -43,7 +42,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <AddWish groupSlug={groupSlug} />
+        <AddWish groupSlug={groupSlug} empty={!view.isPending && wishes.length === 0} />
         {hidden.length > 0 && (
           <section aria-labelledby={`${groupSlug}-pick`} className="flex flex-col gap-2">
             <h3 id={`${groupSlug}-pick`} className="text-sm font-semibold text-muted">
@@ -60,24 +59,15 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         )}
         {view.isPending ? (
           <Skeleton className="h-24" />
-        ) : wishes.length === 0 ? (
-          <div className="flex items-center gap-4">
-            <Doodle shape="dots" className="text-primary-muted" />
-            <p>{t('empty')}</p>
-          </div>
         ) : (
-          <>
-            {shown.length === 0 ? (
-              <p>{t('all-hidden')}</p>
-            ) : (
-              <WishListEditor
-                wishes={shown}
-                onMove={(wishId, toIndex) => move.mutate({ groupSlug, wishId, toIndex })}
-                status={(wish) => wish.alsoIn.length > 0 && <AlsoInNote groups={wish.alsoIn.map(({ name }) => name)} />}
-                actions={(wish) => <ShowWishButton groupSlug={groupSlug} wish={wish} />}
-              />
-            )}
-          </>
+          shown.length > 0 && (
+            <WishListEditor
+              wishes={shown}
+              onMove={(wishId, toIndex) => move.mutate({ groupSlug, wishId, toIndex })}
+              status={(wish) => wish.alsoIn.length > 0 && <AlsoInNote groups={wish.alsoIn.map(({ name }) => name)} />}
+              actions={(wish) => <ShowWishButton groupSlug={groupSlug} wish={wish} />}
+            />
+          )
         )}
       </CardContent>
     </Card>

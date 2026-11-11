@@ -22,7 +22,7 @@ const withName = (key: string, name: ReactNode, square: ReactElement) => (
  * Overlapping avatar squares, as many as fit its width (at most 8), "+n" for the rest; hovering shows
  * the names. Takes the free width of its row. `label` is what screen readers get, e.g. who's in.
  */
-export const AvatarStack = ({ people, label }: { people: Pick<GroupMember, 'id' | 'name'>[]; label: string }) => {
+export const AvatarStack = ({ people, label }: { people: (Pick<GroupMember, 'id' | 'name'> & Partial<Pick<GroupMember, 'avatarColor'>>)[]; label: string }) => {
   const format = useFormatter();
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
@@ -38,7 +38,7 @@ export const AvatarStack = ({ people, label }: { people: Pick<GroupMember, 'id' 
 
   return (
     <AvatarGroup ref={ref} role="img" aria-label={label} className="min-w-0 flex-1 -space-x-2">
-      {people.slice(0, shown).map((person) => withName(person.id, person.name, <PersonAvatar id={person.id} name={person.name} />))}
+      {people.slice(0, shown).map((person) => withName(person.id, person.name, <PersonAvatar id={person.id} name={person.name} color={person.avatarColor} />))}
       {rest.length > 0 &&
         withName('rest', format.list(rest.map((person) => person.name)), <AvatarGroupCount>+{rest.length}</AvatarGroupCount>)}
     </AvatarGroup>

@@ -48,7 +48,7 @@
   },
   "settings": {
     "switch": "Guess your Santa",
-    "description": "Everyone can guess who their Santa is and the rest of the draw, for points, and change their guesses until those Santas are shown. On gift day everyone can guess on their phone who each gift is from, then the presenter view shows the Santa, with everyone's guesses and the leaderboard. Switch it off to keep Santas secret.",
+    "description": "Everyone guesses who gives to whom, for points. On gift day the presenter shows each Santa, everyone's guesses and the leaderboard. Off: Santas stay secret.",
     "on": "Guess your Santa is on",
     "off": "Guess your Santa is off: Santas stay secret"
   },

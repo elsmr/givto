@@ -21,38 +21,35 @@ export const WishFormLinks = ({ links, onChange }: WishFormLinksProps) => {
     onChange(links.flatMap((current, i) => (i !== index ? [current] : link ? [link] : [])));
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-semibold">{t('links', { count: links.length })}</p>
-      <ul className="flex flex-col gap-2">
-        {links.map((link, index) => {
-          const shop = shopName(link.url);
-          return (
-            <li key={`${index}-${link.url}`} className="flex items-center gap-3 border-2 border-outline bg-page p-2">
-              {link.imageId && (
-                <WishImage imageId={link.imageId} alt={t('image-alt', { title: link.title ?? shop })} size={64} className="size-14" />
-              )}
-              <div className="flex min-w-0 flex-1 flex-col">
-                <span className="mono truncate text-xs font-semibold">{shop}</span>
-                <span className="line-clamp-2 text-sm break-words">{link.title ?? link.url}</span>
-                {link.price && <span className="mono text-sm text-muted">{formatPrice(link.price, locale)}</span>}
-              </div>
-              {link.imageId &&
-                withTooltip(
-                  t('remove-image', { shop }),
-                  <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index, { ...link, imageId: undefined })}>
-                    <ImageOff aria-hidden="true" />
-                  </Button>
-                )}
-              {withTooltip(
-                t('remove-link', { shop }),
-                <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index)}>
-                  <X aria-hidden="true" />
+    <ul className="flex flex-col gap-2">
+      {links.map((link, index) => {
+        const shop = shopName(link.url);
+        return (
+          <li key={`${index}-${link.url}`} className="flex items-center gap-3 border-2 border-outline bg-page p-2">
+            {link.imageId && (
+              <WishImage imageId={link.imageId} alt={t('image-alt', { title: link.title ?? shop })} size={64} className="size-14" />
+            )}
+            <div className="flex min-w-0 flex-1 flex-col">
+              <span className="mono truncate text-xs font-semibold">{shop}</span>
+              <span className="line-clamp-2 text-sm break-words">{link.title ?? link.url}</span>
+              {link.price && <span className="mono text-sm text-muted">{formatPrice(link.price, locale)}</span>}
+            </div>
+            {link.imageId &&
+              withTooltip(
+                t('remove-image', { shop }),
+                <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index, { ...link, imageId: undefined })}>
+                  <ImageOff aria-hidden="true" />
                 </Button>
               )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+            {withTooltip(
+              t('remove-link', { shop }),
+              <Button type="button" variant="ghost" size="icon-sm" onClick={() => replace(index)}>
+                <X aria-hidden="true" />
+              </Button>
+            )}
+          </li>
+        );
+      })}
+    </ul>
   );
 };

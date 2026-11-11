@@ -48,7 +48,7 @@
   },
   "settings": {
     "switch": "Raad je Santa",
-    "description": "Iedereen kan raden wie zijn Santa is en hoe de rest van de loting zit, voor punten, en zijn gokken aanpassen tot die Santa's bekend zijn. Op pakjesdag kan iedereen op zijn telefoon gokken van wie elk cadeau is, daarna toont de presentatieweergave wie de Santa was, met wat iedereen gokte en de ranglijst. Zet het uit om de Santa's geheim te houden.",
+    "description": "Iedereen raadt wie aan wie geeft, voor punten. Op pakjesdag toont de presentatie elke Santa, wat iedereen gokte en de ranglijst. Uit: de Santa's blijven geheim.",
     "on": "Raad je Santa staat aan",
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
   },

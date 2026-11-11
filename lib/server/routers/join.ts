@@ -5,11 +5,10 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findGroupByJoinLink, joinLinkPreview } from '../join-preview';
-import { addToCurrentEdition, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, memberProfile, placeHolding, randomToken } from '../membership';
 import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
-import { unshownWishIds } from '../wishlist/wish-view';
 
 const JOINS_PER_USER = { window: 60 * 60, max: 20 };
 const JOINS_PER_GROUP = { window: 60 * 60, max: 100 };
@@ -28,7 +27,7 @@ export const joinRouter = router({
    * a pending email invite for the same address becomes this member (45).
    */
   accept: authedProcedure
-    .input(v.object({ ...LinkInput.entries, name: PersonName }))
+    .input(v.object({ ...LinkInput.entries, name: v.optional(PersonName) }))
     .mutation(async ({ ctx, input }) => {
       const group = await findGroupByJoinLink(ctx.db, input.groupSlug, input.token);
       if (!group?.joinLink) throw new AppError('JOIN_LINK_INVALID');
@@ -39,6 +38,7 @@ export const joinRouter = router({
       if (existing && placeHolding.includes(existing.status)) {
         return { slug: group.slug, status: existing.status };
       }
+      const profile = await memberProfile(ctx.db, ctx.user.id, input.name);
       const status = group.joinLink.requiresApproval ? 'requested' : 'joined';
       const now = new Date();
       const invite = existing
@@ -47,9 +47,8 @@ export const joinRouter = router({
             { groupId: group._id, email: ctx.user.email.toLowerCase() },
             { sort: { createdAt: -1 } }
           );
+      // Someone rejoining keeps what they showed here before; anyone new, invitees included, starts with nothing shown.
       const reusedId = existing?.id ?? invite?.memberId;
-      // Someone rejoining keeps what they showed here before; anyone new starts with what no other active group shows.
-      const shownWishIds = existing ? undefined : await unshownWishIds(ctx.db, ctx.user.id, group._id);
       const cap = Math.min(group.joinLink.maxMembers ?? MAX_MEMBERS, MAX_MEMBERS);
       const hasRoom = {
         $expr: {
@@ -72,10 +71,10 @@ export const joinRouter = router({
             {
               $set: {
                 'members.$.userId': ctx.user.id,
-                'members.$.name': input.name,
+                'members.$.name': profile.name,
+                ...(profile.avatarColor && { 'members.$.avatarColor': profile.avatarColor }),
                 'members.$.status': status,
                 'members.$.joinedAt': now,
-                ...(shownWishIds && { 'members.$.wishlistView.shownWishIds': shownWishIds }),
                 updatedAt: now,
               },
             }
@@ -87,11 +86,11 @@ export const joinRouter = router({
                 members: {
                   id: newId(),
                   userId: ctx.user.id,
-                  name: input.name,
+                  ...profile,
                   role: 'member',
                   status,
                   joinedAt: now,
-                  wishlistView: { shownWishIds: shownWishIds ?? [] },
+                  wishlistView: { shownWishIds: [] },
                 } satisfies Member,
               },
               $set: { updatedAt: now },
@@ -104,7 +103,6 @@ export const joinRouter = router({
       const member = fresh?.members.find((m) => m.userId === ctx.user.id);
       if (member && status === 'joined') await addToCurrentEdition(ctx.db, group._id, member.id);
       if (member && status === 'requested') await notifyJoinRequest(ctx.db, group._id, member.id);
-      await nameUserIfUnnamed(ctx.db, ctx.user.id, input.name);
       return { slug: group.slug, status };
     }),
 

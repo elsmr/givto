@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import { Id, Locale, PersonName } from './common';
+import { AvatarColor } from './user';
 
 export const MemberRole = v.picklist(['organizer', 'member']);
 export type MemberRole = v.InferOutput<typeof MemberRole>;
@@ -31,7 +32,9 @@ export const Member = v.object({
   userId: v.optional(Id),
   /** Member id of the organizer who manages this member. */
   managedBy: v.optional(Id),
+  /** With a `userId`, copies of the account's, kept in sync by `account.setName` / `setAvatarColor`. */
   name: PersonName,
+  avatarColor: v.optional(AvatarColor),
   role: MemberRole,
   status: MemberStatus,
   /** Email language for a member without an account; otherwise the account's locale wins. */

@@ -8,7 +8,16 @@
     "email-label": "Email",
     "save": "Save name",
     "saved": "Name saved",
-    "invalid": "Use 1 to 50 characters, without links or @."
+    "invalid": "Use 1 to 50 characters, without links or @.",
+    "color-label": "Avatar colour",
+    "color-hint": "Saved at once, in all your groups. Until you pick one, each group picks one for you.",
+    "color-error": "That didn't save. Try again in a moment.",
+    "colors": {
+      "primary-muted": "Lilac",
+      "yellow": "Yellow",
+      "mint": "Mint",
+      "coral": "Coral"
+    }
   },
   "address": {
     "title": "Postal addresses",

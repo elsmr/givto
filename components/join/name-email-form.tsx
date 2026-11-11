@@ -19,8 +19,10 @@ type NameEmailFormProps = {
   texts: NameEmailTexts;
   name: string;
   email: string;
-  /** Signed in: the session is the verified email, so only the name is asked. */
+  /** Signed in: the session is the verified email, so the email isn't asked. */
   signedInEmail: string | null;
+  /** Only signed in, for an account without a name yet: before that we can't know whether it has one. */
+  askName: boolean;
   busy: boolean;
   onChange: (patch: { name?: string; email?: string }) => void;
   onSubmit: () => void;
@@ -28,12 +30,13 @@ type NameEmailFormProps = {
   children?: ReactNode;
 };
 
-/** Name + email to verify (or just the name when signed in): create's organizer step and joining. */
+/** The email to verify when signed out; signed in, the name if the account has none: create's organizer step and joining. */
 export const NameEmailForm = ({
   texts,
   name,
   email,
   signedInEmail,
+  askName,
   busy,
   onChange,
   onSubmit,
@@ -45,7 +48,7 @@ export const NameEmailForm = ({
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const next = {
-      name: fieldIssue(PersonName, name),
+      name: askName ? fieldIssue(PersonName, name) : null,
       email: signedInEmail ? null : fieldIssue(Email, email),
     };
     setIssues(next);
@@ -55,6 +58,7 @@ export const NameEmailForm = ({
   return (
     <form onSubmit={submit} className="flex flex-col gap-6">
       <FieldGroup>
+        {askName && (
         <Field data-invalid={issues.name ? 'true' : undefined}>
           <FieldLabel htmlFor="person-name" hint={texts.nameHelp}>
             {texts.name}
@@ -70,6 +74,7 @@ export const NameEmailForm = ({
           />
           {issues.name && <FieldError>{tIssues(issues.name)}</FieldError>}
         </Field>
+        )}
         {signedInEmail ? (
           <p className="text-muted">{texts.signedIn}</p>
         ) : (

@@ -35,7 +35,7 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, ticked, drawn
 
   return (
     <li className="flex flex-wrap items-center gap-x-3 gap-y-2 py-3">
-      <PersonAvatar id={person.id} name={person.name} />
+      <PersonAvatar id={person.id} name={person.name} color={person.avatarColor} />
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-semibold break-all">{person.name}</span>

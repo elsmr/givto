@@ -22,7 +22,6 @@ export const editionDetailsInput = (draft: EditionDetailsDraft) => ({
 
 export const toCreateInput = (draft: CreateDraft, timeZone: string): RouterInputs['group']['create'] => ({
   name: draft.name,
-  organizerName: draft.organizerName,
   timeZone,
   exchangeMode: draft.exchangeMode,
   ...(draft.kind !== 'secretSanta' && { kind: draft.kind }),

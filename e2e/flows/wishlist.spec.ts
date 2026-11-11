@@ -167,7 +167,7 @@ test('links: pasted or typed into the wish or notes become link cards; a walled 
 
   await test.step('a second link, pasted into the notes, from a shop that walls us off: kept quietly, the wish stays as it is', async () => {
     await paste(notes, walled);
-    await expect(page.getByText('2 links')).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Remove the link to / })).toHaveCount(2);
     await expect(notes).toHaveValue('Warm socks, size 42');
     await expect(wishField).toHaveValue('Merino wool socks');
     await page.getByRole('button', { name: 'Add wish' }).click();

@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { knownAppError } from '../group/app-error-code';
+import { appErrorCode, knownAppError } from '../group/app-error-code';
 import { EmailCodeForm } from '../join/email-code-form';
 import { NameEmailForm } from '../join/name-email-form';
 import { useEmailCode } from '../join/use-email-code';
@@ -48,7 +48,10 @@ const StepTrack = ({ step, total }: { step: number; total: number }) => {
   );
 };
 
-/** /new, link-first (PLAN-v2 "Create flow"): details → organizer → emailed code → share; signed in with a name, details → share. */
+/**
+ * /new, link-first (PLAN-v2 "Create flow"): details → email → emailed code → share; signed in with a name, details → share.
+ * An account without a name is asked for one on the organizer step, once signed in.
+ */
 export const CreateFlow = () => {
   const t = useTranslations('create');
   const tCode = useTranslations('join.code');
@@ -65,6 +68,10 @@ export const CreateFlow = () => {
         clear();
         // The account may just have got its name.
         void session.refetch();
+      },
+      // Just verified: make sure the organizer step sees the signed-in account it now asks the name for.
+      onError: (error) => {
+        if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
       },
     })
   );
@@ -83,7 +90,9 @@ export const CreateFlow = () => {
   const signedInEmail = session.data?.user.email ?? null;
   // Signed in with a name: there's nothing left to ask, so the details step creates.
   const accountName = signedInEmail ? session.data?.user.name : undefined;
-  const submitCreate = () => create.mutate(toCreateInput(draft, timeZone()));
+  const askName = signedInEmail !== null && !accountName;
+  const submitCreate = () =>
+    create.mutate({ ...toCreateInput(draft, timeZone()), ...(askName && { organizerName: draft.organizerName }) });
   const sendCode = async () => {
     if (await emailCode.send(draft.email)) setStep('code');
   };
@@ -92,13 +101,15 @@ export const CreateFlow = () => {
     setStep('organizer');
     submitCreate();
   };
-  const errorCode = create.error && knownAppError(create.error, knownErrors);
-  const stepNumber = { details: 1, organizer: 2, code: 3 }[step];
+  const errorCode = create.error && appErrorCode(create.error) !== 'NAME_REQUIRED' && knownAppError(create.error, knownErrors);
+  const total = signedInEmail ? 2 : 3;
+  // After the code, the name is the last step.
+  const stepNumber = step === 'organizer' && askName ? total : { details: 1, organizer: 2, code: 3 }[step];
   const createLabel = { secretSanta: t('create'), whiteElephant: t('create-white-elephant'), conspiracy: t('create-conspiracy') }[draft.kind];
 
   return (
     <FlowPage
-      eyebrow={accountName ? undefined : <StepTrack step={stepNumber} total={signedInEmail ? 2 : 3} />}
+      eyebrow={accountName ? undefined : <StepTrack step={stepNumber} total={total} />}
       title={t(`titles.${step}`)}
       headingRef={heading}
     >
@@ -116,11 +127,7 @@ export const CreateFlow = () => {
               onChange={update}
               submitLabel={accountName ? createLabel : t('details.next')}
               busy={create.isPending}
-              onNext={
-                accountName
-                  ? () => create.mutate(toCreateInput({ ...draft, organizerName: accountName }, timeZone()))
-                  : () => setStep('organizer')
-              }
+              onNext={accountName ? submitCreate : () => setStep('organizer')}
             />
           )}
           {step === 'organizer' && (
@@ -136,6 +143,7 @@ export const CreateFlow = () => {
               name={draft.organizerName}
               email={draft.email}
               signedInEmail={signedInEmail}
+              askName={askName}
               busy={emailCode.busy || create.isPending}
               onChange={({ name, email }) => update({ organizerName: name ?? draft.organizerName, email: email ?? draft.email })}
               onSubmit={signedInEmail ? submitCreate : sendCode}

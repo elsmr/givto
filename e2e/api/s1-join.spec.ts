@@ -50,6 +50,32 @@ test('join via link: preview without member list, join after verifying, members 
   expect(data.edition?.participantIds).toHaveLength(2);
 });
 
+test('the name lives on the account: asked once, then the account name wins', async ({ signIn }) => {
+  const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
+  const [first, second] = await Promise.all([createFamily(ann), createFamily(ann)]);
+  expect(codeOf(await bob.trpc.mutate('join.accept', { groupSlug: first.slug, token: first.joinToken }))).toBe('NAME_REQUIRED');
+  ok(await bob.trpc.mutate('join.accept', { groupSlug: first.slug, token: first.joinToken, name: 'Bob' }));
+  ok(await bob.trpc.mutate('join.accept', { groupSlug: second.slug, token: second.joinToken, name: 'Other' }));
+  const names = async (slug: string) => ok(await bob.trpc.query('group.get', { groupSlug: slug })).members.map((m) => m.name);
+  expect(await names(second.slug)).toEqual(['Ann.Smith', 'Bob']);
+  ok(await bob.trpc.mutate('account.setName', { name: 'Robert' }));
+  expect(await names(first.slug)).toEqual(['Ann.Smith', 'Robert']);
+  expect(await names(second.slug)).toEqual(['Ann.Smith', 'Robert']);
+});
+
+test('the avatar colour lives on the account: every group, and groups joined later, show it', async ({ signIn }) => {
+  const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
+  const [first, second] = await Promise.all([createFamily(ann), createFamily(ann)]);
+  await joinAll(first, [[bob, 'Bob']]);
+  const colors = async (slug: string) => ok(await bob.trpc.query('group.get', { groupSlug: slug })).members.map((m) => m.avatarColor);
+  expect(await colors(first.slug)).toEqual([undefined, undefined]);
+  expect(codeOf(await bob.trpc.mutate('account.setAvatarColor', { avatarColor: 'primary' as never }))).toBe('INVALID_INPUT');
+  ok(await bob.trpc.mutate('account.setAvatarColor', { avatarColor: 'mint' }));
+  expect(await colors(first.slug)).toEqual([undefined, 'mint']);
+  await joinAll(second, [[bob, 'Bob']]);
+  expect(await colors(second.slug)).toEqual([undefined, 'mint']);
+});
+
 test('same email twice = one member', async ({ signIn, newClient, secrets }) => {
   const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
   const group = await createFamily(ann);

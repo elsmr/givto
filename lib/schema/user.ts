@@ -33,8 +33,10 @@ export const MAX_ADDRESSES = 10;
 export const SavedAddress = v.object({ id: Id, ...PostalAddress.entries });
 export type SavedAddress = v.InferOutput<typeof SavedAddress>;
 
-export const avatarColors = ['primary', 'primaryMuted', 'coral', 'yellow', 'mint'] as const;
+/** The avatar fills; without a pick, one is derived from the member id. */
+export const avatarColors = ['primary-muted', 'yellow', 'mint', 'coral'] as const;
 export const AvatarColor = v.picklist(avatarColors);
+export type AvatarColor = v.InferOutput<typeof AvatarColor>;
 
 /** Fields the user edits on their account. */
 export const UserFields = v.object({

@@ -8,7 +8,16 @@
     "email-label": "E-mailadres",
     "save": "Naam opslaan",
     "saved": "Naam opgeslagen",
-    "invalid": "Gebruik 1 tot 50 tekens, zonder links of @."
+    "invalid": "Gebruik 1 tot 50 tekens, zonder links of @.",
+    "color-label": "Kleur van je avatar",
+    "color-hint": "Meteen opgeslagen, in al je groepen. Tot je er een kiest, kiest elke groep er een voor je.",
+    "color-error": "Dat is niet opgeslagen. Probeer het zo opnieuw.",
+    "colors": {
+      "primary-muted": "Lila",
+      "yellow": "Geel",
+      "mint": "Mint",
+      "coral": "Koraal"
+    }
   },
   "address": {
     "title": "Postadressen",

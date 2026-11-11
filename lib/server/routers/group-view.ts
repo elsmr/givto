@@ -53,6 +53,7 @@ export const groupView = async (
     members: visible.map((m) => ({
       id: m.id,
       name: m.name,
+      avatarColor: m.avatarColor,
       role: m.role,
       status: m.status,
       /** Champions and badges (86), over the group's editions. */

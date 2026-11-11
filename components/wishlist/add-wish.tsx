@@ -1,6 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
+import { IconTile } from '@/components/ui/icon-tile';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
+import { Heart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -13,8 +15,9 @@ import { isActiveGroup, WishGroups } from './wish-groups';
 /**
  * "Add a wish", as a card on top of the list. In a group (`groupSlug`) the wish shows in that group only;
  * on /wishlist, in the groups picked: the group the person came from (?group=), else their only active group.
+ * With an `empty` wishlist the card is the empty state.
  */
-export const AddWish = ({ groupSlug }: { groupSlug?: string }) => {
+export const AddWish = ({ groupSlug, empty = false }: { groupSlug?: string; empty?: boolean }) => {
   const t = useTranslations('wishlist');
   const router = useRouter();
   const errorMessage = useErrorMessage();
@@ -33,8 +36,18 @@ export const AddWish = ({ groupSlug }: { groupSlug?: string }) => {
 
   return (
     <Card size="sm">
-      <CardContent>
-        <h2 className="sr-only">{t('add-title')}</h2>
+      <CardContent className="flex flex-col gap-4">
+        {empty ? (
+          <div className="flex items-center gap-4">
+            <IconTile icon={Heart} tone="coral" />
+            <div>
+              <h2 className="text-xl font-bold">{t('empty-title')}</h2>
+              <p className="text-muted">{t('empty-hint')}</p>
+            </div>
+          </div>
+        ) : (
+          <h2 className="sr-only">{t('add-title')}</h2>
+        )}
         <WishForm
           key={formKey}
           compact

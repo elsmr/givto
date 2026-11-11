@@ -6,7 +6,7 @@ import { EyeOff, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { WishView } from './wish-draft';
 
-type GroupWish = WishView & { shown: boolean; alsoIn: { name: string }[] };
+type GroupWish = WishView & { shown: boolean; rank: number; alsoIn: { name: string }[] };
 
 /** Hide a wish in this group, or show it at the end of the group's list. A wish another active group shows too says so on its card. */
 export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: GroupWish }) => {
@@ -18,11 +18,11 @@ export const ShowWishButton = ({ groupSlug, wish }: { groupSlug: string; wish: G
     trpc.wish.setShown.mutationOptions({
       onMutate: async ({ shown }) => {
         await queryClient.cancelQueries({ queryKey: viewKey });
+        // As groupView orders them: shown in the group's order (a newly shown one last), hidden in the global order.
         queryClient.setQueryData(viewKey, (view) => {
           if (!view) return view;
-          const rest = view.filter((w) => w.id !== wish.id);
-          const count = rest.filter((w) => w.shown).length;
-          return [...rest.slice(0, count), { ...wish, shown }, ...rest.slice(count)];
+          const next = [...view.filter((w) => w.id !== wish.id), { ...wish, shown }];
+          return [...next.filter((w) => w.shown), ...next.filter((w) => !w.shown).toSorted((a, b) => a.rank - b.rank)];
         });
       },
       onSettled: () =>

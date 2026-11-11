@@ -4,6 +4,7 @@ import { isDrawn } from '../schema/edition';
 import type { Group } from '../schema/group';
 import type { Member } from '../schema/member';
 import type { Collections } from './db';
+import { AppError } from './errors';
 import { slotInLateJoiner } from './draw/patch';
 
 /** URL-safe random token; 18 bytes = 24 chars. */
@@ -53,9 +54,20 @@ export const addToCurrentEdition = async (db: Collections, groupId: string, memb
   if (isDrawn(edition)) await slotInLateJoiner(db, groupId, edition._id, memberId);
 };
 
-/** Accounts start without a name; the first name someone gives us when joining or creating sticks. */
-export const nameUserIfUnnamed = (db: Collections, userId: string, name: string) =>
-  db.users.updateOne(
-    { _id: new ObjectId(userId), name: '' },
-    { $set: { name, updatedAt: new Date() } }
-  );
+/**
+ * Name and avatar colour live on the account; members carry a copy that `account.setName` / `setAvatarColor` keep in
+ * sync. Accounts start without a name (sign-in by email doesn't ask), so `givenName` is only needed, and only used,
+ * until the account has one. No `avatarColor` key without a pick: the driver would store `undefined` as null.
+ */
+export const memberProfile = async (
+  db: Collections,
+  userId: string,
+  givenName: string | undefined
+): Promise<Pick<Member, 'name' | 'avatarColor'>> => {
+  const user = await db.users.findOne({ _id: new ObjectId(userId) }, { projection: { name: 1, avatarColor: 1 } });
+  const color = user?.avatarColor ? { avatarColor: user.avatarColor } : {};
+  if (user?.name) return { name: user.name, ...color };
+  if (!givenName) throw new AppError('NAME_REQUIRED');
+  await db.users.updateOne({ _id: new ObjectId(userId), name: '' }, { $set: { name: givenName, updatedAt: new Date() } });
+  return { name: givenName, ...color };
+};

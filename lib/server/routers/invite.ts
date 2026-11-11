@@ -6,12 +6,11 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
-import { addToCurrentEdition, hashToken, nameUserIfUnnamed, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, hashToken, memberProfile, placeHolding, randomToken } from '../membership';
 import { sendMail } from '../mail';
 import { inviteUrl } from '../mail/urls';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
-import { unshownWishIds } from '../wishlist/wish-view';
 
 const INVITE_DAYS = 7;
 const INVITES_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 30 };
@@ -82,11 +81,13 @@ export const inviteRouter = router({
     return found && invitePreview(found);
   }),
 
-  /** Lands on the group under the name they give. The session must be the invited email. */
-  accept: authedProcedure.input(v.object({ ...TokenInput.entries, name: PersonName })).mutation(async ({ ctx, input }) => {
+  /** Lands on the group under the account's name. The session must be the invited email. */
+  accept: authedProcedure.input(v.object({ ...TokenInput.entries, name: v.optional(PersonName) })).mutation(async ({ ctx, input }) => {
     const found = await findPendingInvite(ctx.db, input.groupSlug, input.token);
     if (!found) throw new AppError('INVITE_INVALID');
     if (found.invite.email !== ctx.user.email.toLowerCase()) throw new AppError('INVITE_EMAIL_MISMATCH');
+    // Before the invite is used up: without a name the person comes back to give one.
+    const profile = await memberProfile(ctx.db, ctx.user.id, input.name);
     const now = new Date();
     const used = await ctx.db.invites.updateOne(
       { _id: found.invite._id, usedAt: { $exists: false } },
@@ -102,15 +103,14 @@ export const inviteRouter = router({
           $set: {
             'members.$.userId': ctx.user.id,
             'members.$.status': 'joined',
-            'members.$.name': input.name,
+            'members.$.name': profile.name,
+            ...(profile.avatarColor && { 'members.$.avatarColor': profile.avatarColor }),
             'members.$.joinedAt': now,
-            'members.$.wishlistView.shownWishIds': await unshownWishIds(ctx.db, ctx.user.id, group._id),
             updatedAt: now,
           },
         }
       );
       await addToCurrentEdition(ctx.db, group._id, invite.memberId);
-      await nameUserIfUnnamed(ctx.db, ctx.user.id, input.name);
     }
     return { slug: group.slug };
   }),

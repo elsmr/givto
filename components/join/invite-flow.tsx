@@ -14,34 +14,36 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { knownAppError } from '../group/app-error-code';
+import { appErrorCode, knownAppError } from '../group/app-error-code';
 import { fieldIssue, type FieldIssue } from '../group/field-issue';
 import { EmailCodeForm } from './email-code-form';
 import { JoinIntro } from './join-intro';
 import { useEmailCode } from './use-email-code';
-import { useJoinName } from './use-join-name';
 
 const knownErrors = ['INVITE_INVALID', 'INVITE_EMAIL_MISMATCH', 'RATE_LIMITED'] as const;
 
 type InviteFlowProps = { slug: string; token: string; preview: JoinPreview & { invite: { email: string } } };
 
-/** Email invite (45, secondary): bound to one address, single-use; say your name and accept to land on the group, or decline (48). */
+/** Email invite (45, secondary): bound to one address, single-use; accept to land on the group (saying your name if the account has none), or decline (48). */
 export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   const t = useTranslations('join');
   const tIssues = useTranslations('group.issues');
   const trpc = useTRPC();
   const router = useRouter();
   const session = authClient.useSession();
-  const joinName = useJoinName(session.data?.user.name);
+  const [name, setName] = useState('');
   const [nameIssue, setNameIssue] = useState<FieldIssue | null>(null);
   const [codeSent, setCodeSent] = useState(false);
   const emailCode = useEmailCode(router.asPath);
   const accept = useMutation(
     trpc.invite.accept.mutationOptions({
       onSuccess: () => {
-        joinName.forget();
         void session.refetch();
         void router.push(`/g/${slug}`);
+      },
+      // Just verified: make sure the form sees the signed-in account it now asks the name for.
+      onError: (error) => {
+        if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
       },
     })
   );
@@ -66,22 +68,22 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   }
 
   const signedInEmail = session.data?.user.email ?? null;
-  const acceptInvite = () => accept.mutate({ groupSlug: slug, token, name: joinName.name });
-  /** Runs `next` once the name is valid. */
+  const askName = signedInEmail === email && !session.data?.user.name;
+  const acceptInvite = () => accept.mutate({ groupSlug: slug, token, ...(askName && { name }) });
+  /** Runs `next` once the name, when asked, is valid. */
   const withName = (next: () => void) => {
-    const issue = fieldIssue(PersonName, joinName.name);
+    const issue = askName ? fieldIssue(PersonName, name) : null;
     setNameIssue(issue);
     if (!issue) next();
   };
   const send = async () => {
-    joinName.remember();
     setCodeSent(await emailCode.send(email));
   };
   const verify = async (otp: string) => {
     if (await emailCode.verify(email, otp)) acceptInvite();
   };
   const error = accept.error ?? decline.error;
-  const errorCode = error && knownAppError(error, knownErrors);
+  const errorCode = error && appErrorCode(error) !== 'NAME_REQUIRED' && knownAppError(error, knownErrors);
   const busy = emailCode.busy || accept.isPending || accept.isSuccess || decline.isPending;
 
   return (
@@ -104,7 +106,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
       ) : (
         <div className="flex flex-col gap-4">
           <p>{signedInEmail && signedInEmail !== email ? t('invite.other-account', { email, signedInEmail }) : t('invite.for', { email })}</p>
-          {(!signedInEmail || signedInEmail === email) && (
+          {askName && (
             <Field data-invalid={nameIssue ? 'true' : undefined}>
               <FieldLabel htmlFor="person-name" hint={t('details.name-help')}>
                 {t('details.name')}
@@ -114,9 +116,9 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
                 required
                 maxLength={50}
                 autoComplete="name"
-                value={joinName.name}
+                value={name}
                 aria-invalid={nameIssue ? 'true' : undefined}
-                onChange={(event) => joinName.setName(event.target.value)}
+                onChange={(event) => setName(event.target.value)}
               />
               {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
             </Field>
@@ -127,7 +129,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
               <Button size="lg" disabled={busy} onClick={() => withName(acceptInvite)}>{t('details.join')}</Button>
             )}
             {!signedInEmail && (
-              <Button size="lg" disabled={busy} onClick={() => withName(() => void send())}>{t('invite.send-code')}</Button>
+              <Button size="lg" disabled={busy} onClick={() => void send()}>{t('invite.send-code')}</Button>
             )}
             {signedInEmail && signedInEmail !== email && (
               <Button size="lg" disabled={busy} onClick={() => void signOut()}>{t('invite.sign-out')}</Button>

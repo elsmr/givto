@@ -3,6 +3,7 @@
   "intro": "One list for all your Secret Santas. You pick which groups see each wish, and you'll never see what's been claimed.",
   "loading": "Loading your wishlist…",
   "empty-title": "Your wishlist is empty",
+  "empty-hint": "Add your first wish: type it, or paste a link to a shop.",
   "count": "{count, plural, =0 {No wishes yet} one {# wish} other {# wishes}}",
   "list-title": "Your wishes",
   "hide-hint": "Each group sees only the wishes you tick under “Groups”. Reorder them per group, on its “My wishlist” tab.",
@@ -41,7 +42,6 @@
     "groups": "Groups",
     "groups-label": "Groups that see “{title}”",
     "groups-more": "+{count}",
-    "links": "{count, plural, one {# link} other {# links}}",
     "remove-link": "Remove the link to {shop}"
   },
   "item": {
@@ -77,10 +77,8 @@
   },
   "group": {
     "title": "My wishlist in this group",
-    "empty": "Your wishlist is empty.",
     "hide": "Hide “{title}” in this group",
     "show": "Add “{title}” to this group",
-    "all-hidden": "Nothing on your wishlist shows in this group.",
     "pick": "Or add one from your wishlist"
   },
   "giftee": {

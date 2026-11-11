@@ -73,7 +73,7 @@
   "invite": {
     "label": "Invite by email",
     "placeholder": "name@example.com",
-    "help": "Separate addresses with a comma or a space. They pick their own name when they join.",
+    "help": "Separate addresses with a comma or a space.",
     "remove": "Remove {email}",
     "send": "{count, plural, =0 {Send invites} one {Send invite} other {Send # invites}}",
     "sent": "{count, plural, one {Invite sent} other {# invites sent}}",

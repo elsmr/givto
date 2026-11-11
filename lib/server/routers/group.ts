@@ -8,17 +8,17 @@ import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } fr
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
-import { currentEdition, nameUserIfUnnamed, randomToken } from '../membership';
+import { currentEdition, memberProfile, randomToken } from '../membership';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, memberProcedure, organizerProcedure, router } from '../trpc';
-import { unshownWishIds } from '../wishlist/wish-view';
 import { groupView } from './group-view';
 
 const GROUPS_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 10 };
 
 export const CreateGroupInput = v.object({
   name: GroupName,
-  organizerName: PersonName,
+  /** Only used while the account has no name yet. */
+  organizerName: v.optional(PersonName),
   timeZone: TimeZone,
   giftDay: v.optional(GiftDay),
   exchangeMode: ExchangeMode,
@@ -54,6 +54,7 @@ export const groupRouter = router({
     await enforceRateLimit(`group:create:${ctx.user.id}`, GROUPS_PER_USER_PER_DAY);
     const today = todayIn(input.timeZone);
     if (input.giftDay && input.giftDay.date < today) throw new AppError('DATE_IN_PAST');
+    const profile = await memberProfile(ctx.db, ctx.user.id, input.organizerName);
 
     const now = new Date();
     // The driver stores `undefined` as null, which the schemas reject: leave absent fields out.
@@ -63,11 +64,11 @@ export const groupRouter = router({
     const organizer: Member = {
       id: newId(),
       userId: ctx.user.id,
-      name: input.organizerName,
+      ...profile,
       role: 'organizer',
       status: 'joined',
       joinedAt: now,
-      wishlistView: { shownWishIds: await unshownWishIds(ctx.db, ctx.user.id) },
+      wishlistView: { shownWishIds: [] },
     };
     const group: Group = {
       _id: newId(),
@@ -105,7 +106,6 @@ export const groupRouter = router({
     };
     await ctx.db.groups.insertOne(group);
     await ctx.db.editions.insertOne(edition);
-    await nameUserIfUnnamed(ctx.db, ctx.user.id, input.organizerName);
     return { slug: group.slug, joinToken: group.joinLink!.token };
   }),
 

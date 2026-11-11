@@ -3,6 +3,7 @@
   "intro": "Eén lijstje voor al je Secret Santa's. Jij kiest welke groepen een wens zien, en je ziet nooit wat er geclaimd is.",
   "loading": "Je verlanglijstje laden…",
   "empty-title": "Je verlanglijstje is nog leeg",
+  "empty-hint": "Voeg je eerste wens toe: typ hem, of plak een link naar een winkel.",
   "count": "{count, plural, =0 {Nog geen wensen} one {# wens} other {# wensen}}",
   "list-title": "Je wensen",
   "hide-hint": "Elke groep ziet alleen de wensen die je onder “Groepen” aanvinkt. De volgorde pas je per groep aan, op het tabblad “Mijn verlanglijstje”.",
@@ -41,7 +42,6 @@
     "groups": "Groepen",
     "groups-label": "Groepen die “{title}” zien",
     "groups-more": "+{count}",
-    "links": "{count, plural, one {# link} other {# links}}",
     "remove-link": "Link naar {shop} verwijderen"
   },
   "item": {
@@ -77,10 +77,8 @@
   },
   "group": {
     "title": "Mijn verlanglijstje in deze groep",
-    "empty": "Je verlanglijstje is nog leeg.",
     "hide": "“{title}” verbergen in deze groep",
     "show": "“{title}” toevoegen aan deze groep",
-    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep.",
     "pick": "Of kies er een uit je verlanglijstje"
   },
   "giftee": {

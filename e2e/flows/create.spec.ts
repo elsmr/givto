@@ -17,10 +17,12 @@ const createSecretSanta = async (page: Page, name: string, email: string, secret
   await page.goto('/new');
   await page.getByLabel("What's your Secret Santa called?").fill(name);
   await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByLabel('Your name').fill('Ann');
+  await expect(page.getByLabel('Your name')).toHaveCount(0);
   await page.getByLabel('Your email').fill(email);
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await enterCode(page, email, secrets);
+  await page.getByRole('button', { name: 'Create Secret Santa' }).click();
+  await page.getByLabel('Your name').fill('Ann');
   await page.getByRole('button', { name: 'Create Secret Santa' }).click();
   await expect(page.getByRole('heading', { level: 1, name: `${name} is ready!` })).toBeVisible();
   const link = await page.getByLabel('Join link').inputValue();
@@ -28,15 +30,16 @@ const createSecretSanta = async (page: Page, name: string, email: string, secret
   return link;
 };
 
-/** Opens the join link signed out: name + email → emailed code → Join. */
+/** Opens the join link signed out: email → emailed code → Join → name (a new account) → Join. */
 const joinWithLink = async (page: Page, link: string, name: string, email: string, secrets: string[]) => {
   secrets.push(email);
   await page.goto(link);
   await expect(page.getByRole('heading', { level: 1, name: "You're invited!" })).toBeVisible();
-  await page.getByLabel('Your name').fill(name);
   await page.getByLabel('Your email').fill(email);
   await page.getByRole('button', { name: 'Send me a code' }).click();
   await enterCode(page, email, secrets);
+  await page.getByRole('button', { name: 'Join' }).click();
+  await page.getByLabel('Your name').fill(name);
   await page.getByRole('button', { name: 'Join' }).click();
 };
 

@@ -26,7 +26,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
         <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
           {people.map((person) => (
             <li key={person.id} className="flex items-center gap-3 py-2.5">
-              <PersonAvatar id={person.id} name={person.name} />
+              <PersonAvatar id={person.id} name={person.name} color={person.avatarColor} />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-semibold break-all">{person.name}</span>

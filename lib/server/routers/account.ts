@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
 import { Id, PersonName } from '../../schema/common';
-import { MAX_ADDRESSES, NotificationPrefs, PostalAddress } from '../../schema/user';
+import { AvatarColor, MAX_ADDRESSES, NotificationPrefs, PostalAddress } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
 import { exportAccount } from '../account/export';
 import { accountGroups } from '../account/groups';
@@ -23,12 +23,28 @@ const ownAccount = (userId: string) => ({ _id: new ObjectId(userId) });
 export const accountRouter = router({
   groups: authedProcedure.query(({ ctx }) => accountGroups(ctx.db, ctx.user.id)),
 
+  /** Every group shows the new name too: members carry a copy of the account's. */
   setName: authedProcedure.input(v.object({ name: PersonName })).mutation(async ({ ctx, input }) => {
-    await ctx.db.users.updateOne(
-      { _id: new ObjectId(ctx.user.id) },
-      { $set: { name: input.name, updatedAt: new Date() } }
+    const now = new Date();
+    await ctx.db.users.updateOne({ _id: new ObjectId(ctx.user.id) }, { $set: { name: input.name, updatedAt: now } });
+    await ctx.db.groups.updateMany(
+      { 'members.userId': ctx.user.id },
+      { $set: { 'members.$[me].name': input.name, updatedAt: now } },
+      { arrayFilters: [{ 'me.userId': ctx.user.id }] }
     );
     return { name: input.name };
+  }),
+
+  /** Like the name, every group shows it. */
+  setAvatarColor: authedProcedure.input(v.object({ avatarColor: AvatarColor })).mutation(async ({ ctx, input }) => {
+    const now = new Date();
+    await ctx.db.users.updateOne({ _id: new ObjectId(ctx.user.id) }, { $set: { avatarColor: input.avatarColor, updatedAt: now } });
+    await ctx.db.groups.updateMany(
+      { 'members.userId': ctx.user.id },
+      { $set: { 'members.$[me].avatarColor': input.avatarColor, updatedAt: now } },
+      { arrayFilters: [{ 'me.userId': ctx.user.id }] }
+    );
+    return input;
   }),
 
   setNotifications: authedProcedure.input(NotificationPrefs).mutation(async ({ ctx, input }) => {

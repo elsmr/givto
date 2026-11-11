@@ -1,11 +1,10 @@
 import { LoadFailed } from '@/components/shell/load-failed';
 import { Badge } from '@/components/ui/badge';
-import { IconTile } from '@/components/ui/icon-tile';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { EyeOff, Heart } from 'lucide-react';
+import { EyeOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
 import { ArchivedWishes } from './archived-wishes';
@@ -37,13 +36,7 @@ export const MyWishlist = () => {
       ) : (
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
-            <AddWish />
-          {wishes.data.length === 0 && (
-            <div className="flex items-center gap-4 border-2 border-dashed border-outline bg-surface p-6">
-              <IconTile icon={Heart} tone="coral" />
-              <h2 className="text-xl font-bold">{t('empty-title')}</h2>
-            </div>
-          )}
+            <AddWish empty={wishes.data.length === 0} />
           {wishes.data.length > 0 && (
             <section aria-labelledby="wishes-title" className="flex flex-col gap-4">
               <h2 id="wishes-title" className="sr-only">

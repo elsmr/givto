@@ -165,6 +165,7 @@ export const wishRouter = router({
   /**
    * My wishlist as this group sees it: the shown wishes in this group's order, then the hidden ones in
    * the global order. `alsoIn`: my other active groups that show it too, as two Santas might buy it.
+   * `rank`: the place in the global order, so a wish hidden on the client drops straight into its place.
    */
   groupView: memberProcedure.query(async ({ ctx }) => {
     const [wishes, shown, active] = await Promise.all([
@@ -176,6 +177,7 @@ export const wishRouter = router({
     const withAlsoIn = (wish: Wish, isShown: boolean) => ({
       ...toWishView(wish),
       shown: isShown,
+      rank: wishes.indexOf(wish),
       alsoIn: active.filter((group) => group.shownWishIds.includes(wish._id)).map(({ name }) => ({ name })),
     });
     return [...shown.map((wish) => withAlsoIn(wish, true)), ...hidden.map((wish) => withAlsoIn(wish, false))];
