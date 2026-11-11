@@ -7,7 +7,8 @@ import type { MigrationReport } from './001-v1-to-v2';
 export const id = '003-guess-rows';
 
 export const up = async (db: Db, { apply }: { apply: boolean; now?: Date }): Promise<MigrationReport> => {
-  const found = (await db.listCollections({ name: { $in: ['guesses', 'votes'] } }, { nameOnly: true }).toArray()).map((c) => c.name);
+  // No filter: Atlas Flex only takes an exact name or a regex there ("can't get regex from filter doc").
+  const found = (await db.listCollections({}, { nameOnly: true }).toArray()).map((c) => c.name).filter((name) => ['guesses', 'votes'].includes(name));
   const counts = Object.fromEntries(await Promise.all(found.map(async (name) => [name, await db.collection(name).countDocuments()])));
   const report: MigrationReport = { source: counts, planned: counts, conflicts: {}, invalid: [], samples: {} };
   if (!apply) return report;
