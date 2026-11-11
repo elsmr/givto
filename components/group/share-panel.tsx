@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { JoinQrCode } from './join-qr-code';
 import { joinUrl } from './join-url';
 
-type SharePanelProps = { slug: string; token: string; groupName: string; locale: string; primary?: boolean };
+type SharePanelProps = { slug: string; token: string; groupName: string; primary?: boolean };
 
 const segment = 'h-auto min-h-11 shrink-0 border-0 border-l-2 border-outline';
 
@@ -18,11 +18,11 @@ const segment = 'h-auto min-h-11 shrink-0 border-0 border-l-2 border-outline';
  * The join link (45) as one row with Copy, QR (in a popover) and Share (where the browser can) attached.
  * `primary`: copying is the screen's main action, so Copy is filled and says what it does.
  */
-export const SharePanel = ({ slug, token, groupName, locale, primary = false }: SharePanelProps) => {
+export const SharePanel = ({ slug, token, groupName, primary = false }: SharePanelProps) => {
   const t = useTranslations('group.share');
   const [canShare, setCanShare] = useState(false);
   const [copied, setCopied] = useState(false);
-  const url = joinUrl(slug, token, locale);
+  const url = joinUrl(slug, token);
 
   useEffect(() => setCanShare(typeof navigator.share === 'function'), []);
   useEffect(() => {

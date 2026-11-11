@@ -1,6 +1,6 @@
-import { useTranslations } from 'next-intl';
+import { locales } from '@/lib/schema/common';
+import { useLocale, useTranslations } from 'next-intl';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { publicPages, publicUrl, siteUrl, type PublicPath } from './public-pages';
 
 const ogLocales: Record<string, string> = { en: 'en_US', nl: 'nl_NL' };
@@ -9,11 +9,11 @@ const ogLocales: Record<string, string> = { en: 'en_US', nl: 'nl_NL' };
 // Those pages load the `seo` messages.
 export const PublicPageMeta = ({ pathname }: { pathname: PublicPath }) => {
   const t = useTranslations('seo');
-  const { locale = 'en', locales = [], defaultLocale = 'en' } = useRouter();
+  const locale = useLocale();
   const page = publicPages[pathname];
   const title = t(`${page}.title`);
   const description = t(`${page}.description`);
-  const url = publicUrl(pathname, locale, defaultLocale);
+  const url = publicUrl(pathname, locale);
   const image = `${siteUrl}/og-image.png`;
 
   return (
@@ -26,13 +26,13 @@ export const PublicPageMeta = ({ pathname }: { pathname: PublicPath }) => {
           key={alternate}
           rel="alternate"
           hrefLang={alternate}
-          href={publicUrl(pathname, alternate, defaultLocale)}
+          href={publicUrl(pathname, alternate)}
         />
       ))}
       <link
         rel="alternate"
         hrefLang="x-default"
-        href={publicUrl(pathname, defaultLocale, defaultLocale)}
+        href={publicUrl(pathname, 'en')}
       />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="Givto" />

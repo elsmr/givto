@@ -1,16 +1,15 @@
 import { publicUrl } from '@/components/shell/public-pages';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/router';
+import { useLocale, useTranslations } from 'next-intl';
 
 // Structured data for the home page only (37).
 export const HomeJsonLd = () => {
   const t = useTranslations('seo.home');
-  const { locale = 'en', defaultLocale = 'en' } = useRouter();
+  const locale = useLocale();
   const data = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'Givto',
-    url: publicUrl('/', locale, defaultLocale),
+    url: publicUrl('/', locale),
     description: t('description'),
     inLanguage: locale,
     applicationCategory: 'LifestyleApplication',

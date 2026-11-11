@@ -8,7 +8,6 @@ import { SharePanel } from './share-panel';
 type InvitePeopleProps = {
   slug: string;
   groupName: string;
-  locale: string;
   /** No link, or turned off: says so instead of the link row. */
   joinLink: { token: string; revoked: boolean } | undefined;
   /** Right after creating, copying is the screen's main action. */
@@ -18,13 +17,13 @@ type InvitePeopleProps = {
 };
 
 /** The organizer's way to get people in, wherever they invite (45): the join link or QR, or email invites. */
-export const InvitePeople = ({ slug, groupName, locale, joinLink, primary, linkExtra }: InvitePeopleProps) => {
+export const InvitePeople = ({ slug, groupName, joinLink, primary, linkExtra }: InvitePeopleProps) => {
   const t = useTranslations('group.share');
 
   return (
     <div className="flex flex-col gap-4">
       {joinLink && !joinLink.revoked ? (
-        <SharePanel slug={slug} token={joinLink.token} groupName={groupName} locale={locale} primary={primary} />
+        <SharePanel slug={slug} token={joinLink.token} groupName={groupName} primary={primary} />
       ) : (
         <Alert>
           <AlertDescription>{t('revoked')}</AlertDescription>

@@ -7,7 +7,7 @@ import type { GetStaticProps } from 'next';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-// Static per locale and indexable (37): picking happens on the device, nothing reaches the server.
+// Static per language and indexable (37): picking happens on the device, nothing reaches the server.
 export default function PickPage() {
   const t = useTranslations('pick');
 
@@ -30,6 +30,7 @@ export default function PickPage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['pick', 'seo']) },
+// The Dutch twin is pages/nl/: only indexable pages have the language in the URL (81).
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { locale: 'en', messages: await loadMessages('en', ['pick', 'seo']) },
 });

@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { localePath } from '@/components/shell/public-pages';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 const questions = ['account', 'secret', 'apart', 'cost', 'data'] as const;
@@ -7,6 +8,7 @@ const questions = ['account', 'secret', 'apart', 'cost', 'data'] as const;
 // Native <details>: works before hydration and without JS.
 export const HomeFaq = () => {
   const t = useTranslations('home.faq');
+  const locale = useLocale();
 
   return (
     <section aria-labelledby="faq-title" className="flex flex-col gap-8">
@@ -25,7 +27,7 @@ export const HomeFaq = () => {
             </summary>
             <p className="p-5">
               {t.rich(`${question}.answer`, {
-                link: (chunks) => <Link href="/privacy">{chunks}</Link>,
+                link: (chunks) => <Link href={localePath('/privacy', locale)}>{chunks}</Link>,
               })}
             </p>
           </details>

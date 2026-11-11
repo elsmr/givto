@@ -19,7 +19,7 @@ export default function GroupPage() {
   );
 }
 
-// One static shell per locale and slug, built on first request; the data loads on the client.
+// One static shell per slug, built on first request; the data loads on the client.
 // No database here, so the server never reveals which slugs exist (37).
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 

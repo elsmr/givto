@@ -244,3 +244,8 @@
     animation-delay: 0s !important;
   }
 }
+
+/* App pages' static HTML is English; another language waits for _app (components/shell/use-preferred-locale.ts). */
+[data-locale-pending] body {
+  visibility: hidden;
+}
