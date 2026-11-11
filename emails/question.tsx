@@ -8,7 +8,7 @@ import { emailTranslator } from './ui/translator';
 
 export const questionSubject = ({ locale }: Pick<NoticeProps, 'locale'>) => emailTranslator(locale)('question.subject');
 
-/** An anonymous question from the Santa (52), sent at the question's delivery time. */
+/** An anonymous question from the Santa (52). */
 export const QuestionEmail = ({ locale, group, url, forName, unsubscribe, question }: NoticeProps & { question: string }) => {
   const t = emailTranslator(locale);
   return (

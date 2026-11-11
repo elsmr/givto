@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { anonymousSendAt } from '../../anonymous-delay';
 import { Id } from '../../schema/common';
 import { isDrawn } from '../../schema/edition';
 import { AnswerFields, QuestionFields, type Question } from '../../schema/question';
@@ -16,9 +15,7 @@ const toAnswerView = (question: Question) =>
 
 /**
  * Anonymous Q&A (52): a Santa asks their giftee, the giftee answers without learning who
- * asked. The giftee's outputs never carry `askerMemberId` or the real ask time (`askedAt`
- * is the delivery slot); questions show up for the giftee only from `notifyAfter` on. There
- * is no organizer path. Threads where the caller would answer their own question (they
+ * asked. The giftee's outputs never carry `askerMemberId`. There is no organizer path. Threads where the caller would answer their own question (they
  * manage the giftee) are left out.
  */
 export const questionRouter = router({
@@ -49,7 +46,7 @@ export const questionRouter = router({
       gifteeMemberId: ctx.giftee.id,
       askerMemberId: ctx.santa.id,
       text: input.text,
-      notifyAfter: anonymousSendAt(now, ctx.group.timeZone),
+      notifyAfter: now,
       createdAt: now,
     };
     await ctx.db.questions.insertOne(question);

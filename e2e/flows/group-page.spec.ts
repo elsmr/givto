@@ -180,19 +180,11 @@ test('notices show only when there is something: join requests, Psst! and questi
     await expect(bobPage.getByRole('heading', { name: '1 person wants to join' })).toHaveCount(0);
   });
 
-  await test.step('a Psst! and a question from my Santa: hidden until their delivery time', async () => {
+  await test.step('a Psst! and a question from my Santa show right away', async () => {
     ok(await annSanta.trpc.mutate('nudge.send', { ...edition, kind: 'emptyWishlist' }));
     ok(await annSanta.trpc.mutate('question.ask', { ...edition, text: 'Tea or coffee?' }));
     await page.reload();
     await expect(joinRequest).toBeVisible();
-    await expect(psst).toHaveCount(0);
-    await expect(questions).toHaveCount(0);
-  });
-
-  await test.step('delivered: both show', async () => {
-    await db.nudges.updateMany({ editionId: draw.editionId }, { $set: { sendAfter: new Date(Date.now() - 1000) } });
-    await db.questions.updateMany({ editionId: draw.editionId }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
-    await page.reload();
     await expect(psst).toContainText('Your Santa would love some ideas. Add a few wishes to your wishlist.');
     await expect(questions).toBeVisible();
     await expect(page.getByText('Tea or coffee?')).toBeVisible();

@@ -11,9 +11,8 @@ import { visibleWishes } from '../wishlist/wish-view';
 import { editionContext } from './edition-context';
 import { runEach } from './run-each';
 
-// Psst!s and questions (30, 52) were given a fixed-time slot by S3 (`sendAfter` /
-// `notifyAfter`, lib/anonymous-delay); they go out once that slot has passed. The emails
-// carry nothing about the Santa and come from the same address as every other email.
+// Psst!s and questions (30, 52) go out on the first tick after `sendAfter` / `notifyAfter`.
+// The emails carry nothing about the Santa and come from the same address as every other email.
 
 const BATCH = 200;
 

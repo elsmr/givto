@@ -37,11 +37,11 @@
   },
   "ask": {
     "title": "Ask {name} a question",
-    "intro": "Questions go out once a day, in the evening, so the timing doesn't give you away. {name} never sees who asked.",
+    "intro": "{name} never sees who asked.",
     "text": "Your question",
     "placeholder": "e.g. What size are you?",
     "submit": "Ask anonymously",
-    "sent": "Question on its way. {name} gets it this evening or tomorrow evening.",
+    "sent": "Question on its way. {name} gets it shortly.",
     "asked-title": "Your questions",
     "waiting": "No answer yet",
     "answer-label": "Answer",
@@ -52,7 +52,7 @@
     "emptyWishlist": "{name}'s wishlist is empty. Send a Psst! and they'll hear their Santa would love some ideas.",
     "moreDetails": "Send a Psst! and {name} will hear their Santa would love more detail on their wishes.",
     "send": "Send Psst!",
-    "sent": "Psst! sent. {name} hears about it in the evening, without your name.",
+    "sent": "Psst! sent. {name} hears about it shortly, without your name.",
     "next": "You can send another Psst! from {date}.",
     "unanswerable": "You look after {name}, so a Psst! would come back to you."
   },

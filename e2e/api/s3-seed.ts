@@ -47,9 +47,6 @@ export const seedBetween = async (db: TestDb, people: People) => {
           },
         }
       ),
-    /** Questions and Psst!s in edition 1 become visible as if their delivery time had come. */
-    deliverQuestions: () => db.questions.updateMany({ editionId: e1._id }, { $set: { notifyAfter: new Date(Date.now() - 1000) } }),
-    deliverNudges: () => db.nudges.updateMany({ editionId: e1._id }, { $set: { sendAfter: new Date(Date.now() - 1000) } }),
     /** Every response Ann (the subject) gets in edition 1, as [path, json], for the leak checks. */
     annQueries: async (into: [string, string][]) => {
       for (const path of ['tip.authored', 'tip.forGiftee', 'question.forMe', 'question.asked', 'nudge.forMe', 'nudge.status', 'claim.gifteeWishlist'] as QueryPath[]) {

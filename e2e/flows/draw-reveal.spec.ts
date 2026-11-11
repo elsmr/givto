@@ -93,7 +93,7 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   await test.step('ask a question anonymously', async () => {
     await panel.getByLabel('Your question').fill('What size are you?');
     await panel.getByRole('button', { name: 'Ask anonymously' }).click();
-    await expect(page.getByText(`Question on its way. ${name} gets it this evening or tomorrow evening.`)).toBeVisible();
+    await expect(page.getByText(`Question on its way. ${name} gets it shortly.`)).toBeVisible();
     await expect(panel.getByRole('heading', { name: 'Your questions' })).toBeVisible();
     await expect(panel.getByText('What size are you?')).toBeVisible();
     await expect(panel.getByText('No answer yet')).toBeVisible();
@@ -102,7 +102,7 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   await test.step('send a Psst!: one per few days', async () => {
     await expect(panel.getByText(`Send a Psst! and ${name} will hear their Santa would love more detail on their wishes.`)).toBeVisible();
     await panel.getByRole('button', { name: 'Send Psst!' }).click();
-    await expect(page.getByText(`Psst! sent. ${name} hears about it in the evening, without your name.`)).toBeVisible();
+    await expect(page.getByText(`Psst! sent. ${name} hears about it shortly, without your name.`)).toBeVisible();
     await expect(panel.getByText(/^You can send another Psst! from /)).toBeVisible();
     await expect(panel.getByRole('button', { name: 'Send Psst!' })).toHaveCount(0);
   });
@@ -110,17 +110,8 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   const gifteePage = await newPage();
   await signInPage(gifteePage, giftee);
   const psst = gifteePage.getByRole('status').filter({ hasText: 'Psst!' });
-  await test.step('the giftee sees nothing before the delivery time', async () => {
+  await test.step('the giftee sees the Psst! and the question right away, and answers', async () => {
     await gifteePage.goto(`/g/${group.slug}`);
-    await expect(tapToReveal(gifteePage)).toBeVisible();
-    await expect(psst).toHaveCount(0);
-    await expect(gifteePage.getByText('What size are you?')).toHaveCount(0);
-  });
-
-  await test.step('delivered: the Psst! and the question, and the giftee answers', async () => {
-    await db.nudges.updateMany({ editionId: draw.editionId }, { $set: { sendAfter: new Date(Date.now() - 1000) } });
-    await db.questions.updateMany({ editionId: draw.editionId }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
-    await gifteePage.reload();
     await expect(psst).toContainText('Your Santa would love a bit more detail on your wishes: sizes, colours, links.');
     await expect(gifteePage.getByText('What size are you?')).toBeVisible();
     await gifteePage.getByLabel('Your answer').fill('Medium');

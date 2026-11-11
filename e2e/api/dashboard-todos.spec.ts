@@ -42,11 +42,8 @@ test('account.groups lists to-dos per group', async ({ signIn, db }) => {
   const santaId = Object.entries(draw!.assignments).find(([, gifteeId]) => gifteeId === bobId)![0];
   const santa = [ann, cee].find((user) => members.find((m) => m.id === santaId)?.userId === user.id)!;
 
-  await test.step('only delivered questions show for the giftee', async () => {
-    const first = ok(await santa.trpc.mutate('question.ask', { ...edition, text: 'Size?' }));
-    ok(await santa.trpc.mutate('question.ask', { ...edition, text: 'Colour?' }));
-    expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'getGift' }]);
-    await db.questions.updateOne({ _id: first.id, editionId }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
+  await test.step('a question shows for the giftee right away', async () => {
+    ok(await santa.trpc.mutate('question.ask', { ...edition, text: 'Size?' }));
     expect(await todosOf(bob, group.slug)).toEqual([{ kind: 'question', count: 1 }, { kind: 'getGift' }]);
   });
 

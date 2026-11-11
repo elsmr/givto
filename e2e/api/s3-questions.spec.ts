@@ -1,4 +1,4 @@
-// S3 between people (anonymous Q&A and Psst!): delivery times, who
+// S3 between people (anonymous Q&A and Psst!): delivery, who
 // reads what, rate limits, and that Ann (the giftee) never learns who her Santa is.
 import { newId } from '@/lib/server/db';
 import { expect, ok, test, type TrpcError } from '../fixtures';
@@ -10,24 +10,18 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
   const names = ['olive', 'ann', 'bob', 'cee', 'dan', 'nina', 'eve'] as const;
   const people = Object.fromEntries(await Promise.all(names.map(async (name) => [name, await signIn(name)]))) as People;
   const { olive, ann, bob, cee, dan, nina, eve } = people;
-  const { m, e2, E1, E2, E3, drawE1, deliverQuestions, deliverNudges, annQueries } = await seedBetween(db, people);
+  const { m, e2, E1, E2, E3, drawE1, annQueries } = await seedBetween(db, people);
   /** Every response Ann (the subject) gets, as [path, json], for the leak checks. */
   const annResponses: [string, string][] = [];
   // Q&A and Psst! start from a drawn edition.
   await drawE1();
 
-  const question = await test.step('Q&A: the giftee sees the question only at the delivery time, with no asker identity', async () => {
+  const question = await test.step('Q&A: the giftee sees the question right away, with no asker identity', async () => {
     const question = ok(await dan.trpc.mutate('question.ask', { ...E1, text: 'What size are your feet?' }));
     const stored = (await db.questions.findOne({ _id: question.id }))!;
-    const notifyAfter = stored.notifyAfter!;
-    expect(notifyAfter.getTime() - stored.createdAt.getTime(), 'at least an hour later').toBeGreaterThanOrEqual(3600_000);
-    expect(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Brussels', hour: 'numeric', hourCycle: 'h23' }).format(notifyAfter)).toBe('18');
-    expect(ok(await ann.trpc.query('question.forMe', E1)), 'not delivered yet').toEqual([]);
-    expect(codeOf(await ann.trpc.mutate('question.answer', { ...E1, questionId: question.id, text: 'Early' }))).toBe('NOT_FOUND');
-    await deliverQuestions();
+    expect(stored.notifyAfter, 'due on the next tick').toEqual(stored.createdAt);
     const forAnn = ok(await ann.trpc.query('question.forMe', E1));
     expect(forAnn.map((q) => [q.text, q.forName, q.answer])).toEqual([['What size are your feet?', null, null]]);
-    expect(forAnn[0].askedAt!.getTime(), 'the real ask time stays hidden').not.toBe(stored.createdAt.getTime());
     annResponses.push(['question.forMe', JSON.stringify(forAnn)]);
     return question;
   });
@@ -48,7 +42,6 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
 
   await test.step('questions to a managed member go to their manager, without the asker', async () => {
     ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'Which dinosaur?' }));
-    await deliverQuestions();
     const forOlive = ok(await olive.trpc.query('question.forMe', E1));
     expect(forOlive.map((q) => [q.text, q.forName])).toEqual([['Which dinosaur?', 'Kid']]);
     expect(JSON.stringify(forOlive)).not.toContain(m.bob.id);
@@ -103,9 +96,7 @@ test('anonymous Q&A and Psst!: delivery, who reads what, limits', async ({ signI
     expect(codeOf(await eve.trpc.mutate('nudge.send', { ...E1, kind: 'emptyWishlist' }))).toBe('GROUP_NOT_FOUND');
   });
 
-  await test.step('Psst!: the giftee sees it from the delivery time, anonymously; "add wishes" clears once they add one', async () => {
-    expect(ok(await ann.trpc.query('nudge.forMe', E1)), 'not delivered yet').toEqual([]);
-    await deliverNudges();
+  await test.step('Psst!: the giftee sees it right away, anonymously; "add wishes" clears once they add one', async () => {
     const forAnn = ok(await ann.trpc.query('nudge.forMe', E1));
     expect(forAnn.map((n) => [n.kind, n.forName])).toEqual([['emptyWishlist', null]]);
     expect(Object.keys(forAnn[0]).sort()).toEqual(['forName', 'id', 'kind']);

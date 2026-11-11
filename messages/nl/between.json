@@ -37,11 +37,11 @@
   },
   "ask": {
     "title": "Stel {name} een vraag",
-    "intro": "Vragen gaan één keer per dag 's avonds de deur uit, zodat het tijdstip je niet verraadt. {name} ziet nooit wie het vroeg.",
+    "intro": "{name} ziet nooit wie het vroeg.",
     "text": "Je vraag",
     "placeholder": "bv. Welke maat heb je?",
     "submit": "Anoniem vragen",
-    "sent": "Vraag onderweg. {name} krijgt hem vanavond of morgenavond.",
+    "sent": "Vraag onderweg. {name} krijgt hem zo.",
     "asked-title": "Jouw vragen",
     "waiting": "Nog geen antwoord",
     "answer-label": "Antwoord",
@@ -52,7 +52,7 @@
     "emptyWishlist": "Het verlanglijstje van {name} is leeg. Stuur een Psst! en ze horen dat hun Santa graag wat ideeën wil.",
     "moreDetails": "Stuur een Psst! en {name} hoort dat hun Santa graag wat meer details over hun wensen wil.",
     "send": "Psst! sturen",
-    "sent": "Psst! verstuurd. {name} hoort het 's avonds, zonder je naam.",
+    "sent": "Psst! verstuurd. {name} hoort het zo, zonder je naam.",
     "next": "Je kunt vanaf {date} weer een Psst! sturen.",
     "unanswerable": "Jij zorgt voor {name}, dus een Psst! komt bij jou terug."
   },

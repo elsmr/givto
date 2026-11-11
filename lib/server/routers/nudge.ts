@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { anonymousSendAt } from '../../anonymous-delay';
 import { isDrawn } from '../../schema/edition';
 import { NudgeKind, type Nudge } from '../../schema/nudge';
 import { ownAndManagedIds, santaActionProcedure, santaViewProcedure } from '../between/santa-role';
@@ -19,9 +18,8 @@ const NUDGE_SHOWN_MS = 7 * DAY_MS;
 const kindFor = (wishCount: number): NudgeKind => (wishCount === 0 ? 'emptyWishlist' : 'moreDetails');
 
 /**
- * "Psst!" (30): a Santa asks their giftee for wishes, anonymously. The record's `sendAfter`
- * is a fixed time of day (S7's job emails it then); the giftee sees it in the app from then
- * on, never with the Santa's identity or the real time it was sent.
+ * "Psst!" (30): a Santa asks their giftee for wishes, anonymously. The next cron tick emails
+ * it; the giftee never sees the Santa's identity.
  */
 export const nudgeRouter = router({
   /** Which Psst! the caller can send their giftee now, and when the next one is allowed. Null when not a Santa here. */
@@ -56,7 +54,7 @@ export const nudgeRouter = router({
       santaMemberId: ctx.santa.id,
       gifteeMemberId: ctx.giftee.id,
       kind: input.kind,
-      sendAfter: anonymousSendAt(now, ctx.group.timeZone),
+      sendAfter: now,
       createdAt: now,
     };
     await ctx.db.nudges.insertOne(nudge);

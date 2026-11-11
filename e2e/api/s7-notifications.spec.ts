@@ -105,11 +105,8 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   };
 
   let psst!: SentMail;
-  await test.step('Psst!: emailed at its delivery slot, once, with nothing about the Santa', async () => {
+  await test.step('Psst!: emailed on the next run, once, with nothing about the Santa', async () => {
     ok(await bob.trpc.mutate('nudge.send', { ...E1, kind: 'emptyWishlist' }));
-    await run('deliveries');
-    expect(await mails(cee, 'psst'), 'not before the slot').toHaveLength(0);
-    await db.nudges.updateMany({ editionId: e1._id }, { $set: { sendAfter: new Date(Date.now() - 1000) } });
     await run('deliveries');
     await expectMails(cee, 'psst', 1);
     await run('deliveries');
@@ -122,10 +119,8 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(psst.headers['List-Unsubscribe'], "the token is the recipient's").toContain(cee.id);
   });
 
-  const questionsDue = () => db.questions.updateMany({ editionId: e1._id }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
   await test.step('question to the giftee, answer to the Santa: once each, the question without the asker', async () => {
     const { id: questionId } = ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'What size are your feet?' }));
-    await questionsDue();
     await run('deliveries');
     await expectMails(cee, 'question', 1);
     const [question] = await mails(cee, 'question');
@@ -155,7 +150,6 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(ok(await cee.trpc.query('me.get')).notifications.santaMessages).toBe(false);
     expect(psst.html, 'footer link to the page').toContain(`/unsubscribe?t=${oneClick.split('t=')[1]}`);
     ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'Favourite colour?' }));
-    await questionsDue();
     await run('deliveries');
     await expect
       .poll(() => db.questions.countDocuments({ editionId: e1._id, notifiedAt: { $exists: false } }), { message: 'in-app delivery still marked' })

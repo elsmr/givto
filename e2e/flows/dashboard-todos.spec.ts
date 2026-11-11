@@ -40,8 +40,7 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
   const annId = members.find((m) => m.userId === ann.id)!.id;
   const santaId = Object.entries(draw!.assignments).find(([, gifteeId]) => gifteeId === annId)![0];
   const santa = [bob, cee].find((user) => members.find((m) => m.id === santaId)?.userId === user.id)!;
-  const question = ok(await santa.trpc.mutate('question.ask', { ...partyEdition, text: 'Which colour do you like?' }));
-  await db.questions.updateOne({ _id: question.id, editionId }, { $set: { notifyAfter: new Date(Date.now() - 1000) } });
+  ok(await santa.trpc.mutate('question.ask', { ...partyEdition, text: 'Which colour do you like?' }));
   await db.editions.updateOne({ _id: editionId }, { $set: { status: 'giftday' } });
 
   await signInPage(page, ann);

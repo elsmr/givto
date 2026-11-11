@@ -10,7 +10,7 @@ import { useId, useState, type FormEvent } from 'react';
 import type { EditionInput } from './edition-input';
 import { useBetweenError } from './use-between-error';
 
-/** One question to the giftee; sent anonymously at the next delivery time. */
+/** One question to the giftee, sent anonymously. */
 export const AskQuestionForm = ({ input, gifteeName }: { input: EditionInput; gifteeName: string }) => {
   const t = useTranslations('between.ask');
   const id = useId();
