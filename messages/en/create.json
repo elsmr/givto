@@ -44,8 +44,7 @@
       "currency": "Currency",
       "from": "From",
       "range": "Range"
-    },
-    "later": "Only the name is needed. You can change the rest later."
+    }
   },
   "organizer": {
     "name": "Your name",

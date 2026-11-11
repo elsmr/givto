@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { todayIn } from '@/lib/local-date';
 import { GroupName } from '@/lib/schema/group';
@@ -56,7 +56,6 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
         <BudgetFields draft={draft} onChange={onChange} />
         {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={onChange} />}
-        <FieldDescription>{t('later')}</FieldDescription>
       </FieldGroup>
       <Button type="submit" size="lg" className="xs:self-start" disabled={busy}>
         {submitLabel}

@@ -44,8 +44,7 @@
       "currency": "Munteenheid",
       "from": "Van",
       "range": "Van–tot"
-    },
-    "later": "Alleen de naam is nodig. De rest kun je later nog aanpassen."
+    }
   },
   "organizer": {
     "name": "Je naam",
