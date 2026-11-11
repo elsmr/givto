@@ -19,12 +19,10 @@ test('"not the same as last time" that makes the draw impossible is refused with
   const refused = await ann.trpc.mutate('draw.run', next);
   expect(codeOf(refused)).toBe('DRAW_IMPOSSIBLE');
   expect(refused.error?.data.details).toEqual({ avoidPreviousGiftees: true });
-  const settings = { ...next, title: 'Secret Santa', exchangeMode: 'inPerson' } as const;
-  ok(await ann.trpc.mutate('settings.updateEdition', { ...settings, avoidPreviousGiftees: false }));
-  expect((await ann.trpc.mutate('settings.updateEdition', { ...settings, avoidPreviousGiftees: true })).error?.data.details).toEqual({
-    avoidPreviousGiftees: true,
-  });
+  ok(await ann.trpc.mutate('settings.setAvoidPrevious', { ...next, enabled: false }));
+  expect((await ann.trpc.mutate('settings.setAvoidPrevious', { ...next, enabled: true })).error?.data.details).toEqual({ avoidPreviousGiftees: true });
   ok(await ann.trpc.mutate('draw.run', next));
+  expect(codeOf(await ann.trpc.mutate('settings.setAvoidPrevious', { ...next, enabled: false }))).toBe('ALREADY_DRAWN');
   expectValidDraw((await editionOf(db, trio.slug, 2)).draw?.assignments, [a, b, c]);
   // Down to one person: nobody can be matched, the edition goes back to open for the organizer.
   ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: trio.slug, memberId: b }));
@@ -44,7 +42,7 @@ test('scheduled draw runs via runDueDraws once its time has come; impossible one
   const bystander = await createGroup(ann, 'Bystander');
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) for (const group of [scheduled, bystander]) await join(person, group, name);
   await join(bob, tooSmall, 'Bob');
-  const input = { editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
+  const input = { editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
   for (const { slug } of [scheduled, tooSmall, bystander]) ok(await ann.trpc.mutate('settings.updateEdition', { ...input, groupSlug: slug }));
   const editionIds = [(await editionOf(db, scheduled.slug, 1))._id, (await editionOf(db, tooSmall.slug, 1))._id];
   const drawAt = (await editionOf(db, scheduled.slug, 1)).drawAt;
@@ -75,7 +73,7 @@ test('time zone: organizer only; a scheduled draw keeps its local date', async (
   const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
   const group = await createGroup(ann, 'Moving');
   await join(bob, group, 'Bob');
-  const input = { groupSlug: group.slug, editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
+  const input = { groupSlug: group.slug, editionNumber: 1, title: 'Secret Santa', exchangeMode: 'inPerson', giftDay: { date: '2099-12-24' }, drawOn: '2099-12-01' } as const;
   ok(await ann.trpc.mutate('settings.updateEdition', input));
   expect(codeOf(await bob.trpc.mutate('settings.setTimeZone', { groupSlug: group.slug, timeZone: 'America/New_York' }))).toBe('NOT_ORGANIZER');
   ok(await ann.trpc.mutate('settings.setTimeZone', { groupSlug: group.slug, timeZone: 'America/New_York' }));

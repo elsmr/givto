@@ -6,7 +6,7 @@ import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
 import { removeMember } from '../remove-member';
 import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
-import { DRAW_TIME, updateEdition } from './settings-edition';
+import { DRAW_TIME, setAvoidPrevious, updateEdition } from './settings-edition';
 
 /** Organizer settings (27): every change is checked here, not only in the form. */
 export const settingsRouter = router({
@@ -45,6 +45,8 @@ export const settingsRouter = router({
 
   /** Edition details and dates (28); see `updateEdition` for the rules. */
   updateEdition,
+
+  setAvoidPrevious,
 
   /** Who's in this edition: tick or untick joined people before the draw (33). */
   setParticipants: organizerEditionProcedure

@@ -7,13 +7,18 @@ import { buttonVariants } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Gift } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Gift, PenLine, Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { GuessSetting } from '@/components/guess/guess-settings';
 import { RevealSetting } from '@/components/giftday/reveal-settings';
+import { UnwrapModeSetting } from '@/components/giftday/unwrap-mode-setting';
+import { useGiftDay } from '@/components/giftday/use-gift-day';
 import { SettingsGroup } from '@/components/ui/settings-group';
+import type { GroupEdition } from '@/components/group/group-data';
+import { isBeforeDraw } from '@/lib/schema/edition';
+import { AvoidPreviousSetting } from './avoid-previous-setting';
 import { DangerZone } from './danger-zone';
 import { EditionForm } from './edition-form';
 import { GroupNameForm } from './group-name-form';
@@ -50,19 +55,20 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
 
   const { data } = group;
   const { edition } = data;
-  // Most used first; the danger zone last.
   const sections: { id: string; title: string; content: ReactNode }[] = [
-    {
-      id: 'group',
-      title: t('group-name.title'),
-      content: (
-        <>
-          <GroupNameForm slug={slug} name={data.name} />
-          <GroupTimeZoneForm slug={slug} timeZone={data.timeZone} />
-        </>
-      ),
-    },
-    ...(edition ? [{ id: 'edition', title: edition.title, content: <EditionForm key={edition.number} groupSlug={slug} edition={edition} /> }] : []),
+    ...(edition
+      ? [
+          {
+            id: 'edition',
+            title: edition.title,
+            content: (
+              <SettingsGroup id="edition" title={t('edition.title', { edition: edition.title })} icon={CalendarDays} tone="mint">
+                <EditionForm key={edition.number} groupSlug={slug} edition={edition} />
+              </SettingsGroup>
+            ),
+          },
+        ]
+      : []),
     {
       id: 'people',
       title: t('people.title'),
@@ -73,24 +79,28 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
         </>
       ),
     },
-    ...(edition
-      ? [
-          {
-            id: 'gift-day',
-            title: t('gift-day'),
-            content: (
-              <SettingsGroup title={t('gift-day')} icon={Gift} tone="mint">
-                <GuessSetting groupSlug={slug} edition={edition} />
-                <RevealSetting groupSlug={slug} edition={edition} />
-              </SettingsGroup>
-            ),
-          },
-        ]
-      : []),
-    { id: 'keep-apart', title: tGroup('keep-apart.title'), content: <KeepApartSection group={data} edition={edition} organizer={organizer} /> },
-    ...(edition?.status === 'drawn'
-      ? [{ id: 'redraw', title: t('redraw.title'), content: <RedrawSection group={data} edition={edition} /> }]
-      : []),
+    {
+      id: 'draw',
+      title: t('draw-title'),
+      content: (
+        <SettingsGroup id="draw" title={t('draw-title')} icon={Shuffle} tone="yellow">
+          {edition?.hasPreviousEdition && isBeforeDraw(edition) && <AvoidPreviousSetting groupSlug={slug} edition={edition} />}
+          <KeepApartSection group={data} edition={edition} organizer={organizer} />
+          {edition?.status === 'drawn' && <RedrawSection group={data} edition={edition} />}
+        </SettingsGroup>
+      ),
+    },
+    ...(edition ? [{ id: 'gift-day', title: t('gift-day'), content: <GiftDaySettings groupSlug={slug} edition={edition} /> }] : []),
+    {
+      id: 'group',
+      title: t('group-name.title'),
+      content: (
+        <SettingsGroup id="group" title={t('group-name.title')} icon={PenLine} collapsible>
+          <GroupNameForm slug={slug} name={data.name} />
+          <GroupTimeZoneForm slug={slug} timeZone={data.timeZone} />
+        </SettingsGroup>
+      ),
+    },
     { id: 'danger', title: t('danger.title'), content: <DangerZone slug={slug} groupName={data.name} /> },
   ];
 
@@ -119,12 +129,32 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
         </nav>
         <div className="flex min-w-0 flex-col gap-8 lg:col-start-1 lg:row-start-1">
           {sections.map(({ id, content }) => (
-            <div key={id} id={id} className="flex scroll-mt-8 flex-col gap-8">
-              {content}
-            </div>
+            <Fragment key={id}>{content}</Fragment>
           ))}
         </div>
       </div>
     </div>
+  );
+};
+
+/** The unwrap mode comes with the gift day view, which `useGiftDay` loads from the draw on. */
+const GiftDaySettings = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
+  const t = useTranslations('settings');
+  const giftDay = useGiftDay({ groupSlug, editionNumber: edition.number }, edition.status);
+  const order = giftDay.data?.unwrapOrder;
+
+  return (
+    <SettingsGroup id="gift-day" title={t('gift-day')} icon={Gift} tone="mint">
+      {giftDay.data && edition.status !== 'done' && (
+        <UnwrapModeSetting
+          groupSlug={groupSlug}
+          editionNumber={edition.number}
+          mode={giftDay.data.unwrapMode}
+          inProgress={Boolean(order?.started && !order.finished)}
+        />
+      )}
+      <GuessSetting groupSlug={groupSlug} edition={edition} />
+      <RevealSetting groupSlug={groupSlug} edition={edition} />
+    </SettingsGroup>
   );
 };

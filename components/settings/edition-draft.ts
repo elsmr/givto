@@ -11,7 +11,6 @@ export type EditionDraft = EditionDetailsDraft & {
   wishlistBy: string;
   postBy: string;
   notes: string;
-  avoidPreviousGiftees: boolean;
 };
 
 const amount = (cents: number) => String(cents / 100);
@@ -28,7 +27,6 @@ export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   wishlistBy: edition.wishlistBy ?? '',
   postBy: edition.postBy ?? '',
   notes: edition.notes ?? '',
-  avoidPreviousGiftees: edition.avoidPreviousGiftees,
 });
 
 type EditionInput = RouterInputs['settings']['updateEdition'];
@@ -39,7 +37,6 @@ export const toEditionInput = (draft: EditionDraft, groupSlug: string, editionNu
   editionNumber,
   title: draft.title,
   exchangeMode: draft.exchangeMode,
-  avoidPreviousGiftees: draft.avoidPreviousGiftees,
   ...editionDetailsInput(draft),
   ...(draft.drawOn && { drawOn: draft.drawOn }),
   ...(draft.wishlistBy && { wishlistBy: draft.wishlistBy }),

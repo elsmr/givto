@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Dialog,
   DialogClose,
@@ -10,14 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { IconCardTitle } from '@/components/ui/icon-card-title';
+import { SettingsGroup, SettingsRow } from '@/components/ui/settings-group';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 
-/** Delete the group for everyone (27). */
+/**
+ * Delete the group for everyone (27). On coral, muted text is ink and the header keeps the coral on
+ * hover: grey text, and ink on the dark theme's page fill, are under 4.5:1.
+ */
 export const DangerZone = ({ slug, groupName }: { slug: string; groupName: string }) => {
   const t = useTranslations('settings');
   const trpc = useTRPC();
@@ -33,14 +35,8 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
   );
 
   return (
-    <Card className="bg-coral">
-      <CardHeader>
-        <IconCardTitle icon={TriangleAlert} tone="yellow">
-          {t('danger.title')}
-        </IconCardTitle>
-        <CardDescription className="text-base text-ink">{t('danger.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <SettingsGroup id="danger" title={t('danger.title')} icon={TriangleAlert} tone="yellow" collapsible className="bg-coral [--color-muted:var(--color-ink)] [&>summary:hover]:bg-transparent">
+      <SettingsRow label={t('danger.button')} description={t('danger.description')}>
         <Dialog>
           <DialogTrigger render={<Button variant="neutral" />}>{t('danger.button')}</DialogTrigger>
           <DialogContent>
@@ -61,7 +57,7 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
             </DialogFooter>
           </DialogContent>
         </Dialog>
-      </CardContent>
-    </Card>
+      </SettingsRow>
+    </SettingsGroup>
   );
 };

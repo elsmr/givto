@@ -6,9 +6,9 @@ import { expect, ok, test, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
 
-/** A settings card by its title. Cards have no role; data-slot (components/ui/card.tsx) is the handle. */
-const card = (page: Page, title: string) =>
-  page.locator('[data-slot="card"]').filter({ has: page.getByRole('heading', { level: 2, name: title, exact: true }) });
+/** A settings group by its title (components/ui/settings-group.tsx): a section, or a details when collapsible. */
+const settingsGroup = (page: Page, title: string) =>
+  page.locator('section, details').filter({ has: page.getByRole('heading', { level: 2, name: title, exact: true }) });
 
 const openGroup = async ([ann, ...others]: User[], name: string) => {
   const group = ok(
@@ -28,33 +28,37 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await signInPage(page, people[0]);
   await page.goto(`/g/${group.slug}/settings`);
 
-  await test.step('rename', async () => {
-    const groupCard = card(page, 'Group');
-    await groupCard.getByLabel('Group name').fill('After');
-    await groupCard.getByRole('button', { name: 'Save' }).click();
+  await test.step('rename: the Group settings start closed, and open when the link names them', async () => {
+    const groupSettings = settingsGroup(page, 'Group');
+    await expect(groupSettings).toBeVisible();
+    await expect(groupSettings.getByLabel('Group name')).toBeHidden();
+    await page.goto(`/g/${group.slug}/settings#group`);
+    const nameForm = groupSettings.locator('form').filter({ has: page.getByLabel('Group name') });
+    await nameForm.getByLabel('Group name').fill('After');
+    await nameForm.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Saved', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Back to After' })).toBeVisible();
   });
 
   await test.step('gift day, wishlist deadline and budget', async () => {
-    const editionCard = card(page, 'Secret Santa 2099');
-    await editionCard.getByLabel('Date', { exact: true }).fill('2099-12-20');
-    await editionCard.getByLabel('Time').fill('18:00');
-    await editionCard.getByLabel('Wishlists ready by').fill('2099-12-01');
-    await editionCard.getByLabel('Amount').fill('25');
-    await editionCard.getByLabel('Currency').selectOption('EUR');
+    const editionSettings = settingsGroup(page, 'Secret Santa 2099');
+    await editionSettings.getByLabel('Date', { exact: true }).fill('2099-12-20');
+    await editionSettings.getByLabel('Time').fill('18:00');
+    await editionSettings.getByLabel('Wishlists ready by').fill('2099-12-01');
+    await editionSettings.getByLabel('Amount').fill('25');
+    await editionSettings.getByLabel('Currency').selectOption('EUR');
     await Promise.all([
       page.waitForResponse((res) => res.url().includes('/api/trpc/settings.updateEdition') && res.ok()),
-      editionCard.getByRole('button', { name: 'Save' }).click(),
+      editionSettings.getByRole('button', { name: 'Save' }).click(),
     ]);
   });
 
   await test.step('saved: the settings keep them after a reload', async () => {
     await page.reload();
-    const editionCard = card(page, 'Secret Santa 2099');
-    await expect(editionCard.getByLabel('Date', { exact: true })).toHaveValue('2099-12-20');
-    await expect(editionCard.getByLabel('Wishlists ready by')).toHaveValue('2099-12-01');
-    await expect(editionCard.getByLabel('Amount')).toHaveValue('25');
+    const editionSettings = settingsGroup(page, 'Secret Santa 2099');
+    await expect(editionSettings.getByLabel('Date', { exact: true })).toHaveValue('2099-12-20');
+    await expect(editionSettings.getByLabel('Wishlists ready by')).toHaveValue('2099-12-01');
+    await expect(editionSettings.getByLabel('Amount')).toHaveValue('25');
   });
 
   await test.step('the group page shows them', async () => {
@@ -73,7 +77,7 @@ test('keep apart: rows of people, a stuck row is named, and the draw follows the
   const group = await openGroup(people, 'Apart');
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}/settings`);
-  const keepApart = card(page, 'Keep apart');
+  const keepApart = settingsGroup(page, 'The draw').getByRole('group', { name: 'Keep apart' });
   const row1 = keepApart.getByRole('group', { name: 'Row 1' });
   const row2 = keepApart.getByRole('group', { name: 'Row 2' });
 
@@ -121,7 +125,7 @@ test('join link settings: a cap, turn the link off, make a new one', async ({ pa
   const group = await openGroup(people, 'Link');
   await signInPage(page, people[0]);
   await page.goto(`/g/${group.slug}/settings`);
-  const invite = card(page, 'People');
+  const invite = settingsGroup(page, 'People');
   const oldLink = await invite.getByLabel('Join link').inputValue();
   expect(oldLink).toContain(group.joinToken);
 
@@ -169,13 +173,13 @@ test('remove someone after the draw: only their Santa gets someone new', async (
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}/settings`);
   await test.step(`remove ${leaverName}`, async () => {
-    const row = card(page, 'People').getByRole('listitem').filter({ has: page.getByText(leaverName, { exact: true }) });
+    const row = settingsGroup(page, 'People').getByRole('listitem').filter({ has: page.getByText(leaverName, { exact: true }) });
     await row.getByRole('button', { name: 'Remove' }).click();
     const dialog = page.getByRole('dialog', { name: `Remove ${leaverName}?` });
     await expect(dialog).toContainText(`${leaverName} leaves the group. The names are drawn already: their Santa gets someone else, everyone else keeps their giftee.`);
     await dialog.getByRole('button', { name: `Remove ${leaverName}` }).click();
     await expect(page.getByText(`${leaverName} removed`)).toBeVisible();
-    await expect(card(page, 'People').getByText(leaverName, { exact: true })).toHaveCount(0);
+    await expect(settingsGroup(page, 'People').getByText(leaverName, { exact: true })).toHaveCount(0);
   });
 
   await test.step("the leaver's Santa now has the leaver's giftee; everyone else keeps theirs", async () => {
@@ -223,8 +227,17 @@ test('after gift day: same again next year, then open the new edition', async ({
     await expect(dialog.getByText('is finished first'), 'done already').toHaveCount(0);
     await dialog.getByRole('button', { name: 'Start new edition' }).click();
     await expect(page).toHaveURL(`/g/${group.slug}/settings`);
-    await expect(card(page, title)).toBeVisible();
-    await expect(card(page, 'People')).toContainText('3 people in this edition');
+    await expect(settingsGroup(page, title)).toBeVisible();
+    await expect(settingsGroup(page, 'People')).toContainText('3 people in this edition');
+  });
+
+  await test.step('not the same as last time: on for the new edition, off at once', async () => {
+    const avoidPrevious = page.getByRole('switch', { name: 'Not the same as last time' });
+    await expect(avoidPrevious).toBeChecked();
+    await avoidPrevious.click();
+    await expect(page.getByText('Anyone can draw the same person as last time')).toBeVisible();
+    await page.reload();
+    await expect(avoidPrevious).not.toBeChecked();
   });
 
   await test.step('open it from the group page', async () => {

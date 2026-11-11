@@ -16,10 +16,11 @@ test('Family: settings, draw, changes after the draw, .ics, next edition', async
   const rules = async () => rulesOf(await groupOf(db, slug));
 
   await test.step('settings are organizer-only; outsiders get GROUP_NOT_FOUND', async () => {
-    const editionInput = { ...edition1, title: 'Hacked', exchangeMode: 'inPerson', avoidPreviousGiftees: false };
+    const editionInput = { ...edition1, title: 'Hacked', exchangeMode: 'inPerson' };
     for (const [path, input] of [
       ['settings.rename', { groupSlug: slug, name: 'Hacked' }],
       ['settings.updateEdition', editionInput],
+      ['settings.setAvoidPrevious', { ...edition1, enabled: false }],
       ['settings.setParticipants', { ...edition1, memberIds: [id.bob] }],
       ['settings.removePerson', { groupSlug: slug, memberId: id.cee }],
       ['settings.deleteGroup', { groupSlug: slug }],
@@ -36,7 +37,7 @@ test('Family: settings, draw, changes after the draw, .ics, next edition', async
   });
 
   await test.step('edition dates and budget are validated server-side', async () => {
-    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', avoidPreviousGiftees: false, giftDay: { date: '2099-12-24' } } as const;
+    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', giftDay: { date: '2099-12-24' } } as const;
     expect(codeOf(await ann.trpc.mutate('settings.updateEdition', { ...base, giftDay: { date: '2001-12-24' } }))).toBe('DATE_IN_PAST');
     expect(codeOf(await ann.trpc.mutate('settings.updateEdition', { ...base, drawOn: '2001-12-01' }))).toBe('DATE_IN_PAST');
     expect(codeOf(await ann.trpc.mutate('settings.updateEdition', { ...base, drawOn: '2099-12-24' }))).toBe('DATES_OUT_OF_ORDER');
@@ -158,7 +159,7 @@ test('Family: settings, draw, changes after the draw, .ics, next edition', async
     expect(lines.includes('DTSTART;VALUE=DATE:20991219') && lines.includes('DTEND;VALUE=DATE:20991220'), first).toBe(true);
     const uids = (ics: string) => ics.split('\r\n').filter((line) => line.startsWith('UID:'));
     const sequence = (ics: string) => Number(ics.split('\r\n').find((line) => line.startsWith('SEQUENCE:'))!.slice(9));
-    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', avoidPreviousGiftees: false, postBy: '2099-12-19' } as const;
+    const base = { ...edition1, title: 'Secret Santa 2099', exchangeMode: 'byPost', postBy: '2099-12-19' } as const;
     ok(await ann.trpc.mutate('settings.updateEdition', { ...base, giftDay: { date: '2099-12-23' } }));
     const second = await icsFor();
     expect(uids(second)).toEqual(uids(first));

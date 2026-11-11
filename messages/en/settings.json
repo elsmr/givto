@@ -1,5 +1,6 @@
 {
   "gift-day": "Gift day",
+  "draw-title": "The draw",
   "page-title": "Settings",
   "only-organizer": "Only the organizer can change the settings of {group}.",
   "back": "Back to {group}",
@@ -13,7 +14,6 @@
     "help": "Stays the same every year, like Family or The office."
   },
   "time-zone": {
-    "title": "Time zone",
     "label": "Time zone",
     "help": "Gift day, reminders and scheduled draws follow this time zone."
   },
@@ -28,9 +28,13 @@
     "post-by": "Post gifts by",
     "post-by-help": "Optional.",
     "notes": "Notes for everyone",
-    "notes-help": "Optional. Dress code, theme, house rules…",
-    "avoid-previous": "Not the same as last time",
-    "avoid-previous-help": "Nobody draws the person they had last time. Nobody sees who that was, not even you."
+    "notes-help": "Optional. Dress code, theme, house rules…"
+  },
+  "avoid-previous": {
+    "label": "Not the same as last time",
+    "help": "Nobody draws the person they had last time. Nobody sees who that was, not even you.",
+    "on": "Nobody draws the same person as last time",
+    "off": "Anyone can draw the same person as last time"
   },
   "people": {
     "title": "People",

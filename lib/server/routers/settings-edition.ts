@@ -23,7 +23,6 @@ export const EditionSettingsInput = v.pipe(
     exchangeMode: ExchangeMode,
     budget: v.optional(Price),
     notes: v.optional(MultiLine(2000)),
-    avoidPreviousGiftees: v.boolean(),
   }),
   v.check((input) => checkEditionDates.requirement(input), checkEditionDates.message)
 );
@@ -32,8 +31,7 @@ const optionalFields = ['giftDay', 'drawAt', 'wishlistBy', 'postBy', 'budget', '
 
 /**
  * Dates (28): a changed date can't be in the past, the draw is before gift day, wishlists and
- * posting no later than gift day (schema). The schedule and "not the same as last time" are
- * fixed once drawn; turning the latter on must leave a possible draw. Done editions are read-only.
+ * posting no later than gift day (schema). The schedule is fixed once drawn. Done editions are read-only.
  */
 export const updateEdition = organizerEditionProcedure.input(EditionSettingsInput).mutation(async ({ ctx, input }) => {
   const { edition } = ctx;
@@ -52,22 +50,11 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
     throw new AppError('DATE_IN_PAST');
   }
   if (input.drawOn && input.giftDay && input.drawOn >= input.giftDay.date) throw new AppError('DATES_OUT_OF_ORDER');
-  const beforeDraw = isBeforeDraw(edition);
-  if (!beforeDraw && (input.drawOn !== drawOn || input.avoidPreviousGiftees !== edition.avoidPreviousGiftees)) {
-    throw new AppError('ALREADY_DRAWN');
-  }
-  if (beforeDraw && input.avoidPreviousGiftees && !edition.avoidPreviousGiftees) {
-    const ids = drawParticipantIds(ctx.group, edition);
-    const rules = await drawRules(ctx.db, ctx.group, { ...edition, avoidPreviousGiftees: true });
-    if (ids.length >= MIN_PARTICIPANTS && !findStuckGivers(ids, rules.standing) && findStuckGivers(ids, allRules(rules))) {
-      throw new AppError('DRAW_IMPOSSIBLE', { details: { avoidPreviousGiftees: true } });
-    }
-  }
+  if (!isBeforeDraw(edition) && input.drawOn !== drawOn) throw new AppError('ALREADY_DRAWN');
 
   const next = {
     title: input.title,
     exchangeMode: input.exchangeMode,
-    avoidPreviousGiftees: input.avoidPreviousGiftees,
     giftDay: input.giftDay && compactGiftDay(input.giftDay),
     drawAt: input.drawOn ? zonedInstant(input.drawOn, DRAW_TIME, timeZone) : undefined,
     wishlistBy: input.wishlistBy,
@@ -93,6 +80,25 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
       },
       ...(Object.keys(unset).length > 0 && { $unset: unset }),
     }
+  );
+  if (saved.matchedCount === 0) throw new AppError('EDITION_CHANGED');
+  return { ok: true };
+});
+
+/** "Not the same as last time": before the draw only; turning it on must leave a possible draw. */
+export const setAvoidPrevious = organizerEditionProcedure.input(v.object({ enabled: v.boolean() })).mutation(async ({ ctx, input }) => {
+  const { edition } = ctx;
+  if (!isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
+  if (input.enabled && !edition.avoidPreviousGiftees) {
+    const ids = drawParticipantIds(ctx.group, edition);
+    const rules = await drawRules(ctx.db, ctx.group, { ...edition, avoidPreviousGiftees: true });
+    if (ids.length >= MIN_PARTICIPANTS && !findStuckGivers(ids, rules.standing) && findStuckGivers(ids, allRules(rules))) {
+      throw new AppError('DRAW_IMPOSSIBLE', { details: { avoidPreviousGiftees: true } });
+    }
+  }
+  const saved = await ctx.db.editions.updateOne(
+    { _id: edition._id, status: edition.status },
+    { $set: { avoidPreviousGiftees: input.enabled, updatedAt: new Date() } }
   );
   if (saved.matchedCount === 0) throw new AppError('EDITION_CHANGED');
   return { ok: true };

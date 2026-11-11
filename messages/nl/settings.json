@@ -1,5 +1,6 @@
 {
   "gift-day": "Pakjesdag",
+  "draw-title": "De loting",
   "page-title": "Instellingen",
   "only-organizer": "Alleen de organisator kan de instellingen van {group} aanpassen.",
   "back": "Terug naar {group}",
@@ -13,7 +14,6 @@
     "help": "Blijft elk jaar hetzelfde, zoals Familie of Het werk."
   },
   "time-zone": {
-    "title": "Tijdzone",
     "label": "Tijdzone",
     "help": "Cadeaudag, herinneringen en geplande lotingen volgen deze tijdzone."
   },
@@ -28,9 +28,13 @@
     "post-by": "Cadeaus op de post op",
     "post-by-help": "Optioneel.",
     "notes": "Notities voor iedereen",
-    "notes-help": "Optioneel. Dresscode, thema, huisregels…",
-    "avoid-previous": "Niet dezelfde persoon als vorige keer",
-    "avoid-previous-help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet."
+    "notes-help": "Optioneel. Dresscode, thema, huisregels…"
+  },
+  "avoid-previous": {
+    "label": "Niet dezelfde persoon als vorige keer",
+    "help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet.",
+    "on": "Niemand krijgt dezelfde persoon als vorige keer",
+    "off": "Iedereen kan dezelfde persoon krijgen als vorige keer"
   },
   "people": {
     "title": "Deelnemers",

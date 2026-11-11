@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { ChevronDown, type LucideIcon } from 'lucide-react';
-import { useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { IconTile, type Tone } from './icon-tile';
 import { Label } from './label';
 
@@ -11,7 +11,7 @@ type SettingsGroupProps = {
   tone?: Tone;
   /** `plain` inside something that's already framed, like a dialog: no card, an h3. */
   variant?: 'card' | 'plain';
-  /** Starts closed: for what's rarely changed. Card only. */
+  /** Starts closed, unless the URL hash names its `id`: for what's rarely changed. Card only. */
   collapsible?: boolean;
   id?: string;
   className?: string;
@@ -21,6 +21,16 @@ type SettingsGroupProps = {
 /** Related settings under one heading, most important first: each child is a `SettingsRow` (or any block), divided. */
 export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted', variant = 'card', collapsible = false, id, className, children }: SettingsGroupProps) => {
   const headingId = useId();
+  const details = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (!collapsible || !id) return;
+    const openIfTargeted = () => {
+      if (location.hash === `#${id}` && details.current) details.current.open = true;
+    };
+    openIfTargeted();
+    window.addEventListener('hashchange', openIfTargeted);
+    return () => window.removeEventListener('hashchange', openIfTargeted);
+  }, [collapsible, id]);
   const plain = variant === 'plain';
   const Heading = plain ? 'h3' : 'h2';
   const header = (
@@ -56,7 +66,7 @@ export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted'
   const frame = cn('scroll-mt-8 bg-surface text-ink bordered shadow-md', className);
   if (collapsible) {
     return (
-      <details id={id} className={cn('group/settings', frame)}>
+      <details ref={details} id={id} className={cn('group/settings', frame)}>
         <summary className="flex cursor-pointer list-none items-center gap-3 p-6 hover:bg-page [&::-webkit-details-marker]:hidden">
           {header}
           <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open/settings:rotate-180" />
