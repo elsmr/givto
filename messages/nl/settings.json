@@ -22,15 +22,13 @@
     "done": "Deze editie is voorbij en kan niet meer veranderen.",
     "name": "Naam van deze editie",
     "draw-on": "Loten op",
-    "draw-on-help": "Optioneel. Er wordt die ochtend geloot. Laat leeg om zelf te loten.",
+    "draw-on-help": "Er wordt die ochtend geloot. Laat leeg om zelf te loten.",
     "wishlist-by": "Verlanglijstjes klaar op",
-    "wishlist-by-help": "Optioneel.",
     "post-by": "Cadeaus op de post op",
-    "post-by-help": "Optioneel.",
     "call-url": "Link naar het videogesprek",
-    "call-url-help": "Optioneel. Om op pakjesdag samen uit te pakken via een videogesprek.",
+    "call-url-help": "Om op pakjesdag samen uit te pakken via een videogesprek.",
     "notes": "Notities voor iedereen",
-    "notes-help": "Optioneel. Dresscode, thema, huisregels…"
+    "notes-help": "Dresscode, thema, huisregels…"
   },
   "avoid-previous": {
     "label": "Niet dezelfde persoon als vorige keer",

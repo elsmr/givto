@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Email, PersonName } from '@/lib/schema/common';
 import { useTranslations } from 'next-intl';
@@ -56,7 +56,9 @@ export const NameEmailForm = ({
     <form onSubmit={submit} className="flex flex-col gap-6">
       <FieldGroup>
         <Field data-invalid={issues.name ? 'true' : undefined}>
-          <FieldLabel htmlFor="person-name">{texts.name}</FieldLabel>
+          <FieldLabel htmlFor="person-name" hint={texts.nameHelp}>
+            {texts.name}
+          </FieldLabel>
           <Input
             id="person-name"
             required
@@ -66,14 +68,15 @@ export const NameEmailForm = ({
             aria-invalid={issues.name ? 'true' : undefined}
             onChange={(event) => onChange({ name: event.target.value })}
           />
-          <FieldDescription>{texts.nameHelp}</FieldDescription>
           {issues.name && <FieldError>{tIssues(issues.name)}</FieldError>}
         </Field>
         {signedInEmail ? (
           <p className="text-muted">{texts.signedIn}</p>
         ) : (
           <Field data-invalid={issues.email ? 'true' : undefined}>
-            <FieldLabel htmlFor="person-email">{texts.email}</FieldLabel>
+            <FieldLabel htmlFor="person-email" hint={texts.emailHelp}>
+              {texts.email}
+            </FieldLabel>
             <Input
               id="person-email"
               type="email"
@@ -83,7 +86,6 @@ export const NameEmailForm = ({
               aria-invalid={issues.email ? 'true' : undefined}
               onChange={(event) => onChange({ email: event.target.value })}
             />
-            <FieldDescription>{texts.emailHelp}</FieldDescription>
             {issues.email && <FieldError>{tIssues('invalid_email')}</FieldError>}
           </Field>
         )}

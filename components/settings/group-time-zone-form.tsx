@@ -1,6 +1,6 @@
 import { useInvalidateGroup } from '@/components/group/use-invalidate-group';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
@@ -34,7 +34,7 @@ export const GroupTimeZoneForm = ({ slug, timeZone }: { slug: string; timeZone: 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <Field>
-        <FieldLabel htmlFor="settings-time-zone">{t('time-zone.label')}</FieldLabel>
+        <FieldLabel htmlFor="settings-time-zone" hint={t('time-zone.help')}>{t('time-zone.label')}</FieldLabel>
         <NativeSelect id="settings-time-zone" value={value} onChange={(event) => setValue(event.target.value)}>
           {options.map((zone) => (
             <NativeSelectOption key={zone} value={zone}>
@@ -42,7 +42,6 @@ export const GroupTimeZoneForm = ({ slug, timeZone }: { slug: string; timeZone: 
             </NativeSelectOption>
           ))}
         </NativeSelect>
-        <FieldDescription>{t('time-zone.help')}</FieldDescription>
         {save.error && <FieldError>{t('errors.INTERNAL')}</FieldError>}
       </Field>
       <Button type="submit" className="self-start" disabled={save.isPending}>

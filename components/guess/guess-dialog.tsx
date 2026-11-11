@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
+import { FieldLegend, FieldSet } from '@/components/ui/field';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { toast } from '@/components/ui/toast';
 import type { EditionInput } from '@/components/between/edition-input';
@@ -85,10 +85,9 @@ export const GuessDialog = ({ input, people, board }: GuessDialogProps) => {
           </FieldSet>
           {board.rows.length > 0 && (
             <FieldSet>
-              <FieldLegend variant="label" className="font-semibold">
+              <FieldLegend variant="label" className="font-semibold" optional hint={t('dialog.board-hint')}>
                 {t('dialog.board')}
               </FieldLegend>
-              <FieldDescription>{t('dialog.board-hint')}</FieldDescription>
               <dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-x-3 gap-y-2">
                 <dt className="font-semibold break-words">{t('dialog.row', { giftee: board.myGiftee.name })}</dt>
                 <dd className="flex h-11 items-center border-2 border-dashed border-outline px-3 text-muted">{t('dialog.you')}</dd>

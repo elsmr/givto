@@ -51,7 +51,9 @@ export const AddressForm = ({ initial, busy, onSubmit, onCancel }: AddressFormPr
 
   const field = (key: Exclude<keyof typeof draft, 'country'>, label: string, autoComplete: string, required: boolean) => (
     <Field>
-      <FieldLabel htmlFor={key === 'line1' ? ADDRESS_FIELD_ID : `address-${key}`}>{label}</FieldLabel>
+      <FieldLabel htmlFor={key === 'line1' ? ADDRESS_FIELD_ID : `address-${key}`} optional={!required}>
+        {label}
+      </FieldLabel>
       <Input
         id={key === 'line1' ? ADDRESS_FIELD_ID : `address-${key}`}
         autoComplete={autoComplete}

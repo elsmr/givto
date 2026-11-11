@@ -1,5 +1,9 @@
 {
   "close": "Sluiten",
   "close-toast": "Melding sluiten",
-  "loading": "Even geduld…"
+  "loading": "Even geduld…",
+  "field": {
+    "optional": "optioneel",
+    "more-info": "Meer uitleg"
+  }
 }

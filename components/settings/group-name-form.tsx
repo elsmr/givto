@@ -1,7 +1,7 @@
 import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import { useInvalidateGroup } from '@/components/group/use-invalidate-group';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
@@ -37,7 +37,7 @@ export const GroupNameForm = ({ slug, name }: { slug: string; name: string }) =>
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
       <Field data-invalid={issue ? 'true' : undefined}>
-        <FieldLabel htmlFor="settings-group-name">{t('group-name.label')}</FieldLabel>
+        <FieldLabel htmlFor="settings-group-name" hint={t('group-name.help')}>{t('group-name.label')}</FieldLabel>
         <Input
           id="settings-group-name"
           autoComplete="off"
@@ -49,7 +49,6 @@ export const GroupNameForm = ({ slug, name }: { slug: string; name: string }) =>
           value={value}
           onChange={(event) => setValue(event.target.value)}
         />
-        <FieldDescription>{t('group-name.help')}</FieldDescription>
         {issue && <FieldError>{tIssues(issue)}</FieldError>}
         {rename.error && <FieldError>{t('errors.INTERNAL')}</FieldError>}
       </Field>

@@ -1,4 +1,4 @@
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { addDays } from '@/lib/local-date';
 import { useTranslations } from 'next-intl';
@@ -18,9 +18,11 @@ type DateField = 'drawOn' | 'wishlistBy' | 'postBy';
 export const EditionDatesFields = ({ draft, today, canSchedule, onChange }: EditionDatesFieldsProps) => {
   const t = useTranslations('settings.edition');
   const giftDay = draft.giftDate || undefined;
-  const dateField = (field: DateField, label: string, help: string, max?: string) => (
+  const dateField = (field: DateField, label: string, max?: string, hint?: string) => (
     <Field>
-      <FieldLabel htmlFor={`edition-${field}`}>{label}</FieldLabel>
+      <FieldLabel htmlFor={`edition-${field}`} optional hint={hint}>
+        {label}
+      </FieldLabel>
       <Input
         id={`edition-${field}`}
         type="date"
@@ -29,15 +31,14 @@ export const EditionDatesFields = ({ draft, today, canSchedule, onChange }: Edit
         value={draft[field]}
         onChange={(event) => onChange({ [field]: event.target.value })}
       />
-      <FieldDescription>{help}</FieldDescription>
     </Field>
   );
 
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      {canSchedule && dateField('drawOn', t('draw-on'), t('draw-on-help'), giftDay && addDays(giftDay, -1))}
-      {dateField('wishlistBy', t('wishlist-by'), t('wishlist-by-help'), giftDay)}
-      {draft.exchangeMode !== 'inPerson' && dateField('postBy', t('post-by'), t('post-by-help'), giftDay)}
+      {canSchedule && dateField('drawOn', t('draw-on'), giftDay && addDays(giftDay, -1), t('draw-on-help'))}
+      {dateField('wishlistBy', t('wishlist-by'), giftDay)}
+      {draft.exchangeMode !== 'inPerson' && dateField('postBy', t('post-by'), giftDay)}
     </div>
   );
 };

@@ -1,5 +1,9 @@
 {
   "close": "Close",
   "close-toast": "Close notification",
-  "loading": "Loading…"
+  "loading": "Loading…",
+  "field": {
+    "optional": "optional",
+    "more-info": "More info"
+  }
 }

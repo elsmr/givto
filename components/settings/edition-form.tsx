@@ -4,7 +4,7 @@ import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import type { GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
@@ -68,7 +68,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={update} />}
         {draft.kind !== 'whiteElephant' && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
           <Field>
-            <FieldLabel htmlFor="edition-call-url">{t('edition.call-url')}</FieldLabel>
+            <FieldLabel htmlFor="edition-call-url" optional hint={t('edition.call-url-help')}>{t('edition.call-url')}</FieldLabel>
             <Input
               id="edition-call-url"
               type="url"
@@ -78,7 +78,6 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
               value={draft.callUrl}
               onChange={(event) => update({ callUrl: event.target.value })}
             />
-            <FieldDescription>{t('edition.call-url-help')}</FieldDescription>
           </Field>
         )}
         {drawsNames(draft) && (
@@ -86,9 +85,8 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         )}
         <BudgetFields draft={draft} onChange={update} />
         <Field>
-          <FieldLabel htmlFor="edition-notes">{t('edition.notes')}</FieldLabel>
+          <FieldLabel htmlFor="edition-notes" optional hint={t('edition.notes-help')}>{t('edition.notes')}</FieldLabel>
           <Textarea id="edition-notes" maxLength={2000} value={draft.notes} onChange={(event) => update({ notes: event.target.value })} />
-          <FieldDescription>{t('edition.notes-help')}</FieldDescription>
         </Field>
       </FieldGroup>
       {save.error && <FieldError>{t(`errors.${settingsErrorKey(save.error)}`)}</FieldError>}

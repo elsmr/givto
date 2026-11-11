@@ -1,7 +1,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { FlowPage, MessageCard } from '@/components/shell/flow-page';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
@@ -106,7 +106,9 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
           <p>{signedInEmail && signedInEmail !== email ? t('invite.other-account', { email, signedInEmail }) : t('invite.for', { email })}</p>
           {(!signedInEmail || signedInEmail === email) && (
             <Field data-invalid={nameIssue ? 'true' : undefined}>
-              <FieldLabel htmlFor="person-name">{t('details.name')}</FieldLabel>
+              <FieldLabel htmlFor="person-name" hint={t('details.name-help')}>
+                {t('details.name')}
+              </FieldLabel>
               <Input
                 id="person-name"
                 required
@@ -116,7 +118,6 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
                 aria-invalid={nameIssue ? 'true' : undefined}
                 onChange={(event) => joinName.setName(event.target.value)}
               />
-              <FieldDescription>{t('details.name-help')}</FieldDescription>
               {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
             </Field>
           )}

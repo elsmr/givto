@@ -22,7 +22,9 @@ export const GiftDayFields = ({ draft, today, onChange }: FieldsProps & { today:
   return (
     <div className="flex items-end gap-3">
       <Field className="min-w-0 flex-1">
-        <FieldLabel htmlFor="gift-date">{t('legend')}</FieldLabel>
+        <FieldLabel htmlFor="gift-date" optional>
+          {t('legend')}
+        </FieldLabel>
         <Input id="gift-date" type="date" min={today} value={draft.giftDate} onChange={(event) => onChange({ giftDate: event.target.value })} />
       </Field>
       {(timeAsked || draft.giftTime) && (

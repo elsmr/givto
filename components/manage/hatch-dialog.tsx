@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { addDays, formatLocalDate, todayIn } from '@/lib/local-date';
 import { useLocale, useTranslations } from 'next-intl';
@@ -54,7 +54,7 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
         </ul>
         {hatch === 'backToShopping' && (
           <Field>
-            <FieldLabel htmlFor="hatch-gift-day">{t('backToShopping.date')}</FieldLabel>
+            <FieldLabel htmlFor="hatch-gift-day" hint={t('backToShopping.date-help')}>{t('backToShopping.date')}</FieldLabel>
             <Input
               id="hatch-gift-day"
               type="date"
@@ -63,7 +63,6 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
               value={giftDayDate}
               onChange={(event) => setGiftDayDate(event.target.value)}
             />
-            <FieldDescription>{t('backToShopping.date-help')}</FieldDescription>
           </Field>
         )}
         {error && <FieldError>{t(`errors.${error}`)}</FieldError>}

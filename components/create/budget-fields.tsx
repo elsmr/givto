@@ -31,7 +31,9 @@ export const BudgetFields = ({ draft, onChange }: BudgetFieldsProps) => {
   }
   return (
     <FieldSet>
-      <FieldLegend variant="label">{t('legend')}</FieldLegend>
+      <FieldLegend variant="label" optional>
+        {t('legend')}
+      </FieldLegend>
       <div className="flex flex-wrap items-end gap-3">
         <Field className="w-28">
           <FieldLabel htmlFor="budget-amount" className={range ? undefined : 'sr-only'}>

@@ -22,15 +22,13 @@
     "done": "This edition is over, so it can't be changed anymore.",
     "name": "Name of this edition",
     "draw-on": "Draw names on",
-    "draw-on-help": "Optional. Names are drawn that morning. Leave it empty to draw them yourself.",
+    "draw-on-help": "Names are drawn that morning. Leave it empty to draw them yourself.",
     "wishlist-by": "Wishlists ready by",
-    "wishlist-by-help": "Optional.",
     "post-by": "Post gifts by",
-    "post-by-help": "Optional.",
     "call-url": "Video call link",
-    "call-url-help": "Optional. To unwrap together on a call on gift day.",
+    "call-url-help": "To unwrap together on a call on gift day.",
     "notes": "Notes for everyone",
-    "notes-help": "Optional. Dress code, theme, house rules…"
+    "notes-help": "Dress code, theme, house rules…"
   },
   "avoid-previous": {
     "label": "Not the same as last time",

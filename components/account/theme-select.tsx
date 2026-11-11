@@ -1,4 +1,4 @@
-import { FieldDescription, FieldLegend, FieldSet } from '@/components/ui/field';
+import { FieldLegend, FieldSet } from '@/components/ui/field';
 import { tabsListVariants } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { Monitor, Moon, Sun } from 'lucide-react';
@@ -30,7 +30,7 @@ export const ThemeSelect = () => {
 
   return (
     <FieldSet className="gap-2">
-      <FieldLegend variant="label" className="font-semibold">
+      <FieldLegend variant="label" className="font-semibold" hint={t('theme.description')}>
         {t('theme.label')}
       </FieldLegend>
       <div className={cn(tabsListVariants({ variant: 'segmented' }), 'flex w-full items-stretch')}>
@@ -68,7 +68,6 @@ export const ThemeSelect = () => {
           );
         })}
       </div>
-      <FieldDescription>{t('theme.description')}</FieldDescription>
     </FieldSet>
   );
 };

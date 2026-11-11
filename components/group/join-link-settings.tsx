@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { useTRPC } from '@/lib/client/trpc';
@@ -36,7 +36,9 @@ export const JoinLinkSettings = ({ slug, joinLink }: { slug: string; joinLink: J
         <FieldLabel htmlFor="requires-approval">{t('approval')}</FieldLabel>
       </Field>
       <Field>
-        <FieldLabel htmlFor="member-cap">{t('cap')}</FieldLabel>
+        <FieldLabel htmlFor="member-cap" optional hint={t('cap-help')}>
+          {t('cap')}
+        </FieldLabel>
         <Input
           id="member-cap"
           type="number"
@@ -48,7 +50,6 @@ export const JoinLinkSettings = ({ slug, joinLink }: { slug: string; joinLink: J
           onChange={(event) => setCap(event.target.value)}
           onBlur={() => cap !== String(joinLink.maxMembers ?? '') && save(joinLink.requiresApproval, cap)}
         />
-        <FieldDescription>{t('cap-help')}</FieldDescription>
       </Field>
       <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
         {!joinLink.revoked && (

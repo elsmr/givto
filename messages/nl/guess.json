@@ -20,7 +20,7 @@
     "lock": "Leg vast",
     "cancel": "Nog niet",
     "locked": "Vastgelegd! Je hoort het als jij aan de beurt bent op pakjesdag.",
-    "board": "De rest van de loting (niet verplicht)",
+    "board": "De rest van de loting",
     "board-hint": "Een punt voor elk goed geraden paar. Iedereen is maar van één persoon de Santa.",
     "row": "Santa van {giftee}",
     "you": "Jij",

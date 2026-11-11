@@ -141,12 +141,12 @@ test('join link settings: a cap, turn the link off, make a new one', async ({ pa
 
   await test.step('at most 5 people', async () => {
     await invite.getByText('Link settings', { exact: true }).click();
-    await invite.getByLabel('Most people (optional)').fill('5');
-    await invite.getByLabel('Most people (optional)').blur();
+    await invite.getByLabel('Most people').fill('5');
+    await invite.getByLabel('Most people').blur();
     await expect.poll(async () => ok(await people[0].trpc.query('group.get', { groupSlug: group.slug })).organizer?.joinLink?.maxMembers).toBe(5);
     await page.reload();
     await invite.getByText('Link settings', { exact: true }).click();
-    await expect(invite.getByLabel('Most people (optional)')).toHaveValue('5');
+    await expect(invite.getByLabel('Most people')).toHaveValue('5');
   });
 
   await test.step('turn the link off', async () => {

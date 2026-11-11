@@ -20,7 +20,7 @@
     "lock": "Lock it in",
     "cancel": "Not yet",
     "locked": "Locked in! You'll find out at your turn on gift day.",
-    "board": "The rest of the draw (optional)",
+    "board": "The rest of the draw",
     "board-hint": "A point for every pair you get right. Everyone is someone's Santa once.",
     "row": "{giftee}'s Santa",
     "you": "You",

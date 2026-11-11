@@ -1,8 +1,11 @@
 import { cva, type VariantProps } from 'class-variance-authority';
+import { CircleHelp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import * as React from 'react';
 
 import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 import { cn } from '@/lib/utils';
 
@@ -19,21 +22,60 @@ function FieldSet({ className, ...props }: React.ComponentProps<'fieldset'>) {
   );
 }
 
+type FieldLabelExtras = {
+  /** Help behind a (?) next to the label: opens on hover, and on tap for touch. */
+  hint?: React.ReactNode;
+  optional?: boolean;
+};
+
+function FieldOptional() {
+  const t = useTranslations('ui.field');
+  return <span className="font-normal text-muted">{t('optional')}</span>;
+}
+
+// A popover, not a tooltip: Base UI disables tooltips on touch devices.
+function FieldHint({ children }: { children: React.ReactNode }) {
+  const t = useTranslations('ui.field');
+  return (
+    <Popover>
+      <PopoverTrigger
+        openOnHover
+        delay={150}
+        aria-label={t('more-info')}
+        className="-mx-2 -my-3.5 inline-flex size-11 shrink-0 cursor-help items-center justify-center text-muted hover:text-ink data-popup-open:text-ink"
+      >
+        <CircleHelp className="size-4" aria-hidden />
+      </PopoverTrigger>
+      <PopoverContent side="top" className="w-auto max-w-72 gap-0 p-3 text-sm font-normal">
+        {children}
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 function FieldLegend({
   className,
   variant = 'legend',
+  hint,
+  optional,
+  children,
   ...props
-}: React.ComponentProps<'legend'> & { variant?: 'legend' | 'label' }) {
+}: React.ComponentProps<'legend'> & { variant?: 'legend' | 'label' } & FieldLabelExtras) {
   return (
     <legend
       data-slot="field-legend"
       data-variant={variant}
       className={cn(
         'mb-1.5 font-bold data-[variant=label]:text-sm data-[variant=legend]:text-base',
+        (hint || optional) && 'flex items-center gap-2',
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      {optional && <FieldOptional />}
+      {hint && <FieldHint>{hint}</FieldHint>}
+    </legend>
   );
 }
 
@@ -97,11 +139,15 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
+// The (?) sits next to the label, not in it: a button inside a <label> is invalid HTML.
 function FieldLabel({
   className,
+  hint,
+  optional,
+  children,
   ...props
-}: React.ComponentProps<typeof Label>) {
-  return (
+}: React.ComponentProps<typeof Label> & FieldLabelExtras) {
+  const label = (
     <Label
       data-slot="field-label"
       className={cn(
@@ -110,7 +156,18 @@ function FieldLabel({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      {optional && <FieldOptional />}
+    </Label>
+  );
+  return hint ? (
+    <div className="flex items-center">
+      {label}
+      <FieldHint>{hint}</FieldHint>
+    </div>
+  ) : (
+    label
   );
 }
 

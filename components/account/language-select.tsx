@@ -1,5 +1,5 @@
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { locales, type Locale } from '@/lib/schema/common';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSetLocale } from './use-set-locale';
@@ -13,7 +13,7 @@ export const LanguageSelect = () => {
 
   return (
     <Field>
-      <FieldLabel htmlFor="account-language">{t('language.label')}</FieldLabel>
+      <FieldLabel htmlFor="account-language" hint={t('language.description')}>{t('language.label')}</FieldLabel>
       <NativeSelect
         id="account-language"
         value={locale}
@@ -25,7 +25,6 @@ export const LanguageSelect = () => {
           </NativeSelectOption>
         ))}
       </NativeSelect>
-      <FieldDescription>{t('language.description')}</FieldDescription>
     </Field>
   );
 };

@@ -26,15 +26,21 @@ export const InputsSection = () => (
   <StyleguideSection
     id="inputs"
     title="Inputs and fields"
-    description="Always a visible label; help text and errors under the field, tied to the input with aria-describedby."
+    description="Always a visible label. Help goes behind a (?) next to the label (hover, or tap on touch); only what's needed to fill the field right stays under it. Mark optional fields, not required ones. Errors go under the field, tied to the input with aria-describedby."
   >
     <FieldGroup className="max-w-md">
       <Field>
-        <FieldLabel htmlFor="sg-name">Your name</FieldLabel>
+        <FieldLabel htmlFor="sg-name" hint="Everyone in the Secret Santa sees this name.">
+          Your name
+        </FieldLabel>
         <Input id="sg-name" autoComplete="name" placeholder="Ann" />
-        <FieldDescription>
-          Everyone in the Secret Santa sees this name.
-        </FieldDescription>
+      </Field>
+      <Field>
+        <FieldLabel htmlFor="sg-names" optional>
+          Names
+        </FieldLabel>
+        <Input id="sg-names" aria-describedby="sg-names-help" />
+        <FieldDescription id="sg-names-help">One per line, or separated by commas.</FieldDescription>
       </Field>
       <Field data-invalid="true">
         <FieldLabel htmlFor="sg-email">Email</FieldLabel>
