@@ -24,6 +24,7 @@ export default function HomePage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['home', 'seo']) },
+// The Dutch twin is pages/nl/: only indexable pages have the language in the URL (81).
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { locale: 'en', messages: await loadMessages('en', ['home', 'seo']) },
 });

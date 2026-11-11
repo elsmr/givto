@@ -12,6 +12,7 @@ export type EditionDraft = EditionDetailsDraft & {
   drawOn: string;
   wishlistBy: string;
   postBy: string;
+  callUrl: string;
   notes: string;
 };
 
@@ -29,25 +30,29 @@ export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   drawOn: edition.drawAt ? todayIn(edition.timeZone, edition.drawAt) : '',
   wishlistBy: edition.wishlistBy ?? '',
   postBy: edition.postBy ?? '',
+  callUrl: edition.giftDay?.callUrl ?? '',
   notes: edition.notes ?? '',
 });
 
 type EditionInput = RouterInputs['settings']['updateEdition'];
 
 /**
- * Empty fields are left out (the server unsets them); post-by only for posted exchanges. Without a draw (88) the
- * form hides the draw date and wishlist deadline, a white elephant also the exchange: those are left out too.
+ * Empty fields are left out (the server unsets them); post-by and the call link only for posted exchanges. Without a
+ * draw (88) the form hides the draw date and wishlist deadline, a white elephant also the exchange: those are left out too.
  */
 export const toEditionInput = (draft: EditionDraft, groupSlug: string, editionNumber: number): EditionInput => {
   const draws = drawsNames(draft);
   const exchangeMode = draft.kind === 'whiteElephant' ? 'inPerson' : draft.exchangeMode;
+  const details = editionDetailsInput(draft);
+  const callUrl = exchangeMode !== 'inPerson' && draft.callUrl.trim();
   return {
     groupSlug,
     editionNumber,
     title: draft.title,
     kind: draft.kind,
     exchangeMode,
-    ...editionDetailsInput(draft),
+    ...details,
+    ...(details.giftDay && callUrl && { giftDay: { ...details.giftDay, callUrl } }),
     ...(draws && draft.drawOn && { drawOn: draft.drawOn }),
     ...(draws && draft.wishlistBy && { wishlistBy: draft.wishlistBy }),
     ...(draft.postBy && exchangeMode !== 'inPerson' && { postBy: draft.postBy }),

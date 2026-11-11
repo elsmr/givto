@@ -34,7 +34,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const tGroup = useTranslations('group');
   const trpc = useTRPC();
   const user = useRequireSession();
-  const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug: slug }), enabled: !!user });
+  const group = useQuery(trpc.group.get.queryOptions({ groupSlug: slug }));
 
   if (!user || group.isPending) return <LogoAnimation variant="loading" />;
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {

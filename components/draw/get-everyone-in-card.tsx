@@ -39,7 +39,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
           />
         )}
         {drawsNames(edition) && <DrawRules group={group} edition={edition} />}
-        {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} locale={group.locale} joinLink={joinLink} />}
+        {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} joinLink={joinLink} />}
       </CardContent>
     </Card>
   );

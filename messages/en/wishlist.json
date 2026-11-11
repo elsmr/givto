@@ -114,7 +114,13 @@
     "remove-line": "Remove “{line}”",
     "save": "Save",
     "saved": "{count, plural, one {Saved: # gift} other {Saved: # gifts}}",
-    "cleared": "Saved: still shopping"
+    "cleared": "Saved: still shopping",
+    "post": "I've posted it",
+    "posted": "Posted",
+    "posted-undo": "Undo",
+    "posted-saved": "Marked as posted",
+    "posted-undone": "No longer marked as posted",
+    "arrived": "{name} says it arrived"
   },
   "errors": {
     "generic": "Something went wrong. Try again.",

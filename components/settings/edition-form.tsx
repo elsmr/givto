@@ -18,7 +18,7 @@ import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-d
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
 
-/** Edition title, kind until the draw (88), gift day, dates, exchange, budget, notes (28). A white elephant has no exchange or dates but gift day. */
+/** Edition title, kind until the draw (88), gift day, exchange and the call link by post (87), dates, budget, notes (28). A white elephant has no exchange or dates but gift day. */
 export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('settings');
   const tIssues = useTranslations('group.issues');
@@ -56,6 +56,21 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         {isBeforeDraw(edition) && <KindField kind={draft.kind} onChange={(kind) => update({ kind })} />}
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
         {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={update} />}
+        {draft.kind !== 'whiteElephant' && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
+          <Field>
+            <FieldLabel htmlFor="edition-call-url">{t('edition.call-url')}</FieldLabel>
+            <Input
+              id="edition-call-url"
+              type="url"
+              inputMode="url"
+              placeholder="https://"
+              maxLength={2000}
+              value={draft.callUrl}
+              onChange={(event) => update({ callUrl: event.target.value })}
+            />
+            <FieldDescription>{t('edition.call-url-help')}</FieldDescription>
+          </Field>
+        )}
         {drawsNames(draft) && (
           <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={isBeforeDraw(edition)} onChange={update} />
         )}

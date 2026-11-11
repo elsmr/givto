@@ -18,7 +18,7 @@ export default function AccountPage() {
   const t = useTranslations('account');
   const tShell = useTranslations('shell');
   const user = useRequireSession();
-  const me = useQuery({ ...useTRPC().me.get.queryOptions(), enabled: Boolean(user) });
+  const me = useQuery(useTRPC().me.get.queryOptions());
 
   return (
     <AppShell app>

@@ -89,7 +89,7 @@ const giftDayReminders = async (db: Collections, group: Group, edition: Edition,
   const ids = edition.participants.filter((p) => p.participates && p.status === 'joined').map((p) => p.memberId);
   // Managers hear it once, for themselves: not again per managed member.
   const people = group.members.filter((m): m is Member => ids.includes(m.id) && m.status === 'joined' && Boolean(m.userId));
-  const { time, place } = edition.giftDay;
+  const { time, place, callUrl } = edition.giftDay;
   return runEach('giftday', people, async (member) => {
     const to = await memberRecipient(db, group, member);
     if (!to) return 'noRecipient';
@@ -102,7 +102,7 @@ const giftDayReminders = async (db: Collections, group: Group, edition: Edition,
       editionId: edition._id,
       memberId: member.id,
       render: (unsubscribe) => {
-        const p = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), unsubscribe, time, place };
+        const p = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), unsubscribe, time, place, callUrl };
         return { subject: reminderGiftDaySubject(p), body: ReminderGiftDayEmail(p) };
       },
     });

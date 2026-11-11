@@ -1,13 +1,12 @@
 import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { isDrawn, type Edition } from '../../schema/edition';
+import { isDrawn, isPosted, type Edition } from '../../schema/edition';
 import { groupAddress, userIdsWithAddress } from '../account/addresses';
 import { findSantaRole } from '../between/santa-role';
 import { AppError } from '../errors';
 import { editionProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
 
-const isPosted = (edition: Edition) => edition.exchangeMode !== 'inPerson';
 const participates = (edition: Edition, memberId: string) =>
   edition.participants.some((p) => p.memberId === memberId && p.participates && p.status === 'joined');
 

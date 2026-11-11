@@ -48,6 +48,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await tab.getByRole('button', { name: 'Show “Cookbook” in this group' }).click();
     await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends.')).toBeVisible();
     await expect(tab.getByText('1 wish hidden here')).toBeVisible();
+    await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook']);
   });
 
   await test.step('on /wishlist, each wish shows its groups; ticking one there shows it right away, with one note while more than one group shows it', async () => {

@@ -5,9 +5,9 @@ const isLocale = (value: string | undefined): value is Locale =>
 
 /**
  * The browser's language for someone without an account setting: a manual switch
- * (Next's `NEXT_LOCALE` cookie) wins, then `Accept-Language`, then en.
+ * (the `NEXT_LOCALE` cookie) wins, then `Accept-Language`, then `fallback`.
  */
-export const preferredLocale = (headers: Headers | undefined): Locale => {
+export const preferredLocale = (headers: Headers | undefined, fallback: Locale = 'en'): Locale => {
   const cookie = headers?.get('cookie')?.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/)?.[1];
   if (isLocale(cookie)) return cookie;
   const accepted = (headers?.get('accept-language') ?? '')
@@ -19,5 +19,5 @@ export const preferredLocale = (headers: Headers | undefined): Locale => {
     })
     .filter(({ q }) => q > 0)
     .sort((a, b) => b.q - a.q);
-  return accepted.map(({ language }) => language).find(isLocale) ?? 'en';
+  return accepted.map(({ language }) => language).find(isLocale) ?? fallback;
 };

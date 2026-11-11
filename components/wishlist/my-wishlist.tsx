@@ -26,8 +26,9 @@ export const MyWishlist = () => {
       <PageHeader title={t('page-title')} description={t('intro')}>
         {wishes.data && <Badge variant="yellow">{t('count', { count: wishes.data.length })}</Badge>}
       </PageHeader>
+      {/* Keyed: the list comes in as new content, not as the skeleton's element moved down by the count. */}
       {wishes.isPending || wishes.signedOut ? (
-        <div aria-busy="true" aria-label={t('loading')} className="flex flex-col gap-4">
+        <div key="loading" data-page-loading aria-busy="true" aria-label={t('loading')} className="flex flex-col gap-4">
           <Skeleton className="h-40" />
           <Skeleton className="h-24" />
         </div>

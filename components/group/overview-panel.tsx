@@ -1,10 +1,11 @@
 import { ForYouSection } from '@/components/between/for-you-section';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
+import { GiftArrivalCard } from '@/components/gift/gift-arrival-card';
 import { StillShoppingStat } from '@/components/gift/still-shopping-stat';
 import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
 import { GuessCard } from '@/components/guess/guess-card';
-import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw, isDrawn, isPosted } from '@/lib/schema/edition';
 import { AddressCard, MissingAddressesStat } from './address-card';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
@@ -16,8 +17,9 @@ import type { GroupTab } from './use-group-tab';
 
 /**
  * The overview tab (61): notices only when there are any, the phase's main card, gift day and past
- * editions; your address when gifts go by post (80). Wide: a side column with the gift day countdown,
- * the details and, for organizers, who's still shopping (63) or has no address; phones: that column after the rest.
+ * editions; by post, your address (80) and whether your gift is on its way (87). Wide: a side column with the gift
+ * day countdown, the details and, for organizers, who's still shopping (63), hasn't posted or has no address; phones:
+ * that column after the rest.
  */
 export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (tab: GroupTab) => void }) => {
   const { edition, slug } = group;
@@ -26,7 +28,9 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
   const input = edition && { groupSlug: slug, editionNumber: edition.number };
   const done = edition?.status === 'done';
   const nextEdition = manage && edition && !isBeforeDraw(edition) && <NextEditionCard group={group} edition={edition} />;
-  const addresses = edition && edition.exchangeMode !== 'inPerson' && (edition.status === 'open' || edition.status === 'drawn');
+  const posted = edition && isPosted(edition);
+  const addresses = posted && (edition.status === 'open' || edition.status === 'drawn');
+  const participates = edition?.participantIds.includes(group.me.memberId);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
@@ -35,7 +39,8 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
         {input && <ForYouSection input={input} />}
         {done && nextEdition}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
-        {addresses && edition.participantIds.includes(group.me.memberId) && <AddressCard groupSlug={slug} />}
+        {addresses && participates && <AddressCard groupSlug={slug} />}
+        {input && posted && isDrawn(edition) && participates && <GiftArrivalCard {...input} />}
         {edition?.guessing && !isBeforeDraw(edition) && !done && <GuessCard group={group} edition={edition} />}
         {!done && nextEdition}
         {edition && <GiftDayPanel group={group} edition={edition} />}

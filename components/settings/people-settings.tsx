@@ -33,7 +33,6 @@ export const PeopleSettings = ({ group, edition }: { group: GroupData; edition: 
           <InvitePeople
             slug={group.slug}
             groupName={group.name}
-            locale={group.locale}
             joinLink={joinLink}
             linkExtra={
               joinLink && (

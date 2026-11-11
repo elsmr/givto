@@ -11,6 +11,7 @@
   },
   "summary": {
     "gift-day": "Pakjesdag",
+    "call": "Videogesprek",
     "exchange": "Cadeaus",
     "exchange-modes": {
       "inPerson": "Persoonlijk",
@@ -175,7 +176,10 @@
     "gifts-all": "Iedereen heeft een cadeau",
     "addresses": "Adres ingevuld",
     "addresses-missing": "Nog geen adres: {names}",
-    "addresses-all": "Iedereen heeft een adres ingevuld"
+    "addresses-all": "Iedereen heeft een adres ingevuld",
+    "posted": "Cadeau opgestuurd",
+    "posted-not-yet": "Nog niet opgestuurd: {names}",
+    "posted-all": "Iedereen heeft het zijne opgestuurd"
   },
   "overview": {
     "details": "Data, budget en notities",
@@ -193,5 +197,14 @@
     "picked": "Adres gewijzigd",
     "post-to": "Stuur het naar",
     "giftee-missing": "{name} heeft nog geen adres ingevuld."
+  },
+  "arrival": {
+    "title": "Je cadeau is onderweg",
+    "description": "Je Santa heeft het opgestuurd. Laat weten wanneer het er is.",
+    "mark": "Het is aangekomen",
+    "arrived-title": "Je cadeau is aangekomen",
+    "arrived-description": "Je Santa ziet dat het aangekomen is, verder niets.",
+    "arrived": "Aangekomen",
+    "undo": "Ongedaan maken"
   }
 }

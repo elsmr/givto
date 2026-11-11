@@ -66,10 +66,11 @@ test('/nl stays Dutch for a crawler without cookies', async ({ request }) => {
   expect(tag(body, /<html lang="([^"]+)"/)).toBe('nl');
 });
 
-for (const path of ['/styleguide', '/auth/sign-in', '/nl/auth/passkeys', '/does-not-exist', '/g/no-such-group', '/g/no-such-group/present']) {
-  test(`${path}: noindex, no canonical or social cards`, async ({ request }) => {
+for (const path of ['/styleguide', '/auth/sign-in', '/does-not-exist', '/g/no-such-group', '/g/no-such-group/present']) {
+  test(`${path}: noindex, a description, no canonical or social cards`, async ({ request }) => {
     const { body } = await get(request, path);
     expect(meta(body, 'name', 'robots')).toBe('noindex');
+    expect(meta(body, 'name', 'description')?.length).toBeGreaterThan(50);
     expect(body).not.toMatch(/rel="canonical"|og:url|application\/ld\+json/);
   });
 }
