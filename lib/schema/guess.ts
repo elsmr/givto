@@ -13,6 +13,11 @@ export const Guess = v.object({
   guesserMemberId: Id,
   /** Who they think is their Santa: anyone else in the draw, their own giftee too (bluffing is part of the game). */
   guessedMemberId: Id,
+  /**
+   * Guess the whole draw (82): who they think gives to whom, for others than themselves and their own giftee.
+   * Optional rows; each Santa at most once, never the guesser. Absent on guesses made before 82.
+   */
+  pairs: v.optional(v.array(v.object({ gifteeMemberId: Id, santaMemberId: Id }))),
   createdAt: v.date(),
 });
 export type Guess = v.InferOutput<typeof Guess>;

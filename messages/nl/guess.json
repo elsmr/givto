@@ -1,7 +1,7 @@
 {
   "card": {
     "title": "Raad je Santa",
-    "open": "Wie denk jij dat jouw cadeau koopt? Eén gok, en terugnemen kan niet.",
+    "open": "Wie denk jij dat jouw cadeau koopt? Gok ook de rest van de loting als je wilt. Eén keer, en terugnemen kan niet.",
     "when": "Je hoort het als jij aan de beurt bent op pakjesdag.",
     "make": "Doe je gok",
     "you-guessed": "Jij gokte <name>{guess}</name>",
@@ -9,22 +9,31 @@
     "closed": "Gokken kon tot pakjesdag begon.",
     "from": "Je cadeau kwam van <name>{santa}</name>",
     "no-guess": "Je hebt deze keer niet gegokt.",
-    "so-far": "Gokken tot nu toe"
+    "so-far": "Gokken tot nu toe",
+    "board": "De rest van de loting",
+    "pair": "<name>{giftee}</name> van <name>{santa}</name>"
   },
   "dialog": {
     "title": "Wie is jouw Santa?",
-    "description": "Eenmaal vastgelegd kun je het niet meer veranderen. Niemand ziet je gok tot jij aan de beurt bent op pakjesdag.",
+    "description": "Eenmaal vastgelegd kun je het niet meer veranderen. Niemand ziet je gokken tot die Santa's op pakjesdag bekend zijn.",
     "people": "Jouw gok",
     "lock": "Leg vast",
     "cancel": "Nog niet",
-    "locked": "Vastgelegd! Je hoort het als jij aan de beurt bent op pakjesdag."
+    "locked": "Vastgelegd! Je hoort het als jij aan de beurt bent op pakjesdag.",
+    "board": "De rest van de loting (niet verplicht)",
+    "board-hint": "Een punt voor elk goed geraden paar. Iedereen is maar van één persoon de Santa.",
+    "row": "Santa van {giftee}",
+    "you": "Jij",
+    "no-guess": "Geen gok"
   },
   "result": {
     "guessed": "gokte <name>{guess}</name>",
     "no-guess": "niet gegokt",
     "right": "Raak!",
     "wrong": "Net niet",
-    "score": "{right} van de {total} goed geraden"
+    "score": "{right} van de {total} goed geraden",
+    "leaderboard": "Ranglijst",
+    "points": "{points, plural, one {# punt} other {# punten}}"
   },
   "present": {
     "show": "Van wie was het?",
@@ -35,7 +44,7 @@
   },
   "settings": {
     "switch": "Raad je Santa",
-    "description": "Iedereen kan één geheime gok doen wie zijn Santa is. Op pakjesdag zie je in de presentatieweergave bij elke beurt wie de Santa was, met de gok erbij. Zet het uit om de Santa's geheim te houden.",
+    "description": "Iedereen kan één geheime gok doen wie zijn Santa is, en de rest van de loting raden voor punten. Op pakjesdag zie je in de presentatieweergave bij elke beurt wie de Santa was, met de gok en de ranglijst erbij. Zet het uit om de Santa's geheim te houden.",
     "on": "Raad je Santa staat aan",
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
   },

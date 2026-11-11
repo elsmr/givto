@@ -2,16 +2,16 @@ import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import { Confetti } from './confetti';
-import { currentGiftCount, type PresenterGuessResult, type PresenterOrder } from './presenter-phase';
+import { currentGiftCount, type PresenterGuessResult, type PresenterOrder, type PresenterView } from './presenter-phase';
 import { PresenterSanta } from './presenter-santa';
 
-type PresenterTurnSlideProps = { order: PresenterOrder; oneByOne: boolean; santa: PresenterGuessResult | null };
+type PresenterTurnSlideProps = { order: PresenterOrder; oneByOne: boolean; santa: PresenterGuessResult | null; guessing: PresenterView['guessing'] };
 
 /**
  * Whose turn it is, big, with a burst of confetti; "gift 2 of 3" when their Santa marked their gifts (63).
  * Their Santa only with Guess your Santa (62) on, once shown after they've unwrapped.
  */
-export const PresenterTurnSlide = ({ order, oneByOne, santa }: PresenterTurnSlideProps) => {
+export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing }: PresenterTurnSlideProps) => {
   const t = useTranslations('giftday.present');
   const number = order.people.findIndex((p) => p.memberId === order.current?.memberId) + 1;
   const gifts = currentGiftCount(order);
@@ -39,7 +39,7 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa }: PresenterTurnSlid
           {gifts !== null && ` · ${t('gifts', { count: gifts })}`}
         </p>
       )}
-      {santa && <PresenterSanta result={santa} />}
+      {santa && <PresenterSanta result={santa} leaderboard={guessing?.leaderboard ?? []} />}
     </>
   );
 };

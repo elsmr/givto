@@ -1,4 +1,4 @@
-import { guessResults, type Guesses } from '../../guess-results';
+import { boardScores, guessResults, type Boards } from '../../guess-results';
 import { isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
@@ -15,9 +15,10 @@ export const isRevealed = (edition: Edition) =>
  * The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed.
  * `counts`: gifts per person from what the Santas marked (63), from gift day on.
  * Guess your Santa (62): `guessing` holds only the results that are out (the presenter showed that
- * person's Santa at their turn, or the big reveal is out); null when it's off.
+ * person's Santa at their turn, or the big reveal is out); null when it's off. Its `leaderboard` (82):
+ * points per board for the pairs that are out, most first; empty until something is out.
  */
-const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, guesses: Guesses) => {
+const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards) => {
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const assignments = edition.draw?.assignments ?? {};
   const inDraw = Object.keys(assignments);
@@ -35,6 +36,10 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, guesse
     : null;
   const santaShownIds = santaStepOn(edition) ? (progress?.santaShownIds ?? []) : [];
   const revealedIds = isRevealed(edition) ? (order ?? inDraw) : santaShownIds;
+  const guesses = Object.fromEntries(Object.entries(boards).map(([guesser, board]) => [guesser, board[guesser]]));
+  const leaderboard = boardScores(revealedIds, assignments, boards)
+    .map(({ memberId, points }) => ({ memberId, name: nameOf(memberId), points }))
+    .toSorted((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   const guessing = guessingOn(edition)
     ? guessResults(revealedIds, assignments, guesses).map(({ memberId, santaMemberId, guessedMemberId, right }) => ({
         memberId,
@@ -46,7 +51,7 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, guesse
     : null;
   return {
     nameOf, order, mode, progress, state, revealEnabled: edition.reveal.enabled, revealed: isRevealed(edition), pairs,
-    guessing: guessing && { results: guessing, right: guessing.filter((result) => result.right).length },
+    guessing: guessing && { results: guessing, right: guessing.filter((result) => result.right).length, leaderboard },
     santaToShow: Boolean(state && progress?.currentShown && santaStepOn(edition) && santaStillHidden(state, santaShownIds)),
   };
 };
@@ -55,8 +60,8 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, guesse
  * The presenter view (organizer): the whole unwrap order with each person's gift count (null: their
  * Santa marked nothing), whose turn it is and who's up next, and the reveal pairs in unwrap order.
  */
-export const presenterGiftDayView = (group: Group, edition: Edition, counts: GiftCounts, guesses: Guesses) => {
-  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs, guessing, santaToShow } = giftDayState(group, edition, counts, guesses);
+export const presenterGiftDayView = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs, guessing, santaToShow } = giftDayState(group, edition, counts, boards);
   const person = (memberId: string | null) => (memberId ? { memberId, name: nameOf(memberId) } : null);
   return {
     unwrapMode: mode,
@@ -90,8 +95,8 @@ export const presenterGiftDayView = (group: Group, edition: Edition, counts: Gif
  * (owner), so only who already went (in turn order) and who's unwrapping now, once the
  * presenter's reel landed on them. Reveal pairs by giftee name, not in unwrap order.
  */
-export const giftDayView = (group: Group, edition: Edition, counts: GiftCounts, guesses: Guesses) => {
-  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs, guessing } = giftDayState(group, edition, counts, guesses);
+export const giftDayView = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards) => {
+  const { nameOf, order, mode, progress, state, revealEnabled, revealed, pairs, guessing } = giftDayState(group, edition, counts, boards);
   const wentIds = [...new Set(progress?.turns.map((turn) => turn.memberId) ?? [])];
   const byGiftee = <T extends { giftee: string }>(list: T[]) => list.toSorted((a, b) => a.giftee.localeCompare(b.giftee));
   return {
