@@ -8,9 +8,7 @@
     "closed": "Guessing is closed.",
     "from": "Your gift was from <name>{santa}</name>",
     "no-guess": "You didn't guess this time.",
-    "so-far": "Guesses so far",
-    "board": "The rest of the draw",
-    "pair": "<name>{giftee}</name> from <name>{santa}</name>"
+    "so-far": "Guesses so far"
   },
   "dialog": {
     "title": "Who's your Santa?",
@@ -51,10 +49,6 @@
     "description": "Everyone guesses who gives to whom, for points. On gift day the presenter shows each Santa, everyone's guesses and the leaderboard. Off: Santas stay secret.",
     "on": "Guess your Santa is on",
     "off": "Guess your Santa is off: Santas stay secret"
-  },
-  "panel": {
-    "note": "Santas are shown at each turn.",
-    "settings": "Change"
   },
   "errors": {
     "GUESSING_CLOSED": "Guessing is closed.",

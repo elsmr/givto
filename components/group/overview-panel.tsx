@@ -2,11 +2,10 @@ import { ForYouSection } from '@/components/between/for-you-section';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { GiftArrivalCard } from '@/components/gift/gift-arrival-card';
-import { StillShoppingRows } from '@/components/gift/still-shopping-stat';
+import { EmptyWishlistsRow, StillShoppingRows } from '@/components/gift/still-shopping-stat';
 import { Card, CardContent } from '@/components/ui/card';
-import { GiftDayPanel } from '@/components/giftday/gift-day-panel';
 import { GuessCard } from '@/components/guess/guess-card';
-import { drawsNames, isBeforeDraw, isDrawn, isPosted } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw, isDrawn, isPosted, wishesOn } from '@/lib/schema/edition';
 import { AddressCard, MissingAddressesRow } from './address-card';
 import { EditionDetails } from './edition-details';
 import { EditionsList } from './editions-list';
@@ -18,7 +17,7 @@ import type { GroupTab } from './use-group-tab';
 /**
  * The overview tab (61): notices only when there are any, the phase's main card, gift day and past
  * editions; by post, your address (80) and whether your gift is on its way (87). Wide: a side column with gift day
- * and its details, then, for organizers, who's still shopping (63), hasn't posted or has no address; phones:
+ * and its details, then, for organizers, who's still shopping (63), has an empty wishlist, hasn't posted or has no address; phones:
  * that column after the rest.
  */
 export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (tab: GroupTab) => void }) => {
@@ -34,6 +33,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
   const organizesThis = Boolean(group.organizer && edition?.isCurrent);
   const shopping = organizesThis && edition?.status === 'drawn' && drawsNames(edition);
   const missingAddresses = organizesThis && input && addresses;
+  const emptyWishlists = organizesThis && input && wishesOn(edition) && (edition.status === 'open' || edition.status === 'drawn');
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
@@ -46,7 +46,6 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
         {input && posted && isDrawn(edition) && participates && <GiftArrivalCard {...input} />}
         {edition?.guessing && !isBeforeDraw(edition) && !done && <GuessCard group={group} edition={edition} />}
         {!done && nextEdition}
-        {edition && <GiftDayPanel group={group} edition={edition} />}
         {edition && <EditionsList group={group} shownNumber={edition.number} />}
       </div>
       {edition && (
@@ -54,11 +53,12 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
           <EditionDetails edition={edition}>
             {current && <AddToCalendar groupSlug={slug} groupName={group.name} edition={edition} />}
           </EditionDetails>
-          {(shopping || missingAddresses) && (
+          {(shopping || missingAddresses || emptyWishlists) && (
             <Card size="sm">
               <CardContent>
                 <ul className="flex flex-col gap-4">
                   {shopping && <StillShoppingRows groupSlug={slug} editionNumber={edition.number} />}
+                  {emptyWishlists && <EmptyWishlistsRow {...input} />}
                   {missingAddresses && <MissingAddressesRow {...input} />}
                 </ul>
               </CardContent>

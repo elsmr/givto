@@ -1,7 +1,7 @@
 import { ProgressRow } from '@/components/ui/progress-row';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { Send, ShoppingBag } from 'lucide-react';
+import { Heart, Send, ShoppingBag } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 
 /**
@@ -35,5 +35,25 @@ export const StillShoppingRows = ({ groupSlug, editionNumber }: { groupSlug: str
         />
       )}
     </>
+  );
+};
+
+/** Organizer: who shows no wishes yet in this group, before and after the draw. */
+export const EmptyWishlistsRow = ({ groupSlug, editionNumber }: { groupSlug: string; editionNumber: number }) => {
+  const t = useTranslations('group.stats');
+  const format = useFormatter();
+  const trpc = useTRPC();
+  const wishlists = useQuery(trpc.wish.empty.queryOptions({ groupSlug, editionNumber }));
+
+  if (!wishlists.data) return null;
+  const { people, empty } = wishlists.data;
+  return (
+    <ProgressRow
+      icon={Heart}
+      tone="coral"
+      title={t('wishlists')}
+      value={`${people - empty.length}/${people}`}
+      detail={empty.length > 0 ? t('wishlists-empty', { names: format.list(empty) }) : t('wishlists-all')}
+    />
   );
 };

@@ -23,6 +23,9 @@ test('an invitee is drawn, hears it with an invite link, and keeps the giftee on
   const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
   const { slug, email, memberId, edition } = await familyWith(ann, [[bob, 'Bob']], secrets, 'fay');
   expect(ok(await ann.trpc.query('group.get', { groupSlug: slug })).edition?.participantIds).toContain(memberId);
+  const seen = ok(await bob.trpc.query('group.get', { groupSlug: slug })).members.find((m) => m.id === memberId);
+  expect(seen, 'members see invitees').toMatchObject({ status: 'invited' });
+  expect(seen?.email, 'but not their email').toBeUndefined();
 
   ok(await ann.trpc.mutate('draw.run', edition));
   const drawn = await assignmentsOf(db, slug);

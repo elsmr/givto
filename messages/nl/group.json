@@ -172,7 +172,10 @@
     "addresses-all": "Iedereen heeft een adres ingevuld",
     "posted": "Cadeau opgestuurd",
     "posted-not-yet": "Nog niet opgestuurd: {names}",
-    "posted-all": "Iedereen heeft het zijne opgestuurd"
+    "posted-all": "Iedereen heeft het zijne opgestuurd",
+    "wishlists": "Wensen toegevoegd",
+    "wishlists-empty": "Leeg verlanglijstje: {names}",
+    "wishlists-all": "Iedereen heeft wensen op het lijstje"
   },
   "overview": {
     "to-giftee": "Hun verlanglijstje en tips",

@@ -14,8 +14,8 @@ import { GuessVerdict } from './guess-verdict';
 const name = (chunks: ReactNode) => <strong className="font-heading break-words">{chunks}</strong>;
 
 /**
- * Guess your Santa (62) on the overview: my guesses, changeable until those Santas are out (94); my answer once my
- * Santa is out (my turn on gift day, or the big reveal), and everyone's so far.
+ * Guess your Santa (62) on the overview: my guess for my own Santa (the rest of the draw only in the dialog, 94); my
+ * answer once my Santa is out (my turn on gift day, or the big reveal), and everyone's so far.
  */
 export const GuessCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('guess.card');
@@ -26,9 +26,8 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
 
   if (!mine.data) return null;
   const { rows, result } = mine.data;
-  const [{ santa: guess }, ...others] = rows;
+  const [{ santa: guess }] = rows;
   const open = rows.some((row) => row.open);
-  const myRows = others.flatMap((row) => (row.santa ? [{ memberId: row.memberId, giftee: row.name, santa: row.santa.name }] : []));
   const guessing = giftDay.data?.guessing;
   // Once the big reveal is out, its card is the scoreboard.
   const soFar = !giftDay.data?.reveal.revealed && guessing && guessing.results.length > 0 ? guessing : null;
@@ -59,16 +58,6 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
           <p className="text-lg">{t.rich('you-guessed', { guess: guess.name, name })}</p>
         ) : (
           !open && <p className="text-muted">{t('closed')}</p>
-        )}
-        {myRows.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <h3 className="font-heading font-bold">{t('board')}</h3>
-            <ul className="flex flex-col gap-1">
-              {myRows.map((row) => (
-                <li key={row.memberId}>{t.rich('pair', { giftee: row.giftee, santa: row.santa, name })}</li>
-              ))}
-            </ul>
-          </div>
         )}
         {soFar && (
           <>

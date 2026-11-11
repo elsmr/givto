@@ -10,7 +10,7 @@ import { PersonAvatar } from './person-avatar';
 
 const badgeIcons = { champion: Trophy, backToBack: Flame, perfect: Sparkles, nailed: Target };
 
-/** Everyone sees names; only the organizer sees emails and invite statuses (privacy rules), and gets to the people settings. */
+/** Everyone sees who's in or invited; only the organizer sees emails, requests and declines (privacy rules), and gets to the people settings. */
 export const PeopleList = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group.people');
   const people = group.members.filter((m) => m.status !== 'requested');

@@ -8,9 +8,7 @@
     "closed": "Gokken kan niet meer.",
     "from": "Je cadeau kwam van <name>{santa}</name>",
     "no-guess": "Je hebt deze keer niet gegokt.",
-    "so-far": "Gokken tot nu toe",
-    "board": "De rest van de loting",
-    "pair": "<name>{giftee}</name> van <name>{santa}</name>"
+    "so-far": "Gokken tot nu toe"
   },
   "dialog": {
     "title": "Wie is jouw Santa?",
@@ -51,10 +49,6 @@
     "description": "Iedereen raadt wie aan wie geeft, voor punten. Op pakjesdag toont de presentatie elke Santa, wat iedereen gokte en de ranglijst. Uit: de Santa's blijven geheim.",
     "on": "Raad je Santa staat aan",
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
-  },
-  "panel": {
-    "note": "Bij elke beurt zie je wie de Santa was.",
-    "settings": "Wijzigen"
   },
   "errors": {
     "GUESSING_CLOSED": "Gokken kan niet meer.",

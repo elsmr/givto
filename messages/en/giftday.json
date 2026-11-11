@@ -8,14 +8,9 @@
     "join-live": "Join the presentation"
   },
   "order": {
-    "intro": "A surprise: the presenter spins for who's next.",
-    "none": "No unwrap order yet: it's shuffled by gift day.",
-    "none-organizer": "A surprise: you spin for each turn in the presenter view.",
-    "you": "you",
     "shuffle": "Shuffle the unwrap order",
     "reshuffle": "Shuffle again",
     "shuffled": "Unwrap order shuffled",
-    "present": "Presenter view",
     "mode-label": "How do you unwrap?",
     "modes": {
       "allAtOnce": "All at once",
@@ -32,8 +27,6 @@
     "now": "Now unwrapping",
     "spinning": "Who's next? The reel is spinning…",
     "finished": "Everyone has unwrapped.",
-    "went": "Already unwrapped",
-    "done": "done",
     "reshuffle-title": "Shuffle again?",
     "reshuffle-description": "Everyone gets a new unwrap order and the unwrapping starts over.",
     "reshuffle-confirm": "Shuffle again",
@@ -125,8 +118,5 @@
     "EDITION_CLOSED": "This edition is over.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
-  },
-  "panel": {
-    "order": "Unwrap order"
   }
 }

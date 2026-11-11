@@ -1,15 +1,17 @@
 import * as v from 'valibot';
 import { moveItem } from '../../move-item';
 import { Id } from '../../schema/common';
+import { wishesOn } from '../../schema/edition';
 import { Slug } from '../../schema/group';
 import { WishFields, type Wish } from '../../schema/wish';
 import { newId, type Collections } from '../db';
 import { AppError } from '../errors';
 import { deleteWishImage, findWishImage } from '../import/wish-images';
 import { markWishlistChanged } from '../jobs/wishlist-changes';
-import { authedProcedure, memberProcedure, router } from '../trpc';
+import { drawParticipantIds } from '../draw/rules';
+import { authedProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
-import { activeGroupsOf, inArchive, listWishes, toWishView, visibleWishes } from '../wishlist/wish-view';
+import { activeGroupsOf, inArchive, listWishes, toWishView, visibleWishes, wishOwnerId } from '../wishlist/wish-view';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
@@ -214,4 +216,21 @@ export const wishRouter = router({
       await markWishlistChanged(ctx.db, ctx.user.id);
       return { wishId: input.wishId, shown: input.shown };
     }),
+
+  /**
+   * Organizer: how many people in this edition can keep a wishlist here, and who shows no wishes yet. Never the wishes.
+   * Invitees without an account have no wishlist, so they aren't counted.
+   */
+  empty: organizerEditionProcedure.query(async ({ ctx }) => {
+    const { edition, group } = ctx;
+    if (!wishesOn(edition) || (edition.status !== 'open' && edition.status !== 'drawn')) return null;
+    const ids = new Set(drawParticipantIds(group, edition));
+    const people = group.members.filter((m) => ids.has(m.id) && wishOwnerId(m));
+    const counts = await Promise.all(people.map(async (m) => (await visibleWishes(ctx.db, m)).length));
+    const empty = people
+      .filter((_, index) => counts[index] === 0)
+      .map((m) => m.name)
+      .toSorted((a, b) => a.localeCompare(b));
+    return { people: people.length, empty };
+  }),
 });

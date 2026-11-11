@@ -38,7 +38,7 @@ export const groupView = async (
 ) => {
   const isOrganizer = me.role === 'organizer';
   const visible = group.members.filter((m) =>
-    isOrganizer ? m.status !== 'removed' : m.status === 'joined'
+    isOrganizer ? m.status !== 'removed' : m.status === 'joined' || m.status === 'invited'
   );
   const emails = isOrganizer ? await memberEmails(db, group) : new Map<string, string>();
   const bounced = isOrganizer ? await suppressedEmails(db, [...emails.values()]) : new Set<string>();

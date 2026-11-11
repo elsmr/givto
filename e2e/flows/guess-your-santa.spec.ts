@@ -32,8 +32,9 @@ test('guess and change it; phones guess at the turn; the presenter shows "From â
     await dialog.getByRole('button', { name: 'Save guesses' }).click();
     await expect(dialog).toBeHidden();
     await expect(page.getByText(`You guessed ${nameOf(bobsGiftee)}`)).toBeVisible();
-    await expect(page.getByText(`${nameOf(bobsSanta)} from ${nameOf(bobsGiftee)}`)).toBeVisible();
+    await expect(page.getByText(`${nameOf(bobsSanta)} from ${nameOf(bobsGiftee)}`)).toHaveCount(0);
     await page.getByRole('button', { name: 'Change your guesses' }).click();
+    await expect(dialog.getByRole('combobox', { name: `${nameOf(bobsSanta)}'s Santa` }).locator('option:checked')).toHaveText(nameOf(bobsGiftee));
     await dialog.getByRole('combobox', { name: 'Your Santa' }).selectOption({ label: nameOf(bobsSanta) });
     await dialog.getByRole('button', { name: 'Save guesses' }).click();
     await expect(dialog).toBeHidden();
@@ -130,7 +131,7 @@ test('the organizer switches Guess your Santa off in settings: the card goes', a
   await page.goto(`/g/${group.slug}/settings#gift-day`);
   const toggle = page.getByRole('switch', { name: 'Guess your Santa' });
   await expect(toggle).toBeChecked();
-  await expect(page.getByText(/everyone can guess on their phone/)).toBeVisible();
+  await expect(page.getByText(/Everyone guesses who gives to whom/)).toBeVisible();
   await toggle.click();
   await expect(toggle).not.toBeChecked();
   await page.goto(`/g/${group.slug}`);

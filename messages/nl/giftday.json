@@ -8,14 +8,9 @@
     "join-live": "Volg de presentatie"
   },
   "order": {
-    "intro": "Een verrassing: de presentator draait wie er aan de beurt is.",
-    "none": "Nog geen uitpakvolgorde: die wordt uiterlijk op pakjesdag geschud.",
-    "none-organizer": "Een verrassing: in de presentatieweergave draai je voor elke beurt.",
-    "you": "jij",
     "shuffle": "Uitpakvolgorde schudden",
     "reshuffle": "Opnieuw schudden",
     "shuffled": "Uitpakvolgorde geschud",
-    "present": "Presentatieweergave",
     "mode-label": "Hoe pakken jullie uit?",
     "modes": {
       "allAtOnce": "Alles tegelijk",
@@ -32,8 +27,6 @@
     "now": "Nu aan het uitpakken",
     "spinning": "Wie is er nu? De rol draait…",
     "finished": "Iedereen heeft uitgepakt.",
-    "went": "Al uitgepakt",
-    "done": "klaar",
     "reshuffle-title": "Opnieuw schudden?",
     "reshuffle-description": "Iedereen krijgt een nieuwe uitpakvolgorde en het uitpakken begint opnieuw.",
     "reshuffle-confirm": "Opnieuw schudden",
@@ -125,8 +118,5 @@
     "EDITION_CLOSED": "Deze editie is voorbij.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
-  },
-  "panel": {
-    "order": "Uitpakvolgorde"
   }
 }

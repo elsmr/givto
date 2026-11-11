@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
+import { withTooltip } from '@/components/ui/tooltip';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Check, Undo2 } from 'lucide-react';
@@ -30,17 +31,9 @@ export const TipUsedButton = ({ input, tipId, textId, used }: TipUsedButtonProps
   const toggle = () => setUsed.mutate({ ...input, tipId, used: !used });
 
   const label = used ? t('unmark-used') : t('mark-used');
-  return (
-    <Button
-      variant={used ? 'ghost' : 'neutral'}
-      size="icon-sm"
-      className="shrink-0"
-      disabled={setUsed.isPending}
-      aria-label={label}
-      aria-describedby={textId}
-      title={label}
-      onClick={toggle}
-    >
+  return withTooltip(
+    label,
+    <Button variant={used ? 'ghost' : 'neutral'} size="icon-sm" className="shrink-0" disabled={setUsed.isPending} aria-describedby={textId} onClick={toggle}>
       {used ? <Undo2 aria-hidden="true" /> : <Check aria-hidden="true" />}
     </Button>
   );

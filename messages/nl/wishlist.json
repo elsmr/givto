@@ -6,7 +6,7 @@
   "empty-hint": "Voeg je eerste wens toe: typ hem, of plak een link naar een winkel.",
   "count": "{count, plural, =0 {Nog geen wensen} one {# wens} other {# wensen}}",
   "list-title": "Je wensen",
-  "hide-hint": "Elke groep ziet alleen de wensen die je onder “Groepen” aanvinkt. De volgorde pas je per groep aan, op het tabblad “Mijn verlanglijstje”.",
+  "hide-hint": "Elke groep ziet alleen de wensen die je onder <groups></groups> aanvinkt. De volgorde pas je per groep aan, op het tabblad “Mijn verlanglijstje”.",
   "add-title": "Wens toevoegen",
   "import": {
     "busy": "Pagina lezen…",
@@ -42,6 +42,7 @@
     "groups": "Groepen",
     "groups-label": "Groepen die “{title}” zien",
     "groups-more": "+{count}",
+    "in-no-group": "In geen enkele groep",
     "remove-link": "Link naar {shop} verwijderen"
   },
   "item": {

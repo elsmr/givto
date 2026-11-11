@@ -4,13 +4,13 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { EyeOff } from 'lucide-react';
+import { EyeOff, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
 import { ArchivedWishes } from './archived-wishes';
 import { useOwnWishes } from './use-own-wishes';
 import { useWishMutations } from './use-wish-mutations';
-import { WishGroups } from './wish-groups';
+import { WishGroupChips, WishGroupsPicker } from './wish-groups';
 import { WishListEditor } from './wish-list-editor';
 
 /** The "My wishlist" page body (38): add or import a wish, pick the groups that see it, edit, reorder, archive (76). */
@@ -19,6 +19,7 @@ export const MyWishlist = () => {
   const wishes = useOwnWishes();
   const groups = useQuery(useTRPC().account.groups.queryOptions());
   const { move, setShown } = useWishMutations();
+  const shownIn = (wishId: string) => (groups.data ?? []).filter((group) => group.shownWishIds.includes(wishId)).map(({ slug }) => slug);
 
   return (
     <div className="flex flex-col gap-8">
@@ -45,17 +46,22 @@ export const MyWishlist = () => {
               <WishListEditor
                 wishes={wishes.data}
                 onMove={(wishId, toIndex) => move.mutate({ wishId, toIndex })}
-                status={(wish) => (
-                  <WishGroups
+                status={(wish) => <WishGroupChips shownIn={shownIn(wish.id)} flagNone />}
+                actions={(wish) => (
+                  <WishGroupsPicker
                     wishTitle={wish.title}
-                    shownIn={(groups.data ?? []).filter((group) => group.shownWishIds.includes(wish.id)).map(({ slug }) => slug)}
+                    shownIn={shownIn(wish.id)}
                     onChange={(groupSlug, shown) => setShown.mutate({ groupSlug, wishId: wish.id, shown })}
                   />
                 )}
               />
               <p className="flex items-start gap-2 text-sm text-muted">
                 <EyeOff aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-                {t('hide-hint')}
+                <span>
+                  {t.rich('hide-hint', {
+                    groups: () => <Users role="img" aria-label={t('form.groups')} className="inline size-4 align-text-bottom" />,
+                  })}
+                </span>
               </p>
             </section>
           )}

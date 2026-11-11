@@ -172,7 +172,10 @@
     "addresses-all": "Everyone added theirs",
     "posted": "Posted their gift",
     "posted-not-yet": "Not posted yet: {names}",
-    "posted-all": "Everyone has posted theirs"
+    "posted-all": "Everyone has posted theirs",
+    "wishlists": "Added wishes",
+    "wishlists-empty": "Empty wishlist: {names}",
+    "wishlists-all": "Everyone has wishes on their list"
   },
   "overview": {
     "to-giftee": "Their wishlist and tips",

@@ -34,6 +34,8 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   await page.goto(`/g/${group.slug}`);
   const others = members.filter((m) => m.userId !== ann.id).map((m) => m.name).toSorted();
   await expect(page.getByText(`Still shopping: ${others.join(' and ')}`)).toBeVisible();
+  const empty = members.filter((m) => m.id !== gifteeId).map((m) => m.name).toSorted();
+  await expect(page.getByText(`Empty wishlist: ${empty.join(' and ')}`)).toBeVisible();
 });
 
 test('by post: the Santa marks it posted, the giftee says it arrived, the Santa sees it; the organizer sees who has not posted', async ({ page, newPage, signIn, signInPage, db }) => {

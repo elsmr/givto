@@ -6,7 +6,7 @@
   "empty-hint": "Add your first wish: type it, or paste a link to a shop.",
   "count": "{count, plural, =0 {No wishes yet} one {# wish} other {# wishes}}",
   "list-title": "Your wishes",
-  "hide-hint": "Each group sees only the wishes you tick under “Groups”. Reorder them per group, on its “My wishlist” tab.",
+  "hide-hint": "Each group sees only the wishes you tick under <groups></groups>. Reorder them per group, on its “My wishlist” tab.",
   "add-title": "Add a wish",
   "import": {
     "busy": "Reading the page…",
@@ -42,6 +42,7 @@
     "groups": "Groups",
     "groups-label": "Groups that see “{title}”",
     "groups-more": "+{count}",
+    "in-no-group": "Not in any group",
     "remove-link": "Remove the link to {shop}"
   },
   "item": {
