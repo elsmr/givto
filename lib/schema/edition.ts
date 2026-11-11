@@ -31,18 +31,6 @@ export const GiftDay = v.object({
 });
 export type GiftDay = v.InferOutput<typeof GiftDay>;
 
-/** For posted exchanges (28): visible to this participant's Santa only, after the draw; deleted after the event. */
-export const PostalAddress = v.object({
-  recipient: v.optional(SingleLine(100)),
-  lines: v.pipe(v.array(SingleLine(100)), v.minLength(1), v.maxLength(3)),
-  postalCode: SingleLine(20),
-  city: SingleLine(100),
-  region: v.optional(SingleLine(100)),
-  /** ISO 3166-1 alpha-2, e.g. NL. */
-  country: v.pipe(v.string(), v.regex(/^[A-Z]{2}$/, 'invalid_country')),
-});
-export type PostalAddress = v.InferOutput<typeof PostalAddress>;
-
 /** invited: ticked for this edition, not confirmed yet. joined: in. declined: sits this one out. */
 export const ParticipantStatus = v.picklist(['invited', 'joined', 'declined']);
 export type ParticipantStatus = v.InferOutput<typeof ParticipantStatus>;
@@ -58,7 +46,6 @@ export const Participant = v.object({
   participates: v.boolean(),
   status: ParticipantStatus,
   addedAt: v.date(),
-  address: v.optional(PostalAddress),
   /** Last time this participant, as a Santa, viewed their giftee's wishlist (35: skip stale notifications). */
   gifteeWishlistSeenAt: v.optional(v.date()),
   /** Set when this Santa's giftee changed after the draw (late joiner, someone left, re-draw); cleared once they've seen it. */
@@ -102,6 +89,10 @@ export const UnwrapOrder = v.object({
       currentShown: v.boolean(),
       /** Guess your Santa (62): people whose Santa (and guess) the presenter showed at their turn, in that order. */
       santaShownIds: v.optional(v.array(Id)),
+      /** Live voting (83): whose turn the vote is open for (before their Santa is shown). */
+      voteOpenFor: v.optional(Id),
+      /** Live voting (83): people whose vote the presenter closed, so its tally is out. */
+      votedIds: v.optional(v.array(Id)),
     })
   ),
 });

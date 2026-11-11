@@ -27,7 +27,7 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
     ok(await user.trpc.query('account.groups')),
   ]);
 
-const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' | 'more' | 'last' | 'back') => {
+const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'back') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
   return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
 };
@@ -56,10 +56,10 @@ test('guess once, locked; nobody sees it or whether it is right until the turn; 
     expect(ok(await cee.trpc.mutate('guess.make', { ...at, memberId: idOf(ceesWrong) }))).toEqual({ ok: true });
     expect(code(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(dan) }))).toBe('GUESS_LOCKED');
     expect(ok(await bob.trpc.query('guess.mine', at))).toEqual({
-      open: false, guess: { memberId: idOf(bobsSanta), name: nameOf(idOf(bobsSanta)) }, people: [], result: null,
+      open: false, guess: { memberId: idOf(bobsSanta), name: nameOf(idOf(bobsSanta)) }, people: [], result: null, board: expect.anything(),
     });
     expect(ok(await cee.trpc.query('guess.mine', at))).toEqual({
-      open: false, guess: { memberId: idOf(ceesWrong), name: nameOf(idOf(ceesWrong)) }, people: [], result: null,
+      open: false, guess: { memberId: idOf(ceesWrong), name: nameOf(idOf(ceesWrong)) }, people: [], result: null, board: expect.anything(),
     });
     expect(await db.guesses.countDocuments({ editionId: (await editionOf(db, group.slug))._id })).toBe(2);
   });
@@ -93,13 +93,15 @@ test('guess once, locked; nobody sees it or whether it is right until the turn; 
     ok(await advance(ann, at, 'spin'));
     const turn = ok(await ann.trpc.query('giftday.presenter', at));
     expect(turn.unwrapOrder).toMatchObject({ current: { memberId: idOf(first) }, santaToShow: true });
-    expect(turn.guessing).toEqual({ results: [], right: 0 });
+    expect(turn.guessing).toEqual({ results: [], right: 0, leaderboard: [] });
     expect(code(await advance(ann, at, 'last')), 'the turn ends after the Santa').toBe('EDITION_CHANGED');
-    for (const p of people) expect(ok(await p.trpc.query('giftday.get', at)).guessing).toEqual({ results: [], right: 0 });
+    for (const p of people) expect(ok(await p.trpc.query('giftday.get', at)).guessing).toEqual({ results: [], right: 0, leaderboard: [] });
     expect(ok(await first.trpc.query('guess.mine', at))!.result).toBeNull();
   });
 
   await test.step("then everyone sees whose Santa it was and the guess; back hides it", async () => {
+    ok(await advance(ann, at, 'vote'));
+    ok(await advance(ann, at, 'tally'));
     const shown = ok(await advance(ann, at, 'santa'));
     const result = {
       memberId: idOf(first),
@@ -109,7 +111,7 @@ test('guess once, locked; nobody sees it or whether it is right until the turn; 
       right: first === bob,
     };
     expect(shown.unwrapOrder!.santaToShow).toBe(false);
-    expect(shown.guessing).toEqual({ results: [result], right: first === bob ? 1 : 0 });
+    expect(shown.guessing).toMatchObject({ results: [result], right: first === bob ? 1 : 0 });
     expect(ok(await dan.trpc.query('giftday.get', at)).guessing!.results).toEqual([result]);
     expect(ok(await first.trpc.query('guess.mine', at))!.result).toEqual({ santa: result.santa, right: result.right });
     expect(code(await ann.trpc.mutate('manage.backToShopping', { ...at, giftDayDate: '2099-12-23' }))).toBe('GIFT_DAY_UNDERWAY');
@@ -225,6 +227,8 @@ test('one by one: each Santa is shown once, on their first turn', async ({ signI
   // Round 1: everyone's Santa comes out once they've unwrapped.
   for (const [i, action] of (['more', 'more', 'more'] as const).entries()) {
     expect((await view()).unwrapOrder).toMatchObject({ current: { memberId: order[i] }, santaToShow: true });
+    ok(await advance(ann, at, 'vote'));
+    ok(await advance(ann, at, 'tally'));
     ok(await advance(ann, at, 'santa'));
     ok(await advance(ann, at, action));
     if (i < 2) ok(await advance(ann, at, 'spin'));

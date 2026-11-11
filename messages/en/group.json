@@ -163,10 +163,26 @@
     "over": "Over",
     "gifts": "Got their gift",
     "gifts-still": "Still shopping: {names}",
-    "gifts-all": "Everyone has a gift"
+    "gifts-all": "Everyone has a gift",
+    "addresses": "Added their address",
+    "addresses-missing": "No address yet: {names}",
+    "addresses-all": "Everyone added theirs"
   },
   "overview": {
     "details": "Dates, budget and notes",
     "to-giftee": "Their wishlist and tips"
+  },
+  "address": {
+    "title": "Your address",
+    "private": "Gifts go by post. Only your Santa sees your address, once names are drawn.",
+    "sending-to": "Sending to:",
+    "change": "Change",
+    "pick-label": "Address for this group",
+    "default-option": "{address} (default)",
+    "use": "Use this address",
+    "add-new": "Add a new one",
+    "picked": "Address changed",
+    "post-to": "Post it to",
+    "giftee-missing": "{name} hasn't added their address yet."
   }
 }

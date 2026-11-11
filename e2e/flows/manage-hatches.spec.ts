@@ -1,4 +1,4 @@
-// The organizer's Manage menu (64): every hatch through its confirm dialog, the stepper following along.
+// The organizer's items in the group's ⋯ menu (64): every hatch through its confirm dialog, the stepper following along.
 import { addDays, todayIn } from '@/lib/local-date';
 import type { Page } from '@playwright/test';
 import { newId } from '@/lib/server/db';
@@ -7,9 +7,9 @@ import { editionOf, memberIdOf } from '../api/s4-group';
 
 const currentStep = (page: Page) => page.getByRole('list', { name: 'Where this Secret Santa is' }).locator('[aria-current="step"]');
 
-/** Manage → item → the dialog says what happens → confirm. */
+/** ⋯ → item → the dialog says what happens → confirm. */
 const useHatch = async (page: Page, item: string, dialogTitle: string, confirm: string, fill?: (page: Page) => Promise<void>) => {
-  await page.getByRole('button', { name: 'Manage' }).click();
+  await page.getByRole('button', { name: 'More' }).click();
   await page.getByRole('menuitem', { name: item }).click();
   const dialog = page.getByRole('dialog', { name: dialogTitle });
   await expect(dialog.getByRole('listitem').first()).toBeVisible();
@@ -48,7 +48,7 @@ test('organizer: start gift day now, back to shopping, finish, reopen', async ({
   await expect(currentStep(page)).toContainText('Gift day');
 });
 
-test('a member has no Manage menu', async ({ page, signIn, signInPage }) => {
+test('a member\'s ⋯ menu has no organizer items', async ({ page, signIn, signInPage }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = ok(await ann.trpc.mutate('group.create', { name: 'Members', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
@@ -58,7 +58,8 @@ test('a member has no Manage menu', async ({ page, signIn, signInPage }) => {
   await signInPage(page, bob);
   await page.goto(`/g/${group.slug}`);
   await expect(currentStep(page)).toContainText('Shop');
-  await expect(page.getByRole('button', { name: 'Manage' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'More' }).click();
+  await expect(page.getByRole('menuitem')).toHaveText(['Pick a name']);
 });
 
 test('the draw dialog says the rules, with where to edit them, and who is not in the draw', async ({ page, signIn, signInPage, db }) => {
@@ -84,11 +85,11 @@ test('the draw dialog says the rules, with where to edit them, and who is not in
   await expect(page).toHaveURL(`/g/${group.slug}/settings#draw`);
 });
 
-test('organizer: a new edition from the Manage menu, while shopping (renamed) and once done', async ({ page, signIn, signInPage, db }) => {
+test('organizer: a new edition from the ⋯ menu, while shopping (renamed) and once done', async ({ page, signIn, signInPage, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const year = todayIn('Europe/Brussels').slice(0, 4);
   const newEdition = async (finishes: string | null, title?: string) => {
-    await page.getByRole('button', { name: 'Manage' }).click();
+    await page.getByRole('button', { name: 'More' }).click();
     await page.getByRole('menuitem', { name: 'Start a new edition' }).click();
     const dialog = page.getByRole('dialog', { name: 'Start a new edition?' });
     await expect(dialog.getByLabel('Name')).toHaveValue(`Secret Santa ${year}`);

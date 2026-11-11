@@ -70,6 +70,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     expect(data.wishes.map((w) => w.title)).toEqual([`Ann wish ${tag}`]);
     expect(data.wishes[0].links.map((link) => link.title)).toEqual([`Ann product ${tag}`]);
     expect(data.tipsWritten.map((t) => t.text)).toEqual([`Tip by Ann ${tag}`]);
+    expect(data.account.addresses.map((a) => a.lines[0])).toEqual([`Annstraat ${tag}`]);
     expect(data.groups).toHaveLength(2);
     expect(data.passkeys).toHaveLength(1);
     const foreign = [bob.email, cee.email, `Bob ${tag}`, `Bob wish ${tag}`, `Kid wish ${tag}`, `Tip about Ann ${tag}`, `Tip by Cee ${tag}`];

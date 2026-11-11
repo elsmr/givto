@@ -11,6 +11,7 @@ import type { Question } from '../schema/question';
 import type { RateLimitCounter } from '../schema/rate-limit';
 import type { Tip } from '../schema/tip';
 import type { User } from '../schema/user';
+import type { Vote } from '../schema/vote';
 import type { Wish } from '../schema/wish';
 import { retention } from '../privacy';
 import { requireEnv } from './env';
@@ -32,6 +33,7 @@ export const collections = (db: Db) => ({
   claims: db.collection<Claim>('claims'),
   gifts: db.collection<Gift>('gifts'),
   guesses: db.collection<Guess>('guesses'),
+  votes: db.collection<Vote>('votes'),
   tips: db.collection<Tip>('tips'),
   questions: db.collection<Question>('questions'),
   nudges: db.collection<Nudge>('nudges'),
@@ -71,6 +73,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.claims.createIndex({ editionId: 1 }),
     c.gifts.createIndex({ editionId: 1, santaMemberId: 1 }, { unique: true }),
     c.guesses.createIndex({ editionId: 1, guesserMemberId: 1 }, { unique: true }),
+    c.votes.createIndex({ editionId: 1, turnMemberId: 1, voterMemberId: 1 }, { unique: true }),
     c.tips.createIndex({ editionId: 1, aboutMemberId: 1 }),
     c.tips.createIndex({ editionId: 1, authorMemberId: 1 }),
     c.questions.createIndex({ editionId: 1, gifteeMemberId: 1 }),

@@ -7,5 +7,9 @@
     "title": "Privacy · Givto",
     "description": "What Givto stores about you, why, for how long, who helps us run it, and how to download or delete your data."
   },
+  "pick": {
+    "title": "Random name picker · Givto",
+    "description": "Pick a random name from a list: type or paste the names, spin, and pick one or several. Free, no account, nothing is saved."
+  },
   "image-alt": "The Givto logo: a smiling gift box"
 }

@@ -2,7 +2,8 @@ import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
-import type { Collections } from '../db';
+import type { GiftCounts } from '../../unwrap-turns';
+import { isDuplicateKey, newId, type Collections } from '../db';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
 import { guessesOf } from '../guess/guesses';
@@ -12,19 +13,53 @@ import { authedProcedure, editionProcedure, organizerEditionProcedure, publicPro
 import { giftDayView, presenterGiftDayView } from './giftday-view';
 import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
-const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
-  groupName: group.name,
-  title: edition.title,
-  status: edition.status,
-  ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
-});
+/** Live voting (83): the votes at the current person's turn, once the presenter opened one for them. */
+const votesOf = async (db: Collections, group: Group, edition: Edition, counts: GiftCounts) => {
+  const progress = edition.unwrapOrder?.progress;
+  if (!progress?.voteOpenFor && !progress?.votedIds?.length) return [];
+  const current = presenterGiftDayView(group, edition, counts, {}).vote?.memberId;
+  return current ? db.votes.find({ editionId: edition._id, turnMemberId: current }).toArray() : [];
+};
+
+const presenterView = async (db: Collections, group: Group, edition: Edition) => {
+  const counts = await giftCounts(db, edition);
+  return {
+    groupName: group.name,
+    title: edition.title,
+    status: edition.status,
+    ...presenterGiftDayView(group, edition, counts, await guessesOf(db, edition), await votesOf(db, group, edition, counts)),
+  };
+};
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
   /** Unwrap order and reveal state for the group home; Santas only once revealed. */
-  get: editionProcedure.query(async ({ ctx }) =>
-    giftDayView(ctx.group, ctx.edition, await giftCounts(ctx.db, ctx.edition), await guessesOf(ctx.db, ctx.edition))
-  ),
+  get: editionProcedure.query(async ({ ctx }) => {
+    const { db, group, edition } = ctx;
+    const counts = await giftCounts(db, edition);
+    return giftDayView(group, edition, counts, await guessesOf(db, edition), await votesOf(db, group, edition, counts), ctx.member.id);
+  }),
+
+  /**
+   * Live voting (83): who I think the current person's gift is from, while the presenter has the vote open.
+   * I can change it until the vote closes. Not for the person unwrapping, nor for anyone outside the draw.
+   */
+  vote: editionProcedure.input(v.object({ memberId: Id })).mutation(async ({ ctx, input }) => {
+    const { db, group, edition, member } = ctx;
+    const vote = giftDayView(group, edition, await giftCounts(db, edition), {}, [], member.id).vote;
+    if (!vote?.open) throw new AppError('VOTING_CLOSED');
+    if (!vote.people.some((person) => person.memberId === input.memberId)) throw new AppError('NOT_FOUND');
+    const mine = { editionId: edition._id, turnMemberId: vote.memberId, voterMemberId: member.id };
+    const cast = () =>
+      db.votes.updateOne(
+        mine,
+        { $set: { votedMemberId: input.memberId }, $setOnInsert: { _id: newId(), createdAt: new Date() } },
+        { upsert: true }
+      );
+    // Two taps at once: the second upsert loses the race on the unique index and becomes an update.
+    await cast().catch((error) => (isDuplicateKey(error) ? cast() : Promise.reject(error)));
+    return { ok: true };
+  }),
 
   /** The presenter view (/g/[slug]/present) is the organizer's (PLAN-v2). */
   presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition)),

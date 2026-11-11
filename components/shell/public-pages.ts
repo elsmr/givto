@@ -2,7 +2,7 @@
 export const siteUrl = 'https://givto.app';
 
 // The only indexable routes (37); every other page gets `noindex`. Keep public/sitemap.xml in sync.
-export const publicPages = { '/': 'home', '/privacy': 'privacy' } as const;
+export const publicPages = { '/': 'home', '/privacy': 'privacy', '/pick': 'pick' } as const;
 export type PublicPath = keyof typeof publicPages;
 
 export const isPublicPath = (pathname: string): pathname is PublicPath =>

@@ -1,0 +1,23 @@
+{
+  "title": "Random name picker",
+  "description": "Type or paste names and pick one at random, or a few. Nothing is saved or sent anywhere.",
+  "names": "Names",
+  "names-help": "One per line, or separated by commas.",
+  "how-many": "How many",
+  "spin-each": "Spin for each name",
+  "pick": "Pick",
+  "start-over": "Start over",
+  "left": "{left} of {total} left",
+  "picked": "Picked",
+  "announce": "Picked: {names}",
+  "dialog": {
+    "item": "Pick a name",
+    "title": "Pick a name",
+    "description": "Starts with everyone in this group. Add or remove names as you like; nothing is saved."
+  },
+  "givto": {
+    "title": "Drawing names for a Secret Santa?",
+    "text": "Givto draws them for you: everyone only sees who they're buying for. Free.",
+    "cta": "Start a Secret Santa"
+  }
+}

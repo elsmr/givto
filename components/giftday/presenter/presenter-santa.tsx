@@ -1,15 +1,18 @@
+import { GuessLeaderboard } from '@/components/guess/guess-leaderboard';
 import { GuessVerdict } from '@/components/guess/guess-verdict';
 import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { Confetti } from './confetti';
-import type { PresenterGuessResult } from './presenter-phase';
+import type { PresenterGuessResult, PresenterView } from './presenter-phase';
 
 const name = (chunks: ReactNode) => <strong className="font-heading break-words">{chunks}</strong>;
 
-/** Guess your Santa (62) at the turn, once they've unwrapped: "From Bob · You guessed Cee ✓". */
-export const PresenterSanta = ({ result }: { result: PresenterGuessResult }) => {
+type PresenterSantaProps = { result: PresenterGuessResult; leaderboard: NonNullable<PresenterView['guessing']>['leaderboard'] };
+
+/** Guess your Santa (62) at the turn, once they've unwrapped: "From Bob · You guessed Cee ✓", then the leaderboard (82). */
+export const PresenterSanta = ({ result, leaderboard }: PresenterSantaProps) => {
   const t = useTranslations('guess.present');
   const reduced = useReducedMotion();
 
@@ -45,6 +48,9 @@ export const PresenterSanta = ({ result }: { result: PresenterGuessResult }) => 
           <span className="text-muted">{t('no-guess')}</span>
         )}
       </m.p>
+      <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.3 }}>
+        <GuessLeaderboard leaderboard={leaderboard} large />
+      </m.div>
     </m.div>
   );
 };

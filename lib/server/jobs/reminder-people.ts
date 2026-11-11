@@ -3,6 +3,7 @@ import type { ReminderEdition, ReminderPerson, SentReminder } from '../../remind
 import type { Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
+import { userIdsWithAddress } from '../account/addresses';
 import type { Collections } from '../db';
 import { currentGifts } from '../gift/marks';
 import { visibleWishes } from '../wishlist/wish-view';
@@ -14,6 +15,7 @@ export const reminderEditionOf = (edition: Edition, timeZone: string): ReminderE
   drawnOn: edition.draw?.drawnAt && todayIn(timeZone, edition.draw.drawnAt),
   giftDay: edition.giftDay?.date,
   wishlistBy: edition.wishlistBy,
+  posted: edition.exchangeMode !== 'inPerson',
   postBy: edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined,
 });
 
@@ -34,6 +36,7 @@ export const reminderPeople = async (db: Collections, group: Group, edition: Edi
   const local = (date: Date) => todayIn(group.timeZone, date);
   const participants = edition.participants.filter((p) => p.participates && p.status === 'joined');
   const gifts = await currentGifts(db, edition);
+  const withAddress = edition.exchangeMode !== 'inPerson' ? await userIdsWithAddress(db, group.members) : new Set<string>();
   const manualDraw = edition.status === 'open' && !edition.drawAt && participants.length >= MIN_PARTICIPANTS;
   const everyoneIn = manualDraw && (await everyoneInvitedIn(db, group, openedAt, now));
   const sent = await db.sentNotifications.find({ groupId: group._id, slots: { $exists: true } }, { projection: { memberId: 1, editionId: 1, slots: 1, sentAt: 1 } }).toArray();
@@ -50,6 +53,8 @@ export const reminderPeople = async (db: Collections, group: Group, edition: Edi
         wishCount: participant ? (await visibleWishes(db, member)).length : 1,
         isSanta: Boolean(edition.draw?.assignments[member.id]),
         hasGift: gifts.has(member.id),
+        // Not in this edition, or managed (their manager can't add it for them): no address reminders.
+        hasAddress: !participant || !member.userId || withAddress.has(member.userId),
         canDraw: isOrganizer && manualDraw,
         everyoneIn: isOrganizer && everyoneIn,
       },

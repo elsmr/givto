@@ -1,8 +1,9 @@
 import { CardDivider } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import { Download, KeyRound, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react';
+import { Download, KeyRound, Mailbox, SlidersHorizontal, TriangleAlert, UserRound } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AccountSection, AccountSubsection } from './account-section';
+import { AddressBook } from './address-book';
 import { DeleteAccountDialog } from './delete-account-dialog';
 import { ExportButton } from './export-button';
 import { LanguageSelect } from './language-select';
@@ -12,7 +13,7 @@ import { PasskeyList } from './passkey-list';
 import { SignOutEverywhere } from './sign-out-everywhere';
 import { ThemeSelect } from './theme-select';
 
-/** Profile, sign-in, preferences, then data; deleting the account last, on its own coral card. */
+/** Profile, postal addresses, sign-in, preferences, then data; deleting the account last, on its own coral card. */
 export const AccountSettings = ({ me }: { me: RouterOutputs['me']['get'] }) => {
   const t = useTranslations('account');
 
@@ -21,6 +22,11 @@ export const AccountSettings = ({ me }: { me: RouterOutputs['me']['get'] }) => {
       <AccountSection title={t('profile.title')} icon={UserRound} tone="primary-muted" description={t('profile.description')}>
         <AccountSubsection>
           <NameForm name={me.name} email={me.email} />
+        </AccountSubsection>
+      </AccountSection>
+      <AccountSection title={t('address.title')} icon={Mailbox} tone="coral" description={t('address.description')}>
+        <AccountSubsection>
+          <AddressBook />
         </AccountSubsection>
       </AccountSection>
       <AccountSection title={t('security.title')} icon={KeyRound} tone="mint">

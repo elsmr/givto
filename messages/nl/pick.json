@@ -1,0 +1,23 @@
+{
+  "title": "Willekeurige namenkiezer",
+  "description": "Typ of plak namen en kies er willekeurig één, of een paar. Niets wordt bewaard of verstuurd.",
+  "names": "Namen",
+  "names-help": "Eén per regel, of gescheiden door komma's.",
+  "how-many": "Hoeveel",
+  "spin-each": "Draaien voor elke naam",
+  "pick": "Kies",
+  "start-over": "Opnieuw",
+  "left": "{left} van {total} over",
+  "picked": "Gekozen",
+  "announce": "Gekozen: {names}",
+  "dialog": {
+    "item": "Kies een naam",
+    "title": "Kies een naam",
+    "description": "Begint met iedereen in deze groep. Voeg namen toe of haal ze weg; niets wordt bewaard."
+  },
+  "givto": {
+    "title": "Lootjes trekken voor een Secret Santa?",
+    "text": "Givto loot voor je: iedereen ziet alleen voor wie hij een cadeau koopt. Gratis.",
+    "cta": "Start een Secret Santa"
+  }
+}

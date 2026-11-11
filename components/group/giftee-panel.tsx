@@ -3,9 +3,10 @@ import { RevealCard } from '@/components/draw/reveal-card';
 import { useGifteeRevealed } from '@/components/draw/use-giftee-revealed';
 import { GotGiftCard } from '@/components/gift/got-gift-card';
 import { GifteeWishlist } from '@/components/wishlist/giftee-wishlist';
+import { GifteeAddressCard } from './address-card';
 import type { GroupEdition } from './group-data';
 
-/** The "My giftee" tab (61): tap to reveal, then "I've got my gift" (63), their wishlist with Dibs! and, next to it, tips, Psst! and questions. */
+/** The "My giftee" tab (61): tap to reveal, then where to post it (80), "I've got my gift" (63), their wishlist with Dibs! and, next to it, tips, Psst! and questions. */
 export const GifteePanel = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const input = { groupSlug, editionNumber: edition.number };
   const [revealed] = useGifteeRevealed(groupSlug, edition.number);
@@ -16,6 +17,7 @@ export const GifteePanel = ({ groupSlug, edition }: { groupSlug: string; edition
         <RevealCard {...input} timeZone={edition.timeZone} />
         {revealed && (
           <>
+            {edition.exchangeMode !== 'inPerson' && <GifteeAddressCard {...input} />}
             <GotGiftCard {...input} />
             <GifteeWishlist {...input} />
           </>

@@ -1,4 +1,4 @@
-// The account page (55): name, language, theme, passkeys, export, and deleting the account with the emailed code.
+// The account page (55): name, language, theme, passkeys, postal addresses (80), export, and deleting the account with the emailed code.
 import { readFile } from 'node:fs/promises';
 import { ObjectId } from 'mongodb';
 import { expect, mailsTo, ok, test } from '../fixtures';
@@ -73,6 +73,39 @@ test('passkeys: the list, rename, remove', async ({ page, signIn, signInPage, db
   await page.getByRole('button', { name: 'Remove Work laptop' }).click();
   await expect(page.getByText('Passkey removed')).toBeVisible();
   await expect(page.getByText('No passkeys yet.')).toBeVisible();
+});
+
+test('postal addresses: add, edit, make default, remove', async ({ page, signIn, signInPage }) => {
+  const ann = await signIn('ann');
+  await signInPage(page, ann);
+  await page.goto('/account');
+  const addresses = page.getByRole('listitem').filter({ has: page.locator('address') });
+  const add = async (street: string, postalCode: string, city: string) => {
+    await page.getByRole('button', { name: 'Add an address' }).click();
+    await page.getByLabel('Street and number').fill(street);
+    await page.getByLabel('Postal code').fill(postalCode);
+    await page.getByLabel('City').fill(city);
+    await page.getByLabel('Country').selectOption({ label: 'Belgium' });
+    await page.getByRole('button', { name: 'Save address' }).click();
+    await expect(page.getByText('Address saved').first()).toBeVisible();
+  };
+
+  await add('Annstraat 1', '1000', 'Brussel');
+  await add('Werkplein 1', '2000', 'Antwerpen');
+  await expect(addresses).toHaveCount(2);
+  await expect(addresses.filter({ hasText: 'Annstraat 1' })).toContainText('Default');
+
+  await page.getByRole('button', { name: 'Edit: Werkplein 1, 2000 Antwerpen' }).click();
+  await page.getByLabel('Street and number').fill('Werkplein 2');
+  await page.getByRole('button', { name: 'Save address' }).click();
+  await expect(addresses.filter({ hasText: 'Werkplein 2' })).toHaveCount(1);
+
+  await page.getByRole('button', { name: 'Make default: Werkplein 2, 2000 Antwerpen' }).click();
+  await expect(addresses.filter({ hasText: 'Werkplein 2' })).toContainText('Default');
+  await page.getByRole('button', { name: 'Remove: Werkplein 2, 2000 Antwerpen' }).click();
+  await expect(addresses).toHaveCount(1);
+  await expect(addresses).toContainText('Default');
+  expect(ok(await ann.trpc.query('account.addresses')).addresses.map((a) => a.lines[0])).toEqual(['Annstraat 1']);
 });
 
 test('export: a JSON file with my data and nobody else’s', async ({ page, signIn, signInPage }) => {

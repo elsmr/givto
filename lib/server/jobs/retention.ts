@@ -1,7 +1,5 @@
-import { ObjectId, type Filter } from 'mongodb';
-import { todayIn } from '../../local-date';
+import { ObjectId } from 'mongodb';
 import { retention } from '../../privacy';
-import type { Edition } from '../../schema/edition';
 import type { Collections } from '../db';
 import { getMongoDb } from '../db';
 import { deleteWishImage } from '../import/wish-images';
@@ -19,10 +17,10 @@ const ORPHAN_IMAGE_HOURS = 24;
  * the group's next edition started. The group's latest edition doesn't end this way: it goes with the
  * group once that's inactive (`inactiveGroupMonths`).
  */
-const endedWithoutGiftDay = async (db: Collections, before: Date, filter: Filter<Edition> = {}) => {
+const endedWithoutGiftDay = async (db: Collections, before: Date) => {
   const editions = await db.editions
     .aggregate<{ _id: string }>([
-      { $match: { ...filter, giftDay: { $exists: false } } },
+      { $match: { giftDay: { $exists: false } } },
       {
         $lookup: {
           from: 'editions',
@@ -40,26 +38,7 @@ const endedWithoutGiftDay = async (db: Collections, before: Date, filter: Filter
   return editions.map((edition) => edition._id);
 };
 
-/** Postal addresses go right after gift day (28, 55): once gift day is over in the group's time zone. */
-const deleteAddresses = async (db: Collections, now: Date) => {
-  const withAddress = { 'participants.address': { $exists: true } };
-  const editions = await db.editions
-    .find({ ...withAddress, 'giftDay.date': { $lte: isoDate(now) } }, { projection: { groupId: 1, giftDay: 1 } })
-    .toArray();
-  const groups = await db.groups
-    .find({ _id: { $in: [...new Set(editions.map((edition) => edition.groupId))] } }, { projection: { timeZone: 1 } })
-    .toArray();
-  const timeZones = new Map(groups.map((group) => [group._id, group.timeZone]));
-  const past = editions.filter((edition) => {
-    const timeZone = timeZones.get(edition.groupId);
-    return edition.giftDay && timeZone && edition.giftDay.date < todayIn(timeZone, now);
-  });
-  const ids = [...past.map((edition) => edition._id), ...(await endedWithoutGiftDay(db, now, withAddress))];
-  await db.editions.updateMany({ _id: { $in: ids } }, { $unset: { 'participants.$[].address': true } });
-  return ids.length;
-};
-
-/** Claims, gifts marked (63), guesses (62), tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day (or the end, without one). */
+/** Claims, gifts marked (63), guesses (62), votes (83), tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day (or the end, without one). */
 const deleteEditionMessages = async (db: Collections, now: Date) => {
   const cutoff = monthsBefore(now, retention.editionMessagesMonths);
   const pastGiftDay = await db.editions.find({ 'giftDay.date': { $lt: isoDate(cutoff) } }, { projection: { _id: 1 } }).toArray();
@@ -69,6 +48,7 @@ const deleteEditionMessages = async (db: Collections, now: Date) => {
     db.claims.deleteMany(inEditions),
     db.gifts.deleteMany(inEditions),
     db.guesses.deleteMany(inEditions),
+    db.votes.deleteMany(inEditions),
     db.tips.deleteMany(inEditions),
     db.questions.deleteMany(inEditions),
     db.nudges.deleteMany(inEditions),
@@ -129,7 +109,6 @@ const deleteOrphanImages = async (now: Date) => {
 
 /** Retention (55), with the periods from lib/privacy.ts that /privacy shows. Daily. */
 export const runRetention = async (db: Collections, now: Date) => ({
-  addresses: await deleteAddresses(db, now),
   editionMessages: await deleteEditionMessages(db, now),
   draws: await deleteOldDraws(db, now),
   orphanImages: await deleteOrphanImages(now),

@@ -21,6 +21,8 @@ const publicPages = [
   { path: '/nl', lang: 'nl', url: `${SITE}/nl`, en: `${SITE}/`, nl: `${SITE}/nl`, jsonLd: true },
   { path: '/privacy', lang: 'en', url: `${SITE}/privacy`, en: `${SITE}/privacy`, nl: `${SITE}/nl/privacy`, jsonLd: false },
   { path: '/nl/privacy', lang: 'nl', url: `${SITE}/nl/privacy`, en: `${SITE}/privacy`, nl: `${SITE}/nl/privacy`, jsonLd: false },
+  { path: '/pick', lang: 'en', url: `${SITE}/pick`, en: `${SITE}/pick`, nl: `${SITE}/nl/pick`, jsonLd: false },
+  { path: '/nl/pick', lang: 'nl', url: `${SITE}/nl/pick`, en: `${SITE}/pick`, nl: `${SITE}/nl/pick`, jsonLd: false },
 ];
 
 for (const page of publicPages) {

@@ -10,6 +10,7 @@ import type giftday from './en/giftday.json';
 import type guess from './en/guess.json';
 import type errors from './en/errors.json';
 import type home from './en/home.json';
+import type pick from './en/pick.json';
 import type privacy from './en/privacy.json';
 import type seo from './en/seo.json';
 import type group from './en/group.json';
@@ -36,6 +37,7 @@ declare module 'next-intl' {
       guess: typeof guess;
       errors: typeof errors;
       home: typeof home;
+      pick: typeof pick;
       privacy: typeof privacy;
       seo: typeof seo;
       group: typeof group;

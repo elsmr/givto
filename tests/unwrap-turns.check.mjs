@@ -1,6 +1,6 @@
 // Run: pnpm test (or node --import ./tests/ts-hooks.mjs tests/unwrap-turns.check.mjs)
 import assert from 'node:assert/strict';
-import { backHidesSanta, isLastGift, santaStillHidden, unwrapState } from '../lib/unwrap-turns.ts';
+import { backHidesSanta, isLastGift, santaStillHidden, unwrapState, voteStep } from '../lib/unwrap-turns.ts';
 
 const order = ['ann', 'bob', 'cee'];
 
@@ -79,4 +79,12 @@ assert.equal(santaStillHidden(annAgain, ['ann', 'bob', 'cee']), false, 'second g
 assert.equal(backHidesSanta(annAgain, [{ memberId: 'ann', last: false }], ['ann']), false, 'later turn: back undoes the turn');
 assert.equal(santaStillHidden(unwrapState(order, 'allAtOnce', true, order.map((memberId) => ({ memberId, last: true }))), []), false, 'finished');
 
-console.log('ok  unwrap-turns: more / last by hand, gift counts, skips, rounds, allAtOnce, Santa shown at the turn');
+// Live voting (83): ready → open → closed (tally out) before the Santa; nothing once the Santa is out.
+assert.equal(voteStep(first, [], [], undefined), 'ready');
+assert.equal(voteStep(first, [], [], 'ann'), 'open');
+assert.equal(voteStep(first, [], ['ann'], undefined), 'closed');
+assert.equal(voteStep(first, ['ann'], ['ann'], undefined), null, 'Santa shown: the vote is over');
+assert.equal(voteStep(first, [], ['bob'], 'bob'), 'ready', "someone else's vote doesn't count for Ann");
+assert.equal(voteStep(annAgain, ['ann', 'bob', 'cee'], ['ann'], undefined), null, 'second gift: no vote');
+
+console.log('ok  unwrap-turns: more / last by hand, gift counts, skips, rounds, allAtOnce, Santa shown at the turn, votes');

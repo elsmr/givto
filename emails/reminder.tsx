@@ -10,6 +10,8 @@ import { emailTranslator, type EmailTranslator } from './ui/translator';
 /** The parts a reminder (63) can have; dates are formatted. Each has its own button. */
 export interface ReminderParts {
   wishlist?: { url: string; by?: string };
+  /** Posted exchanges (80): add your postal address. */
+  address?: { url: string; postBy?: string };
   /** `postBy`: a posted exchange. */
   gift?: { url: string; giftDay: string; postBy?: string };
   /** To the organizer drawing by hand. `soon`: gift day is two weeks off (else: everyone invited is in). */
@@ -17,9 +19,10 @@ export interface ReminderParts {
 }
 type ReminderProps = NoticeProps & ReminderParts;
 
-const partSubjects = (t: EmailTranslator, { wishlist, gift, readyToDraw }: ReminderParts) =>
+const partSubjects = (t: EmailTranslator, { wishlist, address, gift, readyToDraw }: ReminderParts) =>
   [
     wishlist && t('reminder.wishlist.subject'),
+    address && t('reminder.address.subject'),
     gift && (gift.postBy ? t('reminder.gift.subject-post', { date: gift.postBy }) : t('reminder.gift.subject')),
     readyToDraw && t('reminder.ready.subject'),
   ].filter((part) => typeof part === 'string');
@@ -31,12 +34,12 @@ export const reminderSubject = ({ locale, group, ...parts }: ReminderParts & { l
 };
 
 /**
- * Wishlist, gift and ready-to-draw reminders (29, 63) in one email: at most one a week per person
+ * Wishlist, address, gift and ready-to-draw reminders (29, 63, 80) in one email: at most one a week per person
  * and group, so parts due in the same week come together.
  */
-export const ReminderEmail = ({ locale, group, forName, unsubscribe, wishlist, gift, readyToDraw }: ReminderProps) => {
+export const ReminderEmail = ({ locale, group, forName, unsubscribe, wishlist, address, gift, readyToDraw }: ReminderProps) => {
   const t = emailTranslator(locale);
-  const subjects = partSubjects(t, { wishlist, gift, readyToDraw });
+  const subjects = partSubjects(t, { wishlist, address, gift, readyToDraw });
   const combined = subjects.length > 1;
   const sections = [
     wishlist && {
@@ -44,6 +47,12 @@ export const ReminderEmail = ({ locale, group, forName, unsubscribe, wishlist, g
       title: t('reminder.wishlist.title'),
       body: [t('reminder.wishlist.body', { group }), ...(wishlist.by ? [t('reminder.wishlist.by', { date: wishlist.by })] : [])],
       button: { href: wishlist.url, label: t('reminder.wishlist.button') },
+    },
+    address && {
+      key: 'address',
+      title: t('reminder.address.title'),
+      body: [t('reminder.address.body', { group }), ...(address.postBy ? [t('reminder.address.by', { date: address.postBy })] : [])],
+      button: { href: address.url, label: t('reminder.address.button') },
     },
     gift && {
       key: 'gift',

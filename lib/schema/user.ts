@@ -1,5 +1,6 @@
 import * as v from 'valibot';
-import { Email, Locale, PersonName } from './common';
+import { countryCodes } from '../countries';
+import { Email, Id, Locale, PersonName, SingleLine } from './common';
 
 /** Email opt-outs (29, 35). Missing means the default: everything on. */
 export const NotificationPrefs = v.object({
@@ -15,6 +16,22 @@ export const NotificationPrefs = v.object({
   joins: v.optional(v.boolean(), true),
 });
 export type NotificationPrefs = v.InferOutput<typeof NotificationPrefs>;
+
+/** Where gifts by post go (80): only the person's Santa reads it, in by-post Secret Santas, from the draw until gift day is over. */
+export const PostalAddress = v.object({
+  recipient: v.optional(SingleLine(100)),
+  lines: v.pipe(v.array(SingleLine(100)), v.minLength(1), v.maxLength(3)),
+  postalCode: SingleLine(20),
+  city: SingleLine(100),
+  region: v.optional(SingleLine(100)),
+  /** ISO 3166-1 alpha-2, e.g. NL. */
+  country: v.picklist(countryCodes, 'invalid_country'),
+});
+export type PostalAddress = v.InferOutput<typeof PostalAddress>;
+
+export const MAX_ADDRESSES = 10;
+export const SavedAddress = v.object({ id: Id, ...PostalAddress.entries });
+export type SavedAddress = v.InferOutput<typeof SavedAddress>;
 
 export const avatarColors = ['primary', 'primaryMuted', 'coral', 'yellow', 'mint'] as const;
 export const AvatarColor = v.picklist(avatarColors);
@@ -38,6 +55,10 @@ export const User = v.object({
   name: v.string(),
   locale: v.optional(Locale),
   notifications: v.optional(NotificationPrefs),
+  /** The address book (80). A group uses its member's `addressId` when that's still here, else the default. */
+  addresses: v.optional(v.pipe(v.array(SavedAddress), v.maxLength(MAX_ADDRESSES))),
+  /** Set whenever there are addresses. */
+  defaultAddressId: v.optional(Id),
   email: Email,
   emailVerified: v.boolean(),
   image: v.optional(v.nullable(v.string())),
