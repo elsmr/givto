@@ -1,3 +1,4 @@
+import { BoardsPanel } from '@/components/between/boards-panel';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { GroupWishlist } from '@/components/wishlist/group-wishlist';
 import { useTRPC } from '@/lib/client/trpc';
@@ -17,14 +18,16 @@ import { groupTabs, useGroupTab, type GroupTab } from './use-group-tab';
 
 /**
  * The group home once loaded (61): header, phase stepper, and tabs with my wishes here and who's in as
- * counts (79); "My giftee" only from the draw on.
+ * counts (79); "My giftee" only from the draw on, "Boards" instead in a conspiracy (90).
  */
 export const GroupView = ({ group }: { group: GroupData }) => {
   const { edition } = group;
   // No giftee without a draw (88). Wishes are the group's, hidden while its current edition is a white elephant.
   const noGiftee = !edition || isBeforeDraw(edition) || !drawsNames(edition);
   const noWishes = group.editions[0]?.kind === 'whiteElephant';
-  const tabs: readonly GroupTab[] = groupTabs.filter((tab) => !(tab === 'giftee' && noGiftee) && !(tab === 'wishlist' && noWishes));
+  const hidden = (tab: GroupTab) =>
+    (tab === 'giftee' && noGiftee) || (tab === 'boards' && !group.me.hasBoards) || (tab === 'wishlist' && noWishes);
+  const tabs: readonly GroupTab[] = groupTabs.filter((tab) => !hidden(tab));
   const top = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useGroupTab(tabs, top);
   const trpc = useTRPC();
@@ -52,6 +55,11 @@ export const GroupView = ({ group }: { group: GroupData }) => {
       {edition && tabs.includes('giftee') && (
         <TabsContent value="giftee" className="mt-0">
           <GifteePanel groupSlug={group.slug} edition={edition} />
+        </TabsContent>
+      )}
+      {edition && tabs.includes('boards') && (
+        <TabsContent value="boards" className="mt-0">
+          <BoardsPanel input={{ groupSlug: group.slug, editionNumber: edition.number }} />
         </TabsContent>
       )}
       {tabs.includes('wishlist') && (

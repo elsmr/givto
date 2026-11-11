@@ -12,6 +12,8 @@ type PresenterTurnSlideProps = {
   santa: PresenterGuessResult | null;
   guessing: PresenterView['guessing'];
   vote: PresenterView['vote'];
+  /** A conspiracy (90): everyone's gift is from all the others. */
+  fromAll: boolean;
 };
 
 /**
@@ -19,7 +21,7 @@ type PresenterTurnSlideProps = {
  * Their Santa only with Guess your Santa (62) on, once shown after they've unwrapped; before it, the room's
  * vote (83): "vote on your phones" while open, then the tally.
  */
-export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote }: PresenterTurnSlideProps) => {
+export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, fromAll }: PresenterTurnSlideProps) => {
   const t = useTranslations('giftday.present');
   const tVote = useTranslations('guess.vote');
   const number = order.people.findIndex((p) => p.memberId === order.current?.memberId) + 1;
@@ -41,6 +43,7 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote }: P
       >
         {order.current?.name}
       </m.p>
+      {fromAll && <p className="text-3xl font-bold sm:text-5xl">{t('from-all')}</p>}
       {oneByOne && gifts !== null && <p className="text-2xl font-semibold sm:text-4xl">{t('gift-of', { current: order.currentGift, total: gifts })}</p>}
       {!oneByOne && (
         <p className="text-xl text-muted sm:text-2xl">

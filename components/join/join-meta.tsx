@@ -11,7 +11,7 @@ export const JoinMeta = ({ preview, origin }: { preview: JoinPreview | null; ori
   const title = preview
     ? t('title', { organizer: preview.organizerFirstName, group: preview.groupName })
     : t('generic-title');
-  const description = preview?.whiteElephant ? t('description-white-elephant') : t('description');
+  const description = preview?.kind && preview.kind !== 'secretSanta' ? t(`description-${preview.kind}`) : t('description');
   const image = `${origin}/givto-logo.png`;
 
   return (

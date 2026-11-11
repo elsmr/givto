@@ -42,8 +42,8 @@ export const PresenterSettings = ({ groupSlug, edition, mode, inProgress, skipSp
           <SettingsRow label={t('skip-spin')} htmlFor={id}>
             <Switch id={id} checked={skipSpin} onCheckedChange={onSkipSpinChange} />
           </SettingsRow>
-          {/* A white elephant (88): one gift each. Without a draw: no Santas. */}
-          {edition.kind !== 'whiteElephant' && (
+          {/* Without a draw (88, 90): one gift each, and no Santas. */}
+          {drawsNames(edition) && (
             <UnwrapModeSetting groupSlug={groupSlug} editionNumber={edition.number} mode={mode} inProgress={inProgress} />
           )}
         </SettingsGroup>

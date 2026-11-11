@@ -2,6 +2,7 @@ import { getMongoDb } from '../db';
 import { publicProcedure, router } from '../trpc';
 import { accountRouter } from './account';
 import { addressRouter } from './address';
+import { boardRouter } from './board';
 import { claimRouter } from './claim';
 import { drawRouter } from './draw';
 import { editionRouter } from './edition';
@@ -38,6 +39,7 @@ export const appRouter = router({
   invite: inviteRouter,
   membership: membershipRouter,
   tip: tipRouter,
+  board: boardRouter,
   question: questionRouter,
   nudge: nudgeRouter,
   draw: drawRouter,

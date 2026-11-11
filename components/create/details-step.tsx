@@ -9,6 +9,7 @@ import { fieldIssue, type FieldIssue } from '../group/field-issue';
 import { BudgetFields } from './budget-fields';
 import { ExchangeField, GiftDayFields, KindField } from './gift-day-fields';
 import type { CreateDraft } from './use-create-draft';
+import { drawsNames } from '@/lib/schema/edition';
 
 type DetailsStepProps = {
   draft: CreateDraft;
@@ -21,7 +22,7 @@ type DetailsStepProps = {
 
 /**
  * Step 1: what kind (88) and its name. Gift day is optional; time, budget and posting only show when asked for.
- * A white elephant is played together, so it doesn't ask about posting.
+ * Kinds without a draw are played together, so they don't ask about posting.
  */
 export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNext }: DetailsStepProps) => {
   const t = useTranslations('create.details');
@@ -40,7 +41,7 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
       <FieldGroup>
         <KindField kind={draft.kind} onChange={(kind) => onChange({ kind })} />
         <Field data-invalid={nameIssue ? 'true' : undefined}>
-          <FieldLabel htmlFor="group-name">{draft.kind === 'whiteElephant' ? t('name-white-elephant') : t('name')}</FieldLabel>
+          <FieldLabel htmlFor="group-name">{{ secretSanta: t('name'), whiteElephant: t('name-white-elephant'), conspiracy: t('name-conspiracy') }[draft.kind]}</FieldLabel>
           <Input
             id="group-name"
             required
@@ -55,7 +56,7 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
         </Field>
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
         <BudgetFields draft={draft} onChange={onChange} />
-        {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={onChange} />}
+        {drawsNames(draft) && <ExchangeField draft={draft} onChange={onChange} />}
         <FieldDescription>{t('later')}</FieldDescription>
       </FieldGroup>
       <Button type="submit" size="lg" className="xs:self-start" disabled={busy}>

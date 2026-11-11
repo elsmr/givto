@@ -18,13 +18,16 @@
     "too-few": "Locking in needs {count, plural, one {# more person} other {# more people}}.",
     "confirm-title": "Lock it in now?",
     "confirm-description": "Everyone who's in brings one gift to gift day. People who join later are in too.",
+    "confirm-description-conspiracy": "Everyone who's in gets one gift from all the others on gift day. People who join later are in too.",
     "left-out": "Not in: {names}.",
     "confirm": "Lock in",
     "cancel": "Not yet",
     "drawn": "Locked in!",
     "wait": "Nothing to do until {organizer} locks it in. Then bring one wrapped gift to gift day.",
+    "wait-conspiracy": "Plan everyone's gift with the others on the Boards tab. {organizer} locks it in before gift day.",
     "locked-title": "It's locked in",
-    "locked-body": "Bring one wrapped gift to gift day. On gift day Givto picks who goes next: open a new gift, or steal one that's already open."
+    "locked-body": "Bring one wrapped gift to gift day. On gift day Givto picks who goes next: open a new gift, or steal one that's already open.",
+    "locked-body-conspiracy": "Keep planning on the boards. On gift day everyone unwraps one gift, from all of us."
   },
   "rules": {
     "title": "Draw rules",

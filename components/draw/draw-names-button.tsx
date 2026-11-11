@@ -25,11 +25,12 @@ import { useRefreshEdition } from './use-refresh-edition';
 
 /**
  * Organizer, open edition: "Draw names" now, after a confirmation that says who's not in (34, 64); "Lock in" for a
- * white elephant (88), which has no draw. Too few people: disabled, with how many more as its tooltip and description.
+ * white elephant (88) or conspiracy (90), which have no draw. Too few people: disabled, with how many more as its tooltip and description.
  */
 export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const lockIn = !drawsNames(edition);
   const t = useTranslations(lockIn ? 'draw.lock-in' : 'draw.before');
+  const tLockIn = useTranslations('draw.lock-in');
   const Icon = lockIn ? Lock : Shuffle;
   const reasonId = useId();
   const missing = MIN_PARTICIPANTS - group.members.filter((m) => edition.participantIds.includes(m.id)).length;
@@ -100,7 +101,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('confirm-title')}</DialogTitle>
-          <DialogDescription>{t('confirm-description')}</DialogDescription>
+          <DialogDescription>{edition.kind === 'conspiracy' ? tLockIn('confirm-description-conspiracy') : t('confirm-description')}</DialogDescription>
         </DialogHeader>
         {!lockIn && <DrawRules group={group} edition={edition} />}
         {leftOut.length > 0 && <p>{t('left-out', { names: format.list(leftOut) })}</p>}

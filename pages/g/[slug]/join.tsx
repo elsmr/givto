@@ -69,7 +69,7 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
         ...preview,
         giftDay: upcoming?.giftDay?.date ?? null,
         budget: upcoming?.budget ?? null,
-        whiteElephant: upcoming?.kind === 'whiteElephant',
+        kind: upcoming?.kind ?? 'secretSanta',
       },
       origin: new URL(requireEnv('BETTER_AUTH_URL')).origin,
       locale,

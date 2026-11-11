@@ -17,7 +17,7 @@ export const JoinIntro = ({ preview, children }: { preview: JoinPreview; childre
   const { giftDay, budget } = preview;
 
   return (
-    <FlowPage title={t('title')} description={preview.whiteElephant ? t('description-white-elephant') : t('description')}>
+    <FlowPage title={t('title')} description={preview.kind && preview.kind !== 'secretSanta' ? t(`description-${preview.kind}`) : t('description')}>
       <Card>
         <CardHeader className="gap-3">
           <IconCardTitle icon={Gift} tone="coral">

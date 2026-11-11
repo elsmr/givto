@@ -162,6 +162,7 @@
     "label": "Deze Secret Santa",
     "overview": "Overzicht",
     "giftee": "Mijn persoon",
+    "boards": "Prikborden",
     "wishlist": "Mijn verlanglijstje",
     "people": "Deelnemers"
   },
@@ -183,7 +184,8 @@
   },
   "overview": {
     "details": "Data, budget en notities",
-    "to-giftee": "Hun verlanglijstje en tips"
+    "to-giftee": "Hun verlanglijstje en tips",
+    "to-boards": "Naar de prikborden"
   },
   "address": {
     "title": "Je adres",

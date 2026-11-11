@@ -3,7 +3,8 @@
     "title": "{organizer} nodigt je uit voor {group}",
     "generic-title": "Je bent uitgenodigd voor een Secret Santa",
     "description": "Doe mee met de Secret Santa op Givto: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt.",
-    "description-white-elephant": "Doe mee met de white elephant op Givto: iedereen brengt één cadeau mee en kiest of steelt er een op pakjesdag."
+    "description-whiteElephant": "Doe mee met de white elephant op Givto: iedereen brengt één cadeau mee en kiest of steelt er een op pakjesdag.",
+    "description-conspiracy": "Doe mee met de Conspiracy Santa op Givto: bedenk samen één cadeau voor elke persoon, achter diens rug."
   },
   "unavailable": {
     "title": "Deze link werkt niet meer",
@@ -16,7 +17,8 @@
   "intro": {
     "title": "Je bent uitgenodigd!",
     "description": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en ontdek voor wie je een cadeau koopt.",
-    "description-white-elephant": "Doe mee met de white elephant: iedereen brengt één cadeau mee en kiest of steelt er een op pakjesdag.",
+    "description-whiteElephant": "Doe mee met de white elephant: iedereen brengt één cadeau mee en kiest of steelt er een op pakjesdag.",
+    "description-conspiracy": "Doe mee met de Conspiracy Santa: bedenk samen één cadeau voor elke persoon, achter diens rug.",
     "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt.",
     "organizer": "Organisator: {name}",
     "gift-day": "Pakjesdag {date}"

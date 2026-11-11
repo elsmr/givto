@@ -27,6 +27,7 @@ const presenterView = async (db: Collections, group: Group, edition: Edition) =>
   return {
     groupName: group.name,
     title: edition.title,
+    kind: edition.kind ?? 'secretSanta',
     status: edition.status,
     ...presenterGiftDayView(group, edition, counts, await guessesOf(db, edition), await votesOf(db, group, edition, counts)),
   };
@@ -83,8 +84,8 @@ export const giftdayRouter = router({
   /** All at once (default) or one by one. Starts the unwrapping over. */
   setMode: organizerEditionProcedure.input(v.object({ mode: UnwrapMode })).mutation(async ({ ctx, input }) => {
     if (ctx.edition.status === 'done') throw new AppError('EDITION_CLOSED');
-    // A white elephant brings one gift each (88).
-    if (ctx.edition.kind === 'whiteElephant' && input.mode !== 'allAtOnce') throw new AppError('FORBIDDEN');
+    // One gift each without a draw: one to bring (88), one from everyone (90).
+    if (!drawsNames(ctx.edition) && input.mode !== 'allAtOnce') throw new AppError('FORBIDDEN');
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
       { $set: { unwrapMode: input.mode, updatedAt: new Date() }, $unset: { 'unwrapOrder.progress': true } }

@@ -94,7 +94,7 @@ export const CreateFlow = () => {
   };
   const errorCode = create.error && knownAppError(create.error, knownErrors);
   const stepNumber = { details: 1, organizer: 2, code: 3 }[step];
-  const createLabel = draft.kind === 'whiteElephant' ? t('create-white-elephant') : t('create');
+  const createLabel = { secretSanta: t('create'), whiteElephant: t('create-white-elephant'), conspiracy: t('create-conspiracy') }[draft.kind];
 
   return (
     <FlowPage

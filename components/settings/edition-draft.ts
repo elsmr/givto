@@ -38,11 +38,11 @@ type EditionInput = RouterInputs['settings']['updateEdition'];
 
 /**
  * Empty fields are left out (the server unsets them); post-by and the call link only for posted exchanges. Without a
- * draw (88) the form hides the draw date and wishlist deadline, a white elephant also the exchange: those are left out too.
+ * draw (88) the form hides the draw date, wishlist deadline and the exchange: those are left out too.
  */
 export const toEditionInput = (draft: EditionDraft, groupSlug: string, editionNumber: number): EditionInput => {
   const draws = drawsNames(draft);
-  const exchangeMode = draft.kind === 'whiteElephant' ? 'inPerson' : draft.exchangeMode;
+  const exchangeMode = draws ? draft.exchangeMode : 'inPerson';
   const details = editionDetailsInput(draft);
   const callUrl = exchangeMode !== 'inPerson' && draft.callUrl.trim();
   return {
