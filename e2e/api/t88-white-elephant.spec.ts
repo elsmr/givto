@@ -67,16 +67,18 @@ test('white elephant: locks in without a draw, refuses Secret Santa features, un
     let view = ok(await ann.trpc.query('giftday.presenter', edition));
     expect(view.unwrapOrder!.people.map((p) => p.memberId).toSorted()).toEqual(ids.toSorted());
     expect(view.guessing).toBeNull();
-    const advance = async (action: 'start' | 'spin' | 'last') =>
+    const advance = async (action: 'start' | 'spin' | 'open' | 'keep') =>
       (view = ok(await ann.trpc.mutate('giftday.advance', { ...edition, action, turnsTaken: view.unwrapOrder!.turnsTaken })));
     await advance('start');
     const went: string[] = [];
-    while (!view.unwrapOrder!.finished) {
+    while (!view.swap!.final) {
       if (!view.unwrapOrder!.currentShown) await advance('spin');
       went.push(view.unwrapOrder!.current!.memberId);
-      await advance('last');
+      await advance('open');
     }
     expect(went.toSorted()).toEqual(ids.toSorted());
+    await advance('keep');
+    expect(view.unwrapOrder!.finished).toBe(true);
   });
 });
 

@@ -22,6 +22,8 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const phase = presenterPhase(order, view, showEnd);
   const spinStatus: SpinStatus = spin.turn === order.turn ? spin.status : 'idle';
   const step = (action: Parameters<typeof advance>[0]) => advance(action, order.turnsTaken);
+  // White elephant (89): what the presenter typed for the gift opened now.
+  const [label, setLabel] = useState('');
   const onLanded = () => advance('spin', order.turnsTaken);
   const oneByOne = view.unwrapMode === 'oneByOne';
   // A known gift count (63) decides when they're done: no "that was the last one".
@@ -30,7 +32,12 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const next = () => {
     if (phase === 'intro') step('start');
     else if (phase === 'spin') setSpin({ turn: order.turn, status: spinStatus === 'idle' && !skipSpin ? 'spinning' : 'skipped' });
-    else if (phase === 'turn' && order.santaToShow) step(order.voteStep === 'ready' ? 'vote' : order.voteStep === 'open' ? 'tally' : 'santa');
+    else if (phase === 'turn' && view.swap?.final) step('keep');
+    else if (phase === 'turn' && view.swap) {
+      if (isPending) return;
+      advance('open', order.turnsTaken, label.trim() ? { label: label.trim() } : undefined);
+      setLabel('');
+    } else if (phase === 'turn' && order.santaToShow) step(order.voteStep === 'ready' ? 'vote' : order.voteStep === 'open' ? 'tally' : 'santa');
     else if (phase === 'turn') step(oneByOne ? 'more' : 'last');
     else if (phase === 'reveal' && !view.reveal.revealed) reveal.mutate({ groupSlug, editionNumber });
     else if (phase === 'reveal') setShowEnd(true);
@@ -44,5 +51,9 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const last = oneByOne && phase === 'turn' && !counted && !santaToShow ? () => step('last') : undefined;
   // Live voting (83) comes first: open the vote, close it, then the Santa.
   const voteStep = santaToShow ? order.voteStep : null;
-  return { phase, spinStatus, onLanded, next, previous, last, counted, santaToShow, voteStep, revealed: view.reveal.revealed, busy: isPending || reveal.isPending };
+  const steal = (giftNo: number) => advance('steal', order.turnsTaken, { giftNo });
+  return {
+    phase, spinStatus, onLanded, next, previous, last, counted, santaToShow, voteStep, revealed: view.reveal.revealed, busy: isPending || reveal.isPending,
+    swap: view.swap, steal, label, setLabel,
+  };
 };

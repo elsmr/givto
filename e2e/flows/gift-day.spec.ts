@@ -248,8 +248,8 @@ test('reduced motion: the presenter still shows every name and pair', async ({ p
   for (const pair of giftDay.pairs) await expect(pairs.filter({ hasText: pair })).toHaveCSS('opacity', '1');
 });
 
-test('white elephant: create, lock in, and the presenter picks everyone once, without Santas', async ({ page, signIn, signInPage }) => {
-  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+test('white elephant: create, lock in, and a four-person swap with two steals in the presenter', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   await signInPage(page, ann);
 
   await test.step('create: no posting question', async () => {
@@ -266,7 +266,7 @@ test('white elephant: create, lock in, and the presenter picks everyone once, wi
   const link = new URL(await page.getByLabel('Join link').inputValue());
   const slug = link.pathname.split('/')[2];
   const at = { groupSlug: slug, editionNumber: 1 };
-  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee'], [dan, 'Dan']] as const) {
     ok(await user.trpc.mutate('join.accept', { groupSlug: slug, token: link.searchParams.get('token')!, name }));
   }
 
@@ -283,21 +283,51 @@ test('white elephant: create, lock in, and the presenter picks everyone once, wi
     await expect(page.getByRole('tab', { name: /wishlist/i })).toHaveCount(0);
   });
 
-  await test.step('the presenter picks each person once, then the end', async () => {
+  await test.step('the swap: open, steal (and undo it), the person robbed goes again, the final steal', async () => {
     ok(await ann.trpc.mutate('manage.startGiftDay', at));
+    const [p0, p1, p2, p3] = ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.people.map((p) => p.name);
+    const table = page.getByRole('list', { name: 'Who has which gift' });
     await openPresenter(page, slug);
     await skipSpin(page);
     await button(page, 'Next').click();
-    const went: string[] = [];
-    for (let turn = 1; turn <= 3; turn++) {
-      if (turn < 3) await button(page, 'Spin').click();
-      await expect(page.getByText(`${turn} of 3`, { exact: true })).toBeVisible();
-      for (const name of ['Ann', 'Bob', 'Cee']) if (!went.includes(name) && (await shownName(page, name).isVisible())) went.push(name);
-      expect(went).toHaveLength(turn);
-      await expect(page.getByText('Who was it from?')).toHaveCount(0);
-      await button(page, 'Next').click();
-    }
+    await button(page, 'Spin').click();
+    await expect(shownName(page, p0)).toBeVisible();
+    await expect(page.getByText('Open a wrapped gift.', { exact: true })).toBeVisible();
+    await page.getByLabel("What's in it? (optional)").fill('Red scarf');
+    await button(page, 'Opened a new gift').click();
+
+    await button(page, 'Spin').click();
+    await expect(shownName(page, p1)).toBeVisible();
+    await expect(table.getByText('Red scarf')).toBeVisible();
+    await button(page, `Steal gift 1 from ${p0}`).click();
+    await expect(page.getByText('Stolen from! Your turn again')).toBeVisible();
+    await expect(shownName(page, p0)).toBeVisible();
+    await button(page, 'Previous').click();
+    await expect(shownName(page, p1)).toBeVisible();
+    await button(page, `Steal gift 1 from ${p0}`).click();
+    await expect(shownName(page, p0)).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Steal gift/ })).toHaveCount(0);
+    await button(page, 'Opened a new gift').click();
+
+    await button(page, 'Spin').click();
+    await expect(shownName(page, p2)).toBeVisible();
+    await button(page, 'Opened a new gift').click();
+    // The last one in the order: no spin.
+    await expect(shownName(page, p3)).toBeVisible();
+    await button(page, `Steal gift 2 from ${p0}`).click();
+    await expect(page.getByText('Stolen from! Your turn again')).toBeVisible();
+    await button(page, 'Opened a new gift').click();
+
+    await expect(page.getByText('Final steal', { exact: true })).toBeVisible();
+    // Their name on the stage, and again on the table with the gift they hold.
+    await expect(shownName(page, p0)).toHaveCount(2);
+    await button(page, 'Keep their gift').click();
     await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
-    expect(went.toSorted()).toEqual(['Ann', 'Bob', 'Cee']);
+    await expect(table.getByRole('listitem')).toHaveText([
+      `Gift 1Red scarf${p1}Stolen once`,
+      `Gift 2${p3}Stolen once`,
+      `Gift 3${p2}Not stolen yet`,
+      `Gift 4${p0}Not stolen yet`,
+    ]);
   });
 });

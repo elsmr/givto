@@ -5,6 +5,7 @@ import * as m from 'motion/react-m';
 import { useFormatter, useTranslations } from 'next-intl';
 import { PresenterControls } from './presenter-controls';
 import { GuessScoreboard } from '@/components/guess/guess-scoreboard';
+import { SwapTable } from '../swap-table';
 import { canRevealIn, currentSanta, type PresenterOrder, type PresenterView } from './presenter-phase';
 import { PresenterRevealSlide } from './presenter-reveal-slide';
 import { PresenterTitleSlide } from './presenter-title-slide';
@@ -53,7 +54,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
                 )}
               </>
             )}
-            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} guessing={view.guessing} vote={view.vote} />}
+            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} guessing={view.guessing} vote={view.vote} swap={view.swap} onSteal={actions.steal} busy={actions.busy} />}
             {phase === 'reveal' && <PresenterRevealSlide reveal={view.reveal} guessing={view.guessing} />}
             {phase === 'end' && (
               <>
@@ -64,6 +65,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
                     {t('present.champion', { count: winners.length, names: format.list(winners) })}
                   </p>
                 )}
+                {view.swap && <SwapTable swap={view.swap} large />}
                 {/* Without the big reveal, the Santas shown at the turns are the scoreboard (62). */}
                 {!canRevealIn(view) && view.guessing && view.guessing.results.length > 0 && <GuessScoreboard guessing={view.guessing} large />}
               </>

@@ -13,7 +13,7 @@ export const GiftDayPanel = ({ group, edition }: { group: GroupData; edition: Gr
   const giftDay = useGiftDay(input, edition.status);
 
   if (!giftDay.data) return null;
-  const { unwrapOrder, unwrapMode, guessing } = giftDay.data;
+  const { unwrapOrder, unwrapMode, guessing, swap } = giftDay.data;
   const manage = group.me.isOrganizer && edition.isCurrent;
   const { status } = edition;
   if (status === 'done' && !unwrapOrder) return null;
@@ -22,6 +22,7 @@ export const GiftDayPanel = ({ group, edition }: { group: GroupData; edition: Gr
       <UnwrapOrderCard
         {...input}
         order={unwrapOrder}
+        swap={swap}
         mode={unwrapMode}
         meId={group.me.memberId}
         canShuffle={manage && status !== 'done'}

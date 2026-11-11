@@ -113,7 +113,7 @@ export const manageRouter = router({
       if (edition.status !== 'giftday') throw wrongStatus(edition);
       if (input.giftDayDate <= todayIn(ctx.group.timeZone)) throw new AppError('DATE_IN_PAST');
       const progress = edition.unwrapOrder?.progress;
-      if ((progress?.turns.length ?? 0) > 0 || (progress?.santaShownIds?.length ?? 0) > 0 || edition.reveal.revealedAt) {
+      if ((progress?.turns.length ?? 0) > 0 || (progress?.moves?.length ?? 0) > 0 || (progress?.santaShownIds?.length ?? 0) > 0 || edition.reveal.revealedAt) {
         throw new AppError('GIFT_DAY_UNDERWAY');
       }
       const now = new Date();
@@ -122,6 +122,7 @@ export const manageRouter = router({
           _id: edition._id,
           status: 'giftday',
           'unwrapOrder.progress.turns.0': { $exists: false },
+          'unwrapOrder.progress.moves.0': { $exists: false },
           'unwrapOrder.progress.santaShownIds.0': { $exists: false },
           'reveal.revealedAt': { $exists: false },
         },

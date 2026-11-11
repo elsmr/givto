@@ -21,7 +21,7 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
   return (
     <>
       <GiftDayHero groupSlug={groupSlug} canPresent={manage}>
-        {order?.started && <UnwrapNow order={order} guessing={giftDay.data?.guessing} className="w-full bg-surface text-left" />}
+        {order?.started && <UnwrapNow order={order} guessing={giftDay.data?.guessing} swap={giftDay.data?.swap} className="w-full bg-surface text-left" />}
         {giftDay.data?.vote && <LiveVote vote={giftDay.data.vote} input={input} />}
         {callUrl && (
           <a href={callUrl} target="_blank" rel="noopener noreferrer nofollow ugc" className={buttonVariants({ size: 'lg', variant: 'neutral' })}>

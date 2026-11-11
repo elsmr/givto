@@ -14,6 +14,7 @@ type UnwrapOrderCardProps = {
   groupSlug: string;
   editionNumber: number;
   order: GiftDayView['unwrapOrder'];
+  swap: GiftDayView['swap'];
   mode: GiftDayView['unwrapMode'];
   meId: string;
   canShuffle: boolean;
@@ -23,7 +24,7 @@ type UnwrapOrderCardProps = {
 };
 
 /** The unwrap order (32): a surprise until the presenter spins, so only who's unwrapping now and who already went; and the mode. */
-export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, canShuffle, canPresent, showMode }: UnwrapOrderCardProps) => {
+export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, swap, mode, meId, canShuffle, canPresent, showMode }: UnwrapOrderCardProps) => {
   const t = useTranslations('giftday.order');
   const inProgress = Boolean(order?.started && !order.finished);
 
@@ -36,7 +37,7 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, c
         <CardDescription>{order ? t('intro') : canShuffle ? t('none-organizer') : t('none')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {order?.started && <UnwrapNow order={order} />}
+        {order?.started && <UnwrapNow order={order} swap={swap} />}
         {order && order.went.length > 0 && (
           <div className="flex flex-col gap-2">
             <h3 className="font-semibold">{t('went')}</h3>

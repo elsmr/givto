@@ -2,7 +2,7 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGiftDayError } from '../use-gift-day-error';
 
-type Action = 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'back';
+type Action = 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'open' | 'steal' | 'keep' | 'back';
 
 /** The presenter's steps, stored on the server; the answer is the new presenter view. */
 export const useAdvance = (groupSlug: string, editionNumber: number) => {
@@ -31,8 +31,8 @@ export const useAdvance = (groupSlug: string, editionNumber: number) => {
       },
     })
   );
-  const advance = (action: Action, turnsTaken: number) => {
-    if (!mutation.isPending) mutation.mutate({ groupSlug, editionNumber, action, turnsTaken });
+  const advance = (action: Action, turnsTaken: number, swap?: { giftNo?: number; label?: string }) => {
+    if (!mutation.isPending) mutation.mutate({ groupSlug, editionNumber, action, turnsTaken, ...swap });
   };
   return { advance, isPending: mutation.isPending };
 };
