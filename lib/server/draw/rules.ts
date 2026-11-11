@@ -2,14 +2,23 @@ import { findStuckGivers, type Exclusion } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { drawsNames, type Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
+import { INVITE_MS } from '../../schema/invite';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
 
-/** Who's in the draw: ticked, joined for this edition, and still a joined member of the group. */
-export const drawParticipantIds = (group: Group, edition: Edition): string[] => {
-  const joined = new Set(group.members.filter((m) => m.status === 'joined').map((m) => m.id));
+/**
+ * Who's in the draw: ticked for this edition and a joined member of the group, or invited by email (98) with the
+ * invite still running. `invitedAt` and not the invite itself: the TTL index deletes expired invites.
+ */
+export const drawParticipantIds = (group: Group, edition: Edition, now = new Date()): string[] => {
+  const invitedSince = now.getTime() - INVITE_MS;
+  const isIn = new Set(
+    group.members
+      .filter((m) => m.status === 'joined' || (m.status === 'invited' && (m.invitedAt?.getTime() ?? 0) > invitedSince))
+      .map((m) => m.id)
+  );
   return edition.participants
-    .filter((p) => p.participates && p.status === 'joined' && joined.has(p.memberId))
+    .filter((p) => p.participates && p.status !== 'declined' && isIn.has(p.memberId))
     .map((p) => p.memberId);
 };
 

@@ -6,6 +6,9 @@ import { Email, Id } from './common';
  * bound to the invited email, 7 days; only its SHA-256 hash is stored. Accepting joins the
  * group and its open edition. Expires via TTL.
  */
+export const INVITE_DAYS = 7;
+export const INVITE_MS = INVITE_DAYS * 24 * 60 * 60 * 1000;
+
 export const Invite = v.object({
   _id: Id,
   groupId: Id,

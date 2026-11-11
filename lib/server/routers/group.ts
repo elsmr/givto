@@ -7,6 +7,7 @@ import { defaultEditionTitle, drawsNames, EditionKind, GiftDay, isDrawn, isPoste
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { currentEdition, memberProfile, randomToken } from '../membership';
 import { enforceRateLimit } from '../rate-limit';
@@ -131,9 +132,7 @@ export const groupRouter = router({
     const distinct = input.households.every((ids) => new Set(ids).size === ids.length);
     if (!allJoined || !distinct) throw new AppError('INVALID_INPUT');
     const exclusions = toExclusions(input.households);
-    const participants = (edition?.participants ?? [])
-      .filter((p) => p.participates && p.status === 'joined')
-      .map((p) => p.memberId);
+    const participants = edition ? drawParticipantIds(ctx.group, edition) : [];
     const stuck = participants.length >= MIN_PARTICIPANTS ? findStuckGivers(participants, exclusions) : null;
     if (stuck) throw new AppError('DRAW_IMPOSSIBLE', { details: { memberIds: stuck.givers } });
     await ctx.db.groups.updateOne(

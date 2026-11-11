@@ -6,9 +6,10 @@ import { currentEdition } from './membership';
 
 /**
  * Leaving (48) or being removed by the organizer (27): out of the current edition, its draw
- * patched so everyone left keeps a valid giftee; kept as `removed` so past editions stay readable.
+ * patched so everyone left keeps a valid giftee; kept as `removed` so past editions stay readable. An invitee who
+ * declines or lets the invite expire (98) goes the same way, as `declined`.
  */
-export const removeMember = async (db: Collections, group: Group, memberId: string) => {
+export const removeMember = async (db: Collections, group: Group, memberId: string, status: 'removed' | 'declined' = 'removed') => {
   const now = new Date();
   const edition = await currentEdition(db, group._id);
   if (edition && isDrawn(edition)) await takeOutOfDraw(db, group._id, edition._id, memberId);
@@ -29,8 +30,8 @@ export const removeMember = async (db: Collections, group: Group, memberId: stri
     { _id: group._id, 'members.id': memberId },
     {
       $set: {
-        'members.$.status': 'removed',
-        'members.$.removedAt': now,
+        'members.$.status': status,
+        ...(status === 'removed' && { 'members.$.removedAt': now }),
         households: group.households
           .map((h) => ({ ...h, memberIds: h.memberIds.filter((id) => id !== memberId) }))
           .filter((h) => h.memberIds.length >= 2),

@@ -48,14 +48,15 @@ export const settingsRouter = router({
 
   setAvoidPrevious,
 
-  /** Who's in this edition: tick or untick joined people before the draw (33). */
+  /** Who's in this edition: tick or untick joined and invited people before the draw (33, 98). */
   setParticipants: organizerEditionProcedure
     .input(v.object({ memberIds: v.pipe(v.array(Id), v.maxLength(MAX_MEMBERS)) }))
     .mutation(async ({ ctx, input }) => {
       const { edition } = ctx;
       if (!isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
+      const invited = new Set(ctx.group.members.filter((m) => m.status === 'invited').map((m) => m.id));
       const joined = new Set(ctx.group.members.filter((m) => m.status === 'joined').map((m) => m.id));
-      if (!input.memberIds.every((id) => joined.has(id))) throw new AppError('INVALID_INPUT');
+      if (!input.memberIds.every((id) => joined.has(id) || invited.has(id))) throw new AppError('INVALID_INPUT');
       const ticked = new Set(input.memberIds);
       const listed = new Set(edition.participants.map((p) => p.memberId));
       const now = new Date();
@@ -63,7 +64,7 @@ export const settingsRouter = router({
         ...edition.participants.map((p) => ({ ...p, participates: ticked.has(p.memberId) })),
         ...[...ticked]
           .filter((id) => !listed.has(id))
-          .map((memberId): Participant => ({ memberId, participates: true, status: 'joined', addedAt: now })),
+          .map((memberId): Participant => ({ memberId, participates: true, status: invited.has(memberId) ? 'invited' : 'joined', addedAt: now })),
       ];
       const saved = await ctx.db.editions.updateOne(
         { _id: edition._id, status: edition.status, updatedAt: edition.updatedAt },

@@ -1,10 +1,12 @@
 import { JoinReminderEmail, joinReminderSubject } from '../../../emails/join-reminder';
+import { INVITE_MS } from '../../schema/invite';
 import type { Collections } from '../db';
 import { newId } from '../db';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { inviteUrl } from '../mail/urls';
 import { hashToken, organizerOf, randomToken } from '../membership';
+import { removeMember } from '../remove-member';
 import { runEach } from './run-each';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -52,5 +54,32 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
     });
     if (result !== 'sent') await db.invites.deleteOne({ _id: reminderInvite._id });
     return result;
+  });
+};
+
+/**
+ * Invitees whose invite ran out are out (98), as if they declined: of the current edition and its draw. Expiry is
+ * `invitedAt` + 7 days, the same as the draw reads it (draw/rules.ts); the expired invites themselves are gone by TTL.
+ */
+export const declineExpiredInvitees = async (db: Collections, now: Date, groupIds?: string[]) => {
+  const expired = { status: 'invited' as const, invitedAt: { $lte: new Date(now.getTime() - INVITE_MS) } };
+  const groups = await db.groups
+    .find(
+      { deletedAt: { $exists: false }, members: { $elemMatch: expired }, ...(groupIds && { _id: { $in: groupIds } }) },
+      { projection: { members: 1 } }
+    )
+    .limit(200)
+    .toArray();
+  const invitees = groups.flatMap((group) =>
+    group.members
+      .filter((m) => m.status === 'invited' && m.invitedAt && m.invitedAt <= expired.invitedAt.$lte)
+      .map((m) => ({ groupId: group._id, memberId: m.id }))
+  );
+  return runEach('expiredInvitees', invitees, async ({ groupId, memberId }) => {
+    // A fresh read per invitee: removeMember rewrites the keep-apart rows from the group it's given.
+    const group = await db.groups.findOne({ _id: groupId, members: { $elemMatch: { id: memberId, ...expired } } });
+    if (!group) return 'skipped';
+    await removeMember(db, group, memberId, 'declined');
+    return 'declined';
   });
 };

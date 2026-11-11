@@ -3,6 +3,7 @@ import { drawsNames, isDrawn, wishesOn, type Edition } from '../../schema/editio
 import { MIN_PARTICIPANTS } from '../../schema/group';
 import { ownAndManagedIds } from '../between/santa-role';
 import type { Collections } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { listWishes } from '../wishlist/wish-view';
 
 // Wishes nobody gave stay unreceived on purpose, so the reminder to tick off gifts has to end.
@@ -53,8 +54,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
     const member = memberOf(group);
     const edition = latest.get(group._id);
     const isOrganizer = member.role === 'organizer';
-    const participantCount =
-      edition?.participants.filter((p) => p.participates && p.status === 'joined').length ?? 0;
+    const participantCount = edition ? drawParticipantIds(group, edition).length : 0;
     const ownIds = ownIdsByGroup.get(group._id) ?? [];
     const unanswered = questions.filter(
       (q) => q.editionId === edition?._id && !ownIds.includes(q.askerMemberId)

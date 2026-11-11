@@ -5,6 +5,7 @@ import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { guessingOn } from '../guess/guesses';
 import { boardPeople } from './board';
 import { suppressedEmails } from '../mail/suppression';
@@ -91,9 +92,7 @@ export const groupView = async (
       reveal: edition.reveal.enabled,
       hasPreviousEdition: Boolean(edition.previousEditionId),
       calendarSequence: edition.calendarSequence ?? 0,
-      participantIds: edition.participants
-        .filter((p) => p.participates && p.status === 'joined')
-        .map((p) => p.memberId),
+      participantIds: drawParticipantIds(group, edition),
     },
     organizer: isOrganizer
       ? {

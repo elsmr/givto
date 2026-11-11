@@ -7,11 +7,12 @@ import { drawsNames, isDrawn, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient, type Recipient } from '../mail/recipients';
 import { groupUrl } from '../mail/urls';
 import { sendJoinDigests } from './join-digests';
-import { sendJoinReminders } from './join-reminders';
+import { declineExpiredInvitees, sendJoinReminders } from './join-reminders';
 import { reminderEditionOf, reminderPeople } from './reminder-people';
 import { addCounts, runEach, type JobCounts } from './run-each';
 
@@ -19,7 +20,7 @@ import { addCounts, runEach, type JobCounts } from './run-each';
 const GIFT_DAY_HOURS = { from: 7, to: 12 };
 const READY_SOON_DAYS = 14;
 
-/** For tests (`reminders.runDue`): only these editions (reminders) and groups (join digests); invite reminders not at all. */
+/** For tests (`reminders.runDue`): only these editions (reminders) and groups (join digests, expired invitees); invite reminders not at all. */
 export interface ReminderScope {
   editionIds?: string[];
   groupIds?: string[];
@@ -46,7 +47,7 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
       readyToDraw: {
         url: home,
         lockIn: !drawsNames(edition),
-        people: edition.participants.filter((p) => p.participates && p.status === 'joined').length,
+        people: drawParticipantIds(group, edition).length,
         giftDay: date(giftDay),
         soon: Boolean(giftDay && daysBetween(today, giftDay) <= READY_SOON_DAYS),
       },
@@ -109,7 +110,7 @@ const giftDayReminders = async (db: Collections, group: Group, edition: Edition,
   });
 };
 
-/** Reminders (29, 63) and the organizer's join digest; idempotent. Runs with every tick. */
+/** Reminders (29, 63), the organizer's join digest and expired invitees out (98); idempotent. Runs with every tick. */
 export const sendReminders = async (db: Collections, now: Date, scope?: ReminderScope) => {
   const editions = await db.editions
     .find({ status: { $in: ['open', 'drawn', 'giftday'] }, ...(scope && { _id: { $in: scope.editionIds ?? [] } }) })
@@ -121,6 +122,7 @@ export const sendReminders = async (db: Collections, now: Date, scope?: Reminder
     counts.push(await scheduledReminders(db, group, edition, now), await giftDayReminders(db, group, edition, now));
   }
   return {
+    expiredInvitees: await declineExpiredInvitees(db, now, scope && (scope.groupIds ?? [])),
     editions: addCounts(...counts),
     join: scope ? {} : await sendJoinReminders(db, now),
     joinDigests: await sendJoinDigests(db, now, scope && (scope.groupIds ?? [])),

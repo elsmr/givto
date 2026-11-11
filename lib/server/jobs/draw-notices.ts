@@ -4,11 +4,12 @@ import { formatBudget } from '../../format-budget';
 import { formatLocalDate } from '../../local-date';
 import type { Edition } from '../../schema/edition';
 import { userIdsWithAddress } from '../account/addresses';
-import type { Collections } from '../db';
+import { newId, type Collections } from '../db';
 import { log } from '../log';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
-import { groupUrl } from '../mail/urls';
+import { groupUrl, inviteUrl } from '../mail/urls';
+import { hashToken, randomToken } from '../membership';
 import { runEach } from './run-each';
 import { startWishlistSnapshot } from './wishlist-changes';
 
@@ -36,7 +37,18 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
     const to = await memberRecipient(db, group, santa);
     if (!to) return 'noRecipient';
     const changed = [...sent].some((id) => id.startsWith(`${prefix}${santaId}:`));
-    return sendNotice(db, {
+    // An invitee can't open the group yet (98): their link is a fresh invite for the same email, expiring with theirs.
+    const invite = santa.status === 'invited'
+      ? await db.invites.findOne({ memberId: santa.id, usedAt: { $exists: false } }, { sort: { createdAt: -1 } })
+      : null;
+    if (santa.status === 'invited' && !invite) return 'noRecipient';
+    const token = invite ? randomToken() : undefined;
+    const linkInvite = invite && token ? { ...invite, _id: newId(), tokenHash: hashToken(token), createdAt: new Date() } : undefined;
+    if (linkInvite) await db.invites.insertOne(linkInvite);
+    const dropLinkInvite = async () => {
+      if (linkInvite) await db.invites.deleteOne({ _id: linkInvite._id });
+    };
+    const result = await sendNotice(db, {
       key,
       kind: changed ? 'gifteeChanged' : 'namesDrawn',
       to,
@@ -44,14 +56,20 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
       editionId: edition._id,
       memberId: santa.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), forName: to.forName };
+        const url = token ? inviteUrl(to.locale, group.slug, token) : groupUrl(to.locale, group.slug);
+        const props = { locale: to.locale, group: group.name, url, forName: to.forName };
         if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);
         const budget = edition.budget && formatBudget(edition.budget, to.locale);
         const addAddress = posted && !to.forName && !(santa.userId && withAddress.has(santa.userId));
         return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget, addAddress }) };
       },
+    }).catch(async (error: unknown) => {
+      await dropLinkInvite();
+      throw error;
     });
+    if (result !== 'sent') await dropLinkInvite();
+    return result;
   });
 };
 

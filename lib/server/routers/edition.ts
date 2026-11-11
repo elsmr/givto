@@ -36,8 +36,8 @@ export const editionRouter = router({
       status: 'draft',
       statusChangedAt: { draft: now },
       participants: ctx.group.members
-        .filter((m) => m.status === 'joined')
-        .map((m) => ({ memberId: m.id, participates: true, status: 'joined' as const, addedAt: now })),
+        .filter((m) => m.status === 'joined' || m.status === 'invited')
+        .map((m) => ({ memberId: m.id, participates: true, status: m.status === 'invited' ? 'invited' : 'joined', addedAt: now })),
       reveal: { enabled: false },
       createdAt: now,
       updatedAt: now,

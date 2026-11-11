@@ -82,7 +82,7 @@ const PeopleList = ({ group, edition }: { group: GroupData; edition: GroupEditio
             isMe={person.id === group.me.memberId}
             drawn={!beforeDraw && edition.status !== 'done'}
             ticked={
-              beforeDraw && person.status === 'joined'
+              beforeDraw && (person.status === 'joined' || person.status === 'invited')
                 ? {
                     checked: edition.participantIds.includes(person.id),
                     busy: setParticipants.isPending,

@@ -1,18 +1,20 @@
 import * as v from 'valibot';
 import { InviteEmail, inviteSubject } from '../../../emails/invite';
 import { Email, PersonName } from '../../schema/common';
+import { isBeforeDraw } from '../../schema/edition';
 import { MAX_MEMBERS, Slug } from '../../schema/group';
+import { INVITE_MS } from '../../schema/invite';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
-import { addToCurrentEdition, hashToken, memberProfile, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, currentEdition, hashToken, memberProfile, placeHolding, randomToken } from '../membership';
 import { sendMail } from '../mail';
 import { inviteUrl } from '../mail/urls';
 import { enforceRateLimit } from '../rate-limit';
+import { removeMember } from '../remove-member';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
 
-const INVITE_DAYS = 7;
 const INVITES_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 30 };
 const INVITES_PER_GROUP_PER_DAY = { window: 24 * 60 * 60, max: 50 };
 
@@ -22,7 +24,10 @@ const TokenInput = v.object({ groupSlug: Slug, token: v.string() });
 export const standInName = (email: string) => email.split('@')[0].replace(/[._+-]+/g, ' ').trim().slice(0, 50) || 'Guest';
 
 export const inviteRouter = router({
-  /** Secondary to the join link (45): one email, single-use token bound to it, 7 days. The invitee names themselves on accept. */
+  /**
+   * Secondary to the join link (45): one email, single-use token bound to it, 7 days. The invitee names themselves on
+   * accept. Before the draw they're in the edition right away (98); after it, only once they accept.
+   */
   send: organizerProcedure
     .input(v.object({ email: Email }))
     .mutation(async ({ ctx, input }) => {
@@ -39,6 +44,8 @@ export const inviteRouter = router({
       const memberId = pending?.memberId ?? newId();
       if (pending) {
         await ctx.db.invites.deleteMany({ memberId });
+        // The draw reads how long the invite runs from here (draw/rules.ts).
+        await ctx.db.groups.updateOne({ _id: ctx.group._id, 'members.id': memberId }, { $set: { 'members.$.invitedAt': now } });
       } else {
         const member: Member = {
           id: memberId,
@@ -55,6 +62,13 @@ export const inviteRouter = router({
         );
         if (added.matchedCount === 0) throw new AppError('GROUP_FULL');
       }
+      const edition = await currentEdition(ctx.db, ctx.group._id);
+      if (edition && isBeforeDraw(edition)) {
+        await ctx.db.editions.updateOne(
+          { _id: edition._id, 'participants.memberId': { $ne: memberId } },
+          { $push: { participants: { memberId, participates: true, status: 'invited', addedAt: now } }, $set: { updatedAt: now } }
+        );
+      }
 
       const token = randomToken();
       await ctx.db.invites.insertOne({
@@ -64,7 +78,7 @@ export const inviteRouter = router({
         email: input.email,
         tokenHash: hashToken(token),
         createdAt: now,
-        expiresAt: new Date(now.getTime() + INVITE_DAYS * 24 * 60 * 60 * 1000),
+        expiresAt: new Date(now.getTime() + INVITE_MS),
       });
       const locale = account?.locale ?? ctx.group.locale;
       const names = { locale, organizer: ctx.member.name, group: ctx.group.name };
@@ -119,12 +133,11 @@ export const inviteRouter = router({
   decline: publicProcedure.input(TokenInput).mutation(async ({ ctx, input }) => {
     const found = await findPendingInvite(ctx.db, input.groupSlug, input.token);
     if (!found) throw new AppError('INVITE_INVALID');
-    const now = new Date();
-    await ctx.db.invites.updateOne({ _id: found.invite._id }, { $set: { usedAt: now } });
-    await ctx.db.groups.updateOne(
-      { _id: found.group._id, members: { $elemMatch: { id: found.invite.memberId, status: 'invited' } } },
-      { $set: { 'members.$.status': 'declined', updatedAt: now } }
-    );
+    await ctx.db.invites.updateOne({ _id: found.invite._id }, { $set: { usedAt: new Date() } });
+    const { group, invite } = found;
+    if (group.members.some((m) => m.id === invite.memberId && m.status === 'invited')) {
+      await removeMember(ctx.db, group, invite.memberId, 'declined');
+    }
     return { ok: true };
   }),
 });
