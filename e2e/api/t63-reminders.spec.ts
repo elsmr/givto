@@ -61,7 +61,7 @@ test('posted: gift reminders before the post-by date, in the Santa’s language'
   const edition = await editionOf(db, group.slug);
   await db.editions.updateOne({ _id: edition._id }, { $set: { exchangeMode: 'byPost', postBy: '2099-12-15' } });
   const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' as const };
-  for (const user of [ann, bob, cee]) ok(await user.trpc.mutate('address.set', { groupSlug: group.slug, editionNumber: 1, address }));
+  for (const user of [ann, bob, cee]) ok(await user.trpc.mutate('account.addAddress', { address }));
   await db.users.updateOne({ email: bob.email }, { $set: { locale: 'nl' } });
   for (const user of [ann, bob, cee]) ok(await user.trpc.mutate('wish.create', { title: 'Something', groupSlugs: [group.slug] }));
   await runAt(ann, '2099-12-16T10:00:00.000Z', { editionIds: [edition._id] });

@@ -35,7 +35,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
         {input && <ForYouSection input={input} />}
         {done && nextEdition}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
-        {input && addresses && edition.participantIds.includes(group.me.memberId) && <AddressCard {...input} />}
+        {addresses && edition.participantIds.includes(group.me.memberId) && <AddressCard groupSlug={slug} />}
         {edition?.guessing && !isBeforeDraw(edition) && !done && <GuessCard group={group} edition={edition} />}
         {!done && nextEdition}
         {edition && <GiftDayPanel group={group} edition={edition} />}

@@ -13,7 +13,6 @@ export const PrivacyRetention = () => {
         items={[
           t('sign-in', { minutes: retention.signInCodeMinutes }),
           t('sessions', { days: retention.sessionDays }),
-          t('addresses'),
           t('edition-messages', { months: retention.editionMessagesMonths }),
           t('draw', { months: retention.drawMaxMonths }),
           t('groups', { months: retention.inactiveGroupMonths }),

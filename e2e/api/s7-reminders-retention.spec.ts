@@ -90,14 +90,12 @@ test('Mailgun webhook: signature checked; hard bounces and complaints suppress',
   expect(await suppressed([dan.email, cee.email])).toBe(2);
 });
 
-test('retention: addresses after gift day; messages after 3 months; old draws; orphan images', async ({ signIn, db }) => {
+test('retention: messages after 3 months; old draws; orphan images', async ({ signIn, db }) => {
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const old = trio(olive, ann, bob);
   const oldGroup = groupDoc(olive, 'Old', old);
-  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' as const };
-  const withAddress = (edition: ReturnType<typeof editionDoc>) => ({ ...edition, participants: edition.participants.map((p) => ({ ...p, address })) });
-  const past = withAddress(editionDoc(oldGroup, 1, 'drawn', old, { giftDay: { date: today('UTC', -120) }, draw: circle(old) }));
-  const recent = withAddress(editionDoc(oldGroup, 2, 'drawn', old, { giftDay: { date: today('UTC', -2) }, draw: circle(old) }));
+  const past = editionDoc(oldGroup, 1, 'drawn', old, { giftDay: { date: today('UTC', -120) }, draw: circle(old) });
+  const recent = editionDoc(oldGroup, 2, 'drawn', old, { giftDay: { date: today('UTC', -2) }, draw: circle(old) });
   await db.groups.insertOne(oldGroup);
   await db.editions.insertMany([past, recent]);
   for (const edition of [past, recent]) {
@@ -118,9 +116,8 @@ test('retention: addresses after gift day; messages after 3 months; old draws; o
   await db.wishes.updateOne({ _id: wish.id }, { $set: { links: [{ url: 'https://shop.test/lamp' }, { url: 'https://shop.test/lamp-2', imageId: used.toHexString() }] } });
   const result = await run('retention');
   // Counts cover the whole database (a parallel run may have done ours): the shape here, our documents below.
-  for (const key of ['addresses', 'editionMessages', 'draws', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
+  for (const key of ['editionMessages', 'draws', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
-  expect((await after(past)).participants.every((p) => !p.address) && (await after(recent)).participants.every((p) => !p.address)).toBe(true);
   expect((await after(past)).draw, "replaced by edition 2's draw").toBeUndefined();
   expect((await after(recent)).draw).toBeTruthy();
   expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
@@ -146,11 +143,8 @@ test('retention without a gift day: counted from done or the next edition; the l
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const people = trio(olive, ann, bob);
   const [nextGroup, doneGroup] = [groupDoc(olive, 'Superseded, no gift day', people), groupDoc(olive, 'Done, no gift day', people)];
-  const address = { lines: ['Main street 1'], postalCode: '1000', city: 'Brussels', country: 'BE' as const };
-  const seeded = (group: ReturnType<typeof groupDoc>, number: number, status: 'drawn' | 'done', extra: Partial<ReturnType<typeof editionDoc>>) => {
-    const edition = editionDoc(group, number, status, people, { draw: circle(people), ...extra });
-    return { ...edition, participants: edition.participants.map((p) => ({ ...p, address })) };
-  };
+  const seeded = (group: ReturnType<typeof groupDoc>, number: number, status: 'drawn' | 'done', extra: Partial<ReturnType<typeof editionDoc>>) =>
+    editionDoc(group, number, status, people, { draw: circle(people), ...extra });
   const monthsAgo = (months: number) => new Date(Date.now() - months * 30 * DAY);
   const superseded = seeded(nextGroup, 1, 'drawn', { createdAt: monthsAgo(6) });
   const live = seeded(nextGroup, 2, 'drawn', { createdAt: monthsAgo(4) });
@@ -167,8 +161,6 @@ test('retention without a gift day: counted from done or the next edition; the l
   }
   await run('retention');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
-  const hasAddresses = async (edition: { _id: string }) => (await after(edition)).participants.some((p) => p.address);
-  expect(await Promise.all(editions.map(hasAddresses)), 'only the live edition keeps addresses').toEqual([false, true, false, false]);
   const kept = async ({ _id: editionId }: { _id: string }) =>
     (await db.claims.countDocuments({ editionId })) + (await db.tips.countDocuments({ editionId })) + (await db.guesses.countDocuments({ editionId }));
   expect(await Promise.all(editions.map(kept)), 'claims, tips and guesses: 3 months after the end').toEqual([0, 3, 0, 3]);

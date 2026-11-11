@@ -129,7 +129,7 @@ test("My giftee: their wishlist, tips for you, ask a question and Psst!; the gif
   });
 });
 
-test('by post: a member adds their address from the overview; after the draw only their Santa sees where to post it', async ({ page, newPage, signIn, signInPage, db }) => {
+test('by post: a member adds their address from the overview and picks one for the group; after the draw only their Santa sees it', async ({ page, newPage, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [ann, bob] = people;
   const group = ok(
@@ -154,6 +154,23 @@ test('by post: a member adds their address from the overview; after the draw onl
     await expect(page.getByText('Address saved')).toBeVisible();
     await expect(page.getByText("You're all set")).toBeVisible();
     await expect(page.getByText('Address added')).toBeVisible();
+    await expect(page.getByText('Sending to:')).toBeVisible();
+    await expect(page.locator('address')).toContainText('Bobstraat 12');
+  });
+
+  await test.step('Bob adds a second address, then picks his default again for this group', async () => {
+    await page.getByRole('button', { name: 'Change' }).click();
+    await page.getByRole('button', { name: 'Add a new one' }).click();
+    await page.getByLabel('Street and number').fill('Werkplein 1');
+    await page.getByLabel('Postal code').fill('2000');
+    await page.getByLabel('City').fill('Antwerpen');
+    await page.getByLabel('Country').selectOption({ label: 'Belgium' });
+    await page.getByRole('button', { name: 'Save address' }).click();
+    await expect(page.locator('address')).toContainText('Werkplein 1');
+    await page.getByRole('button', { name: 'Change' }).click();
+    await page.getByLabel('Address for this group').selectOption({ label: 'Bobstraat 12, 1000 Brussel (default)' });
+    await page.getByRole('button', { name: 'Use this address' }).click();
+    await expect(page.getByText('Address changed')).toBeVisible();
     await expect(page.locator('address')).toContainText('Bobstraat 12');
   });
 

@@ -8,7 +8,7 @@
     "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part) and your sessions with the device's IP address and browser. To keep your account safe.",
     "groups": "<b>Groups and Secret Santas:</b> group names, people's names, Keep apart rows, dates, budget, the draw and your guess at who your Santa is. The organizer also sees everyone's email address. To run your Secret Santa.",
     "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, what you marked with “I've got my gift”, tips, questions and Psst! messages. So your Santa knows what to get you.",
-    "addresses": "<b>Postal addresses:</b> only when a Secret Santa sends gifts by post, and only shown to your Santa, once names are drawn. The organizer sees who hasn't added one yet, never the address itself.",
+    "addresses": "<b>Postal addresses:</b> the ones you add, kept on your account until you remove them or delete your account. Only shown to your Santa in a Secret Santa that sends gifts by post, from the draw until gift day is over. The organizer sees who hasn't added one, never the address.",
     "emails": "<b>Emails we sent:</b> which email went to whom and when. So we never send the same email twice.",
     "cookies": "<b>Cookies:</b> one to keep you signed in and one to remember your language. No tracking or advertising cookies and no analytics, so no cookie banner."
   },
@@ -17,7 +17,6 @@
     "title": "How long we keep it",
     "sign-in": "Sign-in codes and links expire after {minutes} minutes.",
     "sessions": "You're signed out after {days} days without a visit.",
-    "addresses": "Postal addresses are deleted right after gift day.",
     "edition-messages": "Dibs!, gifts marked as got, guesses, tips, questions and Psst! messages are deleted {months} months after gift day. Without a gift day, we count from when the edition is finished or the next one starts.",
     "draw": "The draw is kept until the next edition's draw, so nobody gets the same giftee twice in a row, and for {months} months at most.",
     "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",

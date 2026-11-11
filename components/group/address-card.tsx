@@ -1,145 +1,46 @@
+import { AddressForm, AddressLines, addressSummary, useAddressMutationOptions } from '@/components/account/address-book';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
-import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { StatCard } from '@/components/ui/stat-card';
-import { toast } from '@/components/ui/toast';
-import { useErrorMessage } from '@/components/wishlist/use-error-message';
-import { useTRPC } from '@/lib/client/trpc';
-import { countryCodes, type CountryCode } from '@/lib/countries';
-import type { PostalAddress } from '@/lib/schema/edition';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTRPC, useTRPCClient } from '@/lib/client/trpc';
+import { MAX_ADDRESSES, type PostalAddress } from '@/lib/schema/user';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Mailbox } from 'lucide-react';
-import { useFormatter, useLocale, useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useFormatter, useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 type EditionInput = { groupSlug: string; editionNumber: number };
 
-/** The WaitingCard's "Add your address" focuses this field. */
-export const ADDRESS_FIELD_ID = 'address-line1';
-
-const browserCountry = (): CountryCode | '' => {
-  const region = typeof navigator === 'undefined' ? undefined : new Intl.Locale(navigator.language).maximize().region;
-  return countryCodes.find((code) => code === region) ?? '';
-};
-
-const AddressLines = ({ address, name }: { address: PostalAddress; name?: string }) => {
-  const locale = useLocale();
-  const country = new Intl.DisplayNames([locale], { type: 'region' }).of(address.country);
-  const lines = [address.recipient ?? name, ...address.lines, `${address.postalCode} ${address.city}`, address.region, country];
-  return <address className="whitespace-pre-line not-italic">{lines.filter(Boolean).join('\n')}</address>;
-};
-
-type AddressFormProps = { initial: PostalAddress | null; busy: boolean; onSubmit: (address: PostalAddress) => void; onCancel?: () => void };
-
-const AddressForm = ({ initial, busy, onSubmit, onCancel }: AddressFormProps) => {
+/**
+ * "Your address" on the overview (80), in editions that send gifts by post: where my Santa sends my gift,
+ * picked from my address book for this group. A new address goes to the book and is picked here.
+ */
+export const AddressCard = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('group.address');
-  const locale = useLocale();
-  const [draft, setDraft] = useState(() => ({
-    recipient: initial?.recipient ?? '',
-    line1: initial?.lines[0] ?? '',
-    line2: initial?.lines[1] ?? '',
-    postalCode: initial?.postalCode ?? '',
-    city: initial?.city ?? '',
-    region: initial?.region ?? '',
-    country: initial?.country ?? browserCountry(),
-  }));
-  const names = new Intl.DisplayNames([locale], { type: 'region' });
-  const countries = countryCodes
-    .map((code) => ({ code, name: names.of(code) ?? code }))
-    .toSorted((a, b) => a.name.localeCompare(b.name, locale));
-
-  const field = (key: Exclude<keyof typeof draft, 'country'>, label: string, autoComplete: string, required: boolean) => (
-    <Field>
-      <FieldLabel htmlFor={key === 'line1' ? ADDRESS_FIELD_ID : `address-${key}`}>{label}</FieldLabel>
-      <Input
-        id={key === 'line1' ? ADDRESS_FIELD_ID : `address-${key}`}
-        autoComplete={autoComplete}
-        required={required}
-        maxLength={100}
-        value={draft[key]}
-        onChange={(event) => setDraft({ ...draft, [key]: event.target.value })}
-      />
-    </Field>
-  );
-
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    if (!draft.country) return;
-    onSubmit({
-      ...(draft.recipient.trim() && { recipient: draft.recipient }),
-      lines: [draft.line1, draft.line2].filter((line) => line.trim()),
-      postalCode: draft.postalCode,
-      city: draft.city,
-      ...(draft.region.trim() && { region: draft.region }),
-      country: draft.country,
-    });
-  };
-
-  return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
-      {field('recipient', t('recipient'), 'name', false)}
-      {field('line1', t('line1'), 'address-line1', true)}
-      {field('line2', t('line2'), 'address-line2', false)}
-      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        {field('postalCode', t('postal-code'), 'postal-code', true)}
-        {field('city', t('city'), 'address-level2', true)}
-      </div>
-      {field('region', t('region'), 'address-level1', false)}
-      <Field>
-        <FieldLabel htmlFor="address-country">{t('country')}</FieldLabel>
-        <NativeSelect
-          id="address-country"
-          autoComplete="country"
-          required
-          value={draft.country}
-          onChange={(event) => setDraft({ ...draft, country: event.target.value as CountryCode })}
-        >
-          <NativeSelectOption value="">{t('choose-country')}</NativeSelectOption>
-          {countries.map(({ code, name }) => (
-            <NativeSelectOption key={code} value={code}>
-              {name}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </Field>
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={busy}>
-          {t('save')}
-        </Button>
-        {onCancel && (
-          <Button type="button" variant="neutral" onClick={onCancel}>
-            {t('cancel')}
-          </Button>
-        )}
-      </div>
-    </form>
-  );
-};
-
-/** "Your address" on the overview (80), in editions that send gifts by post: only my Santa sees it, from the draw on. */
-export const AddressCard = (input: EditionInput) => {
-  const t = useTranslations('group.address');
-  const errorMessage = useErrorMessage();
+  const tAccount = useTranslations('account.address');
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const [editing, setEditing] = useState(false);
-  const mine = useQuery(trpc.address.mine.queryOptions(input));
-  const options = (saved: string) => ({
-    onSuccess: () => {
-      setEditing(false);
-      toast.add({ title: saved, type: 'success' as const });
+  const client = useTRPCClient();
+  const options = useAddressMutationOptions();
+  const [mode, setMode] = useState<'view' | 'pick' | 'add'>('view');
+  const mine = useQuery(trpc.address.mine.queryOptions({ groupSlug }));
+  const book = useQuery(trpc.account.addresses.queryOptions());
+  const [pickedId, setPickedId] = useState('');
+  const close = () => setMode('view');
+  const pick = useMutation(trpc.address.pick.mutationOptions(options(t('picked'), close)));
+  const addAndPick = useMutation({
+    mutationFn: async (address: PostalAddress) => {
+      const { id } = await client.account.addAddress.mutate({ address });
+      await client.address.pick.mutate({ groupSlug, addressId: id });
     },
-    onError: (error: unknown) => toast.add({ title: errorMessage(error), type: 'error' as const }),
-    onSettled: () => queryClient.invalidateQueries(trpc.address.pathFilter()),
+    ...options(tAccount('saved'), close),
   });
-  const save = useMutation(trpc.address.set.mutationOptions(options(t('saved'))));
-  const clear = useMutation(trpc.address.clear.mutationOptions(options(t('removed'))));
 
-  if (mine.isPending) return null;
-  const address = mine.data ?? null;
+  if (mine.isPending || book.isPending) return null;
+  const current = mine.data?.address;
+  const { addresses = [], defaultAddressId = null } = book.data ?? {};
 
   return (
     <Card>
@@ -150,25 +51,55 @@ export const AddressCard = (input: EditionInput) => {
         <CardDescription>{t('private')}</CardDescription>
       </CardHeader>
       <CardContent>
-        {address && !editing ? (
-          <div className="flex flex-col gap-4">
-            <AddressLines address={address} />
+        {!current || mode === 'add' ? (
+          <AddressForm busy={addAndPick.isPending} onSubmit={(address) => addAndPick.mutate(address)} onCancel={current ? close : undefined} />
+        ) : mode === 'pick' ? (
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              pick.mutate({ groupSlug, addressId: pickedId });
+            }}
+          >
+            <Field>
+              <FieldLabel htmlFor="address-pick">{t('pick-label')}</FieldLabel>
+              <NativeSelect id="address-pick" value={pickedId} onChange={(event) => setPickedId(event.target.value)}>
+                {addresses.map((address) => (
+                  <NativeSelectOption key={address.id} value={address.id}>
+                    {address.id === defaultAddressId ? t('default-option', { address: addressSummary(address) }) : addressSummary(address)}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </Field>
             <div className="flex flex-wrap gap-3">
-              <Button variant="neutral" onClick={() => setEditing(true)}>
-                {t('change')}
+              <Button type="submit" disabled={pick.isPending}>
+                {t('use')}
               </Button>
-              <Button variant="neutral" disabled={clear.isPending} onClick={() => clear.mutate(input)}>
-                {t('remove')}
+              {addresses.length < MAX_ADDRESSES && (
+                <Button type="button" variant="neutral" onClick={() => setMode('add')}>
+                  {t('add-new')}
+                </Button>
+              )}
+              <Button type="button" variant="neutral" onClick={close}>
+                {tAccount('cancel')}
               </Button>
             </div>
-          </div>
+          </form>
         ) : (
-          <AddressForm
-            initial={address}
-            busy={save.isPending}
-            onSubmit={(next) => save.mutate({ ...input, address: next })}
-            onCancel={address ? () => setEditing(false) : undefined}
-          />
+          <div className="flex flex-col gap-4">
+            <p className="font-semibold">{t('sending-to')}</p>
+            <AddressLines address={current} />
+            <Button
+              variant="neutral"
+              className="self-start"
+              onClick={() => {
+                setPickedId(current.id);
+                setMode('pick');
+              }}
+            >
+              {t('change')}
+            </Button>
+          </div>
         )}
       </CardContent>
     </Card>

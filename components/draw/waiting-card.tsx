@@ -1,4 +1,4 @@
-import { ADDRESS_FIELD_ID } from '@/components/group/address-card';
+import { ADDRESS_FIELD_ID } from '@/components/account/address-book';
 import { AvatarStack } from '@/components/group/avatar-stack';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import type { GroupTab } from '@/components/group/use-group-tab';
@@ -22,7 +22,7 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
   const trpc = useTRPC();
   const posted = edition.exchangeMode !== 'inPerson';
   const wishes = useQuery(trpc.wish.groupView.queryOptions({ groupSlug: group.slug }));
-  const address = useQuery({ ...trpc.address.mine.queryOptions({ groupSlug: group.slug, editionNumber: edition.number }), enabled: posted });
+  const address = useQuery({ ...trpc.address.mine.queryOptions({ groupSlug: group.slug }), enabled: posted });
   if (wishes.isPending || (posted && address.isPending)) return null;
 
   const wishCount = wishes.data?.filter((wish) => wish.shown).length ?? 0;

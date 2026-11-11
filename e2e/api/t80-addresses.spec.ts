@@ -1,12 +1,14 @@
-// Postal addresses (80): only in editions that send gifts by post; only the assigned Santa reads one,
-// from the draw on; the organizer only sees who hasn't added one; in person, nothing at all.
+// Postal addresses (80): an address book on the account, one picked per group (else the default). Only the
+// assigned Santa reads it, in by-post editions, from the draw until gift day is over; the organizer only
+// sees who has none.
 import enEmail from '@/messages/en/email.json' with { type: 'json' };
-import { expect, mailsTo, ok, test, type User } from '../fixtures';
+import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
 import { code, editionOf } from './s6-helpers';
 
-const address = { recipient: 'Bob Builder', lines: ['Bobstraat 12', 'Bus 3'], postalCode: '1000', city: 'Brussel', country: 'BE' as const };
+const home = { recipient: 'Bob Builder', lines: ['Bobstraat 12', 'Bus 3'], postalCode: '1000', city: 'Brussel', country: 'BE' as const };
+const work = { lines: ['Werkplein 1'], postalCode: '2000', city: 'Antwerpen', country: 'BE' as const };
 
-const postedGroup = async ([ann, ...others]: User[], name: string, exchangeMode: 'byPost' | 'inPerson' = 'byPost') => {
+const groupOf = async ([ann, ...others]: User[], name: string, exchangeMode: 'byPost' | 'inPerson' = 'byPost') => {
   const group = ok(await ann.trpc.mutate('group.create', { name, organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode }));
   for (const [i, person] of others.entries()) {
     ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name: ['Bob', 'Cee', 'Dan'][i] }));
@@ -14,104 +16,131 @@ const postedGroup = async ([ann, ...others]: User[], name: string, exchangeMode:
   return group;
 };
 
-test('only the assigned Santa reads the address, from the draw on; the organizer only who is missing', async ({ signIn, db }) => {
+const santaOf = async (db: TestDb, slug: string, people: User[], giftee: User) => {
+  const edition = await editionOf(db, slug);
+  const { members } = (await db.groups.findOne({ slug }))!;
+  const idOf = (user: User) => members.find((m) => m.userId === user.id)!.id;
+  return people.find((person) => edition.draw!.assignments[idOf(person)] === idOf(giftee))!;
+};
+
+test('one account address serves every group; only the Santa in a by-post edition reads it, from the draw until gift day is over', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann, bob, cee] = people;
-  const group = await postedGroup(people, 'By post');
-  const at = { groupSlug: group.slug, editionNumber: 1 };
+  const byPost = await groupOf(people, 'By post');
+  const inPerson = await groupOf(people, 'In person', 'inPerson');
+  const [atPost, atPerson] = [byPost, inPerson].map((group) => ({ groupSlug: group.slug, editionNumber: 1 }));
 
-  await test.step('before the draw: my own address only; nobody reads anyone else’s', async () => {
-    expect(code(await bob.trpc.mutate('address.set', { ...at, address: { ...address, country: 'XX' } } as never))).toBe('INVALID_INPUT');
-    expect(code(await bob.trpc.mutate('address.set', { ...at, address: { ...address, lines: [] } }))).toBe('INVALID_INPUT');
-    ok(await bob.trpc.mutate('address.set', { ...at, address }));
-    expect(ok(await bob.trpc.query('address.mine', at))).toEqual(address);
-    expect(ok(await cee.trpc.query('address.mine', at))).toBeNull();
-    for (const person of people) expect(ok(await person.trpc.query('address.giftee', at))).toBeNull();
+  await test.step('my address book is my own', async () => {
+    expect(code(await bob.trpc.mutate('account.addAddress', { address: { ...home, country: 'XX' } } as never))).toBe('INVALID_INPUT');
+    expect(code(await bob.trpc.mutate('account.addAddress', { address: { ...home, lines: [] } }))).toBe('INVALID_INPUT');
+    const { id } = ok(await bob.trpc.mutate('account.addAddress', { address: home }));
+    expect(ok(await bob.trpc.query('account.addresses'))).toEqual({ addresses: [{ id, ...home }], defaultAddressId: id });
+    expect(ok(await cee.trpc.query('account.addresses'))).toEqual({ addresses: [], defaultAddressId: null });
+    for (const group of [byPost, inPerson]) expect(ok(await bob.trpc.query('address.mine', { groupSlug: group.slug }))).toEqual({ address: { id, ...home }, pickedId: null });
   });
 
-  await test.step('the organizer gets names only', async () => {
-    expect(ok(await ann.trpc.query('address.missing', at))).toEqual({ people: 4, missing: ['Ann', 'Cee', 'Dan'] });
-    expect(code(await bob.trpc.query('address.missing', at))).toBe('NOT_ORGANIZER');
-    const seen = JSON.stringify([ok(await ann.trpc.query('address.missing', at)), ok(await ann.trpc.query('group.get', { groupSlug: group.slug }))]);
+  await test.step('before the draw nobody reads it; the organizer gets names only', async () => {
+    for (const person of people) expect(ok(await person.trpc.query('address.giftee', atPost))).toBeNull();
+    expect(ok(await ann.trpc.query('address.missing', atPost))).toEqual({ people: 4, missing: ['Ann', 'Cee', 'Dan'] });
+    expect(ok(await ann.trpc.query('address.missing', atPerson))).toBeNull();
+    expect(code(await bob.trpc.query('address.missing', atPost))).toBe('NOT_ORGANIZER');
+    const seen = JSON.stringify([ok(await ann.trpc.query('address.missing', atPost)), ok(await ann.trpc.query('group.get', { groupSlug: byPost.slug }))]);
     expect(seen).not.toContain('Bobstraat');
   });
 
-  ok(await ann.trpc.mutate('draw.run', at));
-  const edition = await editionOf(db, group.slug);
-  const { members } = (await db.groups.findOne({ slug: group.slug }))!;
-  const idOf = (user: User) => members.find((m) => m.userId === user.id)!.id;
-  const bobsSanta = people.find((person) => edition.draw!.assignments[idOf(person)] === idOf(bob))!;
+  ok(await ann.trpc.mutate('draw.run', atPost));
+  ok(await ann.trpc.mutate('draw.run', atPerson));
+  const bobsSanta = await santaOf(db, byPost.slug, people, bob);
 
-  await test.step('after the draw: Bob’s Santa gets it, nobody else does', async () => {
-    expect(ok(await bobsSanta.trpc.query('address.giftee', at))).toEqual({ name: 'Bob', address });
+  await test.step('after the draw: Bob’s Santa in the by-post group gets it, nobody else, and nobody in the in-person group', async () => {
+    expect(ok(await bobsSanta.trpc.query('address.giftee', atPost))).toEqual({ name: 'Bob', address: home });
     for (const person of people.filter((p) => p !== bobsSanta)) {
-      const giftee = ok(await person.trpc.query('address.giftee', at))!;
-      expect(giftee.address).toBeNull();
-      expect(JSON.stringify(giftee)).not.toContain('Bobstraat');
+      expect(JSON.stringify(ok(await person.trpc.query('address.giftee', atPost)))).not.toContain('Bobstraat');
     }
+    for (const person of people) expect(ok(await person.trpc.query('address.giftee', atPerson))).toBeNull();
   });
 
-  await test.step('the names-drawn email asks those without an address to add one', async () => {
-    await expect.poll(async () => (await mailsTo(cee.email, 'namesDrawn')).length).toBe(1);
-    expect((await mailsTo(cee.email, 'namesDrawn'))[0].text).toContain(enEmail['names-drawn'].address);
-    await expect.poll(async () => (await mailsTo(bob.email, 'namesDrawn')).length).toBe(1);
-    expect((await mailsTo(bob.email, 'namesDrawn'))[0].text).not.toContain(enEmail['names-drawn'].address);
+  await test.step('the names-drawn email asks those without an address to add one, only in the by-post group', async () => {
+    const drawnMails = async (user: User, group: string) => (await mailsTo(user.email, 'namesDrawn')).filter((mail) => mail.subject.includes(group));
+    await expect.poll(async () => (await drawnMails(cee, 'By post')).length).toBe(1);
+    expect((await drawnMails(cee, 'By post'))[0].text).toContain(enEmail['names-drawn'].address);
+    await expect.poll(async () => (await drawnMails(cee, 'In person')).length).toBe(1);
+    expect((await drawnMails(cee, 'In person'))[0].text).not.toContain(enEmail['names-drawn'].address);
+    await expect.poll(async () => (await drawnMails(bob, 'By post')).length).toBe(1);
+    expect((await drawnMails(bob, 'By post'))[0].text).not.toContain(enEmail['names-drawn'].address);
   });
 
-  await test.step('removing it takes it from the Santa; from gift day on it can’t change', async () => {
-    ok(await bob.trpc.mutate('address.clear', at));
-    expect(ok(await bobsSanta.trpc.query('address.giftee', at))).toEqual({ name: 'Bob', address: null });
-    expect(ok(await ann.trpc.query('address.missing', at))!.missing).toContain('Bob');
+  await test.step('still there on gift day, gone once it is over', async () => {
+    const edition = await editionOf(db, byPost.slug);
     await db.editions.updateOne({ _id: edition._id }, { $set: { status: 'giftday' } });
-    expect(code(await bob.trpc.mutate('address.set', { ...at, address }))).toBe('EDITION_CLOSED');
-    expect(ok(await ann.trpc.query('address.missing', at))).toBeNull();
+    expect(ok(await bobsSanta.trpc.query('address.giftee', atPost))).toEqual({ name: 'Bob', address: home });
+    expect(ok(await ann.trpc.query('address.missing', atPost))).toBeNull();
+    await db.editions.updateOne({ _id: edition._id }, { $set: { status: 'done' } });
+    expect(ok(await bobsSanta.trpc.query('address.giftee', atPost))).toBeNull();
   });
 });
 
-test('in person: setting one is refused and nothing comes back', async ({ signIn, db }) => {
+test('a second address picked for one group; removing it falls back to the default; only my own addresses', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
-  const [ann, bob] = people;
-  const group = await postedGroup(people, 'In person', 'inPerson');
-  const at = { groupSlug: group.slug, editionNumber: 1 };
-  expect(code(await bob.trpc.mutate('address.set', { ...at, address }))).toBe('FORBIDDEN');
-  ok(await ann.trpc.mutate('draw.run', at));
-  const edition = await editionOf(db, group.slug);
-  await db.editions.updateOne({ _id: edition._id }, { $set: { 'participants.$[].address': address } });
-  for (const person of people) {
-    expect(ok(await person.trpc.query('address.mine', at))).toBeNull();
-    expect(ok(await person.trpc.query('address.giftee', at))).toBeNull();
-  }
-  expect(ok(await ann.trpc.query('address.missing', at))).toBeNull();
-  expect(code(await bob.trpc.mutate('address.clear', at))).toBe('FORBIDDEN');
+  const [ann, bob, cee] = people;
+  const [groupA, groupB] = [await groupOf(people, 'Group A'), await groupOf(people, 'Group B')];
+  const [atA, atB] = [groupA, groupB].map((group) => ({ groupSlug: group.slug, editionNumber: 1 }));
+  const { id: homeId } = ok(await bob.trpc.mutate('account.addAddress', { address: home }));
+  const { id: workId } = ok(await bob.trpc.mutate('account.addAddress', { address: work }));
+  const { id: ceeId } = ok(await cee.trpc.mutate('account.addAddress', { address: home }));
+
+  await test.step('someone else’s address is refused everywhere', async () => {
+    expect(code(await bob.trpc.mutate('address.pick', { groupSlug: groupB.slug, addressId: ceeId }))).toBe('NOT_FOUND');
+    expect(code(await bob.trpc.mutate('account.updateAddress', { id: ceeId, address: work }))).toBe('NOT_FOUND');
+    expect(code(await bob.trpc.mutate('account.removeAddress', { id: ceeId }))).toBe('NOT_FOUND');
+    expect(code(await bob.trpc.mutate('account.setDefaultAddress', { id: ceeId }))).toBe('NOT_FOUND');
+    expect(ok(await cee.trpc.query('account.addresses'))).toEqual({ addresses: [{ id: ceeId, ...home }], defaultAddressId: ceeId });
+  });
+
+  await test.step('at most 10', async () => {
+    for (let i = 1; i < 10; i++) ok(await cee.trpc.mutate('account.addAddress', { address: work }));
+    expect(code(await cee.trpc.mutate('account.addAddress', { address: work }))).toBe('FORBIDDEN');
+  });
+
+  ok(await bob.trpc.mutate('address.pick', { groupSlug: groupB.slug, addressId: workId }));
+  expect(ok(await bob.trpc.query('account.addresses')).defaultAddressId).toBe(homeId);
+  expect(ok(await bob.trpc.query('address.mine', { groupSlug: groupB.slug }))).toEqual({ address: { id: workId, ...work }, pickedId: workId });
+  for (const at of [atA, atB]) ok(await ann.trpc.mutate('draw.run', at));
+  const [santaA, santaB] = [await santaOf(db, groupA.slug, people, bob), await santaOf(db, groupB.slug, people, bob)];
+
+  await test.step('each group’s Santa gets that group’s address', async () => {
+    expect(ok(await santaA.trpc.query('address.giftee', atA))!.address).toEqual(home);
+    expect(ok(await santaB.trpc.query('address.giftee', atB))!.address).toEqual(work);
+    ok(await bob.trpc.mutate('account.updateAddress', { id: workId, address: { ...work, lines: ['Werkplein 2'] } }));
+    expect(ok(await santaB.trpc.query('address.giftee', atB))!.address).toEqual({ ...work, lines: ['Werkplein 2'] });
+  });
+
+  await test.step('removing the picked address: that group falls back to the default', async () => {
+    ok(await bob.trpc.mutate('account.removeAddress', { id: workId }));
+    expect(ok(await santaB.trpc.query('address.giftee', atB))!.address).toEqual(home);
+    expect(ok(await bob.trpc.query('address.mine', { groupSlug: groupB.slug }))).toEqual({ address: { id: homeId, ...home }, pickedId: null });
+  });
+
+  await test.step('removing the default promotes the next one; none left, nothing to read', async () => {
+    const { id: thirdId } = ok(await bob.trpc.mutate('account.addAddress', { address: work }));
+    ok(await bob.trpc.mutate('account.removeAddress', { id: homeId }));
+    expect(ok(await bob.trpc.query('account.addresses'))).toEqual({ addresses: [{ id: thirdId, ...work }], defaultAddressId: thirdId });
+    expect(ok(await santaA.trpc.query('address.giftee', atA))!.address).toEqual(work);
+    ok(await bob.trpc.mutate('account.removeAddress', { id: thirdId }));
+    expect(ok(await bob.trpc.query('account.addresses'))).toEqual({ addresses: [], defaultAddressId: null });
+    expect(ok(await santaA.trpc.query('address.giftee', atA))).toEqual({ name: 'Bob', address: null });
+    expect(ok(await bob.trpc.query('address.mine', { groupSlug: groupA.slug }))).toBeNull();
+  });
 });
 
 test('a reminder 14 days before gift day, only to those without an address', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [, bob, cee] = people;
-  const group = await postedGroup(people, 'Remind me');
-  const at = { groupSlug: group.slug, editionNumber: 1 };
+  const group = await groupOf(people, 'Remind me');
   for (const person of people) ok(await person.trpc.mutate('wish.create', { title: 'Something', groupSlugs: [group.slug] }));
-  ok(await bob.trpc.mutate('address.set', { ...at, address }));
+  ok(await bob.trpc.mutate('account.addAddress', { address: home }));
   ok(await bob.trpc.mutate('reminders.runDue', { now: '2099-12-10T10:00:00.000Z', editionIds: [(await editionOf(db, group.slug))._id] }));
   const [reminder] = await mailsTo(cee.email, 'reminderAddress');
   expect(reminder.subject).toBe(`${enEmail.reminder.address.subject} · Remind me`);
   expect(await mailsTo(bob.email, 'reminderAddress')).toHaveLength(0);
-});
-
-test('only people in the edition can add one', async ({ signIn, db }) => {
-  const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
-  const [ann, bob, , dan] = people;
-  const outsider = await signIn('eve');
-  const group = await postedGroup(people, 'Sitting out');
-  const at = { groupSlug: group.slug, editionNumber: 1 };
-  const edition = await editionOf(db, group.slug);
-  const { members } = (await db.groups.findOne({ slug: group.slug }))!;
-  const danId = members.find((m) => m.userId === dan.id)!.id;
-  ok(await ann.trpc.mutate('settings.setParticipants', { ...at, memberIds: members.filter((m) => m.id !== danId).map((m) => m.id) }));
-  expect(code(await dan.trpc.mutate('address.set', { ...at, address }))).toBe('FORBIDDEN');
-  expect(code(await outsider.trpc.mutate('address.set', { ...at, address }))).toBe('GROUP_NOT_FOUND');
-  expect(code(await outsider.trpc.query('address.mine', at))).toBe('GROUP_NOT_FOUND');
-  expect(ok(await ann.trpc.query('address.missing', at))).toEqual({ people: 3, missing: ['Ann', 'Bob', 'Cee'] });
-  expect((await db.editions.findOne({ _id: edition._id }))!.participants.some((p) => p.address)).toBe(false);
-  ok(await bob.trpc.mutate('address.set', { ...at, address }));
 });
