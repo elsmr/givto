@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 import { formatPrice } from './format-price';
 import { WishBadges } from './wish-badges';
+import { Badge } from '@/components/ui/badge';
 import { WishBuyLinks } from './wish-buy-links';
 import type { WishView } from './wish-draft';
 import { WishImage } from './wish-image';
@@ -60,8 +61,13 @@ export const WishCard = ({ wish, inBudget, position, status, children, className
             )}
             <h3 className="font-sans text-lg leading-snug font-bold break-words">{wish.title}</h3>
           </div>
-          <WishBadges wish={wish} inBudget={inBudget} status={status} />
-          {details && <p className="mono text-sm font-semibold">{details}</p>}
+          <WishBadges wish={wish} status={status} />
+          {details && (
+            <p className="mono flex flex-wrap items-center gap-2 text-sm font-semibold">
+              {details}
+              {inBudget && <Badge variant="mint">{t('item.in-budget')}</Badge>}
+            </p>
+          )}
         </div>
         {wish.description && (
           <p className={cn('text-sm break-words whitespace-pre-line', wide)}>

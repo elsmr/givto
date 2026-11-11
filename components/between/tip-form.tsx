@@ -1,6 +1,6 @@
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
@@ -71,19 +71,10 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
           onChange={(event) => update({ text: event.target.value })}
         />
       </Field>
-      <div className="flex flex-col gap-1">
-        <Field orientation="horizontal" className="w-fit">
-          <Switch
-            id={`${id}-anonymous`}
-            size="sm"
-            aria-describedby={`${id}-anonymous-hint`}
-            checked={draft.anonymous}
-            onCheckedChange={(anonymous) => update({ anonymous })}
-          />
-          <FieldLabel htmlFor={`${id}-anonymous`}>{t(`${copy}.anonymous`)}</FieldLabel>
-        </Field>
-        <FieldDescription id={`${id}-anonymous-hint`}>{t(`${copy}.anonymous-hint`)}</FieldDescription>
-      </div>
+      <Field orientation="horizontal" className="w-fit">
+        <Switch id={`${id}-anonymous`} size="sm" checked={draft.anonymous} onCheckedChange={(anonymous) => update({ anonymous })} />
+        <FieldLabel htmlFor={`${id}-anonymous`}>{t(`${copy}.anonymous`)}</FieldLabel>
+      </Field>
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex flex-wrap gap-3">
         <Button type="submit" variant="neutral" disabled={busy}>

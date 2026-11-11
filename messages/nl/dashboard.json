@@ -71,7 +71,7 @@
   "see-giftee": "Je persoon",
   "giftee-known": "Je weet voor wie je een cadeau koopt.",
   "countdown": {
-    "days": "{days, plural, =1 {dag tot pakjesdag} other {dagen tot pakjesdag}}",
+    "left": "{unit, select, day {{count, plural, =1 {dag} other {dagen}}} week {{count, plural, =1 {week} other {weken}}} month {{count, plural, =1 {maand} other {maanden}}} other {{count, plural, =1 {jaar} other {jaar}}}} tot pakjesdag",
     "today": "Vandaag!",
     "today-label": "het is pakjesdag"
   },

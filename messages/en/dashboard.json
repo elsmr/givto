@@ -71,7 +71,7 @@
   "see-giftee": "Your giftee",
   "giftee-known": "You know who you're buying for.",
   "countdown": {
-    "days": "{days, plural, =1 {day to gift day} other {days to gift day}}",
+    "left": "{unit, select, day {{count, plural, =1 {day} other {days}}} week {{count, plural, =1 {week} other {weeks}}} month {{count, plural, =1 {month} other {months}}} other {{count, plural, =1 {year} other {years}}}} to gift day",
     "today": "Today!",
     "today-label": "it's gift day"
   },

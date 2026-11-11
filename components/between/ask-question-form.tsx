@@ -11,7 +11,7 @@ import type { EditionInput } from './edition-input';
 import { useBetweenError } from './use-between-error';
 
 /** One question to the giftee, sent anonymously. */
-export const AskQuestionForm = ({ input, gifteeName }: { input: EditionInput; gifteeName: string }) => {
+export const AskQuestionForm = ({ input, gifteeName, onSent }: { input: EditionInput; gifteeName: string; onSent?: () => void }) => {
   const t = useTranslations('between.ask');
   const id = useId();
   const errorMessage = useBetweenError();
@@ -23,6 +23,7 @@ export const AskQuestionForm = ({ input, gifteeName }: { input: EditionInput; gi
       onSuccess: () => {
         setText('');
         toast.add({ title: t('sent', { name: gifteeName }), type: 'success' });
+        onSent?.();
       },
       onSettled: () => queryClient.invalidateQueries({ queryKey: trpc.question.asked.pathKey() }),
     })

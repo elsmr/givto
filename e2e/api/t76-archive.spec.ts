@@ -70,9 +70,14 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
     expect((await samSees()).find((wish) => wish.id === book.id)).toMatchObject({ archived: false, claim: 'mine' });
   });
 
-  await test.step('received wishes are in the archive; restore brings them back', async () => {
+  await test.step('received (got it) wishes are in the archive, marked as such; restore brings them back', async () => {
     ok(await olive.trpc.mutate('giftday.markReceived', { wishId: mug.id, received: true }));
-    expect(titles(ok(await olive.trpc.query('wish.archived')))).toEqual(['Moomin mug']);
+    ok(await olive.trpc.mutate('wish.archive', { wishId: socks.id }));
+    expect(ok(await olive.trpc.query('wish.archived')).map(({ title, received }) => ({ title, received })), 'before gift day too').toEqual([
+      { title: 'Wool socks', received: false },
+      { title: 'Moomin mug', received: true },
+    ]);
+    ok(await olive.trpc.mutate('wish.restore', { wishId: socks.id }));
     ok(await olive.trpc.mutate('wish.restore', { wishId: mug.id }));
     expect((await db.wishes.findOne({ _id: mug.id }))!.receivedAt).toBeUndefined();
     expect(ok(await olive.trpc.query('wish.archived'))).toEqual([]);

@@ -1,7 +1,7 @@
 {
   "card": {
     "title": "Guess your Santa",
-    "open": "Who do you think is buying your gift? Guess the rest of the draw too, if you like. One go, no take-backs.",
+    "open": "Who's buying your gift? One go, no take-backs.",
     "when": "You'll find out at your turn on gift day.",
     "make": "Make your guess",
     "you-guessed": "You guessed <name>{guess}</name>",
@@ -63,8 +63,8 @@
     "off": "Guess your Santa is off: Santas stay secret"
   },
   "panel": {
-    "note": "Each person's Santa is shown at their turn. Switch off Guess your Santa to keep Santas secret.",
-    "settings": "Guess your Santa settings"
+    "note": "Santas are shown at each turn.",
+    "settings": "Change"
   },
   "errors": {
     "GUESS_LOCKED": "You've already locked in a guess.",

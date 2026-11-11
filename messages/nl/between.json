@@ -1,13 +1,12 @@
 {
   "tips": {
     "title": "Tips voor iemands Santa",
-    "intro": "Weet je wat iemand leuk zou vinden? Geef hun Santa een tip. Alleen hun Santa leest die: nooit de persoon over wie het gaat, nooit de organisator, en jij komt niet te weten wie hun Santa is.",
+    "intro": "Weet je wat iemand leuk zou vinden? Geef hun Santa een tip.",
     "about": "Over wie gaat het?",
     "about-placeholder": "Kies iemand",
     "text": "Je tip",
     "text-placeholder": "bv. spaart Moomin-mokken, draagt maat M",
     "anonymous": "Anoniem plaatsen",
-    "anonymous-hint": "Hun Santa ziet je naam niet.",
     "add": "Geef een tip",
     "added": "Tip bewaard. Alleen de Santa van {name} ziet hem.",
     "mine-title": "Jouw tips",
@@ -21,8 +20,7 @@
     "save": "Bewaren",
     "cancel": "Annuleren",
     "closed": "Tips zijn gesloten voor deze Secret Santa.",
-    "nobody": "Nog niemand om een tip over te geven.",
-    "dialog-description": "Alleen hun Santa leest die: nooit de persoon over wie het gaat, nooit de organisator."
+    "nobody": "Nog niemand om een tip over te geven."
   },
   "boards": {
     "intro": "Iedereen heeft een prikbord waarop de anderen samen één cadeau voor die persoon bedenken. Je eigen prikbord zie je nooit.",
@@ -32,7 +30,6 @@
     "text": "Je bericht",
     "text-placeholder": "bv. Ik vond de camera van het verlanglijstje, doen we dat?",
     "anonymous": "Anoniem plaatsen",
-    "anonymous-hint": "De anderen zien je naam niet.",
     "add": "Plaatsen",
     "post-from": "Van {name}",
     "post-anonymous": "Anoniem",
@@ -50,14 +47,11 @@
     "wishes-empty": "{name} heeft hier nog geen wensen."
   },
   "santa": {
-    "title": "Cadeau voor {name}",
-    "tips-title": "Tips voor jou",
-    "tips-empty": "Nog geen tips over {name}.",
+    "tips-title": "Tips van anderen",
     "tip-from": "Van {name}",
     "tip-anonymous": "Anonieme tip",
     "tip-yours": "Je eigen notitie",
     "mark-used": "Markeer als gebruikt",
-    "used": "Gebruikt",
     "unmark-used": "Ongedaan maken"
   },
   "ask": {
@@ -70,7 +64,8 @@
     "asked-title": "Jouw vragen",
     "waiting": "Nog geen antwoord",
     "answer-label": "Antwoord",
-    "unanswerable": "Jij zorgt voor {name}, dus hun antwoorden komen bij jou terug. Vragen staan hier uit."
+    "button": "Stel een vraag",
+    "unanswerable": "Jij zorgt voor {name}, dus vragen en een Psst! komen bij jou terug."
   },
   "psst": {
     "title": "Psst!",
@@ -78,8 +73,7 @@
     "moreDetails": "Stuur een Psst! en {name} hoort dat hun Santa graag wat meer details over hun wensen wil.",
     "send": "Psst! sturen",
     "sent": "Psst! verstuurd. {name} hoort het zo, zonder je naam.",
-    "next": "Je kunt vanaf {date} weer een Psst! sturen.",
-    "unanswerable": "Jij zorgt voor {name}, dus een Psst! komt bij jou terug."
+    "next": "Je kunt vanaf {date} weer een Psst! sturen."
   },
   "for-you": {
     "psst-emptyWishlist": "Je Santa wil graag wat ideeën. Zet een paar wensen op je verlanglijstje.",

@@ -46,6 +46,8 @@
   },
   "item": {
     "edit": "Edit “{title}”",
+    "got": "Already got “{title}”",
+    "got-done": "Marked “{title}” as got",
     "archive": "Archive “{title}”",
     "archived": "Archived “{title}”",
     "undo": "Undo",
@@ -70,21 +72,19 @@
     "delete-label": "Delete for good: “{title}”",
     "delete-title": "Delete “{title}” for good?",
     "delete-description": "You can't undo this.",
-    "cancel": "Keep it"
+    "cancel": "Keep it",
+    "got": "Got it"
   },
   "group": {
     "title": "My wishlist in this group",
-    "intro": "This group sees only the wishes you show here, in this order.",
     "empty": "Your wishlist is empty.",
     "hide": "Hide “{title}” in this group",
-    "show": "Show “{title}” in this group",
-    "show-short": "Show",
-    "hidden-summary": "{count, plural, one {# wish hidden here} other {# wishes hidden here}}",
-    "all-hidden": "Nothing on your wishlist shows in this group."
+    "show": "Add “{title}” to this group",
+    "all-hidden": "Nothing on your wishlist shows in this group.",
+    "pick": "Or add one from your wishlist"
   },
   "giftee": {
     "title": "{name}'s wishlist",
-    "intro": "You're {name}'s Santa. Call dibs on a wish so nobody else buys it too.",
     "empty": "{name} hasn't added any wishes yet.",
     "claim": "Dibs!",
     "claim-label": "Dibs on “{title}”",
@@ -97,12 +97,9 @@
     "gone": "No longer on the list"
   },
   "got-gift": {
-    "title": "Got your gift?",
     "private": "Only you see this. {name} never does; on gift day the presenter only knows how many gifts to unwrap.",
-    "not-yet": "Got something for {name}? Mark it and the gift reminders stop.",
     "marked": "{count, plural, one {You've got # gift} other {You've got # gifts}}",
     "open": "I've got my gift",
-    "change": "Change",
     "dialog-title": "What did you get?",
     "dialog-description": "Tick the wishes you got (that calls Dibs! too) and add anything that isn't on the list. Untick everything to undo.",
     "wishes": "From {name}'s wishlist",

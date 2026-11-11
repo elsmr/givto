@@ -1,8 +1,7 @@
-import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import { Check, Presentation, Shuffle } from 'lucide-react';
+import { Check, Presentation } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ShuffleButton } from './shuffle-button';
@@ -23,7 +22,10 @@ type UnwrapOrderCardProps = {
   showMode: boolean;
 };
 
-/** The unwrap order (32): a surprise until the presenter spins, so only who's unwrapping now and who already went; and the mode. */
+/**
+ * The unwrap order (32): a surprise until the presenter spins, so only who's unwrapping now and who already went; and
+ * the mode. No title: it only renders inside the "Unwrap order" disclosure.
+ */
 export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, swap, mode, meId, canShuffle, canPresent, showMode }: UnwrapOrderCardProps) => {
   const t = useTranslations('giftday.order');
   const inProgress = Boolean(order?.started && !order.finished);
@@ -31,9 +33,6 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, swap, mode, m
   return (
     <Card>
       <CardHeader>
-        <IconCardTitle icon={Shuffle} tone="yellow">
-          {t('title')}
-        </IconCardTitle>
         <CardDescription>{order ? t('intro') : canShuffle ? t('none-organizer') : t('none')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">

@@ -46,6 +46,8 @@
   },
   "item": {
     "edit": "“{title}” bewerken",
+    "got": "“{title}” al gekregen",
+    "got-done": "“{title}” gemarkeerd als gekregen",
     "archive": "“{title}” archiveren",
     "archived": "“{title}” gearchiveerd",
     "undo": "Ongedaan maken",
@@ -70,21 +72,19 @@
     "delete-label": "“{title}” definitief verwijderen",
     "delete-title": "“{title}” definitief verwijderen?",
     "delete-description": "Dit kun je niet ongedaan maken.",
-    "cancel": "Bewaren"
+    "cancel": "Bewaren",
+    "got": "Gekregen"
   },
   "group": {
     "title": "Mijn verlanglijstje in deze groep",
-    "intro": "Deze groep ziet alleen de wensen die je hier toont, in deze volgorde.",
     "empty": "Je verlanglijstje is nog leeg.",
     "hide": "“{title}” verbergen in deze groep",
-    "show": "“{title}” tonen in deze groep",
-    "show-short": "Tonen",
-    "hidden-summary": "{count, plural, one {# wens hier verborgen} other {# wensen hier verborgen}}",
-    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep."
+    "show": "“{title}” toevoegen aan deze groep",
+    "all-hidden": "Niets van je verlanglijstje is zichtbaar in deze groep.",
+    "pick": "Of kies er een uit je verlanglijstje"
   },
   "giftee": {
     "title": "Verlanglijstje van {name}",
-    "intro": "Jij bent de Santa van {name}. Claim een wens, dan koopt niemand anders hem ook.",
     "empty": "{name} heeft nog geen wensen.",
     "claim": "Claimen",
     "claim-label": "“{title}” claimen",
@@ -97,12 +97,9 @@
     "gone": "Niet meer op het verlanglijstje"
   },
   "got-gift": {
-    "title": "Heb je je cadeau?",
     "private": "Alleen jij ziet dit, {name} nooit. Op pakjesdag weet de presentatie alleen hoeveel cadeaus er uit te pakken zijn.",
-    "not-yet": "Iets gevonden voor {name}? Duid het aan, dan stoppen de herinneringen.",
     "marked": "{count, plural, one {Je hebt # cadeau} other {Je hebt # cadeaus}}",
     "open": "Ik heb mijn cadeau",
-    "change": "Aanpassen",
     "dialog-title": "Wat heb je gekocht?",
     "dialog-description": "Vink de wensen aan die je hebt (dan zijn ze ook Geclaimd!) en voeg toe wat niet op het lijstje staat. Alles uitvinken maakt het ongedaan.",
     "wishes": "Van het verlanglijstje van {name}",

@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, withTooltip } from '@/componen
 import { useTRPCClient } from '@/lib/client/trpc';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { cn } from '@/lib/utils';
-import { Archive, GripVertical, Pencil } from 'lucide-react';
+import { Archive, Check, GripVertical, Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type ReactNode } from 'react';
 import { useErrorMessage } from './use-error-message';
@@ -27,12 +27,12 @@ interface SortableWishItemProps {
   actions?: ReactNode;
 }
 
-/** One of my wishes: its card with reorder / edit / archive, or the edit form. */
+/** One of my wishes: its card with reorder / edit / got it / archive, or the edit form. */
 export const SortableWishItem = ({ wish, index, count, onMove, status, actions }: SortableWishItemProps) => {
   const t = useTranslations('wishlist');
   const errorMessage = useErrorMessage();
   const client = useTRPCClient();
-  const { update, archive, refresh } = useWishMutations();
+  const { update, archive, receive, refresh } = useWishMutations();
   const [editing, setEditing] = useState(false);
   const editButton = useFocusAfterEdit(editing);
   const { rowRef, handleRef, dragging, over } = useSortableWish(wish.id, index, !editing);
@@ -44,19 +44,13 @@ export const SortableWishItem = ({ wish, index, count, onMove, status, actions }
       .mutate({ wishId: wish.id })
       .then(() => onMove(index))
       .then(refresh, onError);
-  const archiveWish = () =>
-    archive.mutate(
-      { wishId: wish.id },
-      {
-        onSuccess: () =>
-          toast.add({
-            title: t('item.archived', { title: wish.title }),
-            type: 'success',
-            actionProps: { children: t('item.undo'), onClick: undo },
-          }),
-        onError,
-      }
-    );
+  // Got it and archive both move the wish to the archive; restore undoes either.
+  const moveOut = (done: string) => ({
+    onSuccess: () => toast.add({ title: done, type: 'success', actionProps: { children: t('item.undo'), onClick: undo } }),
+    onError,
+  });
+  const archiveWish = () => archive.mutate({ wishId: wish.id }, moveOut(t('item.archived', { title: wish.title })));
+  const gotWish = () => receive.mutate({ wishId: wish.id, received: true }, moveOut(t('item.got-done', { title: wish.title })));
 
   return (
     <li ref={rowRef} className={cn(dragging && 'opacity-50', over && 'outline-3 outline-offset-3 outline-focus')}>
@@ -95,6 +89,12 @@ export const SortableWishItem = ({ wish, index, count, onMove, status, actions }
                 t('item.edit', { title: wish.title }),
                 <Button ref={editButton} variant="neutral" size="icon-sm" onClick={() => setEditing(true)}>
                   <Pencil aria-hidden="true" />
+                </Button>
+              )}
+              {withTooltip(
+                t('item.got', { title: wish.title }),
+                <Button variant="neutral" size="icon-sm" disabled={receive.isPending} onClick={gotWish}>
+                  <Check aria-hidden="true" />
                 </Button>
               )}
               {withTooltip(
