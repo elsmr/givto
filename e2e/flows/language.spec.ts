@@ -59,7 +59,7 @@ test('old /nl app links redirect permanently, query kept; marketing pages keep /
   const old = await get('/nl/g/abc/join?invite=xyz');
   expect(old.status()).toBe(308);
   expect(old.headers().location).toBe('/g/abc/join?invite=xyz');
-  for (const path of ['/nl', '/nl/privacy']) expect((await get(path)).status(), path).toBe(200);
+  for (const path of ['/nl', '/nl/privacy', '/nl/pick']) expect((await get(path)).status(), path).toBe(200);
   for (const path of ['/nl//evil.example', '/nl/%5Cevil.example', '/nl/\\evil.example']) {
     expect(new URL((await get(path)).headers().location, 'http://localhost').host, path).toBe('localhost');
   }
