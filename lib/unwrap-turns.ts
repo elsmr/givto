@@ -79,6 +79,19 @@ export const santaStillHidden = (state: UnwrapState, santaShownIds: string[]) =>
   state.current !== null && !santaShownIds.includes(state.current);
 
 /**
+ * Live voting (83), between unwrapping and the Santa: 'ready' to open, 'open', or 'closed' (the tally is out).
+ * null when the current person's Santa isn't still to show.
+ */
+export const voteStep = (state: UnwrapState, santaShownIds: string[], votedIds: string[], voteOpenFor: string | undefined) =>
+  !santaStillHidden(state, santaShownIds)
+    ? null
+    : votedIds.includes(state.current!)
+      ? 'closed'
+      : voteOpenFor === state.current
+        ? 'open'
+        : 'ready';
+
+/**
  * "Back" on the turn where the current person's Santa was shown (their first turn) hides the Santa
  * again; on any later turn it undoes the last turn as usual.
  */

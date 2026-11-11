@@ -1,9 +1,9 @@
-// Guess your Santa (62): the guess dialog locks one guess, with the rest of the draw (82); on gift day the presenter shows the Santa
-// and the guess after the person unwrapped, the group page follows; the organizer can switch it off.
+// Guess your Santa (62): the guess dialog locks one guess, with the rest of the draw (82); on gift day the room votes on their
+// phones (83), then the presenter shows the tally, the Santa and the guess; the group page follows; the organizer can switch it off.
 import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 
-test('guess, locked in; the presenter shows "From … · You guessed …" at the turn', async ({ page, browser, signIn, signInPage, db }) => {
+test('guess, locked in; phones vote; the presenter shows the tally, then "From … · You guessed …" at the turn', async ({ page, browser, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [ann, bob] = people;
   const group = await drawnGroup(people, 'Guessing');
@@ -42,7 +42,7 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
   const order = [idOf(bob.id), ...Object.keys(draw!.assignments).filter((id) => id !== idOf(bob.id))];
   await db.editions.updateOne({ groupId, number: 1 }, { $set: { 'unwrapOrder.memberIds': order } });
 
-  await test.step('the presenter: spin, unwrap, then who it was from', async () => {
+  await test.step('the presenter: spin, unwrap, everyone else votes on their phone, the tally, then who it was from', async () => {
     const presenter = await browser.newPage();
     await signInPage(presenter, ann);
     await presenter.goto(`/g/${group.slug}/present`);
@@ -53,6 +53,28 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     await presenter.getByRole('button', { name: 'Spin' }).click();
     await expect(presenter.getByText('Next to unwrap')).toBeVisible();
     await expect(presenter.getByText(/^From /)).toHaveCount(0);
+    await presenter.getByRole('button', { name: 'Start the vote' }).click();
+    await expect(presenter.getByText("Vote on your phones: who's it from?")).toBeVisible();
+    const phones = await Promise.all(
+      [ann, people[2]].map(async (user) => {
+        const phone = await browser.newPage();
+        await signInPage(phone, user);
+        await phone.goto(`/g/${group.slug}`);
+        return phone;
+      })
+    );
+    for (const [phone, other] of [[phones[0], 'Cee'], [phones[1], 'Ann']] as const) {
+      const vote = phone.getByRole('group', { name: "Who do you think it's from?" });
+      await expect(vote.getByRole('button')).toHaveText([other]);
+      await vote.getByRole('button', { name: other }).click();
+      await expect(vote.getByRole('button', { name: other })).toHaveAttribute('aria-pressed', 'true');
+    }
+    await expect(presenter.getByRole('list', { name: 'The votes' })).toHaveCount(0);
+    await presenter.getByRole('button', { name: 'Close the vote' }).click();
+    await expect(presenter.getByRole('list', { name: 'The votes' }).getByRole('listitem')).toHaveText(['Ann1 vote', 'Cee1 vote']);
+    await expect(phones[1].getByRole('list', { name: 'The votes' })).toBeVisible();
+    await expect(phones[1].getByText('You voted Ann')).toBeVisible();
+    await Promise.all(phones.map((phone) => phone.close()));
     await presenter.getByRole('button', { name: 'Who was it from?' }).click();
     await expect(presenter.getByText(`From ${nameOf(bobsSanta)}`)).toBeVisible();
     await expect(presenter.getByText(`You guessed ${nameOf(bobsSanta)}`)).toBeVisible();
@@ -65,6 +87,7 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
   await test.step("Bob's page shows his answer", async () => {
     await page.reload();
     await expect(page.getByText(`Your gift was from ${nameOf(bobsSanta)}`)).toBeVisible();
+    await expect(page.getByRole('list', { name: 'The votes' })).toBeVisible();
     await expect(page.getByText('Nailed it!').first()).toBeVisible();
     await expect(page.getByText('1 of 1 guessed their Santa')).toBeVisible();
   });
@@ -82,6 +105,9 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
       // Nobody spins for the last one.
       if (i === 1) await presenter.getByRole('button', { name: 'Spin' }).click();
       await expect(presenter.getByText(`${i + 1} of 3`, { exact: true })).toBeVisible();
+      await presenter.getByRole('button', { name: 'Start the vote' }).click();
+      await presenter.getByRole('button', { name: 'Close the vote' }).click();
+      await expect(presenter.getByText('No votes')).toBeVisible();
       await presenter.getByRole('button', { name: 'Who was it from?' }).click();
       await expect(presenter.getByText(`From ${nameOf(santaOf(memberId))}`)).toBeVisible();
     }
@@ -101,7 +127,7 @@ test('the organizer switches Guess your Santa off in settings: the card goes', a
   await page.goto(`/g/${group.slug}/settings#gift-day`);
   const toggle = page.getByRole('switch', { name: 'Guess your Santa' });
   await expect(toggle).toBeChecked();
-  await expect(page.getByText(/each person's Santa is shown at their turn/)).toBeVisible();
+  await expect(page.getByText(/at each turn everyone votes on their phone/)).toBeVisible();
   await toggle.click();
   await expect(toggle).not.toBeChecked();
   await page.goto(`/g/${group.slug}`);

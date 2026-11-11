@@ -30,7 +30,7 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const next = () => {
     if (phase === 'intro') step('start');
     else if (phase === 'spin') setSpin({ turn: order.turn, status: spinStatus === 'idle' && !skipSpin ? 'spinning' : 'skipped' });
-    else if (phase === 'turn' && order.santaToShow) step('santa');
+    else if (phase === 'turn' && order.santaToShow) step(order.voteStep === 'ready' ? 'vote' : order.voteStep === 'open' ? 'tally' : 'santa');
     else if (phase === 'turn') step(oneByOne ? 'more' : 'last');
     else if (phase === 'reveal' && !view.reveal.revealed) reveal.mutate({ groupSlug, editionNumber });
     else if (phase === 'reveal') setShowEnd(true);
@@ -42,5 +42,7 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   // Guess your Santa (62): their Santa comes out before the turn can end.
   const santaToShow = phase === 'turn' && order.santaToShow;
   const last = oneByOne && phase === 'turn' && !counted && !santaToShow ? () => step('last') : undefined;
-  return { phase, spinStatus, onLanded, next, previous, last, counted, santaToShow, revealed: view.reveal.revealed, busy: isPending || reveal.isPending };
+  // Live voting (83) comes first: open the vote, close it, then the Santa.
+  const voteStep = santaToShow ? order.voteStep : null;
+  return { phase, spinStatus, onLanded, next, previous, last, counted, santaToShow, voteStep, revealed: view.reveal.revealed, busy: isPending || reveal.isPending };
 };
