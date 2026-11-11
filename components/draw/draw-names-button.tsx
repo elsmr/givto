@@ -19,6 +19,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { useId, useRef, useState } from 'react';
 import type { GroupData, GroupEdition } from '../group/group-data';
 import { DrawError } from './draw-error';
+import { DrawRules } from './draw-rules';
 import { useRefreshEdition } from './use-refresh-edition';
 
 /**
@@ -99,6 +100,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
           <DialogTitle>{t('confirm-title')}</DialogTitle>
           <DialogDescription>{t('confirm-description')}</DialogDescription>
         </DialogHeader>
+        <DrawRules group={group} edition={edition} />
         {leftOut.length > 0 && <p>{t('left-out', { names: format.list(leftOut) })}</p>}
         {run.error && <DrawError error={run.error} members={members} />}
         <DialogFooter>

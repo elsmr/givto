@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { UserPlus } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
+import { DrawRules } from './draw-rules';
 
 /**
  * Open edition (61): who's in and when names are drawn; the organizer invites (link, QR or email).
@@ -35,6 +36,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
             label={t('who-names', { count: people.length, names: format.list(people.map((person) => person.name)) })}
           />
         )}
+        <DrawRules group={group} edition={edition} />
         {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} locale={group.locale} joinLink={joinLink} />}
       </CardContent>
     </Card>

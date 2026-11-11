@@ -13,6 +13,13 @@
     "cancel": "Nog niet",
     "drawn": "Er is geloot!"
   },
+  "rules": {
+    "title": "Regels voor de loting",
+    "avoid-previous": "Niet dezelfde persoon als vorige keer",
+    "keep-apart": "Niet samen: {groups}",
+    "none": "Iedereen kan iedereen trekken.",
+    "edit": "Regels aanpassen"
+  },
   "draft": {
     "title": "Er is nog niets verstuurd",
     "description": "Kijk wie er meedoet en of de data kloppen, en open hem dan zodat mensen kunnen meedoen.",

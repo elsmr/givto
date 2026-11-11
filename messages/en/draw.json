@@ -13,6 +13,13 @@
     "cancel": "Not yet",
     "drawn": "Names drawn!"
   },
+  "rules": {
+    "title": "Draw rules",
+    "avoid-previous": "Not the same giftee as last time",
+    "keep-apart": "Keep apart: {groups}",
+    "none": "Anyone can draw anyone.",
+    "edit": "Edit the rules"
+  },
   "draft": {
     "title": "Nothing's sent yet",
     "description": "Check who's in and the dates, then open it so people can join.",
