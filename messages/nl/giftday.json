@@ -86,7 +86,8 @@
     "keys-one-by-one": "→ of spatie: nog meer · L: dat was de laatste · ← terug",
     "gift-of": "Cadeau {current} van {total}",
     "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
-    "keys-counted": "→ of spatie: volgende · ← terug"
+    "keys-counted": "→ of spatie: volgende · ← terug",
+    "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
   },
   "errors": {
     "NOT_DRAWN": "Er is nog niet geloot.",

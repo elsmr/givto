@@ -166,6 +166,19 @@ export const Edition = v.object({
   reveal: Reveal,
   /** Guess your Santa (62): organizer setting, absent = on. Off hides all guessing (the guesses stay stored). */
   guessing: v.optional(v.boolean()),
+  /**
+   * Champions and badges (86): what outlives the guesses (deleted with the edition messages), written when the edition
+   * becomes done, from only what was out then. Arrays, so account deletion can pull a person's entries.
+   */
+  results: v.optional(
+    v.object({
+      points: v.array(v.object({ memberId: Id, points: v.pipe(v.number(), v.integer(), v.minValue(0)) })),
+      /** Guessed their own Santa right. */
+      nailedIds: v.array(Id),
+      drawSize: v.pipe(v.number(), v.integer(), v.minValue(0)),
+      savedAt: v.date(),
+    })
+  ),
   /** iCalendar SEQUENCE (47), absent = 0: bumped when the calendar events change, so re-imports update instead of duplicating. */
   calendarSequence: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0))),
   createdAt: v.date(),

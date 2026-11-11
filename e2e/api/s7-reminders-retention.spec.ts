@@ -94,7 +94,8 @@ test('retention: messages after 3 months; old draws; orphan images', async ({ si
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const old = trio(olive, ann, bob);
   const oldGroup = groupDoc(olive, 'Old', old);
-  const past = editionDoc(oldGroup, 1, 'drawn', old, { giftDay: { date: today('UTC', -120) }, draw: circle(old) });
+  const results = { points: [{ memberId: old[1].id, points: 1 }], nailedIds: [old[1].id], drawSize: 3, savedAt: new Date() };
+  const past = editionDoc(oldGroup, 1, 'drawn', old, { giftDay: { date: today('UTC', -120) }, draw: circle(old), results });
   const recent = editionDoc(oldGroup, 2, 'drawn', old, { giftDay: { date: today('UTC', -2) }, draw: circle(old) });
   await db.groups.insertOne(oldGroup);
   await db.editions.insertMany([past, recent]);
@@ -124,6 +125,7 @@ test('retention: messages after 3 months; old draws; orphan images', async ({ si
   expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
   expect(await db.guesses.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent guess stays').toBe(1);
   expect(await db.votes.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent vote stays').toBe(1);
+  expect((await after(past)).results, 'champions and badges (86) outlive the guesses').toEqual(results);
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);
 });
 

@@ -1,9 +1,12 @@
 import { randomInt } from 'node:crypto';
 import { shuffle } from '../../draw';
+import { editionResults } from '../../guess-results';
 import { todayIn } from '../../local-date';
 import { isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
+import { guessesOf, santaStepOn } from '../guess/guesses';
 import { log } from '../log';
+import { isRevealed } from '../routers/giftday-view';
 
 /** UTC+14: no edition anywhere reaches its gift day before the local date here. */
 const FURTHEST_AHEAD_ZONE = 'Pacific/Kiritimati';
@@ -22,6 +25,23 @@ export const newUnwrapOrder = (memberIds: string[], now: Date): NonNullable<Edit
   memberIds: shuffle(memberIds, randomInt),
   shuffledAt: now,
 });
+
+/**
+ * Champions and badges (86): keeps the scores of `edition` (as it was before done) once done, from only what is out
+ * by then: the Santas shown at turns, or everyone with the big reveal on. Finished again after a reopen: written
+ * again, unless retention deleted the guesses by then.
+ */
+export const saveResults = async (db: Collections, edition: Edition, now: Date) => {
+  if ((await db.guesses.countDocuments({ editionId: edition._id }, { limit: 1 })) === 0) return;
+  const done = { ...edition, status: 'done' as const };
+  const assignments = edition.draw?.assignments ?? {};
+  const shown = santaStepOn(done) ? (edition.unwrapOrder?.progress?.santaShownIds ?? []) : [];
+  const results = editionResults(isRevealed(done) ? Object.keys(assignments) : shown, assignments, await guessesOf(db, done));
+  await db.editions.updateOne(
+    { _id: edition._id },
+    results.points.length > 0 ? { $set: { results: { ...results, savedAt: now } } } : { $unset: { results: true } }
+  );
+};
 
 /**
  * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron) or
@@ -55,7 +75,9 @@ export const runGiftDayTransitions = async (db: Collections, now: Date, editionI
       { _id: edition._id, status: edition.status },
       { $set: { status: next, ...changedAt, ...order, updatedAt: now } }
     );
-    if (result.modifiedCount > 0) moved[next].push(edition._id);
+    if (result.modifiedCount === 0) continue;
+    if (next === 'done') await saveResults(db, edition, now);
+    moved[next].push(edition._id);
   }
   if (moved.giftday.length + moved.done.length > 0) {
     log.info({ giftday: moved.giftday.length, done: moved.done.length }, 'gift day transitions');

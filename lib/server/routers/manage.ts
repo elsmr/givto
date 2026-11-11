@@ -4,7 +4,7 @@ import { LocalDate } from '../../schema/common';
 import { isBeforeDraw, isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
-import { newUnwrapOrder } from '../jobs/giftday';
+import { newUnwrapOrder, saveResults } from '../jobs/giftday';
 import { currentEdition } from '../membership';
 import { organizerEditionProcedure, router } from '../trpc';
 
@@ -74,6 +74,7 @@ export const finishEdition = async (db: Collections, edition: Edition, timeZone:
     }
   );
   if (saved.matchedCount === 0) throw new AppError('EDITION_CHANGED');
+  await saveResults(db, edition, now);
 };
 
 /**

@@ -36,7 +36,13 @@
       "removed": "Vertrokken"
     },
     "bounced": "E-mail kwam niet aan: check het adres",
-    "manage": "Mensen uitnodigen en beheren"
+    "manage": "Mensen uitnodigen en beheren",
+    "badges": {
+      "champion": "{count, plural, one {Kampioen} other {Kampioen ×#}}",
+      "backToBack": "{count, plural, one {Twee op rij} other {Twee op rij ×#}}",
+      "perfect": "{count, plural, one {Foutloos} other {Foutloos ×#}}",
+      "nailed": "{count, plural, one {Raak!} other {Raak! ×#}}"
+    }
   },
   "requests": {
     "title": "{count, plural, one {# persoon wil} other {# mensen willen}} meedoen",
@@ -136,7 +142,8 @@
     "current": "Huidige",
     "past": "Dit is {edition}, een eerdere editie.",
     "go-current": "Naar de huidige editie",
-    "not-found": "Deze editie bestaat niet."
+    "not-found": "Deze editie bestaat niet.",
+    "champions": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
   },
   "budget-chip": "Budget {budget}",
   "phase": {
