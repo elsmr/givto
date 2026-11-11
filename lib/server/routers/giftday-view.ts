@@ -3,6 +3,7 @@ import { isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Vote } from '../../schema/vote';
 import { santaStillHidden, unwrapState, voteStep, type GiftCounts } from '../../unwrap-turns';
+import { playerIds } from '../draw/rules';
 import { guessingOn, santaStepOn } from '../guess/guesses';
 
 /**
@@ -24,7 +25,7 @@ export const isRevealed = (edition: Edition) =>
 const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards, votes: Vote[]) => {
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const assignments = edition.draw?.assignments ?? {};
-  const inDraw = Object.keys(assignments);
+  const inDraw = playerIds(group, edition);
   const stored = edition.unwrapOrder?.memberIds ?? [];
   // People who left drop out; late joiners go last, so everyone still sees the same order.
   const order = edition.unwrapOrder

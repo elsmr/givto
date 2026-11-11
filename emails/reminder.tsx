@@ -12,10 +12,10 @@ export interface ReminderParts {
   wishlist?: { url: string; by?: string };
   /** Posted exchanges (80): add your postal address. */
   address?: { url: string; postBy?: string };
-  /** `postBy`: a posted exchange. */
-  gift?: { url: string; giftDay: string; postBy?: string };
-  /** To the organizer drawing by hand. `soon`: gift day is two weeks off (else: everyone invited is in). */
-  readyToDraw?: { url: string; people: number; giftDay?: string; soon: boolean };
+  /** `postBy`: a posted exchange. `whiteElephant` (88): bring one gift, nobody to shop for. */
+  gift?: { url: string; giftDay: string; postBy?: string; whiteElephant?: boolean };
+  /** To the organizer drawing by hand (locking in, for a white elephant). `soon`: gift day is two weeks off (else: everyone invited is in). */
+  readyToDraw?: { url: string; people: number; giftDay?: string; soon: boolean; whiteElephant?: boolean };
 }
 type ReminderProps = NoticeProps & ReminderParts;
 
@@ -23,8 +23,8 @@ const partSubjects = (t: EmailTranslator, { wishlist, address, gift, readyToDraw
   [
     wishlist && t('reminder.wishlist.subject'),
     address && t('reminder.address.subject'),
-    gift && (gift.postBy ? t('reminder.gift.subject-post', { date: gift.postBy }) : t('reminder.gift.subject')),
-    readyToDraw && t('reminder.ready.subject'),
+    gift && (gift.postBy ? t('reminder.gift.subject-post', { date: gift.postBy }) : gift.whiteElephant ? t('reminder.bring.subject') : t('reminder.gift.subject')),
+    readyToDraw && (readyToDraw.whiteElephant ? t('reminder.lock-in.subject') : t('reminder.ready.subject')),
   ].filter((part) => typeof part === 'string');
 
 /** "Add a few wishes · Got your gift yet? · Family" */
@@ -54,7 +54,13 @@ export const ReminderEmail = ({ locale, group, forName, unsubscribe, wishlist, a
       body: [t('reminder.address.body', { group }), ...(address.postBy ? [t('reminder.address.by', { date: address.postBy })] : [])],
       button: { href: address.url, label: t('reminder.address.button') },
     },
-    gift && {
+    gift?.whiteElephant && {
+      key: 'gift',
+      title: t('reminder.bring.title'),
+      body: [t('reminder.bring.body', { group, date: gift.giftDay })],
+      button: { href: gift.url, label: t('reminder.bring.button') },
+    },
+    gift && !gift.whiteElephant && {
       key: 'gift',
       title: gift.postBy ? t('reminder.gift.title-post') : t('reminder.gift.title'),
       body: [
@@ -63,7 +69,17 @@ export const ReminderEmail = ({ locale, group, forName, unsubscribe, wishlist, a
       ],
       button: { href: gift.url, label: t('reminder.gift.button') },
     },
-    readyToDraw && {
+    readyToDraw?.whiteElephant && {
+      key: 'ready',
+      title: t('reminder.lock-in.title'),
+      body: [
+        readyToDraw.soon && readyToDraw.giftDay
+          ? t('reminder.lock-in.body-soon', { group, date: readyToDraw.giftDay })
+          : t('reminder.lock-in.body', { group, count: readyToDraw.people }),
+      ],
+      button: { href: readyToDraw.url, label: t('reminder.lock-in.button') },
+    },
+    readyToDraw && !readyToDraw.whiteElephant && {
       key: 'ready',
       title: t('reminder.ready.title'),
       body: [

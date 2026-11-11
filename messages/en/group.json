@@ -5,6 +5,7 @@
     "draft": "Draft",
     "open": "Open to join",
     "drawn": "Names drawn",
+    "locked": "Locked in",
     "giftday": "Gift day",
     "done": "Done"
   },
@@ -150,6 +151,7 @@
     "label": "Where this Secret Santa is",
     "join": "Join",
     "draw": "Draw",
+    "lock-in": "Lock in",
     "shop": "Shop",
     "giftday": "Gift day",
     "done": "Done",

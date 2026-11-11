@@ -14,6 +14,7 @@
     "draft": "Nog niet verstuurd",
     "open": "Open",
     "drawn": "Geloot",
+    "locked": "Vastgelegd",
     "giftday": "Pakjesdag!",
     "done": "Afgelopen",
     "archived": "Gearchiveerd"
@@ -46,6 +47,10 @@
     "readyToDraw": {
       "text": "Iedereen is er: klaar om te loten",
       "action": "Loten"
+    },
+    "readyToLockIn": {
+      "text": "Iedereen is er: klaar om vast te leggen",
+      "action": "Vastleggen"
     },
     "draft": {
       "text": "Je volgende Secret Santa is nog niet verstuurd",

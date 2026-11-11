@@ -3,7 +3,7 @@ import { GroupWishlist } from '@/components/wishlist/group-wishlist';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
 import { editionPhase } from './edition-phase';
 import type { GroupData } from './group-data';
 import { GifteePanel } from './giftee-panel';
@@ -21,7 +21,10 @@ import { groupTabs, useGroupTab, type GroupTab } from './use-group-tab';
  */
 export const GroupView = ({ group }: { group: GroupData }) => {
   const { edition } = group;
-  const tabs: readonly GroupTab[] = edition && !isBeforeDraw(edition) ? groupTabs : groupTabs.filter((tab) => tab !== 'giftee');
+  // No giftee without a draw (88). Wishes are the group's, hidden while its current edition is a white elephant.
+  const noGiftee = !edition || isBeforeDraw(edition) || !drawsNames(edition);
+  const noWishes = group.editions[0]?.kind === 'whiteElephant';
+  const tabs: readonly GroupTab[] = groupTabs.filter((tab) => !(tab === 'giftee' && noGiftee) && !(tab === 'wishlist' && noWishes));
   const top = useRef<HTMLDivElement>(null);
   const [tab, setTab] = useGroupTab(tabs, top);
   const trpc = useTRPC();
@@ -40,7 +43,7 @@ export const GroupView = ({ group }: { group: GroupData }) => {
       <div ref={top} className="flex scroll-mt-4 flex-col gap-6">
         <GroupHeader group={group} />
         {edition && !edition.isCurrent && <PastEditionNotice slug={group.slug} title={edition.title} />}
-        {edition && <PhaseStepper phase={editionPhase(edition)} />}
+        {edition && <PhaseStepper phase={editionPhase(edition)} kind={edition.kind} />}
       </div>
       <GroupTabBar tabs={tabs} counts={{ wishlist: wishes.data?.filter((wish) => wish.shown).length, people: people.length }} />
       <TabsContent value="overview" className="mt-0">
@@ -51,9 +54,11 @@ export const GroupView = ({ group }: { group: GroupData }) => {
           <GifteePanel groupSlug={group.slug} edition={edition} />
         </TabsContent>
       )}
-      <TabsContent value="wishlist" className="mt-0">
-        <GroupWishlist groupSlug={group.slug} />
-      </TabsContent>
+      {tabs.includes('wishlist') && (
+        <TabsContent value="wishlist" className="mt-0">
+          <GroupWishlist groupSlug={group.slug} />
+        </TabsContent>
+      )}
       <TabsContent value="people" className="mt-0">
         <PeoplePanel group={group} />
       </TabsContent>

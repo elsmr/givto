@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { findStuckGivers } from '../../draw';
 import { todayIn, zonedInstant } from '../../local-date';
 import { LocalDate, MultiLine, Price } from '../../schema/common';
-import { checkEditionDates, EditionTitle, GiftDay, isBeforeDraw, type Edition } from '../../schema/edition';
+import { checkEditionDates, drawsNames, EditionKind, EditionTitle, GiftDay, isBeforeDraw, type Edition } from '../../schema/edition';
 import { ExchangeMode, MIN_PARTICIPANTS } from '../../schema/group';
 import { allRules, drawParticipantIds, drawRules } from '../draw/rules';
 import { AppError } from '../errors';
@@ -15,6 +15,8 @@ export const DRAW_TIME = '09:00';
 export const EditionSettingsInput = v.pipe(
   v.object({
     title: EditionTitle,
+    /** Absent: unchanged. Changes only before the draw (or lock-in, 88). */
+    kind: v.optional(EditionKind),
     giftDay: v.optional(GiftDay),
     /** Local date of the scheduled draw; absent = the organizer draws by hand. */
     drawOn: v.optional(LocalDate),
@@ -33,10 +35,17 @@ const optionalFields = ['giftDay', 'drawAt', 'wishlistBy', 'postBy', 'budget', '
  * Dates (28): a changed date can't be in the past, the draw is before gift day, wishlists and
  * posting no later than gift day (schema). The schedule is fixed once drawn. Done editions are read-only.
  */
-export const updateEdition = organizerEditionProcedure.input(EditionSettingsInput).mutation(async ({ ctx, input }) => {
+export const updateEdition = organizerEditionProcedure.input(EditionSettingsInput).mutation(async ({ ctx, input: given }) => {
   const { edition } = ctx;
   const { timeZone } = ctx.group;
   if (edition.status === 'done') throw new AppError('EDITION_CLOSED');
+  const kind = given.kind ?? edition.kind ?? 'secretSanta';
+  const kindChanged = kind !== (edition.kind ?? 'secretSanta');
+  if (kindChanged && !isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
+  const toNoDraw = kindChanged && !drawsNames({ kind });
+  // No draw, no draw date or wishlist deadline (88); a white elephant is played together, so not by post either.
+  const undrawn = drawsNames({ kind }) ? given : { ...given, drawOn: undefined, wishlistBy: undefined };
+  const input = kind === 'whiteElephant' ? { ...undrawn, exchangeMode: 'inPerson' as const, postBy: undefined } : undrawn;
   const today = todayIn(timeZone);
   const drawOn = edition.drawAt && todayIn(timeZone, edition.drawAt);
   const movedIntoPast = (next: string | undefined, current: string | undefined) =>
@@ -54,6 +63,7 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
 
   const next = {
     title: input.title,
+    ...(kindChanged && { kind }),
     exchangeMode: input.exchangeMode,
     giftDay: input.giftDay && compactGiftDay(input.giftDay),
     drawAt: input.drawOn ? zonedInstant(input.drawOn, DRAW_TIME, timeZone) : undefined,
@@ -76,9 +86,11 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
       $set: {
         ...set,
         ...(calendarChanged && { calendarSequence: (edition.calendarSequence ?? 0) + 1 }),
+        // Nobody to reveal, and one gift each in a white elephant.
+        ...(toNoDraw && { reveal: { enabled: false } }),
         updatedAt: new Date(),
       },
-      ...(Object.keys(unset).length > 0 && { $unset: unset }),
+      ...((Object.keys(unset).length > 0 || toNoDraw) && { $unset: { ...unset, ...(toNoDraw && { unwrapMode: true }) } }),
     }
   );
   if (saved.matchedCount === 0) throw new AppError('EDITION_CHANGED');

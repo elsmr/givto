@@ -11,7 +11,7 @@ import { finishEdition } from './manage';
 export const editionRouter = router({
   /**
    * The next edition as a draft: every joined member ticked, the last one's settings but no dates,
-   * "not the same as last time" on when there was a draw. One runs at a time: a drawn or gift day
+   * "not the same as last time" on when there was a draw, the same kind (88). One runs at a time: a drawn or gift day
    * edition is finished first. Labelled with this year; the title gets a number when it's taken.
    * Nothing is sent until it opens.
    */
@@ -27,7 +27,8 @@ export const editionRouter = router({
       groupId: ctx.group._id,
       number: current.number + 1,
       year,
-      title: input.title ?? defaultEditionTitle(year, await ctx.db.editions.distinct('title', { groupId: ctx.group._id })),
+      title: input.title ?? defaultEditionTitle(year, await ctx.db.editions.distinct('title', { groupId: ctx.group._id }), current.kind),
+      ...(current.kind && { kind: current.kind }),
       exchangeMode: current.exchangeMode,
       ...(current.budget && { budget: current.budget }),
       avoidPreviousGiftees: hadDraw,

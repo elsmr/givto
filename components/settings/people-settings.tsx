@@ -5,7 +5,7 @@ import { JoinLinkSettings } from '@/components/group/join-link-settings';
 import { FieldError } from '@/components/ui/field';
 import { SettingsGroup, SettingsRow } from '@/components/ui/settings-group';
 import { useTRPC } from '@/lib/client/trpc';
-import { isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { ChevronDown, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -71,7 +71,7 @@ const PeopleList = ({ group, edition }: { group: GroupData; edition: GroupEditio
 
   return (
     <div className="flex flex-col gap-3">
-      {!beforeDraw && <p className="text-sm text-muted">{t('people.drawn')}</p>}
+      {!beforeDraw && <p className="text-sm text-muted">{!drawsNames(edition) ? t('people.locked') : t('people.drawn')}</p>}
       {setParticipants.error && <FieldError>{t(`errors.${settingsErrorKey(setParticipants.error)}`)}</FieldError>}
       <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
         {people.map((person) => (

@@ -33,7 +33,7 @@ export const NewEditionDialog = ({ group, edition, onClose }: NewEditionDialogPr
   const router = useRouter();
   const refresh = useRefreshEdition(group.slug);
   const [title, setTitle] = useState(() =>
-    defaultEditionTitle(Number(todayIn(edition.timeZone).slice(0, 4)), group.editions.map((e) => e.title))
+    defaultEditionTitle(Number(todayIn(edition.timeZone).slice(0, 4)), group.editions.map((e) => e.title), edition.kind)
   );
   const start = useMutation(
     trpc.edition.startNext.mutationOptions({

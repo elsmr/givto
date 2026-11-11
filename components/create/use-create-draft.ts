@@ -1,7 +1,9 @@
+import type { EditionKind } from '@/lib/schema/edition';
 import type { ExchangeMode } from '@/lib/schema/group';
 import { useEffect, useState } from 'react';
 
 export type CreateDraft = {
+  kind: EditionKind;
   name: string;
   giftDate: string;
   giftTime: string;
@@ -20,6 +22,7 @@ export type EditionDetailsDraft = Pick<
 >;
 
 export const emptyDraft: CreateDraft = {
+  kind: 'secretSanta',
   name: '',
   giftDate: '',
   giftTime: '',

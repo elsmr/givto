@@ -247,3 +247,57 @@ test('reduced motion: the presenter still shows every name and pair', async ({ p
   await expect(pairs).toHaveCount(3);
   for (const pair of giftDay.pairs) await expect(pairs.filter({ hasText: pair })).toHaveCSS('opacity', '1');
 });
+
+test('white elephant: create, lock in, and the presenter picks everyone once, without Santas', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  await signInPage(page, ann);
+
+  await test.step('create: no posting question', async () => {
+    await page.goto('/new');
+    await page.getByLabel('What are you organizing?').selectOption('whiteElephant');
+    await page.getByLabel("What's your white elephant called?").fill('Swap');
+    await expect(page.getByRole('button', { name: 'Sending gifts by post?' })).toHaveCount(0);
+    await page.getByLabel("When's gift day?").fill('2099-12-24');
+    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByLabel('Your name').fill('Ann');
+    await page.getByRole('button', { name: 'Create white elephant' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Swap is ready!' })).toBeVisible();
+  });
+  const link = new URL(await page.getByLabel('Join link').inputValue());
+  const slug = link.pathname.split('/')[2];
+  const at = { groupSlug: slug, editionNumber: 1 };
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await user.trpc.mutate('join.accept', { groupSlug: slug, token: link.searchParams.get('token')!, name }));
+  }
+
+  await test.step('lock in: no giftee or wishlist, nothing to shop for', async () => {
+    await page.goto(`/g/${slug}`);
+    await expect(page.getByRole('list', { name: 'Where this Secret Santa is' }).getByText('Lock in')).toBeVisible();
+    await expect(page.getByRole('tab', { name: /wishlist/i })).toHaveCount(0);
+    await button(page, 'Lock in').click();
+    await expect(page.getByRole('dialog', { name: 'Lock it in now?' })).toBeVisible();
+    await page.getByRole('dialog').getByRole('button', { name: 'Lock in' }).click();
+    await expect(page.getByText('Locked in!')).toBeVisible();
+    await expect(page.getByRole('heading', { name: "It's locked in" })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'My giftee' })).toHaveCount(0);
+    await expect(page.getByRole('tab', { name: /wishlist/i })).toHaveCount(0);
+  });
+
+  await test.step('the presenter picks each person once, then the end', async () => {
+    ok(await ann.trpc.mutate('manage.startGiftDay', at));
+    await openPresenter(page, slug);
+    await skipSpin(page);
+    await button(page, 'Next').click();
+    const went: string[] = [];
+    for (let turn = 1; turn <= 3; turn++) {
+      if (turn < 3) await button(page, 'Spin').click();
+      await expect(page.getByText(`${turn} of 3`, { exact: true })).toBeVisible();
+      for (const name of ['Ann', 'Bob', 'Cee']) if (!went.includes(name) && (await shownName(page, name).isVisible())) went.push(name);
+      expect(went).toHaveLength(turn);
+      await expect(page.getByText('Who was it from?')).toHaveCount(0);
+      await button(page, 'Next').click();
+    }
+    await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
+    expect(went.toSorted()).toEqual(['Ann', 'Bob', 'Cee']);
+  });
+});

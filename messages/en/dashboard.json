@@ -14,6 +14,7 @@
     "draft": "Not sent yet",
     "open": "Open",
     "drawn": "Names drawn",
+    "locked": "Locked in",
     "giftday": "Gift day!",
     "done": "Done",
     "archived": "Archived"
@@ -46,6 +47,10 @@
     "readyToDraw": {
       "text": "Everyone's in: ready to draw names",
       "action": "Draw"
+    },
+    "readyToLockIn": {
+      "text": "Everyone's in: ready to lock in",
+      "action": "Lock in"
     },
     "draft": {
       "text": "Your next Secret Santa isn't sent yet",

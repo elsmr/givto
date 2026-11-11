@@ -7,6 +7,7 @@
     "code": "Check je e-mail"
   },
   "create": "Secret Santa aanmaken",
+  "create-white-elephant": "White elephant aanmaken",
   "errors": {
     "RATE_LIMITED": "Dat zijn veel Secret Santa's voor één dag. Probeer het morgen opnieuw.",
     "DATE_IN_PAST": "Pakjesdag kan niet in het verleden liggen.",
@@ -15,7 +16,13 @@
     "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
   },
   "details": {
+    "kind": {
+      "label": "Wat organiseer je?",
+      "secretSanta": "Secret Santa: loten wie voor wie koopt",
+      "whiteElephant": "White elephant: iedereen brengt een cadeau mee, zonder loting"
+    },
     "name": "Hoe heet je Secret Santa?",
+    "name-white-elephant": "Hoe heet je white elephant?",
     "name-placeholder": "Familie",
     "next": "Volgende",
     "gift-day": {

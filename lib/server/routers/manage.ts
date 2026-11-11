@@ -1,8 +1,10 @@
 import * as v from 'valibot';
 import { todayIn } from '../../local-date';
 import { LocalDate } from '../../schema/common';
-import { isBeforeDraw, isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
+import { drawsNames, isBeforeDraw, isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
+import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
+import { playerIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { newUnwrapOrder, saveResults } from '../jobs/giftday';
 import { currentEdition } from '../membership';
@@ -34,9 +36,9 @@ const datesToday = (edition: Edition, today: string) => {
  * today, so the scheduled job keeps it there today and finishes it tomorrow. The unwrap order is
  * shuffled if nobody has.
  */
-const toGiftDayToday = async (db: Collections, edition: Edition, timeZone: string, from: EditionStatus) => {
+const toGiftDayToday = async (db: Collections, group: Group, edition: Edition, from: EditionStatus) => {
   if (edition.status !== from) throw wrongStatus(edition);
-  if (!edition.draw) throw new AppError('NOT_DRAWN');
+  if (drawsNames(edition) && !edition.draw) throw new AppError('NOT_DRAWN');
   const now = new Date();
   const saved = await db.editions.updateOne(
     { _id: edition._id, status: from },
@@ -44,8 +46,8 @@ const toGiftDayToday = async (db: Collections, edition: Edition, timeZone: strin
       $set: {
         status: 'giftday',
         'statusChangedAt.giftday': now,
-        ...datesToday(edition, todayIn(timeZone, now)),
-        ...(!edition.unwrapOrder && { unwrapOrder: newUnwrapOrder(Object.keys(edition.draw.assignments), now) }),
+        ...datesToday(edition, todayIn(group.timeZone, now)),
+        ...(!edition.unwrapOrder && { unwrapOrder: newUnwrapOrder(playerIds(group, edition), now) }),
         updatedAt: now,
       },
       $unset: { 'statusChangedAt.done': true },
@@ -84,7 +86,7 @@ export const finishEdition = async (db: Collections, edition: Edition, timeZone:
 export const manageRouter = router({
   /** drawn → giftday now, without waiting for the gift day date (or when there is none). */
   startGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
-    await toGiftDayToday(ctx.db, ctx.edition, ctx.group.timeZone, 'drawn');
+    await toGiftDayToday(ctx.db, ctx.group, ctx.edition, 'drawn');
     return { ok: true };
   }),
 
@@ -139,7 +141,7 @@ export const manageRouter = router({
   reopenGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
     const latest = await currentEdition(ctx.db, ctx.group._id);
     if (latest?._id !== ctx.edition._id) throw new AppError('EDITION_CLOSED');
-    await toGiftDayToday(ctx.db, ctx.edition, ctx.group.timeZone, 'done');
+    await toGiftDayToday(ctx.db, ctx.group, ctx.edition, 'done');
     return { ok: true };
   }),
 });

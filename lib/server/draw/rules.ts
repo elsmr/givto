@@ -1,6 +1,6 @@
 import { findStuckGivers, type Exclusion } from '../../draw';
 import { toExclusions } from '../../exclusions';
-import type { Edition } from '../../schema/edition';
+import { drawsNames, type Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
@@ -12,6 +12,10 @@ export const drawParticipantIds = (group: Group, edition: Edition): string[] => 
     .filter((p) => p.participates && p.status === 'joined' && joined.has(p.memberId))
     .map((p) => p.memberId);
 };
+
+/** Who unwraps on gift day (32): the draw's Santas, or everyone in when the kind has no draw (88). */
+export const playerIds = (group: Group, edition: Edition): string[] =>
+  drawsNames(edition) ? Object.keys(edition.draw?.assignments ?? {}) : drawParticipantIds(group, edition);
 
 export interface DrawRules {
   /** Keep-apart rows (households) and older keep-apart pairs (26). */

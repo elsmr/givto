@@ -26,6 +26,7 @@ export const GiftDayPanel = ({ group, edition }: { group: GroupData; edition: Gr
         meId={group.me.memberId}
         canShuffle={manage && status !== 'done'}
         canPresent={manage && status !== 'giftday'}
+        showMode={edition.kind !== 'whiteElephant'}
       />
       {manage && guessing && status !== 'done' && <GuessingNote groupSlug={group.slug} />}
     </DisclosureCard>

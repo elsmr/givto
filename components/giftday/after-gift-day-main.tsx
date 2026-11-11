@@ -10,7 +10,7 @@ export const AfterGiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: st
 
   return (
     <>
-      {edition.isCurrent && <HowDidItGoCard groupSlug={groupSlug} />}
+      {edition.isCurrent && edition.kind !== 'whiteElephant' && <HowDidItGoCard groupSlug={groupSlug} />}
       {giftDay.data && <BigRevealCard reveal={giftDay.data.reveal} guessing={giftDay.data.guessing} />}
     </>
   );

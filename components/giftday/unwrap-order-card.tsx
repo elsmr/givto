@@ -18,10 +18,12 @@ type UnwrapOrderCardProps = {
   meId: string;
   canShuffle: boolean;
   canPresent: boolean;
+  /** One gift each (white elephant, 88): no mode to show or pick. */
+  showMode: boolean;
 };
 
 /** The unwrap order (32): a surprise until the presenter spins, so only who's unwrapping now and who already went; and the mode. */
-export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, canShuffle, canPresent }: UnwrapOrderCardProps) => {
+export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, canShuffle, canPresent, showMode }: UnwrapOrderCardProps) => {
   const t = useTranslations('giftday.order');
   const inProgress = Boolean(order?.started && !order.finished);
 
@@ -51,13 +53,14 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, c
             </ol>
           </div>
         )}
-        {canShuffle ? (
-          <UnwrapModeSetting groupSlug={groupSlug} editionNumber={editionNumber} mode={mode} inProgress={inProgress} />
-        ) : (
-          <p className="text-sm text-muted">
-            {t(`modes.${mode}`)}: {t(`mode-help.${mode}`)}
-          </p>
-        )}
+        {showMode &&
+          (canShuffle ? (
+            <UnwrapModeSetting groupSlug={groupSlug} editionNumber={editionNumber} mode={mode} inProgress={inProgress} />
+          ) : (
+            <p className="text-sm text-muted">
+              {t(`modes.${mode}`)}: {t(`mode-help.${mode}`)}
+            </p>
+          ))}
         {(canShuffle || canPresent) && (
           <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
             {canShuffle && <ShuffleButton groupSlug={groupSlug} editionNumber={editionNumber} again={Boolean(order)} />}

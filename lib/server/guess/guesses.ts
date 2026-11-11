@@ -1,10 +1,10 @@
 import type { Boards } from '../../guess-results';
-import { isFromGiftDay, type Edition } from '../../schema/edition';
+import { drawsNames, isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Guess } from '../../schema/guess';
 import type { Collections } from '../db';
 
-/** Guess your Santa (62) is on unless the organizer switched it off. */
-export const guessingOn = (edition: Edition) => edition.guessing !== false;
+/** Guess your Santa (62) is on unless the organizer switched it off, or there's no Santa to guess (88). */
+export const guessingOn = (edition: Edition) => edition.guessing !== false && drawsNames(edition);
 
 /** Guessing is open while shopping, closed once gift day starts (by date or by hand); back to shopping opens it again. */
 export const guessingOpen = (edition: Edition) => guessingOn(edition) && edition.status === 'drawn';

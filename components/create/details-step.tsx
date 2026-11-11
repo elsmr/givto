@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { fieldIssue, type FieldIssue } from '../group/field-issue';
 import { BudgetFields } from './budget-fields';
-import { ExchangeField, GiftDayFields } from './gift-day-fields';
+import { ExchangeField, GiftDayFields, KindField } from './gift-day-fields';
 import type { CreateDraft } from './use-create-draft';
 
 type DetailsStepProps = {
@@ -19,7 +19,10 @@ type DetailsStepProps = {
   onNext: () => void;
 };
 
-/** Step 1: name the Secret Santa. Gift day is optional; time, budget and posting only show when asked for. */
+/**
+ * Step 1: what kind (88) and its name. Gift day is optional; time, budget and posting only show when asked for.
+ * A white elephant is played together, so it doesn't ask about posting.
+ */
 export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNext }: DetailsStepProps) => {
   const t = useTranslations('create.details');
   const tIssues = useTranslations('group.issues');
@@ -35,8 +38,9 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
   return (
     <form onSubmit={submit} className="flex flex-col gap-8">
       <FieldGroup>
+        <KindField kind={draft.kind} onChange={(kind) => onChange({ kind })} />
         <Field data-invalid={nameIssue ? 'true' : undefined}>
-          <FieldLabel htmlFor="group-name">{t('name')}</FieldLabel>
+          <FieldLabel htmlFor="group-name">{draft.kind === 'whiteElephant' ? t('name-white-elephant') : t('name')}</FieldLabel>
           <Input
             id="group-name"
             required
@@ -51,7 +55,7 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
         </Field>
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
         <BudgetFields draft={draft} onChange={onChange} />
-        <ExchangeField draft={draft} onChange={onChange} />
+        {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={onChange} />}
         <FieldDescription>{t('later')}</FieldDescription>
       </FieldGroup>
       <Button type="submit" size="lg" className="xs:self-start" disabled={busy}>

@@ -25,7 +25,7 @@ const memberEmails = async (db: Collections, group: Group): Promise<Map<string, 
   );
 };
 
-type EditionListItem = Pick<Edition, 'number' | 'title' | 'status' | 'results'>;
+type EditionListItem = Pick<Edition, 'number' | 'title' | 'kind' | 'status' | 'results'>;
 
 export const groupView = async (
   db: Collections,
@@ -59,9 +59,10 @@ export const groupView = async (
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,
     /** Newest first; the group home lists them once there's history (33). `champions`: names, shared on a tie (86). */
-    editions: editions.map(({ number, title, status, results }) => ({
+    editions: editions.map(({ number, title, kind, status, results }) => ({
       number,
       title,
+      kind: kind ?? 'secretSanta',
       status,
       champions: results ? champions(results.points).map(nameOf) : [],
     })),
@@ -70,6 +71,7 @@ export const groupView = async (
       isCurrent: edition.number === editions[0]?.number,
       year: edition.year,
       title: edition.title,
+      kind: edition.kind ?? 'secretSanta',
       status: edition.status,
       timeZone: group.timeZone,
       giftDay: edition.giftDay,

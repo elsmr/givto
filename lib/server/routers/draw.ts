@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
-import { drawEdition, redrawEdition } from '../draw/run';
+import { drawEdition, lockInEdition, redrawEdition } from '../draw/run';
 import { AppError } from '../errors';
 import { runDueDraws } from '../jobs/draws';
 import { testHooksEnabled } from '../test-hooks';
@@ -11,6 +11,12 @@ export const drawRouter = router({
   /** "Draw names" now; refuses with the stuck people's ids when the rules make it impossible. */
   run: organizerEditionProcedure.mutation(async ({ ctx }) => {
     await drawEdition(ctx.db, ctx.group, ctx.edition);
+    return { ok: true };
+  }),
+
+  /** White elephant (88): "Lock in" instead of drawing names. */
+  lockIn: organizerEditionProcedure.mutation(async ({ ctx }) => {
+    await lockInEdition(ctx.db, ctx.group, ctx.edition);
     return { ok: true };
   }),
 

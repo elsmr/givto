@@ -2,7 +2,8 @@
   "meta": {
     "title": "{organizer} invited you to {group}",
     "generic-title": "You're invited to a Secret Santa",
-    "description": "Join the Secret Santa on Givto: add your wishlist and find out who you're buying for."
+    "description": "Join the Secret Santa on Givto: add your wishlist and find out who you're buying for.",
+    "description-white-elephant": "Join the white elephant on Givto: everyone brings one gift, then picks or steals one on gift day."
   },
   "unavailable": {
     "title": "This link doesn't work anymore",
@@ -15,6 +16,7 @@
   "intro": {
     "title": "You're invited!",
     "description": "Join the Secret Santa: add your wishlist and find out who you're buying for.",
+    "description-white-elephant": "Join the white elephant: everyone brings one gift, then picks or steals one on gift day.",
     "approval": "The organizer lets people in, so you'll be in once they've said yes.",
     "organizer": "Organizer: {name}",
     "gift-day": "Gift day {date}"

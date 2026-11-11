@@ -13,8 +13,9 @@ import { toast } from '@/components/ui/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useTRPC } from '@/lib/client/trpc';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
+import { drawsNames } from '@/lib/schema/edition';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Shuffle } from 'lucide-react';
+import { Lock, Shuffle } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useId, useRef, useState } from 'react';
 import type { GroupData, GroupEdition } from '../group/group-data';
@@ -23,11 +24,13 @@ import { DrawRules } from './draw-rules';
 import { useRefreshEdition } from './use-refresh-edition';
 
 /**
- * Organizer, open edition: "Draw names" now, after a confirmation that says who's not in (34, 64).
- * Too few people: disabled, with how many more as its tooltip and description.
+ * Organizer, open edition: "Draw names" now, after a confirmation that says who's not in (34, 64); "Lock in" for a
+ * white elephant (88), which has no draw. Too few people: disabled, with how many more as its tooltip and description.
  */
 export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
-  const t = useTranslations('draw.before');
+  const lockIn = !drawsNames(edition);
+  const t = useTranslations(lockIn ? 'draw.lock-in' : 'draw.before');
+  const Icon = lockIn ? Lock : Shuffle;
   const reasonId = useId();
   const missing = MIN_PARTICIPANTS - group.members.filter((m) => edition.participantIds.includes(m.id)).length;
   // In the group but not in this draw (invited, asking to join, sitting out): the draw doesn't wait for them.
@@ -43,18 +46,17 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
   const drawn = useRef(false);
   // The button goes once the edition is drawn. So: load what the drawn page shows first (no
   // skeletons), close with the exit animation, and only then let the page switch to drawn.
-  const run = useMutation(
-    trpc.draw.run.mutationOptions({
-      onSuccess: async () => {
-        await Promise.all([
-          queryClient.prefetchQuery({ ...trpc.draw.mine.queryOptions(input), staleTime: 0 }),
-          queryClient.prefetchQuery({ ...trpc.giftday.get.queryOptions(input), staleTime: 0 }),
-        ]);
-        drawn.current = true;
-        setOpen(false);
-      },
-    })
-  );
+  const onSuccess = async () => {
+    await Promise.all([
+      queryClient.prefetchQuery({ ...trpc.draw.mine.queryOptions(input), staleTime: 0 }),
+      queryClient.prefetchQuery({ ...trpc.giftday.get.queryOptions(input), staleTime: 0 }),
+    ]);
+    drawn.current = true;
+    setOpen(false);
+  };
+  const draw = useMutation(trpc.draw.run.mutationOptions({ onSuccess }));
+  const lock = useMutation(trpc.draw.lockIn.mutationOptions({ onSuccess }));
+  const run = lockIn ? lock : draw;
   const onClosed = async () => {
     if (!drawn.current) return;
     drawn.current = false;
@@ -68,7 +70,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
       <Tooltip>
         <TooltipTrigger render={<span className="inline-flex" />}>
           <Button focusableWhenDisabled disabled aria-describedby={reasonId}>
-            <Shuffle aria-hidden="true" />
+            <Icon aria-hidden="true" />
             {t('draw')}
           </Button>
           <span id={reasonId} className="sr-only">
@@ -92,7 +94,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
       }}
     >
       <DialogTrigger render={<Button />}>
-        <Shuffle aria-hidden="true" />
+        <Icon aria-hidden="true" />
         {t('draw')}
       </DialogTrigger>
       <DialogContent>
@@ -100,7 +102,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
           <DialogTitle>{t('confirm-title')}</DialogTitle>
           <DialogDescription>{t('confirm-description')}</DialogDescription>
         </DialogHeader>
-        <DrawRules group={group} edition={edition} />
+        {!lockIn && <DrawRules group={group} edition={edition} />}
         {leftOut.length > 0 && <p>{t('left-out', { names: format.list(leftOut) })}</p>}
         {run.error && <DrawError error={run.error} members={members} />}
         <DialogFooter>

@@ -164,6 +164,19 @@
       "body-soon": "Gift day for “{group}” is {date} and names aren't drawn yet. Draw them now, so everyone has time to shop.",
       "late": "Anyone who joins after the draw still gets someone to buy for.",
       "button": "Draw names"
+    },
+    "bring": {
+      "subject": "Bring a gift",
+      "title": "Bring a gift",
+      "body": "Gift day for “{group}” is {date}. Bring one wrapped gift: on gift day everyone picks one, or steals one.",
+      "button": "Open the group"
+    },
+    "lock-in": {
+      "subject": "Ready to lock in",
+      "title": "Ready to lock in",
+      "body": "Everyone you invited by email has joined “{group}”: {count, plural, one {# person is} other {# people are}} in. Lock it in whenever you're ready; anyone who joins later is still in.",
+      "body-soon": "Gift day for “{group}” is {date} and it isn't locked in yet. Lock it in now, so everyone knows to bring a gift.",
+      "button": "Lock in"
     }
   },
   "reminder-gift-day": {

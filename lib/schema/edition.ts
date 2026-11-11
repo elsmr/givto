@@ -9,17 +9,31 @@ export type EditionStatus = v.InferOutput<typeof EditionStatus>;
 
 /** People can still join, and the participants and keep-apart rules can change. */
 export const isBeforeDraw = ({ status }: { status: EditionStatus }) => status === 'draft' || status === 'open';
-/** From the draw until gift day is over: `edition.draw` is the live result. */
+/** From the draw (or lock-in, 88) until gift day is over: `edition.draw` is the live result when the kind draws names. */
 export const isDrawn = ({ status }: { status: EditionStatus }) => status === 'drawn' || status === 'giftday';
 /** Gift day has started (by date or by hand), also once it's over. */
 export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status === 'giftday' || status === 'done';
+
+/**
+ * secretSanta: names are drawn. whiteElephant (88): everyone brings one gift, no draw; the edition is locked in
+ * instead (status `drawn` without `draw`), and gift day's reel picks who chooses next. Absent = secretSanta.
+ */
+export const EditionKind = v.picklist(['secretSanta', 'whiteElephant']);
+export type EditionKind = v.InferOutput<typeof EditionKind>;
+
+/** Everything that hangs off the draw (giftees, tips, Q&A, guessing, the big reveal) only exists for these. */
+export const drawsNames = ({ kind }: { kind?: EditionKind }) => (kind ?? 'secretSanta') === 'secretSanta';
+
+/** Kind names stay English in Dutch too, like "Secret Santa". */
+const kindTitles: Record<EditionKind, string> = { secretSanta: 'Secret Santa', whiteElephant: 'White elephant' };
 
 /** e.g. "Secret Santa 2026". */
 export const EditionTitle = SingleLine(80);
 
 /** "Secret Santa 2026", or "Secret Santa 2026 (2)", "(3)" … when the group has that title already (77). */
-export const defaultEditionTitle = (year: number, takenTitles: string[]): string => {
-  const numbered = (n: number) => (n === 1 ? `Secret Santa ${year}` : `Secret Santa ${year} (${n})`);
+export const defaultEditionTitle = (year: number, takenTitles: string[], kind: EditionKind = 'secretSanta'): string => {
+  const title = `${kindTitles[kind]} ${year}`;
+  const numbered = (n: number) => (n === 1 ? title : `${title} (${n})`);
   return Array.from({ length: takenTitles.length + 1 }, (_, i) => numbered(i + 1)).find((title) => !takenTitles.includes(title))!;
 };
 
@@ -106,6 +120,7 @@ export const Reveal = v.object({
 /** Fields the organizer edits. All dates are local dates in the group's time zone. */
 export const EditionFields = v.object({
   title: EditionTitle,
+  kind: v.optional(EditionKind),
   giftDay: v.optional(GiftDay),
   /** Scheduled draw (an instant, for the scheduler); absent = the organizer draws manually. */
   drawAt: v.optional(v.date()),
