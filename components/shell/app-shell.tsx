@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
+import { ViewTransition, type ReactNode } from 'react';
 import { AppNav } from './app-nav';
 import { Footer } from './footer';
 import { Header } from './header';
@@ -19,14 +19,18 @@ const SkipLink = () => {
   );
 };
 
+// Named, because React only runs enter/exit for a ViewTransition with no DOM element above it in
+// the swapped tree; each page has one <main>, so the old and new ones always pair up.
 const Main = ({ children }: { children: ReactNode }) => (
-  <main
-    id="main"
-    tabIndex={-1}
-    className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 outline-none sm:px-6 sm:py-12"
-  >
-    {children}
-  </main>
+  <ViewTransition name="page" share="page" default="none">
+    <main
+      id="main"
+      tabIndex={-1}
+      className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 outline-none sm:px-6 sm:py-12"
+    >
+      {children}
+    </main>
+  </ViewTransition>
 );
 
 /**

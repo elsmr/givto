@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { applyTheme, storedTheme, storeTheme, themeChoices, type ThemeChoice } from './theme';
 
 const icons = { system: Monitor, light: Sun, dark: Moon };
@@ -16,9 +17,15 @@ export const ThemeSelect = () => {
   useEffect(() => setChoice(storedTheme()), []);
 
   const choose = (next: ThemeChoice) => {
-    storeTheme(next);
-    applyTheme();
-    setChoice(next);
+    const update = () =>
+      flushSync(() => {
+        storeTheme(next);
+        applyTheme();
+        setChoice(next);
+      });
+    // A view transition crossfades the page into the new theme and slides the highlight across.
+    if (document.startViewTransition) document.startViewTransition(update);
+    else update();
   };
 
   return (
@@ -32,7 +39,7 @@ export const ThemeSelect = () => {
           return (
             <label
               key={option}
-              className="relative flex min-h-11 flex-1 basis-0 cursor-pointer flex-col items-center justify-center gap-0.5 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold hover:bg-surface has-checked:-translate-x-0.5 has-checked:-translate-y-0.5 has-checked:border-outline has-checked:bg-surface has-checked:shadow-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid sm:flex-row sm:gap-2 sm:text-sm"
+              className="relative flex min-h-11 flex-1 basis-0 cursor-pointer flex-col items-center justify-center gap-0.5 border-2 border-transparent px-1 py-1.5 text-center text-xs leading-tight font-bold not-has-checked:hover:bg-surface has-checked:-translate-x-0.5 has-checked:-translate-y-0.5 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid sm:flex-row sm:gap-2 sm:text-sm"
             >
               <input
                 type="radio"
@@ -42,8 +49,21 @@ export const ThemeSelect = () => {
                 onChange={() => choose(option)}
                 className="sr-only"
               />
-              <Icon aria-hidden="true" className="size-5 shrink-0" />
-              {t(`theme.${option}`)}
+              {choice === option && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -inset-0.5 border-2 border-outline bg-surface shadow-sm"
+                  style={{ viewTransitionName: 'theme-choice' }}
+                />
+              )}
+              {/* Its own layer, painted after the highlight's, so the label stays on top while it slides. */}
+              <span
+                className="relative flex flex-col items-center gap-0.5 sm:flex-row sm:gap-2"
+                style={{ viewTransitionName: `theme-${option}` }}
+              >
+                <Icon aria-hidden="true" className="size-5 shrink-0" />
+                {t(`theme.${option}`)}
+              </span>
             </label>
           );
         })}
