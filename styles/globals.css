@@ -197,6 +197,54 @@
   }
 }
 
+/*
+ * View transitions: page changes (<main> in AppShell), the app nav highlight and the theme picker.
+ * Short, and clicks pass through to the live page while one runs.
+ */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-group(*) {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+}
+
+/* Old and new pages differ in height: no morph, just the old page out and the new one in. */
+::view-transition-group(.page) {
+  animation: none;
+}
+
+::view-transition-old(.page) {
+  animation: 100ms ease-in both page-out;
+}
+
+::view-transition-new(.page) {
+  animation: 180ms ease-out 80ms both page-in;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 /* App pages' static HTML is English; another language waits for _app (components/shell/use-preferred-locale.ts). */
 [data-locale-pending] body {
   visibility: hidden;

@@ -1,14 +1,15 @@
 import { statusTone } from './edition-phase';
 import { Badge } from '@/components/ui/badge';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
-import { History } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { History, Trophy } from 'lucide-react';
+import { useFormatter, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 
 /** Every edition of the group, newest first (33), collapsed. Only once there's history. */
 export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNumber: number }) => {
   const t = useTranslations('group');
+  const format = useFormatter();
 
   if (group.editions.length < 2) return null;
   return (
@@ -25,6 +26,12 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
             </Link>
             <Badge variant={statusTone[edition.status]}>{t(`status.${edition.status}`)}</Badge>
             {index === 0 && <Badge variant="mint">{t('editions.current')}</Badge>}
+            {edition.champions.length > 0 && (
+              <span className="flex items-center gap-1 text-sm">
+                <Trophy aria-hidden="true" className="size-4" />
+                {t('editions.champions', { count: edition.champions.length, names: format.list(edition.champions) })}
+              </span>
+            )}
           </li>
         ))}
       </ul>

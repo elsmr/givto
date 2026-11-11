@@ -36,7 +36,13 @@
       "removed": "Left"
     },
     "bounced": "Email bounced: check the address",
-    "manage": "Invite and manage people"
+    "manage": "Invite and manage people",
+    "badges": {
+      "champion": "{count, plural, one {Champion} other {Champion ×#}}",
+      "backToBack": "{count, plural, one {Back to back} other {Back to back ×#}}",
+      "perfect": "{count, plural, one {Perfect board} other {Perfect board ×#}}",
+      "nailed": "{count, plural, one {Nailed it} other {Nailed it ×#}}"
+    }
   },
   "requests": {
     "title": "{count, plural, one {# person wants} other {# people want}} to join",
@@ -136,7 +142,8 @@
     "current": "Current",
     "past": "This is {edition}, an earlier edition.",
     "go-current": "Go to the current edition",
-    "not-found": "This edition doesn't exist."
+    "not-found": "This edition doesn't exist.",
+    "champions": "{count, plural, one {Champion} other {Champions}}: {names}"
   },
   "budget-chip": "Budget {budget}",
   "phase": {

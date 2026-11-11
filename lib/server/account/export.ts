@@ -77,6 +77,9 @@ export const exportAccount = async (db: Collections, userId: string) => {
       participation: edition.participants
         .filter((participant) => memberIds.includes(participant.memberId))
         .map(({ memberId: _memberId, ...participant }) => participant),
+      result: edition.results?.points
+        .filter((entry) => memberIds.includes(entry.memberId))
+        .map(({ memberId, points }) => ({ points, nailedIt: edition.results!.nailedIds.includes(memberId) }))[0],
     })),
     wishes: wishes.map(({ ownerId: _ownerId, ...wish }) => wish),
     claims: claims.map(({ wishId, editionId, createdAt }) => ({ wishId, editionId, createdAt })),

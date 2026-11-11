@@ -1,6 +1,8 @@
+import { champions } from '@/lib/guess-results';
+import { Trophy } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { PresenterControls } from './presenter-controls';
 import { GuessScoreboard } from '@/components/guess/guess-scoreboard';
 import { canRevealIn, currentSanta, type PresenterOrder, type PresenterView } from './presenter-phase';
@@ -17,10 +19,13 @@ type PresenterStageProps = { groupSlug: string; editionNumber: number; view: Pre
 /** "Who's next" on a shared screen: spin, unwrap, next turn; arrows/space or the buttons. */
 export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin }: PresenterStageProps) => {
   const t = useTranslations('giftday');
+  const format = useFormatter();
   const actions = usePresenterActions({ groupSlug, editionNumber, view, order, skipSpin });
   const { phase } = actions;
   usePresenterKeys(actions);
   const rotation = order.people.filter((p) => !p.done).map((p) => p.name);
+  const leaderboard = view.guessing?.leaderboard ?? [];
+  const winners = champions(leaderboard).map((id) => leaderboard.find((entry) => entry.memberId === id)!.name);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -53,6 +58,12 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
             {phase === 'end' && (
               <>
                 <PresenterTitleSlide title={t('present.end-title')} hint={t('present.end-hint')} />
+                {winners.length > 0 && (
+                  <p className="flex items-center gap-3 text-3xl font-bold sm:text-5xl">
+                    <Trophy aria-hidden="true" className="size-8 sm:size-12" />
+                    {t('present.champion', { count: winners.length, names: format.list(winners) })}
+                  </p>
+                )}
                 {/* Without the big reveal, the Santas shown at the turns are the scoreboard (62). */}
                 {!canRevealIn(view) && view.guessing && view.guessing.results.length > 0 && <GuessScoreboard guessing={view.guessing} large />}
               </>

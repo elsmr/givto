@@ -86,7 +86,8 @@
     "keys-one-by-one": "→ or space: more to open · L: that was the last one · ← back",
     "gift-of": "Gift {current} of {total}",
     "gifts": "{count, plural, one {# gift} other {# gifts}}",
-    "keys-counted": "→ or space: next · ← back"
+    "keys-counted": "→ or space: next · ← back",
+    "champion": "{count, plural, one {Champion} other {Champions}}: {names}"
   },
   "errors": {
     "NOT_DRAWN": "Names aren't drawn yet.",

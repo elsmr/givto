@@ -108,7 +108,7 @@ export const groupRouter = router({
     .input(v.object({ editionNumber: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))) }))
     .query(async ({ ctx, input }) => {
       const editions = await ctx.db.editions
-        .find({ groupId: ctx.group._id }, { projection: { number: 1, title: 1, status: 1 }, sort: { number: -1 } })
+        .find({ groupId: ctx.group._id }, { projection: { number: 1, title: 1, status: 1, results: 1 }, sort: { number: -1 } })
         .toArray();
       const number = input.editionNumber ?? editions[0]?.number;
       const edition = number === undefined ? null : await ctx.db.editions.findOne({ groupId: ctx.group._id, number });

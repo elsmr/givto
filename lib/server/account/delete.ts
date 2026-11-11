@@ -106,6 +106,10 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
       { $unset: { 'participants.$[p].gifteeWishlistSeenAt': '' } },
       { arrayFilters: [{ 'p.memberId': mine }] }
     ),
+    db.editions.updateMany(
+      { $or: [{ 'results.points.memberId': mine }, { 'results.nailedIds': mine }] },
+      { $pull: { 'results.points': { memberId: mine }, 'results.nailedIds': mine } }
+    ),
   ]);
   await db.wishes.deleteMany({ ownerId: user.id });
 
