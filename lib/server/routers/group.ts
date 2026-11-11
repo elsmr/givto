@@ -3,7 +3,7 @@ import { findStuckGivers } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { todayIn } from '../../local-date';
 import { Id, PersonName, Price, TimeZone } from '../../schema/common';
-import { defaultEditionTitle, EditionKind, GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
+import { defaultEditionTitle, drawsNames, EditionKind, GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
@@ -58,8 +58,8 @@ export const groupRouter = router({
     const now = new Date();
     // The driver stores `undefined` as null, which the schemas reject: leave absent fields out.
     const optional = input.budget ? { budget: compactPrice(input.budget) } : {};
-    // A white elephant is played together, never by post.
-    const exchangeMode = input.kind === 'whiteElephant' ? 'inPerson' : input.exchangeMode;
+    // Kinds without a draw are played together, never by post.
+    const exchangeMode = drawsNames(input) ? input.exchangeMode : 'inPerson';
     const organizer: Member = {
       id: newId(),
       userId: ctx.user.id,

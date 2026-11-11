@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { IconTile } from '@/components/ui/icon-tile';
 import { useTRPC } from '@/lib/client/trpc';
-import { drawsNames } from '@/lib/schema/edition';
+import { drawsNames, wishesOn } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { Check, Heart, PartyPopper } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -15,7 +15,8 @@ import { useFormatter, useTranslations } from 'next-intl';
 /**
  * Open edition, for a member who's in (79): all set once this group shows a wish of theirs and, when gifts
  * go by post, their address is in (80). Then nothing until the organizer draws names; the draw email tells them.
- * Without a draw (88) you're all set once you're in: nobody sees your wishes, and locking in sends nothing.
+ * In a white elephant (88) you're all set once you're in: nobody sees your wishes, and locking in sends nothing.
+ * A conspiracy (90) has no draw either, but the others see your wishes on your board.
  */
 export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edition: GroupEdition; showTab: (tab: GroupTab) => void }) => {
   const t = useTranslations('draw');
@@ -24,19 +25,19 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
   const trpc = useTRPC();
   const posted = edition.exchangeMode !== 'inPerson';
   const draws = drawsNames(edition);
-  const wishes = useQuery({ ...trpc.wish.groupView.queryOptions({ groupSlug: group.slug }), enabled: draws });
+  const wishesNeeded = wishesOn(edition);
+  const wishes = useQuery({ ...trpc.wish.groupView.queryOptions({ groupSlug: group.slug }), enabled: wishesNeeded });
   const address = useQuery({ ...trpc.address.mine.queryOptions({ groupSlug: group.slug }), enabled: posted });
-  if ((draws && wishes.isPending) || (posted && address.isPending)) return null;
+  if ((wishesNeeded && wishes.isPending) || (posted && address.isPending)) return null;
 
   const wishCount = wishes.data?.filter((wish) => wish.shown).length ?? 0;
-  // Without a draw nobody sees them, so they're never a to-do.
-  const wishesDone = !draws || wishCount > 0;
+  const wishesDone = !wishesNeeded || wishCount > 0;
   const hasAddress = !posted || Boolean(address.data);
   const ready = wishesDone && hasAddress;
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
   const organizer = group.members.find((m) => m.role === 'organizer')?.name.split(' ')[0] ?? tGroup('people.organizer');
   const waiting = !draws ? (
-    <p>{t('lock-in.wait', { organizer })}</p>
+    <p>{edition.kind === 'conspiracy' ? t('lock-in.wait-conspiracy', { organizer }) : t('lock-in.wait', { organizer })}</p>
   ) : (
     <p>
       {edition.drawAt
@@ -62,7 +63,7 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
             {done}
             {t('waiting.in')}
           </li>
-          {draws && (
+          {wishesNeeded && (
             <li className="flex flex-wrap items-center gap-3">
               {wishesDone ? done : todo}
               {wishesDone ? t('waiting.wishes', { count: wishCount }) : t('waiting.no-wishes')}

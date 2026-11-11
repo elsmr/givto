@@ -214,3 +214,56 @@ test('notices show only when there is something: join requests, Psst! and questi
     await expect(page.getByText('Tea or coffee?')).toBeVisible();
   });
 });
+
+test('conspiracy: two people post on Ann’s board, Ann sees nothing of it', async ({ page, newPage, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Plot', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson', kind: 'conspiracy' })
+  );
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  ok(await ann.trpc.mutate('wish.create', { title: 'Polaroid camera', groupSlugs: [group.slug] }));
+
+  await test.step('Bob posts on Ann’s board, next to her wishlist; Cee posts anonymously', async () => {
+    await signInPage(page, bob);
+    await page.goto(`/g/${group.slug}#boards`);
+    await expect(tab(page, 'Boards')).toHaveAttribute('aria-selected', 'true');
+    await expect(tab(page, 'My giftee')).toHaveCount(0);
+    const board = page.getByRole('tabpanel').locator('[data-slot=card]').filter({ has: page.getByRole('heading', { name: "Ann's board" }) });
+    await expect(board.getByText('Polaroid camera')).toBeVisible();
+    await expect(page.getByRole('heading', { name: "Bob's board" })).toHaveCount(0);
+    await board.getByLabel('Your post', { exact: true }).fill('Shall we get her the Polaroid?');
+    await board.getByRole('button', { name: 'Post', exact: true }).click();
+    await expect(board.getByText('Shall we get her the Polaroid?')).toBeVisible();
+    await expect(board.getByLabel('Your post', { exact: true })).toHaveValue('');
+
+    const ceePage = await newPage();
+    await signInPage(ceePage, cee);
+    await ceePage.goto(`/g/${group.slug}#boards`);
+    const ceeBoard = ceePage.getByRole('tabpanel').locator('[data-slot=card]').filter({ has: ceePage.getByRole('heading', { name: "Ann's board" }) });
+    await expect(ceeBoard.getByText('From Bob')).toBeVisible();
+    await ceeBoard.getByLabel('Your post', { exact: true }).fill('I’m in');
+    await ceeBoard.getByRole('switch', { name: 'Post anonymously' }).click();
+    await ceeBoard.getByRole('button', { name: 'Post', exact: true }).click();
+    await expect(ceeBoard.getByText('I’m in')).toBeVisible();
+
+    await page.reload();
+    await expect(board.getByText('I’m in')).toBeVisible();
+    await expect(board.getByText('Anonymous', { exact: true })).toBeVisible();
+  });
+
+  await test.step('Ann: boards for Bob and Cee only, and no trace of the posts', async () => {
+    const annPage = await newPage();
+    await signInPage(annPage, ann);
+    await annPage.goto(`/g/${group.slug}#boards`);
+    await expect(annPage.getByRole('heading', { name: "Bob's board" })).toBeVisible();
+    await expect(annPage.getByRole('heading', { name: "Cee's board" })).toBeVisible();
+    await expect(annPage.getByRole('heading', { name: "Ann's board" })).toHaveCount(0);
+    for (const tabName of ['Overview', 'Boards', 'My wishlist', 'People']) {
+      await tab(annPage, tabName).click();
+      await expect(annPage.getByText('Polaroid?')).toHaveCount(0);
+      await expect(annPage.getByText('I’m in')).toHaveCount(0);
+    }
+  });
+});

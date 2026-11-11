@@ -162,6 +162,7 @@
     "label": "This Secret Santa",
     "overview": "Overview",
     "giftee": "My giftee",
+    "boards": "Boards",
     "wishlist": "My wishlist",
     "people": "People"
   },
@@ -183,7 +184,8 @@
   },
   "overview": {
     "details": "Dates, budget and notes",
-    "to-giftee": "Their wishlist and tips"
+    "to-giftee": "Their wishlist and tips",
+    "to-boards": "To the boards"
   },
   "address": {
     "title": "Your address",

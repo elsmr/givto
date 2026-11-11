@@ -1,10 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Gift, Heart, LayoutGrid, Users } from 'lucide-react';
+import { Gift, Heart, LayoutGrid, StickyNote, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { GroupTab } from './use-group-tab';
 
-const icons = { overview: LayoutGrid, giftee: Gift, wishlist: Heart, people: Users };
+const icons = { overview: LayoutGrid, giftee: Gift, boards: StickyNote, wishlist: Heart, people: Users };
 
 /**
  * The group home's tabs (61), a segmented control under the stepper; the app nav owns the bottom of the screen.

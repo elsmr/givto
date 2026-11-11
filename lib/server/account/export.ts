@@ -99,7 +99,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
     giftsMarked: gifts.map(({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt }) => ({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt })),
     // By post (87): only when, never who sent it or what.
     giftsArrived: arrived.map(({ editionId, arrivedAt }) => ({ editionId, arrivedAt })),
-    tipsWritten: tips.map(({ text, anonymous, createdAt, updatedAt }) => ({ text, anonymous, createdAt, updatedAt })),
+    tipsWritten: tips.map(({ text, anonymous, board, createdAt, updatedAt }) => ({ text, anonymous, ...(board && { board }), createdAt, updatedAt })),
     questionsAsked: asked.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),
     questionsReceived: received.map(({ text, answer, createdAt }) => ({ text, answer: answer?.text, createdAt })),
     nudgesSent: nudgesSent.map(({ kind, createdAt, sentAt }) => ({ kind, createdAt, sentAt })),

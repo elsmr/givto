@@ -6,6 +6,7 @@ import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
 import { guessingOn } from '../guess/guesses';
+import { boardPeople } from './board';
 import { suppressedEmails } from '../mail/suppression';
 
 /** Organizer only (privacy rules): emails of accounts, or of pending email invites. */
@@ -47,7 +48,8 @@ export const groupView = async (
     name: group.name,
     locale: group.locale,
     timeZone: group.timeZone,
-    me: { memberId: me.id, isOrganizer },
+    /** `hasBoards`: a conspiracy (90) shows me other people's boards. */
+    me: { memberId: me.id, isOrganizer, hasBoards: Boolean(edition && boardPeople(group, edition, me).length > 0) },
     members: visible.map((m) => ({
       id: m.id,
       name: m.name,

@@ -1,5 +1,5 @@
 import { daysBetween, todayIn } from '../../local-date';
-import { drawsNames, isDrawn, type Edition } from '../../schema/edition';
+import { drawsNames, isDrawn, wishesOn, type Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS } from '../../schema/group';
 import { ownAndManagedIds } from '../between/santa-role';
 import type { Collections } from '../db';
@@ -63,8 +63,8 @@ export const accountGroups = async (db: Collections, userId: string) => {
     const visibleWishCount = wishes.filter((wish) => shown.has(wish._id)).length;
     const joinRequests = group.members.filter((m) => m.status === 'requested').length;
     const status = edition?.status;
-    // A white elephant (88) has no Santas: nobody sees your wishes there.
-    const santas = !edition || drawsNames(edition);
+    // A white elephant (88): nobody shops for you, so nobody sees your wishes there.
+    const wishlist = !edition || wishesOn(edition);
     const todos = group.archivedAt
       ? []
       : [
@@ -73,13 +73,13 @@ export const accountGroups = async (db: Collections, userId: string) => {
           isOrganizer &&
             status === 'open' &&
             participantCount >= MIN_PARTICIPANTS &&
-            !edition?.drawAt && { kind: santas ? ('readyToDraw' as const) : ('readyToLockIn' as const) },
+            !edition?.drawAt && { kind: !edition || drawsNames(edition) ? ('readyToDraw' as const) : ('readyToLockIn' as const) },
           unanswered > 0 && { kind: 'question' as const, count: unanswered },
-          santas && (status === 'open' || status === 'drawn') && visibleWishCount === 0 && { kind: 'noWishes' as const },
+          wishlist && (status === 'open' || status === 'drawn') && visibleWishCount === 0 && { kind: 'noWishes' as const },
           myGiftees.some((g) => g.editionId === edition?._id) &&
             !gifted.some((g) => g.editionId === edition?._id) && { kind: 'getGift' as const },
           status === 'giftday' && { kind: 'giftDay' as const },
-          santas &&
+          wishlist &&
             status === 'done' &&
             visibleWishCount > 0 &&
             edition?.giftDay !== undefined &&

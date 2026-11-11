@@ -36,7 +36,7 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
   const home = groupUrl(to.locale, group.slug);
   const giftDay = edition.giftDay?.date;
   const postBy = edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined;
-  const whiteElephant = !drawsNames(edition);
+  const whiteElephant = edition.kind === 'whiteElephant';
   return {
     ...(parts.includes('wishlist') && { wishlist: { url: to.forName ? home : siteUrl(to.locale, '/wishlist'), by: date(edition.wishlistBy) } }),
     ...(parts.includes('address') && { address: { url: home, postBy: date(postBy) } }),
@@ -45,7 +45,7 @@ const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }:
     ...(parts.includes('readyToDraw') && {
       readyToDraw: {
         url: home,
-        whiteElephant,
+        lockIn: !drawsNames(edition),
         people: edition.participants.filter((p) => p.participates && p.status === 'joined').length,
         giftDay: date(giftDay),
         soon: Boolean(giftDay && daysBetween(today, giftDay) <= READY_SOON_DAYS),

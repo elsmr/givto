@@ -6,7 +6,7 @@ import { AfterGiftDayMain } from '@/components/giftday/after-gift-day-main';
 import { GiftDayMain } from '@/components/giftday/gift-day-main';
 import { Confetti } from '@/components/giftday/presenter/confetti';
 import { Button } from '@/components/ui/button';
-import { Card, CardDescription, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { ArrowRight, Gift } from 'lucide-react';
 import * as m from 'motion/react-m';
@@ -45,8 +45,16 @@ export const PhaseMainCard = ({ group, edition, manage, showTab }: PhaseMainCard
                 <IconCardTitle icon={Gift} tone="mint">
                   {tLockIn('locked-title')}
                 </IconCardTitle>
-                <CardDescription>{tLockIn('locked-body')}</CardDescription>
+                <CardDescription>{edition.kind === 'conspiracy' ? tLockIn('locked-body-conspiracy') : tLockIn('locked-body')}</CardDescription>
               </CardHeader>
+              {group.me.hasBoards && (
+                <CardContent>
+                  <Button onClick={() => showTab('boards')}>
+                    {t('to-boards')}
+                    <ArrowRight aria-hidden="true" />
+                  </Button>
+                </CardContent>
+              )}
             </Card>
           ) : (
             <RevealCard groupSlug={slug} editionNumber={edition.number} timeZone={edition.timeZone}>

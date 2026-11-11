@@ -54,7 +54,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
                 )}
               </>
             )}
-            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} guessing={view.guessing} vote={view.vote} swap={view.swap} onSteal={actions.steal} busy={actions.busy} />}
+            {phase === 'turn' && <PresenterTurnSlide order={order} oneByOne={view.unwrapMode === 'oneByOne'} santa={currentSanta(order, view)} guessing={view.guessing} vote={view.vote} swap={view.swap} onSteal={actions.steal} busy={actions.busy} fromAll={view.kind === 'conspiracy'} />}
             {phase === 'reveal' && <PresenterRevealSlide reveal={view.reveal} guessing={view.guessing} />}
             {phase === 'end' && (
               <>

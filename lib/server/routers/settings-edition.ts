@@ -43,9 +43,8 @@ export const updateEdition = organizerEditionProcedure.input(EditionSettingsInpu
   const kindChanged = kind !== (edition.kind ?? 'secretSanta');
   if (kindChanged && !isBeforeDraw(edition)) throw new AppError('ALREADY_DRAWN');
   const toNoDraw = kindChanged && !drawsNames({ kind });
-  // No draw, no draw date or wishlist deadline (88); a white elephant is played together, so not by post either.
-  const undrawn = drawsNames({ kind }) ? given : { ...given, drawOn: undefined, wishlistBy: undefined };
-  const input = kind === 'whiteElephant' ? { ...undrawn, exchangeMode: 'inPerson' as const, postBy: undefined } : undrawn;
+  // No draw (88, 90): no draw date or wishlist deadline, and played together, so not by post either.
+  const input = drawsNames({ kind }) ? given : { ...given, drawOn: undefined, wishlistBy: undefined, exchangeMode: 'inPerson' as const, postBy: undefined };
   const today = todayIn(timeZone);
   const drawOn = edition.drawAt && todayIn(timeZone, edition.drawAt);
   const movedIntoPast = (next: string | undefined, current: string | undefined) =>

@@ -18,13 +18,16 @@
     "too-few": "Om vast te leggen {count, plural, one {is er nog # persoon} other {zijn er nog # mensen}} nodig.",
     "confirm-title": "Nu vastleggen?",
     "confirm-description": "Iedereen die meedoet, brengt één cadeau mee naar pakjesdag. Wie later meedoet, is er ook bij.",
+    "confirm-description-conspiracy": "Iedereen die meedoet, krijgt op pakjesdag één cadeau van alle anderen. Wie later meedoet, is er ook bij.",
     "left-out": "Doet niet mee: {names}.",
     "confirm": "Vastleggen",
     "cancel": "Nog niet",
     "drawn": "Vastgelegd!",
     "wait": "Niks te doen tot {organizer} het vastlegt. Breng daarna één ingepakt cadeau mee naar pakjesdag.",
+    "wait-conspiracy": "Bedenk ondertussen met de anderen ieders cadeau bij Prikborden. {organizer} legt het vast voor pakjesdag.",
     "locked-title": "Het ligt vast",
-    "locked-body": "Breng één ingepakt cadeau mee naar pakjesdag. Op pakjesdag kiest Givto wie er aan de beurt is: een nieuw cadeau openen, of er een stelen dat al open is."
+    "locked-body": "Breng één ingepakt cadeau mee naar pakjesdag. Op pakjesdag kiest Givto wie er aan de beurt is: een nieuw cadeau openen, of er een stelen dat al open is.",
+    "locked-body-conspiracy": "Plan verder op de prikborden. Op pakjesdag pakt iedereen één cadeau uit, van ons allemaal."
   },
   "rules": {
     "title": "Regels voor de loting",

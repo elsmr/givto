@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { GuessingNote } from '@/components/guess/guessing-note';
 import { UnwrapOrderCard } from './unwrap-order-card';
 import { useGiftDay } from './use-gift-day';
+import { drawsNames } from '@/lib/schema/edition';
 
 /** The unwrap order (32), collapsed on the overview (61). Pages must load `giftday` messages. */
 export const GiftDayPanel = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
@@ -27,7 +28,7 @@ export const GiftDayPanel = ({ group, edition }: { group: GroupData; edition: Gr
         meId={group.me.memberId}
         canShuffle={manage && status !== 'done'}
         canPresent={manage && status !== 'giftday'}
-        showMode={edition.kind !== 'whiteElephant'}
+        showMode={drawsNames(edition)}
       />
       {manage && guessing && status !== 'done' && <GuessingNote groupSlug={group.slug} />}
     </DisclosureCard>

@@ -1,6 +1,6 @@
 import { useState, type RefObject } from 'react';
 
-export const groupTabs = ['overview', 'giftee', 'wishlist', 'people'] as const;
+export const groupTabs = ['overview', 'giftee', 'boards', 'wishlist', 'people'] as const;
 export type GroupTab = (typeof groupTabs)[number];
 
 const fromHash = (available: readonly GroupTab[]): GroupTab => {
@@ -9,7 +9,7 @@ const fromHash = (available: readonly GroupTab[]): GroupTab => {
 };
 
 /**
- * The group home's tab (61), kept in the URL hash (#giftee, #wishlist, #people) so a reload keeps it.
+ * The group home's tab (61), kept in the URL hash (#giftee, #boards, #wishlist, #people) so a reload keeps it.
  * Switching scrolls back to `top` when the page was scrolled past it.
  */
 export const useGroupTab = (available: readonly GroupTab[], top: RefObject<HTMLElement | null>) => {

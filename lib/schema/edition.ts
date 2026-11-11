@@ -16,16 +16,20 @@ export const isFromGiftDay = ({ status }: { status: EditionStatus }) => status =
 
 /**
  * secretSanta: names are drawn. whiteElephant (88): everyone brings one gift, no draw; the edition is locked in
- * instead (status `drawn` without `draw`), and gift day's reel picks who chooses next. Absent = secretSanta.
+ * instead (status `drawn` without `draw`), and gift day's reel picks who chooses next. conspiracy (90): no draw either;
+ * everyone but X plans one gift for X on X's board. Absent = secretSanta.
  */
-export const EditionKind = v.picklist(['secretSanta', 'whiteElephant']);
+export const EditionKind = v.picklist(['secretSanta', 'whiteElephant', 'conspiracy']);
 export type EditionKind = v.InferOutput<typeof EditionKind>;
 
 /** Everything that hangs off the draw (giftees, tips, Q&A, guessing, the big reveal) only exists for these. */
 export const drawsNames = ({ kind }: { kind?: EditionKind }) => (kind ?? 'secretSanta') === 'secretSanta';
 
+/** Someone shops for you, so your wishlist matters: not in a white elephant (88). */
+export const wishesOn = ({ kind }: { kind?: EditionKind }) => kind !== 'whiteElephant';
+
 /** Kind names stay English in Dutch too, like "Secret Santa". */
-const kindTitles: Record<EditionKind, string> = { secretSanta: 'Secret Santa', whiteElephant: 'White elephant' };
+const kindTitles: Record<EditionKind, string> = { secretSanta: 'Secret Santa', whiteElephant: 'White elephant', conspiracy: 'Conspiracy Santa' };
 
 /** Gifts go by post (80, 87): `byPost` or `both`. */
 export const isPosted = ({ exchangeMode }: { exchangeMode: ExchangeMode }) => exchangeMode !== 'inPerson';

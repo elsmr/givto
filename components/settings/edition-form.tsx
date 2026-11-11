@@ -65,8 +65,8 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         </Field>
         {isBeforeDraw(edition) && <KindField kind={draft.kind} onChange={(kind) => update({ kind })} />}
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
-        {draft.kind !== 'whiteElephant' && <ExchangeField draft={draft} onChange={update} />}
-        {draft.kind !== 'whiteElephant' && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
+        {drawsNames(draft) && <ExchangeField draft={draft} onChange={update} />}
+        {drawsNames(draft) && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
           <Field>
             <FieldLabel htmlFor="edition-call-url" optional hint={t('edition.call-url-help')}>{t('edition.call-url')}</FieldLabel>
             <Input

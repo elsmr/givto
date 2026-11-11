@@ -8,6 +8,7 @@
   },
   "create": "Create Secret Santa",
   "create-white-elephant": "Create white elephant",
+  "create-conspiracy": "Create Conspiracy Santa",
   "errors": {
     "RATE_LIMITED": "That's a lot of Secret Santas for one day. Try again tomorrow.",
     "DATE_IN_PAST": "Gift day can't be in the past.",
@@ -19,10 +20,12 @@
     "kind": {
       "label": "What are you organizing?",
       "secretSanta": "Secret Santa: draw names",
-      "whiteElephant": "White elephant: everyone brings a gift, no draw"
+      "whiteElephant": "White elephant: everyone brings a gift, no draw",
+      "conspiracy": "Conspiracy Santa: everyone plans one gift for each person, no draw"
     },
     "name": "What's your Secret Santa called?",
     "name-white-elephant": "What's your white elephant called?",
+    "name-conspiracy": "What's your Conspiracy Santa called?",
     "name-placeholder": "Family",
     "next": "Next",
     "gift-day": {

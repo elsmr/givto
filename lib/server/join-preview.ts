@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import type { Price } from '../schema/common';
+import type { EditionKind } from '../schema/edition';
 import { JoinLink, Slug, type Group } from '../schema/group';
 import type { Invite } from '../schema/invite';
 import type { Collections } from './db';
@@ -49,8 +50,8 @@ export type JoinPreview = {
   /** The current edition's, for the join page (not the tRPC previews); null when unset or over. */
   giftDay?: string | null;
   budget?: Price | null;
-  /** The current edition is a white elephant (88): no wishlist, nobody to buy for. */
-  whiteElephant?: boolean;
+  /** The current edition's kind (88, 90), for the description. */
+  kind?: EditionKind;
 };
 
 export const joinLinkPreview = (group: Group): JoinPreview => ({

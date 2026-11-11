@@ -18,6 +18,8 @@ type PresenterTurnSlideProps = {
   swap: PresenterView['swap'];
   onSteal: (giftNo: number) => void;
   busy: boolean;
+  /** A conspiracy (90): everyone's gift is from all the others. */
+  fromAll: boolean;
 };
 
 const Name = ({ name, small }: { name?: string; small?: boolean }) => (
@@ -40,7 +42,7 @@ const Name = ({ name, small }: { name?: string; small?: boolean }) => (
  * vote (83): "vote on your phones" while open, then the tally. White elephant (89): why they're up (their turn, stolen
  * from, the final steal) and the table to steal from.
  */
-export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, swap, onSteal, busy }: PresenterTurnSlideProps) => {
+export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, swap, onSteal, busy, fromAll }: PresenterTurnSlideProps) => {
   const t = useTranslations('giftday.present');
   const tVote = useTranslations('guess.vote');
   const tSwap = useTranslations('giftday.swap');
@@ -69,6 +71,7 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, swa
       {lastOne && oneByOne && <p className="text-2xl font-semibold sm:text-4xl">{t('last-one')}</p>}
       <p className="text-2xl font-semibold sm:text-4xl">{oneByOne ? t('round', { round: order.round }) : t(lastOne ? 'last-one' : 'next-up')}</p>
       <Name name={order.current?.name} />
+      {fromAll && <p className="text-3xl font-bold sm:text-5xl">{t('from-all')}</p>}
       {oneByOne && gifts !== null && <p className="text-2xl font-semibold sm:text-4xl">{t('gift-of', { current: order.currentGift, total: gifts })}</p>}
       {!oneByOne && (
         <p className="text-xl text-muted sm:text-2xl">

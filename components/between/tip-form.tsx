@@ -22,11 +22,13 @@ interface TipFormProps {
   error?: string;
   onSubmit: (draft: TipDraft) => void;
   onCancel?: () => void;
+  /** Labels for a tip, or for a post on a conspiracy board (90). */
+  copy?: 'tips' | 'boards';
 }
 
-/** Write or edit a tip: who it's about, the text, and "post anonymously". */
-export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, onCancel }: TipFormProps) => {
-  const t = useTranslations('between.tips');
+/** Write or edit a tip or board post: who it's about, the text, and "post anonymously". */
+export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, onCancel, copy = 'tips' }: TipFormProps) => {
+  const t = useTranslations('between');
   const id = useId();
   const [draft, setDraft] = useState(initial);
   const update = (changes: Partial<TipDraft>) => setDraft((current) => ({ ...current, ...changes }));
@@ -39,7 +41,7 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
     <form onSubmit={submit} className="flex flex-col gap-4">
       {people && (
         <Field>
-          <FieldLabel htmlFor={`${id}-about`}>{t('about')}</FieldLabel>
+          <FieldLabel htmlFor={`${id}-about`}>{t('tips.about')}</FieldLabel>
           <NativeSelect
             id={`${id}-about`}
             className="w-full"
@@ -48,7 +50,7 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
             onChange={(event) => update({ aboutMemberId: event.target.value })}
           >
             <NativeSelectOption value="" disabled>
-              {t('about-placeholder')}
+              {t('tips.about-placeholder')}
             </NativeSelectOption>
             {people.map((person) => (
               <NativeSelectOption key={person.memberId} value={person.memberId}>
@@ -59,12 +61,12 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
         </Field>
       )}
       <Field>
-        <FieldLabel htmlFor={`${id}-text`}>{t('text')}</FieldLabel>
+        <FieldLabel htmlFor={`${id}-text`}>{t(`${copy}.text`)}</FieldLabel>
         <Textarea
           id={`${id}-text`}
           required
           maxLength={1000}
-          placeholder={t('text-placeholder')}
+          placeholder={t(`${copy}.text-placeholder`)}
           value={draft.text}
           onChange={(event) => update({ text: event.target.value })}
         />
@@ -78,9 +80,9 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
             checked={draft.anonymous}
             onCheckedChange={(anonymous) => update({ anonymous })}
           />
-          <FieldLabel htmlFor={`${id}-anonymous`}>{t('anonymous')}</FieldLabel>
+          <FieldLabel htmlFor={`${id}-anonymous`}>{t(`${copy}.anonymous`)}</FieldLabel>
         </Field>
-        <FieldDescription id={`${id}-anonymous-hint`}>{t('anonymous-hint')}</FieldDescription>
+        <FieldDescription id={`${id}-anonymous-hint`}>{t(`${copy}.anonymous-hint`)}</FieldDescription>
       </div>
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex flex-wrap gap-3">
@@ -89,7 +91,7 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
         </Button>
         {onCancel && (
           <Button type="button" variant="neutral" onClick={onCancel}>
-            {t('cancel')}
+            {t(`${copy}.cancel`)}
           </Button>
         )}
       </div>

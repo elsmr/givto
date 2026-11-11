@@ -1,6 +1,6 @@
 import { todayIn } from '../../local-date';
 import type { ReminderEdition, ReminderPerson, SentReminder } from '../../reminder-schedule';
-import { drawsNames, type Edition } from '../../schema/edition';
+import { drawsNames, wishesOn, type Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { userIdsWithAddress } from '../account/addresses';
@@ -53,10 +53,10 @@ export const reminderPeople = async (db: Collections, group: Group, edition: Edi
       member,
       person: {
         joinedOn: local(later(participant?.addedAt ?? openedAt, openedAt)),
-        // Not in this edition (an organizer sitting out), or nobody's Santa (88): no wishlist reminders.
-        wishCount: participant && drawsNames(edition) ? (await visibleWishes(db, member)).length : 1,
-        // A white elephant (88): everyone in brings a gift.
-        isSanta: drawsNames(edition) ? Boolean(edition.draw?.assignments[member.id]) : Boolean(participant),
+        // Not in this edition (an organizer sitting out), or nobody shops for them (88): no wishlist reminders.
+        wishCount: participant && wishesOn(edition) ? (await visibleWishes(db, member)).length : 1,
+        // A white elephant (88): everyone in brings a gift. A conspiracy (90): the group gift has no one person to remind.
+        isSanta: drawsNames(edition) ? Boolean(edition.draw?.assignments[member.id]) : edition.kind === 'whiteElephant' && Boolean(participant),
         hasGift: gifts.has(member.id),
         // Not in this edition, or managed (their manager can't add it for them): no address reminders.
         hasAddress: !participant || !member.userId || withAddress.has(member.userId),
