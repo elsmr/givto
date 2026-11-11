@@ -93,6 +93,18 @@ export const UnwrapTurn = v.object({ memberId: Id, last: v.boolean() });
 export type UnwrapTurn = v.InferOutput<typeof UnwrapTurn>;
 
 /**
+ * One move in a white elephant swap (89): open the next wrapped gift (numbered in opening order, with an optional
+ * label the presenter typed), steal an opened one, or, at the first player's final steal, keep theirs.
+ */
+export const SwapMove = v.object({
+  memberId: Id,
+  action: v.picklist(['open', 'steal', 'keep']),
+  giftNo: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
+  label: v.optional(SingleLine(60)),
+});
+export type SwapMove = v.InferOutput<typeof SwapMove>;
+
+/**
  * Unwrap order (32): independent of the Santa chain. `progress`: the presenter's turns so far,
  * stored so a refresh or another device carries on and the group home shows who's unwrapping.
  * Who's up, the round and who's done follow from the order and the turns (lib/unwrap-turns.ts).
@@ -104,6 +116,8 @@ export const UnwrapOrder = v.object({
     v.object({
       startedAt: v.date(),
       turns: v.array(UnwrapTurn),
+      /** White elephant (89): the swap's moves instead of `turns` (lib/swap-turns.ts). */
+      moves: v.optional(v.array(SwapMove)),
       /** The presenter's "Who's next?" reel has landed on the current person (until then members don't see who). */
       currentShown: v.boolean(),
       /** Guess your Santa (62): people whose Santa (and guess) the presenter showed at their turn, in that order. */
