@@ -89,6 +89,10 @@ export const UnwrapOrder = v.object({
       currentShown: v.boolean(),
       /** Guess your Santa (62): people whose Santa (and guess) the presenter showed at their turn, in that order. */
       santaShownIds: v.optional(v.array(Id)),
+      /** Live voting (83): whose turn the vote is open for (before their Santa is shown). */
+      voteOpenFor: v.optional(Id),
+      /** Live voting (83): people whose vote the presenter closed, so its tally is out. */
+      votedIds: v.optional(v.array(Id)),
     })
   ),
 });

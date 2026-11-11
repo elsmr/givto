@@ -24,7 +24,7 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
     ok(await user.trpc.query('account.groups')),
   ]);
 
-const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa') => {
+const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'vote' | 'tally' | 'santa') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
   return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
 };
@@ -80,6 +80,8 @@ test('boards stay hidden until their pairs are out; the leaderboard counts only 
     ok(await advance(ann, at, 'start'));
     ok(await advance(ann, at, 'spin'));
     expect(ok(await ann.trpc.query('giftday.presenter', at)).guessing!.leaderboard).toEqual([]);
+    ok(await advance(ann, at, 'vote'));
+    ok(await advance(ann, at, 'tally'));
     const shown = ok(await advance(ann, at, 'santa'));
     // Ann's Santa (Dan) is out: Bob and Cee had it; Dan gives to Ann, a row he never had.
     const leaderboard = [

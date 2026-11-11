@@ -38,7 +38,7 @@ const endedWithoutGiftDay = async (db: Collections, before: Date) => {
   return editions.map((edition) => edition._id);
 };
 
-/** Claims, gifts marked (63), guesses (62), tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day (or the end, without one). */
+/** Claims, gifts marked (63), guesses (62), votes (83), tips, questions, Psst!s and digests: `editionMessagesMonths` after gift day (or the end, without one). */
 const deleteEditionMessages = async (db: Collections, now: Date) => {
   const cutoff = monthsBefore(now, retention.editionMessagesMonths);
   const pastGiftDay = await db.editions.find({ 'giftDay.date': { $lt: isoDate(cutoff) } }, { projection: { _id: 1 } }).toArray();
@@ -48,6 +48,7 @@ const deleteEditionMessages = async (db: Collections, now: Date) => {
     db.claims.deleteMany(inEditions),
     db.gifts.deleteMany(inEditions),
     db.guesses.deleteMany(inEditions),
+    db.votes.deleteMany(inEditions),
     db.tips.deleteMany(inEditions),
     db.questions.deleteMany(inEditions),
     db.nudges.deleteMany(inEditions),

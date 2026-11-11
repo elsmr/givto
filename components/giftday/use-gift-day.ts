@@ -3,12 +3,16 @@ import { useTRPC } from '@/lib/client/trpc';
 import { isBeforeDraw, type EditionStatus } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 
-/** Unwrap order, mode and big reveal from the draw on; on gift day other phones follow the presenter's turns. */
+/**
+ * Unwrap order, mode and big reveal from the draw on; on gift day other phones follow the presenter's turns,
+ * quicker while the unwrapping is under way with Guess your Santa on, so a vote (83) shows up in time.
+ */
 export const useGiftDay = (input: EditionInput, status: EditionStatus) => {
   const trpc = useTRPC();
   return useQuery({
     ...trpc.giftday.get.queryOptions(input),
     enabled: !isBeforeDraw({ status }),
-    refetchInterval: status === 'giftday' ? 10_000 : false,
+    refetchInterval: ({ state: { data } }) =>
+      status !== 'giftday' ? false : data?.guessing && data.unwrapOrder?.started && !data.unwrapOrder.finished ? 3_000 : 10_000,
   });
 };

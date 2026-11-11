@@ -27,7 +27,7 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
     ok(await user.trpc.query('account.groups')),
   ]);
 
-const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' | 'more' | 'last' | 'back') => {
+const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'back') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
   return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
 };
@@ -100,6 +100,8 @@ test('guess once, locked; nobody sees it or whether it is right until the turn; 
   });
 
   await test.step("then everyone sees whose Santa it was and the guess; back hides it", async () => {
+    ok(await advance(ann, at, 'vote'));
+    ok(await advance(ann, at, 'tally'));
     const shown = ok(await advance(ann, at, 'santa'));
     const result = {
       memberId: idOf(first),
@@ -225,6 +227,8 @@ test('one by one: each Santa is shown once, on their first turn', async ({ signI
   // Round 1: everyone's Santa comes out once they've unwrapped.
   for (const [i, action] of (['more', 'more', 'more'] as const).entries()) {
     expect((await view()).unwrapOrder).toMatchObject({ current: { memberId: order[i] }, santaToShow: true });
+    ok(await advance(ann, at, 'vote'));
+    ok(await advance(ann, at, 'tally'));
     ok(await advance(ann, at, 'santa'));
     ok(await advance(ann, at, action));
     if (i < 2) ok(await advance(ann, at, 'spin'));

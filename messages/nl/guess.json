@@ -42,9 +42,23 @@
     "no-guess": "Deze keer niet gegokt",
     "keys": "→ of spatie: van wie was het? · ← terug"
   },
+  "vote": {
+    "ask": "Van wie denk jij dat het is?",
+    "hint": "Tik op een naam. Je kunt wisselen tot de stemming sluit.",
+    "waiting": "Iedereen stemt van wie het is.",
+    "yours": "Jij stemde <name>{choice}</name>",
+    "tally": "De stemmen",
+    "no-votes": "Geen stemmen",
+    "votes": "{votes, plural, one {# stem} other {# stemmen}}",
+    "on-phones": "Stem op je telefoon: van wie is het?",
+    "start": "Start de stemming",
+    "close": "Sluit de stemming",
+    "keys-start": "→ of spatie: start de stemming · ← terug",
+    "keys-close": "→ of spatie: sluit de stemming · ← terug"
+  },
   "settings": {
     "switch": "Raad je Santa",
-    "description": "Iedereen kan één geheime gok doen wie zijn Santa is, en de rest van de loting raden voor punten. Op pakjesdag zie je in de presentatieweergave bij elke beurt wie de Santa was, met de gok en de ranglijst erbij. Zet het uit om de Santa's geheim te houden.",
+    "description": "Iedereen kan één geheime gok doen wie zijn Santa is, en de rest van de loting raden voor punten. Op pakjesdag stemt iedereen bij elke beurt op zijn telefoon van wie het cadeau is, daarna toont de presentatieweergave wie de Santa was, met de gok en de ranglijst erbij. Zet het uit om de Santa's geheim te houden.",
     "on": "Raad je Santa staat aan",
     "off": "Raad je Santa staat uit: de Santa's blijven geheim"
   },
@@ -55,6 +69,7 @@
   "errors": {
     "GUESS_LOCKED": "Je hebt al een gok vastgelegd.",
     "GUESSING_CLOSED": "Gokken kan niet meer.",
+    "VOTING_CLOSED": "De stemming is gesloten.",
     "NOT_FOUND": "Die persoon zit niet in deze loting.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
