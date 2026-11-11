@@ -1,6 +1,7 @@
 import { getMongoDb } from '../db';
 import { publicProcedure, router } from '../trpc';
 import { accountRouter } from './account';
+import { addressRouter } from './address';
 import { claimRouter } from './claim';
 import { drawRouter } from './draw';
 import { editionRouter } from './edition';
@@ -47,6 +48,7 @@ export const appRouter = router({
   gift: giftRouter,
   guess: guessRouter,
   reminders: remindersRouter,
+  address: addressRouter,
 });
 
 export type AppRouter = typeof appRouter;

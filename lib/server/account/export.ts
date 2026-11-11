@@ -48,6 +48,8 @@ export const exportAccount = async (db: Collections, userId: string) => {
       email: user.email,
       locale: user.locale,
       notifications: user.notifications ?? {},
+      addresses: user.addresses ?? [],
+      defaultAddressId: user.defaultAddressId,
       avatarColor: user.avatarColor,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -63,6 +65,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
       joinedAt: member.joinedAt,
       removedAt: member.removedAt,
       shownWishIds: member.wishlistView.shownWishIds,
+      addressId: member.addressId,
     })),
     editions: editions.map((edition) => ({
       group: slugOf.get(edition.groupId),

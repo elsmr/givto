@@ -12,6 +12,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
   const now = new Date();
   const m = { ann: newId(), bob: newId(), cee: newId(), kid: newId(), solo: newId(), inv: newId(), ob: newId(), oc: newId() };
   const g = { family: newId(), solo: newId(), other: newId() };
+  const addressId = newId();
   const e = { family: newId(), solo: newId(), other: newId() };
   const member = (id: string, name: string, extra: Partial<Member> = {}): Member => ({
     id, name, role: 'member', status: 'joined', joinedAt: now, wishlistView: { shownWishIds: [] }, ...extra,
@@ -22,7 +23,7 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
   });
   await db.groups.insertMany([
     group(g.family, `fam${tag}`, 'Family', [
-      member(m.ann, `Annabel ${tag}`, { userId: ann.id, role: 'organizer', joinedAt: new Date(+now - 3e6) }),
+      member(m.ann, `Annabel ${tag}`, { userId: ann.id, role: 'organizer', joinedAt: new Date(+now - 3e6), addressId }),
       member(m.bob, `Bob ${tag}`, { userId: bob.id, joinedAt: new Date(+now - 2e6) }),
       member(m.cee, `Cee ${tag}`, { userId: cee.id, joinedAt: new Date(+now - 1e6) }),
       member(m.kid, 'Kiddo', { managedBy: m.ann }),
@@ -45,9 +46,10 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     reveal: { enabled: false }, createdAt: now, updatedAt: now, ...(draw && { draw }),
   });
   const assignments = { [m.ann]: m.bob, [m.bob]: m.cee, [m.cee]: m.kid, [m.kid]: m.ann };
-  const address = { lines: [`Annstraat ${tag}`], postalCode: '1000', city: 'Brussel', country: 'BE' };
+  const address = { id: addressId, lines: [`Annstraat ${tag}`], postalCode: '1000', city: 'Brussel', country: 'BE' as const };
+  await db.users.updateOne({ _id: new ObjectId(ann.id) }, { $set: { addresses: [address], defaultAddressId: addressId } });
   await db.editions.insertMany([
-    edition(e.family, g.family, 'drawn', [participant(m.ann, { address }), participant(m.bob), participant(m.cee), participant(m.kid)], {
+    edition(e.family, g.family, 'drawn', [participant(m.ann), participant(m.bob), participant(m.cee), participant(m.kid)], {
       assignments, drawnAt: now, history: [],
     }),
     edition(e.solo, g.solo, 'open', [participant(m.solo), participant(m.inv, { status: 'invited' })]),

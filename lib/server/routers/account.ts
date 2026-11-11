@@ -2,12 +2,13 @@ import { createHash, randomInt, timingSafeEqual } from 'node:crypto';
 import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
-import { PersonName } from '../../schema/common';
-import { NotificationPrefs } from '../../schema/user';
+import { Id, PersonName } from '../../schema/common';
+import { MAX_ADDRESSES, NotificationPrefs, PostalAddress } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
 import { exportAccount } from '../account/export';
 import { accountGroups } from '../account/groups';
 import { getAuth } from '../auth';
+import { newId } from '../db';
 import { AppError } from '../errors';
 import { sendMail } from '../mail';
 import { enforceRateLimit } from '../rate-limit';
@@ -16,8 +17,9 @@ import { authedProcedure, router } from '../trpc';
 const DELETION_CODE_TTL = 10 * 60 * 1000;
 const deletionIdentifier = (userId: string) => `delete-account-${userId}`;
 const sha256 = (text: string) => createHash('sha256').update(text).digest();
+const ownAccount = (userId: string) => ({ _id: new ObjectId(userId) });
 
-/** The signed-in person's account (55): profile, preferences, their groups, export and deletion. */
+/** The signed-in person's account (55): profile, preferences, address book (80), their groups, export and deletion. */
 export const accountRouter = router({
   groups: authedProcedure.query(({ ctx }) => accountGroups(ctx.db, ctx.user.id)),
 
@@ -35,6 +37,60 @@ export const accountRouter = router({
       { $set: { notifications: input, updatedAt: new Date() } }
     );
     return input;
+  }),
+
+  /** My address book (80). */
+  addresses: authedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.users.findOne(ownAccount(ctx.user.id), { projection: { addresses: 1, defaultAddressId: 1 } });
+    return { addresses: user?.addresses ?? [], defaultAddressId: user?.defaultAddressId ?? null };
+  }),
+
+  /** The first address becomes the default. */
+  addAddress: authedProcedure.input(v.object({ address: PostalAddress })).mutation(async ({ ctx, input }) => {
+    const id = newId();
+    const added = await ctx.db.users.updateOne(
+      { ...ownAccount(ctx.user.id), [`addresses.${MAX_ADDRESSES - 1}`]: { $exists: false } },
+      { $push: { addresses: { id, ...input.address } }, $set: { updatedAt: new Date() } }
+    );
+    if (added.matchedCount === 0) throw new AppError('FORBIDDEN');
+    await ctx.db.users.updateOne({ ...ownAccount(ctx.user.id), defaultAddressId: { $exists: false } }, { $set: { defaultAddressId: id } });
+    return { id };
+  }),
+
+  updateAddress: authedProcedure.input(v.object({ id: Id, address: PostalAddress })).mutation(async ({ ctx, input }) => {
+    const updated = await ctx.db.users.updateOne(
+      { ...ownAccount(ctx.user.id), 'addresses.id': input.id },
+      { $set: { 'addresses.$': { id: input.id, ...input.address }, updatedAt: new Date() } }
+    );
+    if (updated.matchedCount === 0) throw new AppError('NOT_FOUND');
+    return { ok: true };
+  }),
+
+  /** Removing the default makes the first remaining one the default. Groups that picked it fall back to the default on read. */
+  removeAddress: authedProcedure.input(v.object({ id: Id })).mutation(async ({ ctx, input }) => {
+    const user = await ctx.db.users.findOneAndUpdate(
+      { ...ownAccount(ctx.user.id), 'addresses.id': input.id },
+      { $pull: { addresses: { id: input.id } }, $set: { updatedAt: new Date() } },
+      { returnDocument: 'after', projection: { addresses: 1, defaultAddressId: 1 } }
+    );
+    if (!user) throw new AppError('NOT_FOUND');
+    if (user.defaultAddressId === input.id) {
+      const next = user.addresses?.[0]?.id;
+      await ctx.db.users.updateOne(
+        { ...ownAccount(ctx.user.id), defaultAddressId: input.id },
+        next ? { $set: { defaultAddressId: next } } : { $unset: { defaultAddressId: true } }
+      );
+    }
+    return { ok: true };
+  }),
+
+  setDefaultAddress: authedProcedure.input(v.object({ id: Id })).mutation(async ({ ctx, input }) => {
+    const updated = await ctx.db.users.updateOne(
+      { ...ownAccount(ctx.user.id), 'addresses.id': input.id },
+      { $set: { defaultAddressId: input.id, updatedAt: new Date() } }
+    );
+    if (updated.matchedCount === 0) throw new AppError('NOT_FOUND');
+    return { ok: true };
   }),
 
   export: authedProcedure.query(async ({ ctx }) => {

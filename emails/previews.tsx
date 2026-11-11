@@ -57,6 +57,7 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
     { name: 'join-request', subject: joinRequestSubject({ locale, name: 'Bob', group }), body: <JoinRequestEmail {...base} name="Bob" />, url },
     { name: 'joined', subject: joinedSubject(base), body: <JoinedEmail {...base} />, url },
     { name: 'names-drawn', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} giftDay={giftDay} budget="€25" />, url, mustNotContain: ['Ann'] },
+    { name: 'names-drawn-posted', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} giftDay={giftDay} addAddress />, url },
     { name: 'names-drawn-managed', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} forName="Kid" />, url },
     { name: 'giftee-changed', subject: gifteeChangedSubject(base), body: <GifteeChangedEmail {...base} />, url },
     { name: 'organizer-handover', subject: organizerHandoverSubject(base), body: <OrganizerHandoverEmail {...base} />, url },
@@ -75,6 +76,8 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
     reminder('reminder-gift', { gift }),
     reminder('reminder-post', { gift: { ...gift, postBy } }),
     reminder('reminder-combined', { wishlist, gift }),
+    reminder('reminder-address', { address: { url, postBy } }),
+    reminder('reminder-address-post', { address: { url, postBy }, gift: { ...gift, postBy } }),
     reminder('reminder-ready', { readyToDraw: { url, people: 6, giftDay, soon: false } }),
     reminder('reminder-ready-soon', { wishlist, readyToDraw: { url, people: 6, giftDay, soon: true } }),
     {

@@ -80,6 +80,7 @@
     "body": "De loting voor “{group}” is klaar. Open Givto en kijk voor wie je een cadeau koopt. Niet verklappen!",
     "gift-day": "Pakjesdag: {date}.",
     "budget": "Budget: {budget}.",
+    "address": "De cadeaus gaan met de post: vul je adres in op Givto, dan weet je Santa waar je cadeau heen moet.",
     "button": "Bekijk wie ik heb"
   },
   "giftee-changed": {
@@ -138,6 +139,13 @@
       "body": "Je Santa in “{group}” weet nog niet wat je wilt. Zet een paar wensen op je lijstje: groot of klein, een link of gewoon een idee.",
       "by": "Verlanglijstjes klaar vóór {date}.",
       "button": "Wens toevoegen"
+    },
+    "address": {
+      "subject": "Vul je adres in",
+      "title": "Waar moet je cadeau naartoe?",
+      "body": "Bij “{group}” gaan de cadeaus met de post. Vul je adres in, dan weet je Santa waar je cadeau heen moet. Alleen je Santa ziet het.",
+      "by": "De cadeaus moeten vóór {date} op de post.",
+      "button": "Adres invullen"
     },
     "gift": {
       "subject": "Heb je je cadeau al?",

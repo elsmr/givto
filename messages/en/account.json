@@ -10,6 +10,28 @@
     "saved": "Name saved",
     "invalid": "Use 1 to 50 characters, without links or @."
   },
+  "address": {
+    "title": "Postal addresses",
+    "description": "Only your Santa sees one, in a Secret Santa that sends gifts by post. Groups use your default unless you pick another there.",
+    "default": "Default",
+    "make-default": "Make default",
+    "default-saved": "Default address changed",
+    "add": "Add an address",
+    "edit": "Edit",
+    "remove": "Remove",
+    "removed": "Address removed",
+    "recipient": "Name on the parcel (optional)",
+    "line1": "Street and number",
+    "line2": "Address line 2 (optional)",
+    "postal-code": "Postal code",
+    "city": "City",
+    "region": "State or province (optional)",
+    "country": "Country",
+    "choose-country": "Choose a country",
+    "save": "Save address",
+    "saved": "Address saved",
+    "cancel": "Cancel"
+  },
   "security": {
     "title": "Sign-in & security"
   },

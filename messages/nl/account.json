@@ -10,6 +10,28 @@
     "saved": "Naam opgeslagen",
     "invalid": "Gebruik 1 tot 50 tekens, zonder links of @."
   },
+  "address": {
+    "title": "Postadressen",
+    "description": "Alleen je Santa ziet er een, in een Secret Santa waarbij de cadeaus met de post gaan. Groepen gebruiken je standaardadres, tenzij je er daar een ander kiest.",
+    "default": "Standaard",
+    "make-default": "Als standaard instellen",
+    "default-saved": "Standaardadres gewijzigd",
+    "add": "Adres toevoegen",
+    "edit": "Bewerken",
+    "remove": "Verwijderen",
+    "removed": "Adres verwijderd",
+    "recipient": "Naam op het pakje (optioneel)",
+    "line1": "Straat en huisnummer",
+    "line2": "Extra adresregel (optioneel)",
+    "postal-code": "Postcode",
+    "city": "Woonplaats",
+    "region": "Provincie of staat (optioneel)",
+    "country": "Land",
+    "choose-country": "Kies een land",
+    "save": "Adres opslaan",
+    "saved": "Adres opgeslagen",
+    "cancel": "Annuleren"
+  },
   "security": {
     "title": "Inloggen & beveiliging"
   },

@@ -3,6 +3,7 @@ import { NamesDrawnEmail, namesDrawnSubject } from '../../../emails/names-drawn'
 import { formatBudget } from '../../format-budget';
 import { formatLocalDate } from '../../local-date';
 import type { Edition } from '../../schema/edition';
+import { userIdsWithAddress } from '../account/addresses';
 import type { Collections } from '../db';
 import { log } from '../log';
 import { sendNotice } from '../mail/notice';
@@ -23,6 +24,8 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
   const sent = new Set(
     (await db.sentNotifications.find({ _id: { $regex: `^${prefix}` } }, { projection: { _id: 1 } }).toArray()).map((n) => n._id)
   );
+  const posted = edition.exchangeMode !== 'inPerson';
+  const withAddress = posted ? await userIdsWithAddress(db, group.members) : new Set<string>();
   return runEach('drawNotices', Object.entries(edition.draw.assignments), async ([santaId, gifteeId]) => {
     const key = `${prefix}${santaId}:${gifteeId}`;
     if (sent.has(key)) return 'done';
@@ -45,7 +48,8 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
         if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);
         const budget = edition.budget && formatBudget(edition.budget, to.locale);
-        return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget }) };
+        const addAddress = posted && !to.forName && !(santa.userId && withAddress.has(santa.userId));
+        return { subject: namesDrawnSubject(props), body: NamesDrawnEmail({ ...props, giftDay, budget, addAddress }) };
       },
     });
   });
