@@ -13,6 +13,17 @@
     "cancel": "Not yet",
     "drawn": "Names drawn!"
   },
+  "waiting": {
+    "ready": "You're all set",
+    "todo": "Add your wishes",
+    "wait": "Nothing to do until {organizer} draws names.",
+    "wait-on": "Nothing to do until {organizer} draws names on {date}.",
+    "email": "We'll email you as soon as names are drawn.",
+    "in": "You're in",
+    "wishes": "{count, plural, one {# wish} other {# wishes}} in this group",
+    "no-wishes": "No wishes in this group yet",
+    "add": "Add a wish"
+  },
   "draft": {
     "title": "Nothing's sent yet",
     "description": "Check who's in and the dates, then open it so people can join.",

@@ -38,9 +38,11 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
 
   await test.step('gift day, wishlist deadline and budget', async () => {
     const editionCard = card(page, 'Secret Santa 2099');
-    await editionCard.getByLabel('Date', { exact: true }).fill('2099-12-20');
+    await editionCard.getByLabel("When's gift day?").fill('2099-12-20');
+    await editionCard.getByRole('button', { name: 'Time' }).click();
     await editionCard.getByLabel('Time').fill('18:00');
     await editionCard.getByLabel('Wishlists ready by').fill('2099-12-01');
+    await editionCard.getByRole('button', { name: 'Budget' }).click();
     await editionCard.getByLabel('Amount').fill('25');
     await editionCard.getByLabel('Currency').selectOption('EUR');
     await Promise.all([
@@ -52,7 +54,8 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await test.step('saved: the settings keep them after a reload', async () => {
     await page.reload();
     const editionCard = card(page, 'Secret Santa 2099');
-    await expect(editionCard.getByLabel('Date', { exact: true })).toHaveValue('2099-12-20');
+    await expect(editionCard.getByLabel("When's gift day?")).toHaveValue('2099-12-20');
+    await expect(editionCard.getByLabel('Time')).toHaveValue('18:00');
     await expect(editionCard.getByLabel('Wishlists ready by')).toHaveValue('2099-12-01');
     await expect(editionCard.getByLabel('Amount')).toHaveValue('25');
   });
@@ -60,8 +63,8 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
   await test.step('the group page shows them', async () => {
     await page.getByRole('link', { name: 'Back to After' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'After' })).toBeVisible();
-    await expect(page.getByText('Budget €25', { exact: true })).toBeVisible();
-    await page.getByRole('heading', { name: 'Dates, budget and notes' }).click();
+    await expect(page.getByRole('heading', { name: 'Dates, budget and notes' })).toBeVisible();
+    await expect(page.getByText('€25', { exact: true })).toBeVisible();
     await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00`)).toBeVisible();
     await expect(page.getByText(fullDate('2099-12-01'))).toBeVisible();
   });

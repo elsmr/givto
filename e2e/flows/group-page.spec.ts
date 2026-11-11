@@ -76,13 +76,13 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
 
   await test.step('before the draw: no My giftee tab', async () => {
     await page.goto(`/g/${group.slug}#giftee`);
-    await expect(tabs).toHaveText(['Overview', 'My wishlist', 'People']);
+    await expect(tabs, 'my wishes here and who is in as counts').toHaveText(['Overview', 'My wishlist 0', 'People 3']);
     await expect(tab(page, 'Overview'), 'an unknown tab falls back to the overview').toHaveAttribute('aria-selected', 'true');
   });
 
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   await page.goto(`/g/${group.slug}`);
-  await expect(tabs).toHaveText(['Overview', 'My giftee', 'My wishlist', 'People']);
+  await expect(tabs).toHaveText(['Overview', 'My giftee', 'My wishlist 0', 'People 3']);
 
   await test.step('switching keeps the tab in the hash, and a reload keeps it', async () => {
     for (const [name, hash] of [['People', '#people'], ['My wishlist', '#wishlist'], ['My giftee', '#giftee']] as const) {
@@ -112,6 +112,30 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
     await tab(page, 'Overview').click();
     await expect(page).toHaveURL(`/g/${group.slug}`);
     await expect(page.getByRole('tabpanel', { name: 'Overview' })).toBeVisible();
+  });
+});
+
+test('a member before the draw: adding wishes is the to-do, then all set until the organizer draws', async ({ page, signIn, signInPage }) => {
+  const [ann, bob] = await Promise.all(['ann', 'bob'].map((name) => signIn(name)));
+  const group = await openGroup(ann, bob, 'Waiting');
+  await signInPage(page, bob);
+  await page.goto(`/g/${group.slug}`);
+
+  await test.step('no wishes here: Add your wishes', async () => {
+    await expect(page.getByRole('heading', { name: 'Add your wishes' })).toBeVisible();
+    await expect(page.getByText('No wishes in this group yet')).toBeVisible();
+    await expect(page.getByText('Hi Bob'), 'no greeting').toHaveCount(0);
+    await page.getByRole('button', { name: 'Add a wish' }).click();
+    await expect(tab(page, 'My wishlist')).toHaveAttribute('aria-selected', 'true');
+  });
+
+  await test.step('a wish shown here: all set', async () => {
+    ok(await bob.trpc.mutate('wish.create', { title: 'Warm socks', groupSlugs: [group.slug] }));
+    await page.goto(`/g/${group.slug}`);
+    await expect(page.getByRole('heading', { name: "You're all set" })).toBeVisible();
+    await expect(page.getByText("Nothing to do until Ann draws names. We'll email you as soon as names are drawn.")).toBeVisible();
+    await expect(page.getByText('1 wish in this group')).toBeVisible();
+    await expect(tab(page, 'My wishlist')).toHaveText('My wishlist 1');
   });
 });
 

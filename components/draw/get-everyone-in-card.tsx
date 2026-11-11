@@ -9,6 +9,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 /**
  * Open edition (61): who's in and when names are drawn; the organizer invites (link, QR or email).
  * Draw names is in the group header; names on the People tab; link settings and keep apart in the settings.
+ * Members who are in see the WaitingCard instead.
  */
 export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('draw.before');

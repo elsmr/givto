@@ -31,6 +31,7 @@ const sampleGroups = (giftDay: string | undefined): DashboardGroup[] => [
     archived: false,
     edition: { number: 3, title: 'Christmas 2026', year: 2026, status: 'drawn', giftDay, timeZone: 'UTC', participantCount: 6, gifteeReady: true },
     todos: [{ kind: 'question', count: 1 }],
+    shownWishIds: [],
   },
   {
     slug: 'book-club',
@@ -39,6 +40,7 @@ const sampleGroups = (giftDay: string | undefined): DashboardGroup[] => [
     archived: false,
     edition: { number: 1, title: 'Winter swap', year: 2026, status: 'open', giftDay: undefined, timeZone: 'UTC', participantCount: 4, gifteeReady: false },
     todos: [{ kind: 'joinRequests', count: 2 }, { kind: 'readyToDraw' }, { kind: 'noWishes' }],
+    shownWishIds: [],
   },
 ];
 

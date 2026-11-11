@@ -1,4 +1,4 @@
-// One wishlist, several groups (38): pick the wishes each group sees, confirming one already in another active group, in each group's own order; Dibs! from a Santa, shown as
+// One wishlist, several groups (38): pick the wishes each group sees, in the group or from /wishlist, noting one already in another active group, in each group's own order; Dibs! from a Santa, shown as
 // "Taken" to Santas in other groups and never to the wishlist's owner. Archived (76): only the Santa
 // with Dibs! still sees it, as no longer on the list.
 import type { Locator, Page } from '@playwright/test';
@@ -40,15 +40,31 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
   const friends = await drawnGroup(db, 'Friends', [[cee, 'Cee'], [dan, 'Dan'], [olive, 'Olive']], olive);
   for (const title of ['Cookbook', 'Wool socks']) ok(await olive.trpc.mutate('wish.create', { title, groupSlugs: [friends.slug] }));
 
-  await test.step('Olive shows only the cookbook in Family, after a warning that Friends sees it too', async () => {
+  await test.step('Olive shows only the cookbook in Family; it notes that Friends sees it too', async () => {
     await signInPage(page, olive);
     await page.goto(`/g/${family.slug}#wishlist`);
     const tab = page.getByRole('tabpanel', { name: 'My wishlist' });
     await tab.getByText('2 wishes hidden here').click();
     await tab.getByRole('button', { name: 'Show “Cookbook” in this group' }).click();
-    await page.getByRole('dialog', { name: 'Already shown in Friends' }).getByRole('button', { name: 'Show here too' }).click();
-    await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends')).toBeVisible();
+    await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends.')).toBeVisible();
     await expect(tab.getByText('1 wish hidden here')).toBeVisible();
+  });
+
+  await test.step('on /wishlist, each wish shows its groups; ticking one there shows it right away, with one note while more than one group shows it', async () => {
+    await page.goto('/wishlist');
+    const card = (title: string) => page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: title }) });
+    await expect(card('Cookbook')).toContainText(/Family\s*Friends/);
+    await card('Wool socks').getByRole('button', { name: 'Groups that see “Wool socks”' }).click();
+    const popover = page.getByRole('dialog', { name: 'Show in' });
+    await expect(popover.getByRole('checkbox', { name: 'Friends' })).toBeChecked();
+    await popover.getByRole('checkbox', { name: 'Family' }).click();
+    await expect(popover.getByText(/^Shown in (Family and Friends|Friends and Family)\.$/)).toBeVisible();
+    await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook', 'Wool socks']);
+    await popover.getByRole('checkbox', { name: 'Family' }).click();
+    await expect(popover.getByText(/^Shown in /)).toHaveCount(0);
+    await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook']);
+    await page.keyboard.press('Escape');
+    await expect(card('Wool socks')).not.toContainText('Family');
   });
 
   await test.step('Olive puts the cookbook first in Friends only', async () => {
@@ -76,11 +92,13 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await expect(wishlist.getByRole('button', { name: /Dibs on/ })).toHaveCount(0);
   });
 
+  // "Also in Friends." says Santas "see each other's Dibs!": the words, not a claim.
+  const claimText = /Dibs(?!!, but)|Taken|Someone else is getting|No longer on the list/;
   await test.step('Olive never sees a claim', async () => {
     for (const path of ['/wishlist', `/g/${family.slug}#wishlist`, `/g/${friends.slug}#wishlist`]) {
       await page.goto(path);
       await expect(page.getByRole('heading', { name: 'Cookbook' }).first()).toBeVisible();
-      await expect(page.getByRole('main')).not.toContainText(/Dibs|Taken|Someone else is getting/);
+      await expect(page.getByRole('main')).not.toContainText(claimText);
     }
   });
 
@@ -88,7 +106,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await page.goto('/wishlist');
     await page.getByRole('button', { name: 'Archive “Cookbook”' }).click();
     await expect(page.getByRole('heading', { name: 'Archived (1)' })).toBeVisible();
-    await expect(page.getByRole('main')).not.toContainText(/Dibs|Taken|No longer on the list/);
+    await expect(page.getByRole('main')).not.toContainText(claimText);
     // A reload hides the giftee again (the reveal is per page load), so the tap is there again.
     await friendsSanta.reload();
     const withDibs = await openGifteeWishlist(friendsSanta, friends.slug);
@@ -97,5 +115,16 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await familySanta.reload();
     await familySanta.getByRole('button', { name: /Tap to see who you're buying for/ }).click();
     await expect(familySanta.getByRole('tabpanel', { name: 'My giftee' }).getByText("Olive hasn't added any wishes yet.")).toBeVisible();
+  });
+
+  await test.step('Olive adds a wish in the Family tab: only Family shows it', async () => {
+    await page.goto(`/g/${family.slug}#wishlist`);
+    const tab = page.getByRole('tabpanel', { name: 'My wishlist' });
+    await tab.getByLabel('Wish', { exact: true }).fill('Kite');
+    await tab.getByLabel('Wish', { exact: true }).press('Enter');
+    await expect(tab.getByRole('heading', { name: 'Kite' })).toBeVisible();
+    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
+    expect(await shownIn(family.slug)).toEqual(['Kite']);
+    expect(await shownIn(friends.slug)).toEqual(['Wool socks']);
   });
 });
