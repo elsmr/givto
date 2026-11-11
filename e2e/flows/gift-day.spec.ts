@@ -1,6 +1,6 @@
 // Gift day (31, 32, 63, 69): the presenter for the organizer: intro, spin (or skip it), turns with
 // gift counts all at once and one by one ("Gift 2 of 3", the manual fallback), the big reveal one
-// pair at a time; members can't open it; reduced motion still shows everything.
+// pair at a time; members can't open it but follow it on /live (95); reduced motion still shows everything.
 import type { Page } from '@playwright/test';
 import type { UnwrapMode } from '@/lib/schema/edition';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
@@ -10,9 +10,14 @@ import { drawOf } from './draw-seed';
 /**
  * Ann, Bob and Cee on gift day with a shuffled unwrap order. `counts[i]`: how many gifts the i-th
  * person in the unwrap order gets, as their Santa marked them; null: their Santa marked nothing.
- * Guess your Santa is off: guess-your-santa.spec.ts walks the presenter with it on.
+ * Guess your Santa is off unless `guessing`: guess-your-santa.spec.ts walks the presenter with it on.
  */
-const giftDayGroup = async (db: TestDb, people: User[], name: string, { mode, counts, reveal }: { mode: UnwrapMode; counts: (number | null)[]; reveal: boolean }) => {
+const giftDayGroup = async (
+  db: TestDb,
+  people: User[],
+  name: string,
+  { mode, counts, reveal, guessing = false }: { mode: UnwrapMode; counts: (number | null)[]; reveal: boolean; guessing?: boolean }
+) => {
   const [ann] = people;
   const group = await drawnGroup(people, name);
   const at = { groupSlug: group.slug, editionNumber: 1 };
@@ -27,9 +32,15 @@ const giftDayGroup = async (db: TestDb, people: User[], name: string, { mode, co
     const lines = Array.from({ length: count }, (_, k) => `Gift ${k + 1}`);
     ok(await draw.santaOf(userOf(order[i].memberId)).trpc.mutate('gift.set', { ...at, wishIds: [], lines }));
   }
-  await db.editions.updateOne({ _id: draw.editionId }, { $set: { status: 'giftday', guessing: false } });
+  await db.editions.updateOne({ _id: draw.editionId }, { $set: { status: 'giftday', guessing } });
   const pairs = people.map((person) => `${draw.nameOf(person)} got a gift from ${draw.nameOf(draw.santaOf(person))}`);
-  return { slug: group.slug, names: order.map((person) => person.name), countOf: (user: User) => counts[order.findIndex((p) => p.memberId === draw.memberIdOf(user))], pairs };
+  return {
+    slug: group.slug,
+    names: order.map((person) => person.name),
+    countOf: (user: User) => counts[order.findIndex((p) => p.memberId === draw.memberIdOf(user))],
+    santaOfNth: (i: number) => draw.santaOf(userOf(order[i].memberId)),
+    pairs,
+  };
 };
 
 /** Names on the stage are paragraphs; the spinning reel's strip is aria-hidden, so it never matches. */
@@ -117,8 +128,9 @@ test('presenter, all at once: intro, spin or skip it, turns with gift counts, th
     const bobPage = await newPage();
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${giftDay.slug}`);
-    // The full unwrap order further down is collapsed; the gift day card shows who is up.
-    await expect(bobPage.getByText(`Now unwrapping: ${third}`).filter({ visible: true })).toHaveCount(1);
+    await bobPage.getByRole('link', { name: 'Join the presentation' }).click();
+    await expect(bobPage).toHaveURL(`/g/${giftDay.slug}/live`);
+    await expect(bobPage.getByText(`Now unwrapping: ${third}`)).toBeVisible();
   });
 
   await test.step('the big reveal: the pairs come one at a time', async () => {
@@ -139,6 +151,35 @@ test('presenter, all at once: intro, spin or skip it, turns with gift counts, th
     await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
     await expect(button(page, 'Next')).toHaveCount(0);
   });
+});
+
+test('/live: a member follows the presenter, guesses at the turn, and their guess is in the tally', async ({ page, newPage, signIn, signInPage, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const giftDay = await giftDayGroup(db, people, 'Live', { mode: 'allAtOnce', counts: [null, null, null], reveal: false, guessing: true });
+  const [first] = giftDay.names;
+  // The first person's Santa has nothing to guess at their turn.
+  const member = people.slice(1).find((user) => user !== giftDay.santaOfNth(0))!;
+  const live = await newPage();
+  await signInPage(live, member);
+  await live.goto(`/g/${giftDay.slug}/live`);
+  await expect(live.getByText('Waiting for the presenter…')).toBeVisible();
+
+  await signInPage(page, people[0]);
+  await openPresenter(page, giftDay.slug);
+  await skipSpin(page);
+  await button(page, 'Next').click();
+  await expect(live.getByText("Who's next? The reel is spinning…")).toBeVisible();
+  await button(page, 'Spin').click();
+  await expect(shownName(page, first)).toBeVisible();
+  await expect(live.getByText(`Now unwrapping: ${first}`)).toBeVisible();
+
+  const pick = live.getByRole('group', { name: "Who do you think it's from?" }).getByRole('button').first();
+  const guess = (await pick.textContent())!;
+  await pick.click();
+  await expect(pick).toHaveAttribute('aria-pressed', 'true');
+  await button(page, 'Who was it from?').click();
+  await expect(live.getByRole('list', { name: "Everyone's guesses" }).getByRole('listitem')).toHaveText([`${guess}1 guess`]);
+  await expect(live.getByText(`You guessed ${guess}`)).toBeVisible();
 });
 
 test('presenter, one by one: "Gift 2 of 3", and "That was the last one" when nobody counted', async ({ page, signIn, signInPage, db }) => {

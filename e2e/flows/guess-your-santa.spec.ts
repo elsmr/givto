@@ -1,6 +1,6 @@
 // Guess your Santa (62, 94): the dialog sets a guess per giftee (82) and changes it; on gift day phones guess at the turn
-// until the Santa is shown; the presenter shows the Santa, the guess and everyone's tally; the group page follows; the
-// organizer can switch it off.
+// on /live (95) until the Santa is shown; the presenter shows the Santa, the guess and everyone's tally; the group page
+// follows; the organizer can switch it off.
 import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 
@@ -61,19 +61,18 @@ test('guess and change it; phones guess at the turn; the presenter shows "From â
     const giftee = people.find((user) => idOf(user.id) === bobsGiftee)!;
     const santa = people.find((user) => idOf(user.id) === bobsSanta)!;
     await signInPage(phone, giftee);
-    await phone.goto(`/g/${group.slug}`);
+    await phone.goto(`/g/${group.slug}/live`);
     const picker = phone.getByRole('group', { name: "Who do you think it's from?" });
     await expect(picker.getByRole('button')).toHaveText([nameOf(bobsSanta)]);
     await picker.getByRole('button', { name: nameOf(bobsSanta) }).click();
     await expect(picker.getByRole('button', { name: nameOf(bobsSanta) })).toHaveAttribute('aria-pressed', 'true');
     // Bob's own row, as he saved it.
-    await page.reload();
+    await page.goto(`/g/${group.slug}/live`);
     await expect(page.getByRole('group', { name: "Who do you think it's from?" }).getByRole('button', { name: nameOf(bobsSanta) })).toHaveAttribute('aria-pressed', 'true');
     const santaPhone = await browser.newPage();
     await signInPage(santaPhone, santa);
-    await santaPhone.goto(`/g/${group.slug}`);
-    await expect(santaPhone.getByText(`Now unwrapping: ${nameOf(idOf(bob.id))}`).first()).toBeVisible();
-    await expect(santaPhone.getByRole('heading', { name: 'Guess your Santa' })).toBeVisible();
+    await santaPhone.goto(`/g/${group.slug}/live`);
+    await expect(santaPhone.getByText(`Now unwrapping: ${nameOf(idOf(bob.id))}`)).toBeVisible();
     await expect(santaPhone.getByRole('group', { name: "Who do you think it's from?" }), 'their Santa').toHaveCount(0);
     await santaPhone.close();
     await expect(presenter.getByRole('list', { name: "Everyone's guesses" })).toHaveCount(0);
@@ -91,9 +90,8 @@ test('guess and change it; phones guess at the turn; the presenter shows "From â
   });
 
   await test.step("Bob's page shows his answer", async () => {
-    await page.reload();
+    await page.goto(`/g/${group.slug}`);
     await expect(page.getByText(`Your gift was from ${nameOf(bobsSanta)}`)).toBeVisible();
-    await expect(page.getByRole('list', { name: "Everyone's guesses" })).toBeVisible();
     await expect(page.getByText('Nailed it!').first()).toBeVisible();
     await expect(page.getByText('1 of 1 guessed their Santa')).toBeVisible();
   });

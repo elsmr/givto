@@ -15,12 +15,10 @@ const name = (chunks: ReactNode) => <strong>{chunks}</strong>;
 /** How many guessed each name for a giftee (94), most first, once their Santa is out. `large` for the presenter. */
 export const GuessTally = ({ tally, large = false }: { tally: GuessResult['tally']; large?: boolean }) => {
   const t = useTranslations('guess.live');
-  // The presenter's slide has no h2 above it; on the group page it sits under the gift day h2.
-  const Heading = large ? 'h2' : 'h3';
 
   return (
     <section className={cn('flex flex-col gap-2', large && 'items-center')}>
-      <Heading className={cn('font-heading font-bold', large ? 'text-2xl sm:text-4xl' : 'text-lg')}>{t('tally')}</Heading>
+      <h2 className={cn('font-heading font-bold', large ? 'text-2xl sm:text-4xl' : 'text-lg')}>{t('tally')}</h2>
       {tally.length === 0 ? (
         <p className={cn('text-muted', large && 'text-xl sm:text-3xl')}>{t('no-guesses')}</p>
       ) : (
@@ -46,8 +44,8 @@ export const GuessTally = ({ tally, large = false }: { tally: GuessResult['tally
 type LiveGuessProps = { input: EditionInput; current: { memberId: string; name: string }; result: GuessResult | undefined };
 
 /**
- * On everyone's phone at a turn (94): my guess for who the gift is from, a tap sets or changes it, until the Santa is
- * shown; then the tally and my guess. Nothing for their Santa, who has no row for their own giftee.
+ * On everyone's phone at a turn, on /live (94, 95): my guess for who the gift is from, a tap sets or changes it, until
+ * the Santa is shown; then the tally and my guess. Nothing for their Santa, who has no row for their own giftee.
  */
 export const LiveGuess = ({ input, current, result }: LiveGuessProps) => {
   const t = useTranslations('guess');

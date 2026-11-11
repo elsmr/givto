@@ -4,7 +4,8 @@
     "description": "Time to unwrap. Have fun, everyone.",
     "present": "Open the presenter view",
     "to-open": "{count, plural, one {# gift to open} other {# gifts to open}}",
-    "join-call": "Join the video call"
+    "join-call": "Join the video call",
+    "join-live": "Join the presentation"
   },
   "order": {
     "title": "Unwrap order",
@@ -86,6 +87,12 @@
     "gift-of": "Gift {current} of {total}",
     "gifts": "{count, plural, one {# gift} other {# gifts}}",
     "champion": "{count, plural, one {Champion} other {Champions}}: {names}"
+  },
+  "live": {
+    "page-title": "Gift day live",
+    "close": "Back to the group",
+    "waiting": "Waiting for the presenter…",
+    "reveal-waiting": "Watch the screen: who was whose Santa is coming up."
   },
   "swap": {
     "table": "Who has which gift",

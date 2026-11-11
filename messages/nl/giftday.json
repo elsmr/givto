@@ -4,7 +4,8 @@
     "description": "Tijd om uit te pakken. Veel plezier, allemaal.",
     "present": "Presentatieweergave openen",
     "to-open": "{count, plural, one {# cadeau om uit te pakken} other {# cadeaus om uit te pakken}}",
-    "join-call": "Naar het videogesprek"
+    "join-call": "Naar het videogesprek",
+    "join-live": "Volg de presentatie"
   },
   "order": {
     "title": "Uitpakvolgorde",
@@ -86,6 +87,12 @@
     "gift-of": "Cadeau {current} van {total}",
     "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
     "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
+  },
+  "live": {
+    "page-title": "Pakjesdag live",
+    "close": "Terug naar de groep",
+    "waiting": "Wachten op de presentator…",
+    "reveal-waiting": "Kijk naar het scherm: zo meteen zie je wie wiens Santa was."
   },
   "swap": {
     "table": "Wie heeft welk cadeau",

@@ -14,7 +14,7 @@ import { PresenterLoading } from './presenter-loading';
 import { PresenterSettings } from './presenter-settings';
 import { PresenterStage } from './presenter-stage';
 
-const notice = (text: string) => (
+export const notice = (text: string) => (
   <div className="mx-auto w-full max-w-xl px-6 py-16">
     <Alert>
       <AlertDescription>{text}</AlertDescription>

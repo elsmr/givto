@@ -6,11 +6,12 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-type PresenterFrameProps = { groupSlug: string; heading?: string; settings?: ReactNode; children: ReactNode };
+type PresenterFrameProps = { groupSlug: string; heading?: string; settings?: ReactNode; closeLabel?: string; children: ReactNode };
 
-/** Full-screen stage for a TV or laptop at the party: no site header or footer. */
-export const PresenterFrame = ({ groupSlug, heading, settings, children }: PresenterFrameProps) => {
+/** Full-screen stage for a TV or laptop at the party, and for phones following it (95): no site header or footer. */
+export const PresenterFrame = ({ groupSlug, heading, settings, closeLabel, children }: PresenterFrameProps) => {
   const t = useTranslations('giftday.present');
+  const close = closeLabel ?? t('close');
   usePreferredLocale();
 
   return (
@@ -20,10 +21,10 @@ export const PresenterFrame = ({ groupSlug, heading, settings, children }: Prese
         <div className="flex shrink-0 gap-1">
           {settings}
           <Tooltip>
-            <TooltipTrigger render={<Link href={`/g/${groupSlug}`} aria-label={t('close')} className={buttonVariants({ variant: 'ghost', size: 'icon' })} />}>
+            <TooltipTrigger render={<Link href={`/g/${groupSlug}`} aria-label={close} className={buttonVariants({ variant: 'ghost', size: 'icon' })} />}>
               <X aria-hidden="true" />
             </TooltipTrigger>
-            <TooltipContent side="bottom">{t('close')}</TooltipContent>
+            <TooltipContent side="bottom">{close}</TooltipContent>
           </Tooltip>
         </div>
       </header>
