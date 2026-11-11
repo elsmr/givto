@@ -4,13 +4,14 @@ import { isDrawn } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { appErrorCode } from '../../group/app-error-code';
 import { GroupNotFound } from '../../group/group-not-found';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { ShuffleButton } from '../shuffle-button';
 import { PresenterFrame } from './presenter-frame';
 import { PresenterLoading } from './presenter-loading';
+import { PresenterSettings } from './presenter-settings';
 import { PresenterStage } from './presenter-stage';
 
 const notice = (text: string) => (
@@ -33,9 +34,22 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
     ...trpc.giftday.presenter.queryOptions({ groupSlug, editionNumber }),
     enabled: isOrganizer && editionNumber > 0,
   });
+  const [skipSpin, setSkipSpin] = useState(false);
+  const edition = group.data?.edition;
+  const order = view.data?.unwrapOrder;
+  const settings = edition && view.data && (
+    <PresenterSettings
+      groupSlug={groupSlug}
+      edition={edition}
+      mode={view.data.unwrapMode}
+      inProgress={Boolean(order?.started && !order.finished)}
+      skipSpin={skipSpin}
+      onSkipSpinChange={setSkipSpin}
+    />
+  );
 
   const frame = (children: ReactNode) => (
-    <PresenterFrame groupSlug={groupSlug} heading={group.data?.name}>
+    <PresenterFrame groupSlug={groupSlug} heading={group.data?.name} settings={settings}>
       {children}
     </PresenterFrame>
   );
@@ -63,8 +77,8 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
   return frame(
     <div className="grid flex-1 *:col-start-1 *:row-start-1">
       <AnimatePresence>
-        {view.data?.unwrapOrder ? (
-          <PresenterStage key="stage" groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} order={view.data.unwrapOrder} />
+        {view.data && order ? (
+          <PresenterStage key="stage" groupSlug={groupSlug} editionNumber={editionNumber} view={view.data} order={order} skipSpin={skipSpin} />
         ) : (
           <PresenterLoading key="loading" />
         )}

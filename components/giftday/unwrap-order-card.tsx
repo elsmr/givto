@@ -6,7 +6,7 @@ import { Check, Presentation, Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { ShuffleButton } from './shuffle-button';
-import { UnwrapModeSelect } from './unwrap-mode-select';
+import { UnwrapModeSetting } from './unwrap-mode-setting';
 import { UnwrapNow } from './unwrap-now';
 
 type GiftDayView = RouterOutputs['giftday']['get'];
@@ -52,7 +52,7 @@ export const UnwrapOrderCard = ({ groupSlug, editionNumber, order, mode, meId, c
           </div>
         )}
         {canShuffle ? (
-          <UnwrapModeSelect groupSlug={groupSlug} editionNumber={editionNumber} mode={mode} locked={inProgress} />
+          <UnwrapModeSetting groupSlug={groupSlug} editionNumber={editionNumber} mode={mode} inProgress={inProgress} />
         ) : (
           <p className="text-sm text-muted">
             {t(`modes.${mode}`)}: {t(`mode-help.${mode}`)}

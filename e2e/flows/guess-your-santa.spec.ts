@@ -42,7 +42,9 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     await signInPage(presenter, ann);
     await presenter.goto(`/g/${group.slug}/present`);
     await presenter.getByRole('button', { name: 'Next' }).click();
+    await presenter.getByRole('button', { name: 'Presenter settings' }).click();
     await presenter.getByRole('switch', { name: 'Skip the spin' }).click();
+    await presenter.keyboard.press('Escape');
     await presenter.getByRole('button', { name: 'Spin' }).click();
     await expect(presenter.getByText('Next to unwrap')).toBeVisible();
     await expect(presenter.getByText(/^From /)).toHaveCount(0);
@@ -65,7 +67,9 @@ test('guess, locked in; the presenter shows "From … · You guessed …" at the
     const presenter = await browser.newPage();
     await signInPage(presenter, ann);
     await presenter.goto(`/g/${group.slug}/present`);
+    await presenter.getByRole('button', { name: 'Presenter settings' }).click();
     await presenter.getByRole('switch', { name: 'Skip the spin' }).setChecked(true);
+    await presenter.keyboard.press('Escape');
     for (const [i, memberId] of order.entries()) {
       if (i === 0) continue;
       await presenter.getByRole('button', { name: 'Next' }).click();

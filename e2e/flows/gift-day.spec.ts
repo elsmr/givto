@@ -46,6 +46,12 @@ const openPresenter = async (page: Page, slug: string) => {
   await expect(button(page, 'Previous')).toBeDisabled();
 };
 
+const skipSpin = async (page: Page) => {
+  await button(page, 'Presenter settings').click();
+  await page.getByRole('switch', { name: 'Skip the spin' }).click();
+  await page.keyboard.press('Escape');
+};
+
 /** When each of the big reveal's pairs is fully shown, in ms (performance.now). */
 const pairsShownAt = (page: Page) =>
   page.evaluate(
@@ -94,7 +100,11 @@ test('presenter, all at once: intro, spin or skip it, turns with gift counts, th
   await test.step('skip the spin: the second person, no count', async () => {
     await button(page, 'Next').click();
     await expect(page.getByRole('heading', { name: "Who's next?" })).toBeVisible();
+    await button(page, 'Presenter settings').click();
     await page.getByRole('switch', { name: 'Skip the spin' }).click();
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Escape');
+    await expect(button(page, 'Spin'), 'keys in the settings stay in the settings').toBeVisible();
     await button(page, 'Spin').click();
     await expect(page.getByText('2 of 3', { exact: true })).toBeVisible();
     await expect(shownName(page, second)).toBeVisible();
@@ -138,7 +148,7 @@ test('presenter, one by one: "Gift 2 of 3", and "That was the last one" when nob
   const [first, second, third] = giftDay.names;
   await signInPage(page, people[0]);
   await openPresenter(page, giftDay.slug);
-  await page.getByRole('switch', { name: 'Skip the spin' }).click();
+  await skipSpin(page);
   await button(page, 'Next').click();
 
   /** Spins (skipped) when there's more than one person left, then checks whose turn it is. */
@@ -176,6 +186,32 @@ test('presenter, one by one: "Gift 2 of 3", and "That was the last one" when nob
     await button(page, 'Next').click();
     await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
   });
+});
+
+test('presenter settings: changing how you unwrap mid-way asks first, then starts over; close goes back', async ({ page, signIn, signInPage, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const giftDay = await giftDayGroup(db, people, 'Switch', { mode: 'allAtOnce', counts: [null, null, null], reveal: false });
+  await signInPage(page, people[0]);
+  await openPresenter(page, giftDay.slug);
+  await skipSpin(page);
+  await button(page, 'Next').click();
+  await button(page, 'Spin').click();
+  await expect(page.getByText('Next to unwrap')).toBeVisible();
+
+  await button(page, 'Presenter settings').click();
+  const mode = page.getByLabel('How do you unwrap?');
+  await mode.selectOption('One by one');
+  await button(page, 'Keep going').click();
+  await expect(mode).toHaveValue('allAtOnce');
+  await mode.selectOption('One by one');
+  await button(page, 'Change and start over').click();
+  await expect(page.getByRole('dialog', { name: 'Change how you unwrap?' })).toHaveCount(0);
+  await expect(mode).toHaveValue('oneByOne');
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('Press → or space for the first person.')).toBeVisible();
+
+  await page.getByRole('link', { name: 'Close the presenter view' }).click();
+  await expect(page).toHaveURL(`/g/${giftDay.slug}`);
 });
 
 test("a member can't open the presenter", async ({ page, signIn, signInPage, db }) => {

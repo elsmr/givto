@@ -24,7 +24,10 @@
       "allAtOnce": "In their turn, each person opens all their gifts.",
       "oneByOne": "One gift per turn, round and round until nobody has any left."
     },
-    "mode-locked": "You can change this before the unwrapping starts, or after shuffling again.",
+    "mode-restart-title": "Change how you unwrap?",
+    "mode-restart-description": "The unwrapping starts over from the first person, in the same order.",
+    "mode-restart-confirm": "Change and start over",
+    "mode-restart-cancel": "Keep going",
     "now": "Now unwrapping",
     "spinning": "Who's next? The reel is spinning…",
     "finished": "Everyone has unwrapped.",
@@ -56,7 +59,10 @@
   },
   "present": {
     "page-title": "Presenter view",
-    "back": "Back to the group",
+    "close": "Close the presenter view",
+    "settings": "Presenter settings",
+    "settings-turns": "Turns",
+    "settings-santas": "Santas",
     "only-organizer": "Only the organizer can open the presenter view.",
     "intro-hint": "Press → or space for the first person.",
     "next-up": "Next to unwrap",

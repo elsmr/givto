@@ -7,12 +7,13 @@ import { buttonVariants } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Gift } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { GuessSettings } from '@/components/guess/guess-settings';
-import { RevealSettings } from '@/components/giftday/reveal-settings';
+import { GuessSetting } from '@/components/guess/guess-settings';
+import { RevealSetting } from '@/components/giftday/reveal-settings';
+import { SettingsGroup } from '@/components/ui/settings-group';
 import { DangerZone } from './danger-zone';
 import { EditionForm } from './edition-form';
 import { GroupNameForm } from './group-name-form';
@@ -78,10 +79,10 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
             id: 'gift-day',
             title: t('gift-day'),
             content: (
-              <>
-                <GuessSettings groupSlug={slug} edition={edition} />
-                <RevealSettings groupSlug={slug} edition={edition} />
-              </>
+              <SettingsGroup title={t('gift-day')} icon={Gift} tone="mint">
+                <GuessSetting groupSlug={slug} edition={edition} />
+                <RevealSetting groupSlug={slug} edition={edition} />
+              </SettingsGroup>
             ),
           },
         ]

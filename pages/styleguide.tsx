@@ -3,6 +3,7 @@ import { ButtonsSection } from '@/components/styleguide/buttons-section';
 import {
   CardsSection,
   DisclosureSection,
+  SettingsGroupSection,
   IconTilesSection,
   StatCardsSection,
 } from '@/components/styleguide/cards-section';
@@ -64,6 +65,7 @@ const parts: Part[] = [
       { id: 'icon-tiles', label: 'Icon tiles', Section: IconTilesSection },
       { id: 'stat-cards', label: 'Stat cards', Section: StatCardsSection },
       { id: 'disclosure-card', label: 'Disclosure card', Section: DisclosureSection },
+      { id: 'settings-group', label: 'Settings group', Section: SettingsGroupSection },
       { id: 'feedback', label: 'Alerts and toasts', Section: FeedbackSection },
       { id: 'overlays', label: 'Overlays', Section: OverlaysSection },
       { id: 'avatars', label: 'Avatars', Section: AvatarsSection },

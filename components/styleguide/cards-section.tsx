@@ -11,9 +11,12 @@ import {
 import { DisclosureCard } from '@/components/ui/disclosure-card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { IconTile, type Tone } from '@/components/ui/icon-tile';
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { SettingsGroup, SettingsRow, settingsHelpId } from '@/components/ui/settings-group';
+import { Switch } from '@/components/ui/switch';
 import { StatCard } from '@/components/ui/stat-card';
 import { toast } from '@/components/ui/toast';
-import { CalendarDays, Gift, Heart, History, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { CalendarDays, Gift, Heart, History, PenLine, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
 import { Captioned, StyleguideRow, StyleguideSection } from './styleguide-section';
 
 const tones: { tone: Tone; icon: LucideIcon }[] = [
@@ -112,5 +115,44 @@ export const DisclosureSection = () => (
         <CardContent>Colleagues · Done</CardContent>
       </Card>
     </DisclosureCard>
+  </StyleguideSection>
+);
+
+export const SettingsGroupSection = () => (
+  <StyleguideSection
+    id="settings-group"
+    title="Settings group"
+    description="Related settings under one heading, most important first. A row is the label and what it does, with its control beside it; switches apply at once. Collapsible for what's rarely changed, plain inside a dialog."
+  >
+    <StyleguideRow label="Card">
+      <SettingsGroup title="Gift day" icon={Gift} tone="mint" className="w-full max-w-2xl">
+        <SettingsRow label="Guess your Santa" description="One secret guess each; Santas are shown at the turns." htmlFor="sg-guess">
+          <Switch id="sg-guess" aria-describedby={settingsHelpId('sg-guess')} defaultChecked />
+        </SettingsRow>
+        <SettingsRow label="How do you unwrap?" description="In their turn, each person opens all their gifts." htmlFor="sg-mode">
+          <NativeSelect id="sg-mode" aria-describedby={settingsHelpId('sg-mode')} defaultValue="all">
+            <NativeSelectOption value="all">All at once</NativeSelectOption>
+            <NativeSelectOption value="one">One by one</NativeSelectOption>
+          </NativeSelect>
+        </SettingsRow>
+        <SettingsRow label="Re-draw" description="Draw all names again.">
+          <Button variant="neutral">Re-draw names</Button>
+        </SettingsRow>
+      </SettingsGroup>
+    </StyleguideRow>
+    <StyleguideRow label="Collapsible">
+      <SettingsGroup title="Group" icon={PenLine} collapsible className="w-full max-w-2xl">
+        <SettingsRow label="Rarely changed" description="Opens on click." />
+      </SettingsGroup>
+    </StyleguideRow>
+    <StyleguideRow label="Plain (in a dialog)">
+      <div className="w-full max-w-xl bg-surface p-6 bordered">
+        <SettingsGroup variant="plain" title="Turns">
+          <SettingsRow label="Skip the spin" htmlFor="sg-skip">
+            <Switch id="sg-skip" />
+          </SettingsRow>
+        </SettingsGroup>
+      </div>
+    </StyleguideRow>
   </StyleguideSection>
 );

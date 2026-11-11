@@ -1,7 +1,6 @@
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { PresenterControls } from './presenter-controls';
 import { GuessScoreboard } from '@/components/guess/guess-scoreboard';
 import { canRevealIn, currentSanta, type PresenterOrder, type PresenterView } from './presenter-phase';
@@ -13,12 +12,11 @@ import { usePresenterKeys } from './use-presenter-keys';
 import { WhoIsNextEndgame } from './who-is-next-endgame';
 import { WhoIsNextReel } from './who-is-next-reel';
 
-type PresenterStageProps = { groupSlug: string; editionNumber: number; view: PresenterView; order: PresenterOrder };
+type PresenterStageProps = { groupSlug: string; editionNumber: number; view: PresenterView; order: PresenterOrder; skipSpin: boolean };
 
 /** "Who's next" on a shared screen: spin, unwrap, next turn; arrows/space or the buttons. */
-export const PresenterStage = ({ groupSlug, editionNumber, view, order }: PresenterStageProps) => {
+export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin }: PresenterStageProps) => {
   const t = useTranslations('giftday');
-  const [skipSpin, setSkipSpin] = useState(false);
   const actions = usePresenterActions({ groupSlug, editionNumber, view, order, skipSpin });
   const { phase } = actions;
   usePresenterKeys(actions);
@@ -62,7 +60,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order }: Presen
           </m.div>
         </AnimatePresence>
       </div>
-      <PresenterControls actions={actions} oneByOne={view.unwrapMode === 'oneByOne'} skipSpin={skipSpin} onSkipSpinChange={setSkipSpin} />
+      <PresenterControls actions={actions} oneByOne={view.unwrapMode === 'oneByOne'} />
     </div>
   );
 };

@@ -34,7 +34,6 @@
     "keys": "→ or space: who was it from? · ← back"
   },
   "settings": {
-    "title": "Guess your Santa",
     "switch": "Guess your Santa",
     "description": "Everyone can make one secret guess at who their Santa is. On gift day, each person's Santa is shown at their turn in the presenter view, with their guess. Switch it off to keep Santas secret.",
     "on": "Guess your Santa is on",
