@@ -40,10 +40,18 @@ export const editionCalendarEvents = (edition: CalendarEdition, texts: CalendarT
   const base = { sequence: edition.calendarSequence ?? 0, timeZone: edition.timeZone, description: texts.description };
   const id = `${edition.groupSlug}-${edition.editionNumber}@givto.app`;
   const posted = edition.exchangeMode !== 'inPerson';
+  const callUrl = edition.giftDay?.callUrl;
+  const giftDay = edition.giftDay && {
+    ...base,
+    uid: `gift-day-${id}`,
+    title: texts.giftDay,
+    date: edition.giftDay.date,
+    time: edition.giftDay.time,
+    location: edition.giftDay.place,
+    ...(callUrl && { description: `${callUrl}\n\n${texts.description}` }),
+  };
   return [
-    ...(edition.giftDay
-      ? [{ ...base, uid: `gift-day-${id}`, title: texts.giftDay, date: edition.giftDay.date, time: edition.giftDay.time, location: edition.giftDay.place }]
-      : []),
+    ...(giftDay ? [giftDay] : []),
     ...(posted && edition.postBy ? [{ ...base, uid: `post-by-${id}`, title: texts.postBy, date: edition.postBy }] : []),
   ];
 };

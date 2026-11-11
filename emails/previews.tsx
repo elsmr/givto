@@ -88,6 +88,7 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
     },
     { name: 'join-digest-one', subject: joinDigestSubject({ ...base, names: ['Bob'] }), body: <JoinDigestEmail {...base} names={['Bob']} people={4} unsubscribe={unsubscribe('joins')} />, url },
     { name: 'reminder-gift-day', subject: reminderGiftDaySubject(base), body: <ReminderGiftDayEmail {...base} time="19:30" place="Grandma's place" unsubscribe={unsubscribe('reminders')} />, url },
+    { name: 'reminder-gift-day-call', subject: reminderGiftDaySubject(base), body: <ReminderGiftDayEmail {...base} time="19:30" callUrl="https://meet.example.com/abc-defg-hij" unsubscribe={unsubscribe('reminders')} />, url },
     { name: 'group-deletion', subject: groupDeletionSubject({ ...base, date: giftDay }), body: <GroupDeletionEmail {...base} date={giftDay} months={24} />, url },
   ];
 };

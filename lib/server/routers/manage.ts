@@ -12,9 +12,12 @@ import { organizerEditionProcedure, router } from '../trpc';
 const wrongStatus = ({ status }: Edition) =>
   new AppError(isBeforeDraw({ status }) ? 'NOT_DRAWN' : status === 'drawn' ? 'NOT_GIFT_DAY' : 'EDITION_CHANGED');
 
-/** Gift day today: a time set for another day no longer applies, the place still does. */
-const giftDayToday = (edition: Edition, today: string): Edition['giftDay'] =>
-  edition.giftDay?.date === today ? edition.giftDay : { date: today, ...(edition.giftDay?.place && { place: edition.giftDay.place }) };
+/** Gift day today: a time set for another day no longer applies, the place and call link still do. */
+const giftDayToday = ({ giftDay }: Edition, today: string): Edition['giftDay'] => {
+  if (giftDay?.date === today) return giftDay;
+  const { place, callUrl } = giftDay ?? {};
+  return { date: today, ...(place && { place }), ...(callUrl && { callUrl }) };
+};
 
 /** Gift day becomes today; deadlines after today move to today (they can't be after gift day). */
 const datesToday = (edition: Edition, today: string) => {

@@ -10,6 +10,7 @@
   },
   "summary": {
     "gift-day": "Gift day",
+    "call": "Video call",
     "exchange": "Gifts",
     "exchange-modes": {
       "inPerson": "In person",
@@ -173,7 +174,10 @@
     "gifts-all": "Everyone has a gift",
     "addresses": "Added their address",
     "addresses-missing": "No address yet: {names}",
-    "addresses-all": "Everyone added theirs"
+    "addresses-all": "Everyone added theirs",
+    "posted": "Posted their gift",
+    "posted-not-yet": "Not posted yet: {names}",
+    "posted-all": "Everyone has posted theirs"
   },
   "overview": {
     "details": "Dates, budget and notes",
@@ -191,5 +195,14 @@
     "picked": "Address changed",
     "post-to": "Post it to",
     "giftee-missing": "{name} hasn't added their address yet."
+  },
+  "arrival": {
+    "title": "Your gift is on its way",
+    "description": "Your Santa posted it. Let them know when it's there.",
+    "mark": "It arrived",
+    "arrived-title": "Your gift arrived",
+    "arrived-description": "Your Santa sees that it arrived, nothing more.",
+    "arrived": "Arrived",
+    "undo": "Undo"
   }
 }

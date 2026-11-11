@@ -18,7 +18,7 @@ import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-d
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
 
-/** Edition title, gift day, dates, exchange, budget, notes (28). */
+/** Edition title, gift day, exchange and the call link by post (87), dates, budget, notes (28). */
 export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('settings');
   const tIssues = useTranslations('group.issues');
@@ -55,6 +55,21 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         </Field>
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
         <ExchangeField draft={draft} onChange={update} />
+        {draft.exchangeMode !== 'inPerson' && draft.giftDate && (
+          <Field>
+            <FieldLabel htmlFor="edition-call-url">{t('edition.call-url')}</FieldLabel>
+            <Input
+              id="edition-call-url"
+              type="url"
+              inputMode="url"
+              placeholder="https://"
+              maxLength={2000}
+              value={draft.callUrl}
+              onChange={(event) => update({ callUrl: event.target.value })}
+            />
+            <FieldDescription>{t('edition.call-url-help')}</FieldDescription>
+          </Field>
+        )}
         <EditionDatesFields draft={draft} today={todayIn(edition.timeZone)} canSchedule={isBeforeDraw(edition)} onChange={update} />
         <BudgetFields draft={draft} onChange={update} />
         <Field>

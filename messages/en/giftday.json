@@ -3,7 +3,8 @@
     "title": "It's gift day!",
     "description": "Time to unwrap. Have fun, everyone.",
     "present": "Open the presenter view",
-    "to-open": "{count, plural, one {# gift to open} other {# gifts to open}}"
+    "to-open": "{count, plural, one {# gift to open} other {# gifts to open}}",
+    "join-call": "Join the video call"
   },
   "order": {
     "title": "Unwrap order",

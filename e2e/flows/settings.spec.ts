@@ -1,4 +1,4 @@
-// The organizer's settings (27, 28, 26, 45, 48, 33): rename, dates and budget, keep apart, the join
+// The organizer's settings (27, 28, 26, 45, 48, 33, 87): rename, dates, call link and budget, keep apart, the join
 // link, removing someone after the draw, and the next edition after gift day.
 import { todayIn } from '@/lib/local-date';
 import type { Page } from '@playwright/test';
@@ -20,9 +20,11 @@ const openGroup = async ([ann, ...others]: User[], name: string) => {
   return group;
 };
 
+const CALL = 'https://meet.example.com/abc-defg-hij';
+
 const fullDate = (date: string) => new Intl.DateTimeFormat('en', { dateStyle: 'full', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
 
-test('rename the group, change the dates and the budget', async ({ page, signIn, signInPage }) => {
+test('rename the group, change the dates, the call link and the budget', async ({ page, signIn, signInPage }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = await openGroup(people, 'Before');
   await signInPage(page, people[0]);
@@ -40,11 +42,14 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
     await expect(page.getByRole('link', { name: 'Back to After' })).toBeVisible();
   });
 
-  await test.step('gift day, wishlist deadline and budget', async () => {
+  await test.step('gift day, by post with a call link, wishlist deadline and budget', async () => {
     const editionSettings = settingsGroup(page, 'Secret Santa 2099');
     await editionSettings.getByLabel("When's gift day?").fill('2099-12-20');
     await editionSettings.getByRole('button', { name: 'Time' }).click();
     await editionSettings.getByLabel('Time').fill('18:00');
+    await editionSettings.getByRole('button', { name: 'Sending gifts by post?' }).click();
+    await editionSettings.getByLabel('How do gifts change hands?').selectOption({ label: 'By post' });
+    await editionSettings.getByLabel('Video call link').fill(CALL);
     await editionSettings.getByLabel('Wishlists ready by').fill('2099-12-01');
     await editionSettings.getByRole('button', { name: 'Budget' }).click();
     await editionSettings.getByLabel('Amount').fill('25');
@@ -60,6 +65,7 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
     const editionSettings = settingsGroup(page, 'Secret Santa 2099');
     await expect(editionSettings.getByLabel("When's gift day?")).toHaveValue('2099-12-20');
     await expect(editionSettings.getByLabel('Time')).toHaveValue('18:00');
+    await expect(editionSettings.getByLabel('Video call link')).toHaveValue(CALL);
     await expect(editionSettings.getByLabel('Wishlists ready by')).toHaveValue('2099-12-01');
     await expect(editionSettings.getByLabel('Amount')).toHaveValue('25');
   });
@@ -70,6 +76,7 @@ test('rename the group, change the dates and the budget', async ({ page, signIn,
     await expect(page.getByRole('heading', { name: 'Dates, budget and notes' })).toBeVisible();
     await expect(page.getByText('€25', { exact: true })).toBeVisible();
     await expect(page.getByText(`${fullDate('2099-12-20')} · 18:00`)).toBeVisible();
+    await expect(page.getByRole('link', { name: CALL })).toHaveAttribute('target', '_blank');
     await expect(page.getByText(fullDate('2099-12-01'))).toBeVisible();
   });
 });

@@ -114,7 +114,13 @@
     "remove-line": "“{line}” verwijderen",
     "save": "Opslaan",
     "saved": "{count, plural, one {Opgeslagen: # cadeau} other {Opgeslagen: # cadeaus}}",
-    "cleared": "Opgeslagen: nog aan het shoppen"
+    "cleared": "Opgeslagen: nog aan het shoppen",
+    "post": "Ik heb het opgestuurd",
+    "posted": "Opgestuurd",
+    "posted-undo": "Ongedaan maken",
+    "posted-saved": "Aangeduid als opgestuurd",
+    "posted-undone": "Niet meer aangeduid als opgestuurd",
+    "arrived": "{name} heeft het ontvangen"
   },
   "errors": {
     "generic": "Er ging iets mis. Probeer het opnieuw.",

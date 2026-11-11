@@ -3,7 +3,7 @@ import { findStuckGivers } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { todayIn } from '../../local-date';
 import { Id, PersonName, Price, TimeZone } from '../../schema/common';
-import { GiftDay, isDrawn, type Edition } from '../../schema/edition';
+import { GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
@@ -33,10 +33,12 @@ const KeepApartInput = v.object({
   ),
 });
 
-export const compactGiftDay = ({ date, time, place }: GiftDay): GiftDay => ({
+/** The call link only when gifts go by post (87). */
+export const compactGiftDay = ({ date, time, place, callUrl }: GiftDay, exchangeMode: ExchangeMode): GiftDay => ({
   date,
   ...(time && { time }),
   ...(place && { place }),
+  ...(callUrl && isPosted({ exchangeMode }) && { callUrl }),
 });
 
 export const compactPrice = ({ currency, amount, maxAmount }: Price): Price => ({
@@ -88,7 +90,7 @@ export const groupRouter = router({
       title: `Secret Santa ${year}`,
       exchangeMode: input.exchangeMode,
       ...optional,
-      ...(input.giftDay && { giftDay: compactGiftDay(input.giftDay) }),
+      ...(input.giftDay && { giftDay: compactGiftDay(input.giftDay, input.exchangeMode) }),
       avoidPreviousGiftees: false,
       status: 'open',
       statusChangedAt: { open: now },

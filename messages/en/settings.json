@@ -27,6 +27,8 @@
     "wishlist-by-help": "Optional.",
     "post-by": "Post gifts by",
     "post-by-help": "Optional.",
+    "call-url": "Video call link",
+    "call-url-help": "Optional. To unwrap together on a call on gift day.",
     "notes": "Notes for everyone",
     "notes-help": "Optional. Dress code, theme, house rules…"
   },
