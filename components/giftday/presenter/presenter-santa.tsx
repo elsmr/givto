@@ -4,6 +4,7 @@ import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
+import { GuessTally } from '../live-guess';
 import { Confetti } from './confetti';
 import type { PresenterGuessResult, PresenterView } from './presenter-phase';
 
@@ -11,7 +12,7 @@ const name = (chunks: ReactNode) => <strong className="font-heading break-words"
 
 type PresenterSantaProps = { result: PresenterGuessResult; leaderboard: NonNullable<PresenterView['guessing']>['leaderboard'] };
 
-/** Guess your Santa (62) at the turn, once they've unwrapped: "From Bob · You guessed Cee ✓", then the leaderboard (82). */
+/** Guess your Santa (62) at the turn, once they've unwrapped: "From Bob · You guessed Cee ✓", everyone's tally (94), then the leaderboard (82). */
 export const PresenterSanta = ({ result, leaderboard }: PresenterSantaProps) => {
   const t = useTranslations('guess.present');
   const reduced = useReducedMotion();
@@ -48,7 +49,8 @@ export const PresenterSanta = ({ result, leaderboard }: PresenterSantaProps) => 
           <span className="text-muted">{t('no-guess')}</span>
         )}
       </m.p>
-      <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.3 }}>
+      <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1, duration: 0.3 }} className="flex flex-col items-center gap-4">
+        <GuessTally tally={result.tally} large />
         <GuessLeaderboard leaderboard={leaderboard} large />
       </m.div>
     </m.div>

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, ArrowRight, ChartNoAxesColumn, Check, Dices, Gift, Sparkles, VenetianMask, Vote } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Dices, Gift, Sparkles, VenetianMask } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { usePresenterActions } from './use-presenter-actions';
 
@@ -10,9 +10,8 @@ type PresenterControlsProps = { actions: ReturnType<typeof usePresenterActions>;
 export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps) => {
   const t = useTranslations('giftday');
   const tGuess = useTranslations('guess.present');
-  const tVote = useTranslations('guess.vote');
   const tSwap = useTranslations('giftday.swap');
-  const { phase, spinStatus, busy, santaToShow, voteStep } = actions;
+  const { phase, spinStatus, busy, santaToShow } = actions;
   // White elephant (89): the turn ends with an opened gift (or, at the final steal, keeping theirs); steals are on the table.
   const swapTurn = phase === 'turn' && actions.swap;
   const byHand = phase === 'turn' && oneByOne && !actions.counted;
@@ -22,19 +21,15 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
     ? tSwap(swapTurn.final ? 'keep' : 'open')
     : toSpin
       ? t('present.spin')
-      : voteStep === 'ready'
-        ? tVote('start')
-        : voteStep === 'open'
-          ? tVote('close')
-          : santaToShow
-            ? tGuess('show')
-            : phase === 'spin'
-              ? t('present.skip')
-              : toReveal
-                ? t('reveal.button')
-                : byHand
-                  ? t('present.more')
-                  : t('present.next');
+      : santaToShow
+        ? tGuess('show')
+        : phase === 'spin'
+          ? t('present.skip')
+          : toReveal
+            ? t('reveal.button')
+            : byHand
+              ? t('present.more')
+              : t('present.next');
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 px-6 pb-6">
@@ -71,9 +66,7 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
             {swapTurn && !swapTurn.final && <Gift aria-hidden="true" />}
             {toSpin && <Dices aria-hidden="true" />}
             {toReveal && <Sparkles aria-hidden="true" />}
-            {voteStep === 'ready' && <Vote aria-hidden="true" />}
-            {voteStep === 'open' && <ChartNoAxesColumn aria-hidden="true" />}
-            {voteStep === 'closed' && <VenetianMask aria-hidden="true" />}
+            {santaToShow && <VenetianMask aria-hidden="true" />}
             {nextLabel}
             {!toSpin && !toReveal && !santaToShow && !swapTurn && <ArrowRight aria-hidden="true" />}
           </Button>

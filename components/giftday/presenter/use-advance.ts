@@ -2,7 +2,7 @@ import { useTRPC } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGiftDayError } from '../use-gift-day-error';
 
-type Action = 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'open' | 'steal' | 'keep' | 'back';
+type Action = 'start' | 'spin' | 'santa' | 'more' | 'last' | 'open' | 'steal' | 'keep' | 'back';
 
 /** The presenter's steps, stored on the server; the answer is the new presenter view. */
 export const useAdvance = (groupSlug: string, editionNumber: number) => {

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 
 /**
  * Unwrap order, mode and big reveal from the draw on; on gift day other phones follow the presenter's turns,
- * quicker while the unwrapping is under way with Guess your Santa on, so a vote (83) shows up in time.
+ * quicker while the unwrapping is under way with Guess your Santa on, so guessing at a turn (94) closes in time.
  */
 export const useGiftDay = (input: EditionInput, status: EditionStatus) => {
   const trpc = useTRPC();

@@ -25,7 +25,7 @@ export const GuessSetting = ({ groupSlug, edition }: { groupSlug: string; editio
       onSettled: () =>
         Promise.all([
           queryClient.invalidateQueries({ queryKey: trpc.group.get.queryKey({ groupSlug }) }),
-          queryClient.invalidateQueries(trpc.guess.mine.pathFilter()),
+          queryClient.invalidateQueries(trpc.guess.get.pathFilter()),
           queryClient.invalidateQueries(trpc.giftday.pathFilter()),
         ]),
     })

@@ -1,12 +1,12 @@
 {
   "card": {
     "title": "Guess your Santa",
-    "open": "Who do you think is buying your gift? Guess the rest of the draw too, if you like. One go, no take-backs.",
+    "open": "Who do you think is buying your gift? Guess the rest of the draw too, if you like. You can change your guesses until those Santas are shown on gift day.",
     "when": "You'll find out at your turn on gift day.",
     "make": "Make your guess",
+    "change": "Change your guesses",
     "you-guessed": "You guessed <name>{guess}</name>",
-    "locked": "Locked in",
-    "closed": "Guessing closed when gift day started.",
+    "closed": "Guessing is closed.",
     "from": "Your gift was from <name>{santa}</name>",
     "no-guess": "You didn't guess this time.",
     "so-far": "Guesses so far",
@@ -15,13 +15,11 @@
   },
   "dialog": {
     "title": "Who's your Santa?",
-    "description": "Once it's locked in, you can't change it. Nobody sees your guesses until those Santas are shown on gift day.",
-    "people": "Your guess",
-    "lock": "Lock it in",
+    "description": "A point for every pair you get right. Nobody sees your guesses until those Santas are shown on gift day.",
+    "yours": "Your Santa",
     "cancel": "Not yet",
-    "locked": "Locked in! You'll find out at your turn on gift day.",
-    "board": "The rest of the draw",
-    "board-hint": "A point for every pair you get right. Everyone is someone's Santa once.",
+    "save": "Save guesses",
+    "saved": "Guesses saved. You'll find out at your turn on gift day.",
     "row": "{giftee}'s Santa",
     "you": "You",
     "no-guess": "No guess"
@@ -39,23 +37,19 @@
     "show": "Who was it from?",
     "from": "From <name>{santa}</name>",
     "you-guessed": "You guessed <name>{guess}</name>",
-    "no-guess": "No guess this time"
+    "no-guess": "No guess this time",
+    "on-phones": "Guess on your phones: who's it from?"
   },
-  "vote": {
+  "live": {
     "ask": "Who do you think it's from?",
-    "hint": "Tap a name. You can change it until the vote closes.",
-    "waiting": "Everyone's voting who it's from.",
-    "yours": "You voted <name>{choice}</name>",
-    "tally": "The votes",
-    "no-votes": "No votes",
-    "votes": "{votes, plural, one {# vote} other {# votes}}",
-    "on-phones": "Vote on your phones: who's it from?",
-    "start": "Start the vote",
-    "close": "Close the vote"
+    "hint": "Tap a name. You can change it until the Santa is shown.",
+    "tally": "Everyone's guesses",
+    "no-guesses": "No guesses",
+    "guesses": "{count, plural, one {# guess} other {# guesses}}"
   },
   "settings": {
     "switch": "Guess your Santa",
-    "description": "Everyone can make one secret guess at who their Santa is, and guess the rest of the draw for points. On gift day, at each turn everyone votes on their phone who the gift is from, then the presenter view shows the Santa, with their guess and the leaderboard. Switch it off to keep Santas secret.",
+    "description": "Everyone can guess who their Santa is and the rest of the draw, for points, and change their guesses until those Santas are shown. On gift day everyone can guess on their phone who each gift is from, then the presenter view shows the Santa, with everyone's guesses and the leaderboard. Switch it off to keep Santas secret.",
     "on": "Guess your Santa is on",
     "off": "Guess your Santa is off: Santas stay secret"
   },
@@ -64,9 +58,7 @@
     "settings": "Guess your Santa settings"
   },
   "errors": {
-    "GUESS_LOCKED": "You've already locked in a guess.",
     "GUESSING_CLOSED": "Guessing is closed.",
-    "VOTING_CLOSED": "The vote is closed.",
     "NOT_FOUND": "That person isn't in this draw.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."

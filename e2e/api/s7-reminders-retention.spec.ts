@@ -103,8 +103,9 @@ test('retention: messages after 3 months; old draws; orphan images', async ({ si
     await db.tips.insertOne({
       _id: newId(), editionId: edition._id, authorMemberId: old[0].id, aboutMemberId: old[1].id, text: 'Tip', anonymous: false, createdAt: new Date(), updatedAt: new Date(),
     });
-    await db.guesses.insertOne({ _id: newId(), editionId: edition._id, guesserMemberId: old[1].id, guessedMemberId: old[2].id, createdAt: new Date() });
-    await db.votes.insertOne({ _id: newId(), editionId: edition._id, turnMemberId: old[0].id, voterMemberId: old[1].id, votedMemberId: old[2].id, createdAt: new Date() });
+    await db.guesses.insertOne({
+      _id: newId(), editionId: edition._id, guesserMemberId: old[1].id, gifteeMemberId: old[1].id, santaMemberId: old[2].id, createdAt: new Date(), updatedAt: new Date(),
+    });
   }
   const wish = ok(await ann.trpc.mutate('wish.create', { title: 'With a picture' }));
   const [orphan, used] = [new ObjectId(), new ObjectId()];
@@ -124,7 +125,6 @@ test('retention: messages after 3 months; old draws; orphan images', async ({ si
   expect((await after(recent)).draw).toBeTruthy();
   expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
   expect(await db.guesses.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent guess stays').toBe(1);
-  expect(await db.votes.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent vote stays').toBe(1);
   expect((await after(past)).results, 'champions and badges (86) outlive the guesses').toEqual(results);
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);
 });
@@ -161,7 +161,7 @@ test('retention without a gift day: counted from done or the next edition; the l
     const base = { _id: newId(), editionId: edition._id, createdAt: monthsAgo(5) };
     await db.claims.insertOne({ ...base, wishId: newId(), ownerId: ann.id, santaMemberId: people[0].id });
     await db.tips.insertOne({ ...base, _id: newId(), authorMemberId: people[0].id, aboutMemberId: people[1].id, text: 'Tip', anonymous: false, updatedAt: base.createdAt });
-    await db.guesses.insertOne({ ...base, _id: newId(), guesserMemberId: people[1].id, guessedMemberId: people[2].id });
+    await db.guesses.insertOne({ ...base, _id: newId(), guesserMemberId: people[1].id, gifteeMemberId: people[1].id, santaMemberId: people[2].id, updatedAt: base.createdAt });
   }
   await run('retention');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;

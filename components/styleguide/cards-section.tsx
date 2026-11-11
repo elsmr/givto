@@ -126,7 +126,7 @@ export const SettingsGroupSection = () => (
   >
     <StyleguideRow label="Card">
       <SettingsGroup title="Gift day" icon={Gift} tone="mint" className="w-full max-w-2xl">
-        <SettingsRow label="Guess your Santa" description="One secret guess each; Santas are shown at the turns." htmlFor="sg-guess">
+        <SettingsRow label="Guess your Santa" description="Guess the draw; Santas are shown at the turns." htmlFor="sg-guess">
           <Switch id="sg-guess" aria-describedby={settingsHelpId('sg-guess')} defaultChecked />
         </SettingsRow>
         <SettingsRow label="How do you unwrap?" description="In their turn, each person opens all their gifts." htmlFor="sg-mode">

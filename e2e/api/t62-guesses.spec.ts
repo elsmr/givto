@@ -1,21 +1,23 @@
-// Guess your Santa (62): one locked guess while shopping; nobody (not the organizer, not the Santa)
-// sees a guess or whether it's right before its reveal: the person's turn in the presenter, or the
-// big reveal (the scoreboard). Off hides it all. Re-draws, removals, retention, export and deletion.
+// Guess your Santa (62, 94): a guess per giftee, changeable from the draw until that giftee's Santa is out (their turn
+// in the presenter, or the big reveal). Nobody (not the organizer, not the Santa) sees a guess, a count or whether it's
+// right before then; after it, the giftee's own guess and counts per name, never who guessed whom. Off hides it all.
+// Late joiners, removals, re-draws, export and account deletion.
 import { newId } from '@/lib/server/db';
-import { expect, mailsTo, ok, test, type User } from '../fixtures';
+import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
 import { code, drawnGroup, editionOf } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
 
-const peopleOf = async (db: Parameters<typeof editionOf>[0], slug: string, people: User[]) => {
+/** Ann → Bob → Cee → Dan → Ann (Santa → giftee): Dan is Ann's Santa, Ann Bob's, Bob Cee's, Cee Dan's. */
+const fixDraw = async (db: TestDb, slug: string, people: User[]) => {
   const group = (await db.groups.findOne({ slug }))!;
-  const assignments = (await editionOf(db, slug)).draw!.assignments;
-  const idOf = (user: User) => group.members.find((m) => m.userId === user.id)!.id;
-  const byId = (id: string) => people.find((p) => idOf(p) === id)!;
-  const nameOf = (id: string) => group.members.find((m) => m.id === id)!.name;
-  const santaOf = (user: User) => byId(Object.entries(assignments).find(([, giftee]) => giftee === idOf(user))![0]);
-  return { idOf, nameOf, santaOf, assignments };
+  const ids = people.map((p) => group.members.find((m) => m.userId === p.id)!.id);
+  await db.editions.updateOne({ groupId: group._id, number: 1 }, { $set: { 'draw.assignments': Object.fromEntries(ids.map((id, i) => [id, ids[(i + 1) % ids.length]])) } });
+  return ids;
 };
+
+const set = (user: User, at: Input, rows: [string, string][]) =>
+  user.trpc.mutate('guess.set', { ...at, rows: rows.map(([gifteeMemberId, santaMemberId]) => ({ gifteeMemberId, santaMemberId })) });
 
 /** Everything a person can read about this edition. */
 const everything = async (user: User, at: Input, organizer: boolean) =>
@@ -27,93 +29,101 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
     ok(await user.trpc.query('account.groups')),
   ]);
 
-const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'vote' | 'tally' | 'santa' | 'more' | 'last' | 'back') => {
+const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' | 'more' | 'last' | 'back') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
   return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
 };
 
-test('guess once, locked; nobody sees it or whether it is right until the turn; scoreboard at the big reveal', async ({ signIn, db }) => {
+test('a guess per giftee, changeable until that Santa is shown; nobody sees it before; scoreboard at the big reveal', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann, bob, cee, dan] = people;
   const group = await drawnGroup(people, 'Guesses');
   const at = { groupSlug: group.slug, editionNumber: 1 };
-  const { idOf, nameOf, santaOf } = await peopleOf(db, group.slug, people);
-  // Bob guesses right, Cee guesses wrong, Dan and Ann don't guess.
-  const bobsSanta = santaOf(bob);
-  const ceesWrong = people.find((p) => p !== cee && p !== santaOf(cee))!;
-  const before = await Promise.all(people.map((p) => everything(p, at, p === ann)));
+  const [A, B, C, D] = await fixDraw(db, group.slug, people);
+  const { _id: editionId } = await editionOf(db, group.slug);
+  const all = () => Promise.all(people.map((p) => everything(p, at, p === ann)));
+  const before = await all();
 
-  await test.step('who you can pick: everyone else in the draw, your own giftee too', async () => {
-    const mine = ok(await bob.trpc.query('guess.mine', at))!;
-    expect(mine).toMatchObject({ open: true, guess: null, result: null });
-    expect(mine.people.map((p) => p.memberId).toSorted()).toEqual([ann, cee, dan].map(idOf).toSorted());
-    expect(code(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(bob) }))).toBe('NOT_FOUND');
-    expect(code(await bob.trpc.mutate('guess.make', { ...at, memberId: newId() }))).toBe('NOT_FOUND');
+  await test.step('my rows: mine first, none for my own giftee; anyone else in the draw as Santa', async () => {
+    expect(ok(await bob.trpc.query('guess.get', at))).toEqual({
+      myGiftee: { memberId: C, name: 'Cee' },
+      people: [{ memberId: A, name: 'Ann' }, { memberId: C, name: 'Cee' }, { memberId: D, name: 'Dan' }],
+      rows: [
+        { memberId: B, name: 'Bob', santa: null, open: true },
+        { memberId: A, name: 'Ann', santa: null, open: true },
+        { memberId: D, name: 'Dan', santa: null, open: true },
+      ],
+      result: null,
+    });
+    for (const rows of [[[C, A]], [[A, B]], [[A, A]], [[B, B]], [[newId(), A]], [[A, newId()]], [[A, D], [A, C]]] as [string, string][][]) {
+      expect(code(await set(bob, at, rows)), JSON.stringify(rows)).toBe('INVALID_INPUT');
+    }
+    expect(await db.guesses.countDocuments({ editionId })).toBe(0);
   });
 
-  await test.step('one guess, locked in; right or wrong looks the same', async () => {
-    expect(ok(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(bobsSanta) }))).toEqual({ ok: true });
-    expect(ok(await cee.trpc.mutate('guess.make', { ...at, memberId: idOf(ceesWrong) }))).toEqual({ ok: true });
-    expect(code(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(dan) }))).toBe('GUESS_LOCKED');
-    expect(ok(await bob.trpc.query('guess.mine', at))).toEqual({
-      open: false, guess: { memberId: idOf(bobsSanta), name: nameOf(idOf(bobsSanta)) }, people: [], result: null, board: expect.anything(),
-    });
-    expect(ok(await cee.trpc.query('guess.mine', at))).toEqual({
-      open: false, guess: { memberId: idOf(ceesWrong), name: nameOf(idOf(ceesWrong)) }, people: [], result: null, board: expect.anything(),
-    });
-    expect(await db.guesses.countDocuments({ editionId: (await editionOf(db, group.slug))._id })).toBe(2);
+  await test.step('set, then changed: one row per giftee', async () => {
+    ok(await set(bob, at, [[B, D]]));
+    ok(await set(bob, at, [[B, A], [A, D]]));
+    ok(await set(cee, at, [[C, D]]));
+    expect(ok(await bob.trpc.query('guess.get', at))!.rows.map((row) => row.santa?.name ?? null)).toEqual(['Ann', 'Dan', null]);
+    expect(await db.guesses.countDocuments({ editionId })).toBe(3);
   });
 
   await test.step('nothing anyone else reads changed: not the organizer, not the Santa', async () => {
-    const after = await Promise.all(people.map((p) => everything(p, at, p === ann)));
+    const after = await all();
     expect(after).toEqual(before);
-    for (const text of after) expect(text).not.toMatch(/"right":true|"guess"|guessed/);
-    expect(ok(await ann.trpc.query('guess.mine', at))!.guess).toBeNull();
-    expect(ok(await bobsSanta.trpc.query('guess.mine', at))!.guess?.memberId).not.toBe(idOf(bobsSanta));
-    expect(ok(await bobsSanta.trpc.query('account.export')).guessesMade).toEqual(
-      bobsSanta === cee ? [expect.objectContaining({ guessed: nameOf(idOf(ceesWrong)) })] : []
-    );
-    expect(ok(await bob.trpc.query('account.export')).guessesMade).toEqual([expect.objectContaining({ guessed: nameOf(idOf(bobsSanta)) })]);
+    for (const text of after) expect(text).not.toMatch(/"right":true|"guess"|guessed|tally/);
+    expect(ok(await ann.trpc.query('guess.get', at))!.rows.every((row) => row.santa === null)).toBe(true);
+    expect(ok(await ann.trpc.query('account.export')).guessesMade).toEqual([]);
+    expect(ok(await bob.trpc.query('account.export')).guessesMade.map(({ giftee, santa }) => [giftee, santa]).toSorted()).toEqual([
+      ['Ann', 'Dan'],
+      ['Bob', 'Ann'],
+    ]);
   });
 
-  await test.step('gift day closes guessing; back to shopping opens it again', async () => {
+  await test.step('gift day keeps guessing open, back to shopping too', async () => {
     ok(await ann.trpc.mutate('manage.startGiftDay', at));
-    expect(code(await dan.trpc.mutate('guess.make', { ...at, memberId: idOf(ann) }))).toBe('GUESSING_CLOSED');
-    expect(ok(await dan.trpc.query('guess.mine', at))).toMatchObject({ open: false, people: [], result: null });
+    ok(await set(dan, at, [[D, C]]));
     ok(await ann.trpc.mutate('manage.backToShopping', { ...at, giftDayDate: '2099-12-23' }));
-    expect(ok(await dan.trpc.query('guess.mine', at))!.open).toBe(true);
+    expect(ok(await dan.trpc.query('guess.get', at))!.rows[0]).toMatchObject({ santa: { memberId: C }, open: true });
     ok(await ann.trpc.mutate('manage.startGiftDay', at));
+    await db.editions.updateOne({ _id: editionId }, { $set: { 'unwrapOrder.memberIds': [A, B, C, D] } });
   });
 
-  const order = ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.people.map((p) => p.memberId);
-  const first = people.find((p) => idOf(p) === order[0])!;
-
-  await test.step("the presenter shows the Santa only after they've unwrapped", async () => {
+  await test.step("at the turn, until the Santa is shown: anyone guesses, the person unwrapping too; nobody sees a thing", async () => {
     ok(await advance(ann, at, 'start'));
     ok(await advance(ann, at, 'spin'));
     const turn = ok(await ann.trpc.query('giftday.presenter', at));
-    expect(turn.unwrapOrder).toMatchObject({ current: { memberId: idOf(first) }, santaToShow: true });
-    expect(turn.guessing).toEqual({ results: [], right: 0, leaderboard: [] });
+    expect(turn.unwrapOrder).toMatchObject({ current: { memberId: A }, santaToShow: true });
     expect(code(await advance(ann, at, 'last')), 'the turn ends after the Santa').toBe('EDITION_CHANGED');
+    const during = await all();
+    ok(await set(ann, at, [[A, B]]));
+    ok(await set(cee, at, [[A, D]]));
+    expect(code(await set(dan, at, [[A, B]])), "Ann's Santa").toBe('INVALID_INPUT');
+    expect(await all()).toEqual(during);
     for (const p of people) expect(ok(await p.trpc.query('giftday.get', at)).guessing).toEqual({ results: [], right: 0, leaderboard: [] });
-    expect(ok(await first.trpc.query('guess.mine', at))!.result).toBeNull();
+    expect(ok(await ann.trpc.query('guess.get', at))!.result).toBeNull();
   });
 
-  await test.step("then everyone sees whose Santa it was and the guess; back hides it", async () => {
-    ok(await advance(ann, at, 'vote'));
-    ok(await advance(ann, at, 'tally'));
+  await test.step("shown: the Santa, the giftee's own guess and the counts, never who; that row closes", async () => {
     const shown = ok(await advance(ann, at, 'santa'));
     const result = {
-      memberId: idOf(first),
-      giftee: nameOf(idOf(first)),
-      santa: nameOf(idOf(santaOf(first))),
-      guess: first === bob ? nameOf(idOf(bobsSanta)) : first === cee ? nameOf(idOf(ceesWrong)) : null,
-      right: first === bob,
+      memberId: A, giftee: 'Ann', santa: 'Dan', guess: 'Bob', right: false,
+      tally: [{ memberId: D, name: 'Dan', count: 2 }, { memberId: B, name: 'Bob', count: 1 }],
     };
     expect(shown.unwrapOrder!.santaToShow).toBe(false);
-    expect(shown.guessing).toMatchObject({ results: [result], right: first === bob ? 1 : 0 });
-    expect(ok(await dan.trpc.query('giftday.get', at)).guessing!.results).toEqual([result]);
-    expect(ok(await first.trpc.query('guess.mine', at))!.result).toEqual({ santa: result.santa, right: result.right });
+    expect(shown.guessing).toMatchObject({ results: [result], right: 0 });
+    for (const p of people) expect(ok(await p.trpc.query('giftday.get', at)).guessing!.results).toEqual([result]);
+    expect(JSON.stringify(shown)).not.toMatch(/guesser/i);
+    expect(ok(await ann.trpc.query('guess.get', at))!.result).toEqual({ santa: 'Dan', right: false });
+    expect(code(await set(ann, at, [[A, D]]))).toBe('GUESSING_CLOSED');
+    expect(code(await set(bob, at, [[D, A], [A, C]])), 'all or nothing').toBe('GUESSING_CLOSED');
+    expect(ok(await bob.trpc.query('guess.get', at))!.rows.map((row) => [row.name, row.santa?.name ?? null, row.open])).toEqual([
+      ['Bob', 'Ann', true],
+      ['Ann', 'Dan', false],
+      ['Dan', null, true],
+    ]);
+    ok(await set(bob, at, [[D, A]]));
     expect(code(await ann.trpc.mutate('manage.backToShopping', { ...at, giftDayDate: '2099-12-23' }))).toBe('GIFT_DAY_UNDERWAY');
     ok(await advance(ann, at, 'back'));
     expect(ok(await dan.trpc.query('giftday.get', at)).guessing!.results).toEqual([]);
@@ -121,37 +131,41 @@ test('guess once, locked; nobody sees it or whether it is right until the turn; 
     ok(await advance(ann, at, 'last'));
     expect(ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder).toMatchObject({ turnsTaken: 1, santaToShow: false });
     // Only the person whose turn it was is out.
-    expect(ok(await ann.trpc.query('giftday.get', at)).guessing!.results.map((r) => r.memberId)).toEqual([idOf(first)]);
+    expect(ok(await ann.trpc.query('giftday.get', at)).guessing!.results.map((r) => r.memberId)).toEqual([A]);
   });
 
-  await test.step('the big reveal is the scoreboard: every pair, every guess, how many were right', async () => {
+  await test.step('the big reveal is the scoreboard and closes every row', async () => {
     ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
     ok(await ann.trpc.mutate('giftday.reveal', at));
     const { guessing, reveal } = ok(await cee.trpc.query('giftday.get', at));
-    expect(guessing!.results).toHaveLength(4);
-    expect(guessing!.right).toBe(1);
-    expect(guessing!.results.find((r) => r.memberId === idOf(bob))).toMatchObject({ right: true, guess: nameOf(idOf(bobsSanta)) });
-    expect(guessing!.results.find((r) => r.memberId === idOf(cee))).toMatchObject({ right: false, guess: nameOf(idOf(ceesWrong)) });
-    expect(guessing!.results.find((r) => r.memberId === idOf(dan))).toMatchObject({ right: false, guess: null });
+    expect(guessing!.results.map(({ giftee, guess, right }) => [giftee, guess, right])).toEqual([
+      ['Ann', 'Bob', false],
+      ['Bob', 'Ann', true],
+      ['Cee', 'Dan', false],
+      ['Dan', 'Cee', true],
+    ]);
+    expect(guessing!.right).toBe(2);
     expect(guessing!.results.map(({ giftee, santa }) => ({ giftee, santa }))).toEqual(reveal.pairs);
-    expect(ok(await cee.trpc.query('guess.mine', at))!.result).toEqual({ santa: nameOf(idOf(santaOf(cee))), right: false });
+    expect(ok(await cee.trpc.query('guess.get', at))!.result).toEqual({ santa: 'Bob', right: false });
+    expect(ok(await bob.trpc.query('guess.get', at))!.rows.some((row) => row.open)).toBe(false);
+    expect(code(await set(bob, at, [[D, C]]))).toBe('GUESSING_CLOSED');
   });
 });
 
 test('organizer switch: off hides every guess and keeps Santas out of the turns', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
-  const [ann, bob] = people;
+  const [ann, bob, cee] = people;
   const group = await drawnGroup(people, 'No guessing');
   const at = { groupSlug: group.slug, editionNumber: 1 };
-  const { idOf } = await peopleOf(db, group.slug, people);
-  ok(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(ann) }));
+  const [A, B, C] = await fixDraw(db, group.slug, people);
+  ok(await set(bob, at, [[B, A]]));
 
   expect(code(await bob.trpc.mutate('guess.setEnabled', { ...at, enabled: false }))).toBe('NOT_ORGANIZER');
   expect(ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).edition!.guessing).toBe(true);
   ok(await ann.trpc.mutate('guess.setEnabled', { ...at, enabled: false }));
   expect(ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).edition!.guessing).toBe(false);
-  expect(ok(await bob.trpc.query('guess.mine', at))).toBeNull();
-  expect(code(await people[2].trpc.mutate('guess.make', { ...at, memberId: idOf(ann) }))).toBe('GUESSING_CLOSED');
+  expect(ok(await bob.trpc.query('guess.get', at))).toBeNull();
+  expect(code(await set(cee, at, [[C, A]]))).toBe('GUESSING_CLOSED');
 
   ok(await ann.trpc.mutate('manage.startGiftDay', at));
   ok(await advance(ann, at, 'start'));
@@ -167,47 +181,46 @@ test('organizer switch: off hides every guess and keeps Santas out of the turns'
 
   // On again: the guess was only hidden.
   ok(await ann.trpc.mutate('guess.setEnabled', { ...at, enabled: true }));
-  expect(ok(await bob.trpc.query('guess.mine', at))!.guess?.memberId).toBe(idOf(ann));
+  expect(ok(await bob.trpc.query('guess.get', at))!.rows[0].santa?.memberId).toBe(A);
 });
 
-test('re-draw and removal drop guesses, a late joiner keeps them; account deletion removes mine and those naming me', async ({ signIn, db }) => {
+test('a late joiner keeps the guesses; removal, account deletion and re-draw drop them', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann, bob, cee, dan] = people;
   const group = await drawnGroup(people, 'Guess changes');
   const at = { groupSlug: group.slug, editionNumber: 1 };
-  const { idOf } = await peopleOf(db, group.slug, people);
-  const editionId = (await editionOf(db, group.slug))._id;
-  const guessers = async () => (await db.guesses.find({ editionId }).toArray()).map((g) => g.guesserMemberId).toSorted();
+  const [A, B, C, D] = await fixDraw(db, group.slug, people);
+  const { _id: editionId } = await editionOf(db, group.slug);
+  const rows = async () =>
+    (await db.guesses.find({ editionId }).toArray()).map((g) => [g.guesserMemberId, g.gifteeMemberId, g.santaMemberId].join(' ')).toSorted();
+  const row = (...ids: string[]) => ids.join(' ');
 
-  ok(await bob.trpc.mutate('guess.make', { ...at, memberId: idOf(cee) }));
-  ok(await cee.trpc.mutate('guess.make', { ...at, memberId: idOf(dan) }));
-  ok(await dan.trpc.mutate('guess.make', { ...at, memberId: idOf(bob) }));
+  ok(await set(bob, at, [[B, A], [A, D], [D, C]]));
+  ok(await set(cee, at, [[C, A], [A, D], [B, A]]));
+  ok(await set(dan, at, [[D, C], [B, C]]));
 
   await test.step('a late joiner slots in: guesses stay', async () => {
     const eve = await signIn('eve');
     ok(await eve.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name: 'Eve' }));
     expect(Object.keys((await editionOf(db, group.slug)).draw!.assignments)).toHaveLength(5);
-    expect(await guessers()).toEqual([bob, cee, dan].map(idOf).toSorted());
+    expect(await rows()).toHaveLength(8);
   });
 
-  await test.step('removing Dan drops his guess and the one naming him', async () => {
-    ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: group.slug, memberId: idOf(dan) }));
-    expect(await guessers()).toEqual([idOf(bob)]);
-    expect(ok(await cee.trpc.query('guess.mine', at))!.open).toBe(true);
+  await test.step('removing Dan drops his rows, the row for him and those naming him', async () => {
+    ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: group.slug, memberId: D }));
+    expect(await rows()).toEqual([row(B, B, A), row(C, B, A), row(C, C, A)].toSorted());
   });
 
-  await test.step("account deletion: Bob's guess and the one naming him go", async () => {
-    ok(await cee.trpc.mutate('guess.make', { ...at, memberId: idOf(bob) }));
+  await test.step("account deletion: Bob's rows, the rows for him and those naming him go", async () => {
     const before = (await mailsTo(bob.email)).filter((mail) => mail.tags.length === 0).length;
     ok(await bob.trpc.mutate('account.requestDeletion'));
     let mails = await mailsTo(bob.email);
     await expect.poll(async () => (mails = (await mailsTo(bob.email)).filter((mail) => mail.tags.length === 0)).length).toBe(before + 1);
     ok(await bob.trpc.mutate('account.delete', { code: mails.at(-1)!.text.match(/\b(\d{6})\b/)![1] }));
-    expect(await db.guesses.countDocuments({ editionId })).toBe(0);
+    expect(await rows()).toEqual([row(C, C, A)]);
   });
 
   await test.step('a re-draw starts the guessing over', async () => {
-    ok(await cee.trpc.mutate('guess.make', { ...at, memberId: idOf(ann) }));
     ok(await ann.trpc.mutate('draw.redraw', at));
     expect(await db.guesses.countDocuments({ editionId })).toBe(0);
   });
@@ -227,8 +240,6 @@ test('one by one: each Santa is shown once, on their first turn', async ({ signI
   // Round 1: everyone's Santa comes out once they've unwrapped.
   for (const [i, action] of (['more', 'more', 'more'] as const).entries()) {
     expect((await view()).unwrapOrder).toMatchObject({ current: { memberId: order[i] }, santaToShow: true });
-    ok(await advance(ann, at, 'vote'));
-    ok(await advance(ann, at, 'tally'));
     ok(await advance(ann, at, 'santa'));
     ok(await advance(ann, at, action));
     if (i < 2) ok(await advance(ann, at, 'spin'));

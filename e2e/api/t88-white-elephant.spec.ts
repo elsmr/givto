@@ -50,7 +50,7 @@ test('white elephant: locks in without a draw, refuses Secret Santa features, un
     const annId = await memberIdOf(db, group.slug, ann);
     expect(ok(await bob.trpc.query('draw.mine', edition)).giftee).toBeNull();
     expect(code(await bob.trpc.mutate('tip.create', { ...edition, aboutMemberId: annId, text: 'Mugs' }))).toBe('EDITION_CLOSED');
-    expect(code(await bob.trpc.mutate('guess.make', { ...edition, memberId: annId }))).toBe('GUESSING_CLOSED');
+    expect(code(await bob.trpc.mutate('guess.set', { ...edition, rows: [{ gifteeMemberId: annId, santaMemberId: annId }] }))).toBe('GUESSING_CLOSED');
     expect(code(await bob.trpc.mutate('question.ask', { ...edition, text: 'Size?' }))).toBe('NOT_DRAWN');
     expect(code(await bob.trpc.mutate('nudge.send', { ...edition, kind: 'emptyWishlist' }))).toBe('NOT_DRAWN');
     expect(code(await bob.trpc.mutate('gift.set', { ...edition, wishIds: [], lines: ['Socks'] }))).toBe('NOT_DRAWN');

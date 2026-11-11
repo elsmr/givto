@@ -2,7 +2,6 @@ import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { cn } from '@/lib/utils';
 import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
-import { VoteTally } from '../live-vote';
 import { SwapTable } from '../swap-table';
 import { Confetti } from './confetti';
 import { currentGiftCount, type PresenterGuessResult, type PresenterOrder, type PresenterView } from './presenter-phase';
@@ -13,7 +12,6 @@ type PresenterTurnSlideProps = {
   oneByOne: boolean;
   santa: PresenterGuessResult | null;
   guessing: PresenterView['guessing'];
-  vote: PresenterView['vote'];
   /** White elephant (89): the table, with what the current person may steal. */
   swap: PresenterView['swap'];
   onSteal: (giftNo: number) => void;
@@ -38,13 +36,13 @@ const Name = ({ name, small }: { name?: string; small?: boolean }) => (
 
 /**
  * Whose turn it is, big, with a burst of confetti; "gift 2 of 3" when their Santa marked their gifts (63).
- * Their Santa only with Guess your Santa (62) on, once shown after they've unwrapped; before it, the room's
- * vote (83): "vote on your phones" while open, then the tally. White elephant (89): why they're up (their turn, stolen
+ * Their Santa only with Guess your Santa (62) on, once shown after they've unwrapped; until then everyone can still
+ * guess on their phone (94). White elephant (89): why they're up (their turn, stolen
  * from, the final steal) and the table to steal from.
  */
-export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, swap, onSteal, busy, fromAll }: PresenterTurnSlideProps) => {
+export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, swap, onSteal, busy, fromAll }: PresenterTurnSlideProps) => {
   const t = useTranslations('giftday.present');
-  const tVote = useTranslations('guess.vote');
+  const tGuess = useTranslations('guess.present');
   const tSwap = useTranslations('giftday.swap');
   const number = order.people.findIndex((p) => p.memberId === order.current?.memberId) + 1;
   const gifts = currentGiftCount(order);
@@ -79,19 +77,14 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, vote, swa
           {gifts !== null && ` · ${t('gifts', { count: gifts })}`}
         </p>
       )}
-      {vote?.open && (
+      {order.santaToShow && (
         <m.p
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-primary-muted px-6 py-3 text-2xl font-semibold text-ink bordered shadow-md sm:text-4xl dark:border-control"
         >
-          {tVote('on-phones')}
+          {tGuess('on-phones')}
         </m.p>
-      )}
-      {vote?.tally && (
-        <m.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-          <VoteTally tally={vote.tally} large />
-        </m.div>
       )}
       {santa && <PresenterSanta result={santa} leaderboard={guessing?.leaderboard ?? []} />}
     </>

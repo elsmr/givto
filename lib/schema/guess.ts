@@ -2,22 +2,19 @@ import * as v from 'valibot';
 import { Id } from './common';
 
 /**
- * `guesses` collection, Guess your Santa (62): who a participant thinks their Santa is. One per
- * person per edition (unique index), locked once made. Nobody sees it (not the organizer, not the
- * Santa) and nothing says whether it's right until its reveal: the person's turn in the presenter
- * or the big reveal. The guesser sees their own guess, without the answer.
+ * `guesses` collection, Guess your Santa (62, 82, 94): who a participant thinks is the Santa of one giftee, one row
+ * per guesser per giftee (unique index), their own row (giftee = guesser) included. Changeable from the draw until
+ * that giftee's Santa is out (their turn in the presenter, or the big reveal). Nobody else sees a row; once that
+ * Santa is out, only the giftee's own guess comes out by name, the rest as counts per name.
  */
 export const Guess = v.object({
   _id: Id,
   editionId: Id,
   guesserMemberId: Id,
-  /** Who they think is their Santa: anyone else in the draw, their own giftee too (bluffing is part of the game). */
-  guessedMemberId: Id,
-  /**
-   * Guess the whole draw (82): who they think gives to whom, for others than themselves and their own giftee.
-   * Optional rows; each Santa at most once, never the guesser. Absent on guesses made before 82.
-   */
-  pairs: v.optional(v.array(v.object({ gifteeMemberId: Id, santaMemberId: Id }))),
+  gifteeMemberId: Id,
+  /** Anyone in the draw but the guesser and the giftee; never on the row for the guesser's own giftee. */
+  santaMemberId: Id,
   createdAt: v.date(),
+  updatedAt: v.date(),
 });
 export type Guess = v.InferOutput<typeof Guess>;

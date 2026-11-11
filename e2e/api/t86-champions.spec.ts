@@ -16,15 +16,15 @@ const fixDraw = async (db: TestDb, slug: string, people: User[]) => {
 };
 
 /** Bob: all right (3, his own Santa too). Cee: own wrong, Ann's right (1). Dan: own right (1). Ann doesn't play. */
-const play = async (at: Input, [, bob, cee, dan]: User[], [A, , C, D]: string[]) => {
-  const make = (user: User, memberId: string, pairs: [string, string][]) =>
-    user.trpc.mutate('guess.make', { ...at, memberId, pairs: pairs.map(([gifteeMemberId, santaMemberId]) => ({ gifteeMemberId, santaMemberId })) });
-  ok(await make(bob, A, [[A, D], [D, C]]));
-  ok(await make(cee, A, [[A, D]]));
-  ok(await make(dan, C, []));
+const play = async (at: Input, [, bob, cee, dan]: User[], [A, B, C, D]: string[]) => {
+  const set = (user: User, rows: [string, string][]) =>
+    user.trpc.mutate('guess.set', { ...at, rows: rows.map(([gifteeMemberId, santaMemberId]) => ({ gifteeMemberId, santaMemberId })) });
+  ok(await set(bob, [[B, A], [A, D], [D, C]]));
+  ok(await set(cee, [[C, A], [A, D]]));
+  ok(await set(dan, [[D, C]]));
 };
 
-const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'vote' | 'tally' | 'santa') => {
+const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
   return ok(await ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken }));
 };
@@ -58,7 +58,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
   await test.step("done after Ann's turn: only her Santa scores; a shared title", async () => {
     ok(await ann.trpc.mutate('manage.reopenGiftDay', at));
     await db.editions.updateOne({ _id: edition._id }, { $set: { 'unwrapOrder.memberIds': [A, B, C, D] } });
-    for (const action of ['start', 'spin', 'vote', 'tally', 'santa'] as const) await advance(ann, at, action);
+    for (const action of ['start', 'spin', 'santa'] as const) await advance(ann, at, action);
     ok(await ann.trpc.mutate('manage.finishGiftDay', at));
     expect(await results()).toEqual({
       points: [{ memberId: B, points: 1 }, { memberId: C, points: 1 }, { memberId: D, points: 0 }],

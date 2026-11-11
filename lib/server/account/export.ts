@@ -3,7 +3,7 @@ import { getMongoDb, type Collections } from '../db';
 
 /**
  * Everything stored about one person (55), as JSON. Leaves out what they may not see
- * (claims, gifts, tips, guesses and votes about them, who their Santa is, who sent a nudge or question) and
+ * (claims, gifts, tips and guesses about them, who their Santa is, who sent a nudge or question) and
  * other people's data (the draw, other members).
  */
 export const exportAccount = async (db: Collections, userId: string) => {
@@ -23,7 +23,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
   const mine = { $in: memberIds };
   const raw = getMongoDb();
 
-  const [editions, wishes, claims, gifts, arrived, guesses, votes, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
+  const [editions, wishes, claims, gifts, arrived, guesses, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
     await Promise.all([
       db.editions.find({ 'participants.memberId': mine }).toArray(),
       db.wishes.find({ ownerId: userId }).sort({ position: 1 }).toArray(),
@@ -31,7 +31,6 @@ export const exportAccount = async (db: Collections, userId: string) => {
       db.gifts.find({ santaMemberId: mine }).toArray(),
       db.gifts.find({ gifteeMemberId: mine, arrivedAt: { $exists: true } }, { projection: { editionId: 1, arrivedAt: 1 } }).toArray(),
       db.guesses.find({ guesserMemberId: mine }).toArray(),
-      db.votes.find({ voterMemberId: mine }).toArray(),
       db.tips.find({ authorMemberId: mine }).toArray(),
       db.questions.find({ askerMemberId: mine }).toArray(),
       db.questions.find({ gifteeMemberId: mine }).toArray(),
@@ -84,17 +83,12 @@ export const exportAccount = async (db: Collections, userId: string) => {
     })),
     wishes: wishes.map(({ ownerId: _ownerId, ...wish }) => wish),
     claims: claims.map(({ wishId, editionId, createdAt }) => ({ wishId, editionId, createdAt })),
-    guessesMade: guesses.map(({ editionId, guessedMemberId, pairs, createdAt }) => ({
+    guessesMade: guesses.map(({ editionId, gifteeMemberId, santaMemberId, createdAt, updatedAt }) => ({
       editionId,
-      guessed: nameOf(guessedMemberId),
-      board: (pairs ?? []).map(({ gifteeMemberId, santaMemberId }) => ({ giftee: nameOf(gifteeMemberId), santa: nameOf(santaMemberId) })),
+      giftee: nameOf(gifteeMemberId),
+      santa: nameOf(santaMemberId),
       createdAt,
-    })),
-    votesCast: votes.map(({ editionId, turnMemberId, votedMemberId, createdAt }) => ({
-      editionId,
-      turn: nameOf(turnMemberId),
-      voted: nameOf(votedMemberId),
-      createdAt,
+      updatedAt,
     })),
     giftsMarked: gifts.map(({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt }) => ({ editionId, wishIds, lines, postedAt, arrivedAt, createdAt, updatedAt })),
     // By post (87): only when, never who sent it or what.
