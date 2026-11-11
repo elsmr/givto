@@ -12,7 +12,7 @@ import { useInvalidateGroup } from './use-invalidate-group';
 
 type JoinLink = NonNullable<NonNullable<GroupData['organizer']>['joinLink']>;
 
-/** Approval, member cap, turn off / new link (45). */
+/** Approval, member cap, turn off / new link (45). A turned-off link gets its new one from the notice in its place (invite-people.tsx). */
 export const JoinLinkSettings = ({ slug, joinLink }: { slug: string; joinLink: JoinLink }) => {
   const t = useTranslations('group.share.settings');
   const trpc = useTRPC();
@@ -51,16 +51,16 @@ export const JoinLinkSettings = ({ slug, joinLink }: { slug: string; joinLink: J
           onBlur={() => cap !== String(joinLink.maxMembers ?? '') && save(joinLink.requiresApproval, cap)}
         />
       </Field>
-      <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
-        {!joinLink.revoked && (
+      {!joinLink.revoked && (
+        <div className="flex flex-col gap-3 xs:flex-row xs:flex-wrap">
           <Button variant="neutral" disabled={revoke.isPending} onClick={() => revoke.mutate({ groupSlug: slug })}>
             {t('revoke')}
           </Button>
-        )}
-        <Button variant="neutral" disabled={regenerate.isPending} onClick={() => regenerate.mutate({ groupSlug: slug })}>
-          {t('regenerate')}
-        </Button>
-      </div>
+          <Button variant="neutral" disabled={regenerate.isPending} onClick={() => regenerate.mutate({ groupSlug: slug })}>
+            {t('regenerate')}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

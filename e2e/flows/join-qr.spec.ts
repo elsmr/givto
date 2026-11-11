@@ -93,3 +93,24 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     await expect(bobPage.getByRole('button', { name: 'Draw names' })).toHaveCount(0);
   });
 });
+
+test('join link turned off or missing: the card makes a new one', async ({ page, signIn, signInPage, db }) => {
+  const ann = await signIn('ann');
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Relink', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' })
+  );
+  await signInPage(page, ann);
+  for (const [why, turnOff] of [
+    ['turned off', async () => ok(await ann.trpc.mutate('join.revokeLink', { groupSlug: group.slug }))],
+    ['missing', () => db.groups.updateOne({ slug: group.slug }, { $unset: { joinLink: '' } })],
+  ] as const) {
+    await test.step(why, async () => {
+      await turnOff();
+      await page.goto(`/g/${group.slug}`);
+      await expect(page.getByText('The join link is turned off.')).toBeVisible();
+      await page.getByRole('button', { name: 'Make a new link' }).click();
+      await expect(page.getByLabel('Join link')).toHaveValue(/\/join\?token=/);
+      await expect(page.getByText('The join link is turned off.')).toHaveCount(0);
+    });
+  }
+});
