@@ -14,7 +14,7 @@ import { PresenterFrame } from './presenter/presenter-frame';
 import { PresenterLoading } from './presenter/presenter-loading';
 import { PresenterTitleSlide } from './presenter/presenter-title-slide';
 import { UnwrapNow } from './unwrap-now';
-import { useGiftDay } from './use-gift-day';
+import { useGiftDay, useGiftDayStream } from './use-gift-day';
 
 /**
  * /g/[slug]/live (95): the presenter on a member's phone, from the member view, so the unwrap order stays a surprise:
@@ -27,7 +27,9 @@ export const LiveStage = ({ groupSlug }: { groupSlug: string }) => {
   const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug }), enabled: !!user });
   const edition = group.data?.edition;
   const input = { groupSlug, editionNumber: edition?.number ?? 0 };
-  const giftDay = useGiftDay(input, edition?.status ?? 'draft', 3_000);
+  const giftDay = useGiftDay(input, edition?.status ?? 'draft');
+  // Whatever the status: the presenter can run before the gift day date (95).
+  useGiftDayStream(input, Boolean(edition));
   const view = giftDay.data;
   const order = view?.unwrapOrder;
 

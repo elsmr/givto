@@ -21,12 +21,14 @@ const presenterView = async (db: Collections, group: Group, edition: Edition) =>
   ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
 });
 
+/** giftday.get, also pushed by the gift day stream (97). */
+export const memberView = async (db: Collections, group: Group, edition: Edition) =>
+  giftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition));
+
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
   /** Unwrap order and reveal state for the group home; Santas only once revealed. */
-  get: editionProcedure.query(async ({ ctx }) =>
-    giftDayView(ctx.group, ctx.edition, await giftCounts(ctx.db, ctx.edition), await guessesOf(ctx.db, ctx.edition))
-  ),
+  get: editionProcedure.query(({ ctx }) => memberView(ctx.db, ctx.group, ctx.edition)),
 
   /** The presenter view (/g/[slug]/present) is the organizer's (PLAN-v2). */
   presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition)),

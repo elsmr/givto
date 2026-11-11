@@ -6,7 +6,7 @@ import * as v from 'valibot';
 import { Id } from '../schema/common';
 import { Slug } from '../schema/group';
 import { getAuth } from './auth';
-import { getDb } from './db';
+import { getDb, type Collections } from './db';
 import { AppError, errorData, GENERIC_ERROR_MESSAGE, isUnexpected, toAppCode } from './errors';
 import { log } from './log';
 
@@ -80,20 +80,35 @@ export const authedProcedure = publicProcedure.use(({ ctx, next }) => {
   return next({ ctx: { user: ctx.session.user, session: ctx.session.session } });
 });
 
-/**
- * Input `{ groupSlug }`. A joined member of the group: `ctx.group`, `ctx.member`. Anyone
- * else gets GROUP_NOT_FOUND, so slugs don't reveal which groups exist.
- */
+/** The group the user joined, and their member; anyone else gets GROUP_NOT_FOUND, so slugs don't reveal which groups exist. */
+const memberGroup = async (db: Collections, userId: string, groupSlug: string) => {
+  const group = await db.groups.findOne({
+    slug: groupSlug,
+    deletedAt: { $exists: false },
+    members: { $elemMatch: { userId, status: 'joined' } },
+  });
+  const member = group?.members.find((m) => m.userId === userId && m.status === 'joined');
+  if (!group || !member) throw new AppError('GROUP_NOT_FOUND');
+  return { group, member };
+};
+
+const groupEdition = async (db: Collections, groupId: string, editionNumber: number) => {
+  const edition = await db.editions.findOne({ groupId, number: editionNumber });
+  if (!edition) throw new AppError('EDITION_NOT_FOUND');
+  return edition;
+};
+
+/** editionProcedure's checks, for the gift day stream (97), which isn't tRPC. */
+export const memberEdition = async (db: Collections, userId: string, groupSlug: string, editionNumber: number) => {
+  const { group } = await memberGroup(db, userId, groupSlug);
+  return { group, edition: await groupEdition(db, group._id, editionNumber) };
+};
+
+/** Input `{ groupSlug }`. A joined member of the group: `ctx.group`, `ctx.member`. */
 export const memberProcedure = authedProcedure
   .input(v.object({ groupSlug: Slug }))
   .use(async ({ ctx, input, next }) => {
-    const group = await ctx.db.groups.findOne({
-      slug: input.groupSlug,
-      deletedAt: { $exists: false },
-      members: { $elemMatch: { userId: ctx.user.id, status: 'joined' } },
-    });
-    const member = group?.members.find((m) => m.userId === ctx.user.id && m.status === 'joined');
-    if (!group || !member) throw new AppError('GROUP_NOT_FOUND');
+    const { group, member } = await memberGroup(ctx.db, ctx.user.id, input.groupSlug);
     ctx.meta.groupId = group._id;
     return next({ ctx: { group, member, log: ctx.log.child({ groupId: group._id }) } });
   });
@@ -108,8 +123,7 @@ export const organizerProcedure = memberProcedure.use(({ ctx, next }) => {
 export const editionProcedure = memberProcedure
   .input(v.object({ editionNumber: v.pipe(v.number(), v.integer(), v.minValue(1)) }))
   .use(async ({ ctx, input, next }) => {
-    const edition = await ctx.db.editions.findOne({ groupId: ctx.group._id, number: input.editionNumber });
-    if (!edition) throw new AppError('EDITION_NOT_FOUND');
+    const edition = await groupEdition(ctx.db, ctx.group._id, input.editionNumber);
     ctx.meta.editionId = edition._id;
     return next({ ctx: { edition, log: ctx.log.child({ editionId: edition._id }) } });
   });

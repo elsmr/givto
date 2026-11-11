@@ -1,17 +1,28 @@
 import type { EditionInput } from '@/components/between/edition-input';
 import { useTRPC } from '@/lib/client/trpc';
 import { isBeforeDraw, type EditionStatus } from '@/lib/schema/edition';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import superjson from 'superjson';
+
+/** Unwrap order, mode and big reveal from the draw on; the page's `useGiftDayStream` keeps it current. */
+export const useGiftDay = (input: EditionInput, status: EditionStatus) => {
+  const trpc = useTRPC();
+  return useQuery({ ...trpc.giftday.get.queryOptions(input), enabled: !isBeforeDraw({ status }) });
+};
 
 /**
- * Unwrap order, mode and big reveal from the draw on; on gift day other phones follow the presenter's turns. `every`
- * polls whatever the status: the presenter can run before the gift day date (95).
+ * The server pushes the gift day view after every change, so phones follow the presenter (97). One per page: the other
+ * `useGiftDay` callers read the same cache. EventSource reconnects by itself and gets the current view first.
  */
-export const useGiftDay = (input: EditionInput, status: EditionStatus, every?: number) => {
+export const useGiftDayStream = ({ groupSlug, editionNumber }: EditionInput, enabled: boolean) => {
   const trpc = useTRPC();
-  return useQuery({
-    ...trpc.giftday.get.queryOptions(input),
-    enabled: !isBeforeDraw({ status }),
-    refetchInterval: every ?? (status === 'giftday' && 10_000),
-  });
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (!enabled) return;
+    const queryKey = trpc.giftday.get.queryKey({ groupSlug, editionNumber });
+    const source = new EventSource(`/api/giftday/${encodeURIComponent(groupSlug)}/${editionNumber}`);
+    source.onmessage = (event) => queryClient.setQueryData(queryKey, superjson.parse(event.data));
+    return () => source.close();
+  }, [trpc, queryClient, groupSlug, editionNumber, enabled]);
 };

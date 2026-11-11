@@ -83,6 +83,13 @@ test('/robots.txt allows crawling and points to the sitemap', async ({ request }
   expect(body).toMatch(new RegExp(`^Sitemap: ${SITE}/sitemap.xml$`, 'm'));
 });
 
+test('an unknown URL: 404, our page, in the visitor\'s language', async ({ request }) => {
+  const { res, body } = await get(request, '/does-not-exist');
+  expect(res.status()).toBe(404);
+  expect(body).toMatch(/We couldn(&#x27;|')t find this page/);
+  expect((await get(request, '/does-not-exist', { 'accept-language': 'nl' })).body).toContain('We kunnen deze pagina niet vinden');
+});
+
 test('/sitemap.xml lists exactly the public pages', async ({ request }) => {
   const { res, body } = await get(request, '/sitemap.xml');
   expect(res.status()).toBe(200);
