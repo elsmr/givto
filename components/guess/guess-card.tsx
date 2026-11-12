@@ -14,8 +14,8 @@ import { GuessVerdict } from './guess-verdict';
 const name = (chunks: ReactNode) => <strong className="font-heading break-words">{chunks}</strong>;
 
 /**
- * Guess your Santa (62) on the overview: my guess for my own Santa (the rest of the draw only in the dialog, 94); my
- * answer once my Santa is out (my turn on gift day, or the big reveal), and everyone's so far.
+ * Guess your Santa (62) on the overview: my guesses only in the dialog (94); my answer once my Santa is out (my turn on
+ * gift day, or the big reveal), and everyone's so far.
  */
 export const GuessCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('guess.card');
@@ -54,8 +54,6 @@ export const GuessCard = ({ group, edition }: { group: GroupData; edition: Group
               <p className="text-muted">{t('no-guess')}</p>
             )}
           </div>
-        ) : guess ? (
-          <p className="text-lg">{t.rich('you-guessed', { guess: guess.name, name })}</p>
         ) : (
           !open && <p className="text-muted">{t('closed')}</p>
         )}
