@@ -38,7 +38,9 @@ export const EmailForm = ({
           id="sign-in-email"
           type="email"
           name="email"
-          autoComplete="email webauthn"
+          // `username` marks this as a sign-in form for password managers; `webauthn` offers passkeys here.
+          autoComplete="username webauthn"
+          autoFocus
           required
           value={email}
           aria-invalid={error ? true : undefined}

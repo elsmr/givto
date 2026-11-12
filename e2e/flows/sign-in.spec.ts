@@ -26,7 +26,7 @@ test('link: the emailed link signs in and opens the page that asked', async ({ p
   await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible();
 });
 
-test('passkey: add one on the account page, then sign in with it', async ({ page, signIn, signInPage }) => {
+test('passkey: add one on the account page, then sign in with it from the email field\'s autofill', async ({ page, signIn, signInPage }) => {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   await cdp.send('WebAuthn.addVirtualAuthenticator', {
@@ -48,8 +48,7 @@ test('passkey: add one on the account page, then sign in with it', async ({ page
 
   await page.context().clearCookies();
   await page.goto('/account');
-  await expect(page).toHaveURL('/auth/sign-in?redirect=%2Faccount');
-  await page.getByRole('button', { name: 'Sign in with a passkey' }).click();
+  // The virtual authenticator answers the conditional (autofill) request without a pick.
   await expect(page).toHaveURL('/account');
   await expect(page.getByRole('heading', { name: 'Passkeys' })).toBeVisible();
 });
