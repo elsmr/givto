@@ -10,17 +10,8 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from '@/components/ui/native-select';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { StyleguideSection } from './styleguide-section';
-
-const budgets = { '10': '€10', '20': '€20', '50': '€50' };
 
 export const InputsSection = () => (
   <StyleguideSection
@@ -68,21 +59,6 @@ export const InputsSection = () => (
           <NativeSelectOption value="en">English</NativeSelectOption>
           <NativeSelectOption value="nl">Nederlands</NativeSelectOption>
         </NativeSelect>
-      </Field>
-      <Field>
-        <FieldLabel id="sg-budget-label">Budget</FieldLabel>
-        <Select items={budgets} defaultValue="20">
-          <SelectTrigger aria-labelledby="sg-budget-label">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.entries(budgets).map(([value, label]) => (
-              <SelectItem key={value} value={value}>
-                {label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </Field>
     </FieldGroup>
   </StyleguideSection>

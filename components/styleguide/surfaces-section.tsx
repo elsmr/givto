@@ -9,8 +9,8 @@ const borders = [
 
 const shadows = [
   { className: 'shadow-sm', use: 'Active segment and nav item, current phase' },
-  { className: 'shadow-md', use: 'Cards and buttons' },
-  { className: 'shadow-lg', use: 'Dialogs and menus' },
+  { className: 'shadow-md', use: 'Cards, buttons, menus and popovers' },
+  { className: 'shadow-lg', use: 'Dialogs' },
   { className: 'shadow-brand', use: 'The one card that matters most on a page' },
 ];
 
