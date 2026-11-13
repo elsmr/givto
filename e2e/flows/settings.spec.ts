@@ -218,6 +218,8 @@ test('after gift day: same again next year, then open the new edition', async ({
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = await drawnGroup(people, 'Yearly');
   const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;
+  // A wish to mark received, so the done phase has a main card (How did it go?).
+  ok(await people[0].trpc.mutate('wish.create', { title: 'Green socks', groupSlugs: [group.slug] }));
   await signInPage(page, people[0]);
   await page.goto(`/g/${group.slug}`);
   await expect(page.getByRole('heading', { name: 'Same again next year?' }), 'not before gift day').toHaveCount(0);
@@ -227,7 +229,7 @@ test('after gift day: same again next year, then open the new edition', async ({
   await test.step('done: a new edition once, under the main card; guessing is gone', async () => {
     const overview = page.getByRole('tabpanel', { name: 'Overview' });
     await expect(overview.getByRole('heading', { name: 'Same again next year?' })).toHaveCount(1);
-    await expect(overview.getByRole('heading', { level: 2 }).first()).not.toHaveText('Same again next year?');
+    await expect(overview.getByRole('heading', { level: 2 }).first()).toHaveText('How did it go?');
     await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toHaveCount(0);
   });
   const title = `Secret Santa ${todayIn('Europe/Brussels').slice(0, 4)}`;
