@@ -26,7 +26,10 @@ export const UnwrapNow = ({ order, guessing, swap, className }: UnwrapNowProps) 
   if (order.finished) {
     return (
       <>
-        <p className={cn('bg-mint p-3 font-semibold text-ink bordered', className)}>{t('finished')}</p>
+        {/* The same live div as a turn below, so React keeps it mounted and the finish is announced. */}
+        <div aria-live="polite" className={cn('bg-mint p-3 font-semibold text-ink bordered', className)}>
+          {t('finished')}
+        </div>
         {table}
       </>
     );

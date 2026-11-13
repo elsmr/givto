@@ -1,3 +1,4 @@
+import { LoadFailed } from '@/components/shell/load-failed';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -141,6 +142,7 @@ export const useAddressMutationOptions = () => {
 /** /account (80): the address book. Groups post to the default unless one is picked there; only the Santa in a by-post Secret Santa sees it. */
 export const AddressBook = () => {
   const t = useTranslations('account.address');
+  const tErrors = useTranslations('account.errors');
   const trpc = useTRPC();
   const options = useAddressMutationOptions();
   // The address being edited, 'new' for the add form: one form at a time.
@@ -153,6 +155,7 @@ export const AddressBook = () => {
   const makeDefault = useMutation(trpc.account.setDefaultAddress.mutationOptions(options(t('default-saved'))));
 
   if (book.isPending) return <Skeleton className="h-16" />;
+  if (book.isError) return <LoadFailed message={tErrors('generic')} onRetry={() => void book.refetch()} />;
   const { addresses = [], defaultAddressId = null } = book.data ?? {};
 
   return (

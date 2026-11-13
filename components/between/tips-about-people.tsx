@@ -1,3 +1,4 @@
+import { LoadFailed } from '@/components/shell/load-failed';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,10 +13,12 @@ import { NewTipDialog } from './new-tip-dialog';
 /** "Tips for someone's Santa" (42): leave a tip about anyone in the draw (in a dialog), and manage your own tips. */
 export const TipsAboutPeople = ({ input }: { input: EditionInput }) => {
   const t = useTranslations('between.tips');
+  const tErrors = useTranslations('between.errors');
   const trpc = useTRPC();
   const authored = useQuery(trpc.tip.authored.queryOptions(input));
 
   if (authored.isPending) return <Skeleton className="h-48" />;
+  if (authored.isError) return <LoadFailed message={tErrors('generic')} onRetry={() => void authored.refetch()} />;
   if (!authored.data) return null;
   const { canWrite, people, tips } = authored.data;
 

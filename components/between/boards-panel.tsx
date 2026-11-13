@@ -1,3 +1,4 @@
+import { LoadFailed } from '@/components/shell/load-failed';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardDivider, CardHeader } from '@/components/ui/card';
@@ -149,9 +150,11 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
 /** The "Boards" tab of a conspiracy (90): a board per person but me, where the others plan one gift for them. */
 export const BoardsPanel = ({ input }: { input: EditionInput }) => {
   const t = useTranslations('between.boards');
+  const tErrors = useTranslations('between.errors');
   const trpc = useTRPC();
   const list = useQuery(trpc.board.list.queryOptions(input));
   if (list.isPending) return <Skeleton className="h-40" />;
+  if (list.isError) return <LoadFailed message={tErrors('generic')} onRetry={() => void list.refetch()} />;
   const view = list.data;
   if (!view) return null;
 
