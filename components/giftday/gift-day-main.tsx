@@ -9,7 +9,7 @@ import { BigRevealCard } from './big-reveal-card';
 import { GiftDayHero } from './gift-day-hero';
 import { useGiftDay, useGiftDayStream } from './use-gift-day';
 
-/** Gift day on the overview (61): once the presenter started, the way to follow it on your phone (95), the call to join by post (87), the presenter for the organizer, the big reveal once it's out, one line about my giftee. */
+/** Gift day on the overview (61): once the presenter started, for members the way to follow it on their phone (95), the call to join by post (87), the presenter for the organizer, the big reveal once it's out, one line about my giftee. */
 export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string; edition: GroupEdition; manage: boolean }) => {
   const t = useTranslations('giftday.hero');
   const input = { groupSlug, editionNumber: edition.number };
@@ -20,7 +20,7 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
   return (
     <>
       <GiftDayHero groupSlug={groupSlug} canPresent={manage}>
-        {giftDay.data?.unwrapOrder?.started && (
+        {!manage && giftDay.data?.unwrapOrder?.started && (
           <Link href={`/g/${groupSlug}/live`} className={buttonVariants({ size: 'lg' })}>
             <MonitorPlay aria-hidden="true" />
             {t('join-live')}

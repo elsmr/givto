@@ -151,7 +151,7 @@ test('join link settings: a cap, turn the link off, make a new one', async ({ pa
 
   await test.step('turn the link off', async () => {
     await invite.getByRole('button', { name: 'Turn off the link' }).click();
-    await expect(invite.getByText('The join link is turned off. Make a new link to let people join again.')).toBeVisible();
+    await expect(invite.getByText('The join link is off.')).toBeVisible();
     await expect(invite.getByLabel('Join link')).toHaveCount(0);
   });
 
@@ -224,9 +224,10 @@ test('after gift day: same again next year, then open the new edition', async ({
 
   await db.editions.updateOne({ groupId, number: 1 }, { $set: { status: 'done' } });
   await page.reload();
-  await test.step('done: a new edition comes first, guessing is gone', async () => {
+  await test.step('done: a new edition once, under the main card; guessing is gone', async () => {
     const overview = page.getByRole('tabpanel', { name: 'Overview' });
-    await expect(overview.getByRole('heading', { level: 2 }).first()).toHaveText('Same again next year?');
+    await expect(overview.getByRole('heading', { name: 'Same again next year?' })).toHaveCount(1);
+    await expect(overview.getByRole('heading', { level: 2 }).first()).not.toHaveText('Same again next year?');
     await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toHaveCount(0);
   });
   const title = `Secret Santa ${todayIn('Europe/Brussels').slice(0, 4)}`;

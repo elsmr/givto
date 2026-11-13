@@ -11,7 +11,7 @@ import type { GroupData, GroupEdition } from '../group/group-data';
 import { DrawError } from './draw-error';
 import { useRefreshEdition } from './use-refresh-edition';
 
-/** Draft edition (33): nothing is sent; the organizer checks who's in, then opens it. */
+/** Draft edition (33): nothing is sent; the organizer checks who's in, then opens it. Members only get a line that it's coming. */
 export const DraftCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
   const t = useTranslations('draw.draft');
   const trpc = useTRPC();
@@ -28,9 +28,11 @@ export const DraftCard = ({ group, edition }: { group: GroupData; edition: Group
   return (
     <Card className="bg-yellow">
       <CardHeader>
-        <IconCardTitle icon={NotebookPen} tone="mint">
-          {t('title')}
-        </IconCardTitle>
+        {group.me.isOrganizer && (
+          <IconCardTitle icon={NotebookPen} tone="mint">
+            {t('title')}
+          </IconCardTitle>
+        )}
         <CardDescription className="text-ink">{group.me.isOrganizer ? t('description') : t('member')}</CardDescription>
       </CardHeader>
       {group.me.isOrganizer && (

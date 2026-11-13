@@ -18,10 +18,12 @@ type InvitePeopleProps = {
   primary?: boolean;
   /** Under the link row, e.g. the link settings. */
   linkExtra?: ReactNode;
+  /** The overview: email invites are only in the settings. */
+  linkOnly?: boolean;
 };
 
 /** The organizer's way to get people in, wherever they invite (45): the join link or QR, or email invites. */
-export const InvitePeople = ({ slug, groupName, joinLink, primary, linkExtra }: InvitePeopleProps) => {
+export const InvitePeople = ({ slug, groupName, joinLink, primary, linkExtra, linkOnly }: InvitePeopleProps) => {
   const t = useTranslations('group.share');
   const trpc = useTRPC();
   const invalidate = useInvalidateGroup(slug);
@@ -46,11 +48,15 @@ export const InvitePeople = ({ slug, groupName, joinLink, primary, linkExtra }: 
         </Alert>
       )}
       {linkExtra}
-      {/* The label sits on the card, not the page. */}
-      <FieldSeparator className="*:data-[slot=field-separator-content]:bg-surface [&_[role=separator]]:border-dashed">
-        {t('or')}
-      </FieldSeparator>
-      <InviteForm slug={slug} />
+      {!linkOnly && (
+        <>
+          {/* The label sits on the card, not the page. */}
+          <FieldSeparator className="*:data-[slot=field-separator-content]:bg-surface [&_[role=separator]]:border-dashed">
+            {t('or')}
+          </FieldSeparator>
+          <InviteForm slug={slug} />
+        </>
+      )}
     </div>
   );
 };

@@ -1,14 +1,6 @@
 {
   "page-title": "Secret Santa",
   "load-failed": "We couldn't load this Secret Santa. Check your connection and try again.",
-  "status": {
-    "draft": "Draft",
-    "open": "Open to join",
-    "drawn": "Names drawn",
-    "locked": "Locked in",
-    "giftday": "Gift day",
-    "done": "Done"
-  },
   "summary": {
     "gift-day": "Gift day",
     "no-gift-day": "Not set yet",
@@ -35,13 +27,7 @@
       "removed": "Left"
     },
     "bounced": "Email bounced: check the address",
-    "manage": "Invite and manage people",
-    "badges": {
-      "champion": "{count, plural, one {Champion} other {Champion ×#}}",
-      "backToBack": "{count, plural, one {Back to back} other {Back to back ×#}}",
-      "perfect": "{count, plural, one {Perfect board} other {Perfect board ×#}}",
-      "nailed": "{count, plural, one {Nailed it} other {Nailed it ×#}}"
-    }
+    "manage": "Invite and manage people"
   },
   "requests": {
     "title": "{count, plural, one {# person wants} other {# people want}} to join",
@@ -51,7 +37,7 @@
   "share": {
     "title": "Invite people",
     "joined": "{count, plural, one {# person has} other {# people have}} joined",
-    "revoked": "The join link is turned off. Make a new link to let people join again.",
+    "revoked": "The join link is off.",
     "link-label": "Join link",
     "copy": "Copy link",
     "copied": "Link copied",
@@ -88,7 +74,7 @@
     }
   },
   "leave": {
-    "button": "Leave this Secret Santa",
+    "button": "Leave the group",
     "title": "Leave {group}?",
     "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, your Santa gets someone else. Your wishlist stays yours.",
     "cancel": "Stay",
@@ -160,7 +146,7 @@
     "overview": "Overview",
     "giftee": "My giftee",
     "boards": "Boards",
-    "wishlist": "My wishlist",
+    "wishlist": "Wishlist",
     "people": "People"
   },
   "stats": {
@@ -184,7 +170,6 @@
   "address": {
     "title": "Your address",
     "private": "Gifts go by post. Only your Santa sees your address, once names are drawn.",
-    "sending-to": "Sending to:",
     "change": "Change",
     "pick-label": "Address for this group",
     "default-option": "{address} (default)",

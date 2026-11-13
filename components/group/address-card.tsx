@@ -87,7 +87,6 @@ export const AddressCard = ({ groupSlug }: { groupSlug: string }) => {
           </form>
         ) : (
           <div className="flex flex-col gap-4">
-            <p className="font-semibold">{t('sending-to')}</p>
             <AddressLines address={current} />
             <Button
               variant="neutral"

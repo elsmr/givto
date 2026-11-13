@@ -36,16 +36,13 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
   const ready = wishesDone && hasAddress;
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
   const organizer = group.members.find((m) => m.role === 'organizer')?.name.split(' ')[0] ?? tGroup('people.organizer');
-  const waiting = !draws ? (
-    <p>{edition.kind === 'conspiracy' ? t('lock-in.wait-conspiracy', { organizer }) : t('lock-in.wait', { organizer })}</p>
-  ) : (
-    <p>
-      {edition.drawAt
-        ? t('waiting.wait-on', { organizer, date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })
-        : t('waiting.wait', { organizer })}{' '}
-      {t('waiting.email')}
-    </p>
-  );
+  const waiting = !draws
+    ? edition.kind === 'conspiracy'
+      ? t('lock-in.wait-conspiracy', { organizer })
+      : t('lock-in.wait', { organizer })
+    : edition.drawAt
+      ? t('waiting.wait-on', { organizer, date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone: edition.timeZone }) })
+      : t('waiting.wait', { organizer });
   const done = <IconTile icon={Check} tone="mint" className="size-7" />;
   const todo = <span aria-hidden="true" className="size-7 shrink-0 border-2 border-outline bg-surface" />;
 
@@ -53,32 +50,27 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
     <Card>
       <CardHeader>
         <IconCardTitle icon={ready ? PartyPopper : Heart} tone={ready ? 'mint' : 'coral'}>
-          {ready ? t('waiting.ready') : wishesDone ? t('waiting.todo-address') : t('waiting.todo')}
+          {ready ? t('waiting.ready') : t('waiting.in')}
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {ready && waiting}
-        <ul className="flex flex-col gap-2 font-semibold">
-          <li className="flex items-center gap-3">
-            {done}
-            {t('waiting.in')}
-          </li>
-          {wishesNeeded && (
-            <li className="flex flex-wrap items-center gap-3">
-              {wishesDone ? done : todo}
-              {wishesDone ? t('waiting.wishes', { count: wishCount }) : t('waiting.no-wishes')}
-              {!wishesDone && <Button onClick={() => showTab('wishlist')}>{t('waiting.add')}</Button>}
-            </li>
-          )}
-          {posted && (
-            <li className="flex flex-wrap items-center gap-3">
-              {hasAddress ? done : todo}
-              {hasAddress ? t('waiting.address') : t('waiting.no-address')}
-              {!hasAddress && <Button onClick={() => document.getElementById(ADDRESS_FIELD_ID)?.focus()}>{t('waiting.add-address')}</Button>}
-            </li>
-          )}
-        </ul>
-        {!ready && waiting}
+        {ready && <p>{waiting}</p>}
+        {(wishesNeeded || posted) && (
+          <ul className="flex flex-col gap-2 font-semibold">
+            {wishesNeeded && (
+              <li className="flex flex-wrap items-center gap-3">
+                {wishesDone ? done : todo}
+                {wishesDone ? t('waiting.wishes', { count: wishCount }) : <Button onClick={() => showTab('wishlist')}>{t('waiting.add')}</Button>}
+              </li>
+            )}
+            {posted && (
+              <li className="flex flex-wrap items-center gap-3">
+                {hasAddress ? done : todo}
+                {hasAddress ? t('waiting.address') : <Button onClick={() => document.getElementById(ADDRESS_FIELD_ID)?.focus()}>{t('waiting.add-address')}</Button>}
+              </li>
+            )}
+          </ul>
+        )}
         {people.length > 0 && (
           <AvatarStack
             people={people}

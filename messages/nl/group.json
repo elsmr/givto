@@ -1,14 +1,6 @@
 {
   "page-title": "Secret Santa",
   "load-failed": "We konden deze Secret Santa niet laden. Check je verbinding en probeer het opnieuw.",
-  "status": {
-    "draft": "Concept",
-    "open": "Open om mee te doen",
-    "drawn": "Geloot",
-    "locked": "Vastgelegd",
-    "giftday": "Pakjesdag",
-    "done": "Afgelopen"
-  },
   "summary": {
     "gift-day": "Pakjesdag",
     "no-gift-day": "Nog niet gekozen",
@@ -35,13 +27,7 @@
       "removed": "Vertrokken"
     },
     "bounced": "E-mail kwam niet aan: check het adres",
-    "manage": "Mensen uitnodigen en beheren",
-    "badges": {
-      "champion": "{count, plural, one {Kampioen} other {Kampioen ×#}}",
-      "backToBack": "{count, plural, one {Twee op rij} other {Twee op rij ×#}}",
-      "perfect": "{count, plural, one {Foutloos} other {Foutloos ×#}}",
-      "nailed": "{count, plural, one {Raak!} other {Raak! ×#}}"
-    }
+    "manage": "Mensen uitnodigen en beheren"
   },
   "requests": {
     "title": "{count, plural, one {# persoon wil} other {# mensen willen}} meedoen",
@@ -51,7 +37,7 @@
   "share": {
     "title": "Mensen uitnodigen",
     "joined": "{count, plural, one {# persoon doet} other {# mensen doen}} mee",
-    "revoked": "De link staat uit. Maak een nieuwe link zodat mensen weer kunnen meedoen.",
+    "revoked": "De link staat uit.",
     "link-label": "Link om mee te doen",
     "copy": "Link kopiëren",
     "copied": "Link gekopieerd",
@@ -88,7 +74,7 @@
     }
   },
   "leave": {
-    "button": "Stoppen met deze Secret Santa",
+    "button": "Groep verlaten",
     "title": "Stoppen met {group}?",
     "description": "Je doet niet meer mee aan de loting en ziet de groep niet meer. Is er al geloot, dan krijgt je Santa iemand anders. Je verlanglijstje blijft van jou.",
     "cancel": "Blijven",
@@ -160,7 +146,7 @@
     "overview": "Overzicht",
     "giftee": "Mijn persoon",
     "boards": "Prikborden",
-    "wishlist": "Mijn verlanglijstje",
+    "wishlist": "Verlanglijstje",
     "people": "Deelnemers"
   },
   "stats": {
@@ -184,7 +170,6 @@
   "address": {
     "title": "Je adres",
     "private": "De cadeaus gaan met de post. Alleen je Santa ziet je adres, zodra er geloot is.",
-    "sending-to": "Verzenden naar:",
     "change": "Wijzigen",
     "pick-label": "Adres voor deze groep",
     "default-option": "{address} (standaard)",

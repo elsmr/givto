@@ -30,22 +30,20 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
   const posted = edition && isPosted(edition);
   const addresses = posted && (edition.status === 'open' || edition.status === 'drawn');
   const participates = edition?.participantIds.includes(group.me.memberId);
-  const organizesThis = Boolean(group.organizer && edition?.isCurrent);
-  const shopping = organizesThis && edition?.status === 'drawn' && drawsNames(edition);
-  const missingAddresses = organizesThis && input && addresses;
-  const emptyWishlists = organizesThis && input && wishesOn(edition) && (edition.status === 'open' || edition.status === 'drawn');
+  const shopping = manage && edition?.status === 'drawn' && drawsNames(edition);
+  const missingAddresses = manage && input && addresses;
+  const emptyWishlists = manage && input && wishesOn(edition) && (edition.status === 'open' || edition.status === 'drawn');
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-6">
         {manage && <PendingRequests group={group} />}
         {input && <ForYouSection input={input} />}
-        {done && nextEdition}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
         {addresses && participates && <AddressCard groupSlug={slug} />}
         {input && posted && isDrawn(edition) && participates && <GiftArrivalCard {...input} />}
         {edition?.guessing && !isBeforeDraw(edition) && !done && <GuessCard group={group} edition={edition} />}
-        {!done && nextEdition}
+        {nextEdition}
         {edition && <EditionsList group={group} shownNumber={edition.number} />}
       </div>
       {edition && (

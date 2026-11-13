@@ -43,7 +43,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
   await test.step('Olive shows only the cookbook in Family; it notes that Friends sees it too', async () => {
     await signInPage(page, olive);
     await page.goto(`/g/${family.slug}#wishlist`);
-    const tab = page.getByRole('tabpanel', { name: 'My wishlist' });
+    const tab = page.getByRole('tabpanel', { name: 'Wishlist' });
     const pick = tab.getByRole('region', { name: 'Or add one from your wishlist' });
     await expect(pick.getByRole('button')).toHaveCount(2);
     await pick.getByRole('button', { name: 'Add “Cookbook” to this group' }).click();
@@ -71,7 +71,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
 
   await test.step('Olive puts the cookbook first in Friends only', async () => {
     await page.goto(`/g/${friends.slug}#wishlist`);
-    await page.getByRole('tabpanel', { name: 'My wishlist' }).getByRole('button', { name: 'Move “Cookbook” up' }).click();
+    await page.getByRole('tabpanel', { name: 'Wishlist' }).getByRole('button', { name: 'Move “Cookbook” up' }).click();
     await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: friends.slug })).map((wish) => wish.title)).toEqual(['Cookbook', 'Wool socks']);
   });
 
@@ -121,7 +121,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
 
   await test.step('Olive adds a wish in the Family tab: only Family shows it', async () => {
     await page.goto(`/g/${family.slug}#wishlist`);
-    const tab = page.getByRole('tabpanel', { name: 'My wishlist' });
+    const tab = page.getByRole('tabpanel', { name: 'Wishlist' });
     await tab.getByLabel('Wish', { exact: true }).fill('Kite');
     await tab.getByLabel('Wish', { exact: true }).press('Enter');
     await expect(tab.getByRole('heading', { name: 'Kite' })).toBeVisible();

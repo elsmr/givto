@@ -48,7 +48,7 @@ test('organizer: start gift day now, back to shopping, finish, reopen', async ({
   await expect(currentStep(page)).toContainText('Gift day');
 });
 
-test('a member\'s ⋯ menu has no organizer items', async ({ page, signIn, signInPage }) => {
+test('a member has no ⋯ menu', async ({ page, signIn, signInPage }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = ok(await ann.trpc.mutate('group.create', { name: 'Members', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
@@ -58,8 +58,7 @@ test('a member\'s ⋯ menu has no organizer items', async ({ page, signIn, signI
   await signInPage(page, bob);
   await page.goto(`/g/${group.slug}`);
   await expect(currentStep(page)).toContainText('Shop');
-  await page.getByRole('button', { name: 'More' }).click();
-  await expect(page.getByRole('menuitem')).toHaveText(['Pick a name']);
+  await expect(page.getByRole('button', { name: 'More' })).toHaveCount(0);
 });
 
 test('the draw dialog says the rules, with where to edit them, and who is not in the draw', async ({ page, signIn, signInPage, db }) => {

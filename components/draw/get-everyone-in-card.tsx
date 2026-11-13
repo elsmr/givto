@@ -4,13 +4,14 @@ import { InvitePeople } from '@/components/group/invite-people';
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { drawsNames } from '@/lib/schema/edition';
+import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { UserPlus } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { DrawRules } from './draw-rules';
 
 /**
- * Open edition (61): who's in and when names are drawn; the organizer invites (link, QR or email).
- * Draw names is in the group header; names on the People tab; link settings and keep apart in the settings.
+ * Open edition (61): who's in and when names are drawn; the organizer shares the link or QR, the main action while too few are in.
+ * Draw names is in the group header; names on the People tab; email invites, link settings and keep apart in the settings.
  * Members who are in see the WaitingCard instead.
  */
 export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; edition: GroupEdition }) => {
@@ -39,7 +40,7 @@ export const GetEveryoneInCard = ({ group, edition }: { group: GroupData; editio
           />
         )}
         {drawsNames(edition) && <DrawRules group={group} edition={edition} />}
-        {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} joinLink={joinLink} />}
+        {group.me.isOrganizer && <InvitePeople slug={group.slug} groupName={group.name} joinLink={joinLink} primary={people.length < MIN_PARTICIPANTS} linkOnly />}
       </CardContent>
     </Card>
   );

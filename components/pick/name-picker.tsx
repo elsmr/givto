@@ -12,7 +12,7 @@ import { useEffect, useId, useState, type FormEvent } from 'react';
 
 /** Pause between two spins when picking several names one after another. */
 const NEXT_SPIN_MS = 800;
-/** The presenter's reel and cards, sized for a page or a dialog. */
+/** The presenter's reel and cards, sized for the page. */
 const reelSize = 'w-full min-w-0 px-4 text-4xl leading-[1.3em] sm:text-6xl';
 const cardSize = 'px-4 py-3 text-3xl leading-none sm:px-6 sm:py-4 sm:text-4xl';
 
@@ -23,11 +23,11 @@ type Spin = { id: number; names: string[]; target: string; queue: string[]; land
  * Picks names at random on this device (`lib/pick`), with the presenter's reel: one at a time or
  * several, each spun in turn or all at once. Picked names leave the pool until Start over.
  */
-export const NamePicker = ({ initialNames = [] }: { initialNames?: string[] }) => {
+export const NamePicker = () => {
   const t = useTranslations('pick');
   const format = useFormatter();
   const id = useId();
-  const [text, setText] = useState(initialNames.join('\n'));
+  const [text, setText] = useState('');
   const [count, setCount] = useState('1');
   const [spinEach, setSpinEach] = useState(true);
   const [picked, setPicked] = useState<string[]>([]);
