@@ -1,6 +1,6 @@
 {
-  "title": "Home",
-  "page-title": "Home · Givto",
+  "title": "My groups",
+  "page-title": "My groups · Givto",
   "start": "Start a Secret Santa",
   "load-failed": "We couldn't load your groups.",
   "empty": {
@@ -10,15 +10,7 @@
   "past": "Earlier",
   "organizer": "You organize this",
   "no-edition": "No Secret Santa yet",
-  "status": {
-    "draft": "Not sent yet",
-    "open": "Open",
-    "drawn": "Names drawn",
-    "locked": "Locked in",
-    "giftday": "Gift day!",
-    "done": "Done",
-    "archived": "Archived"
-  },
+  "archived": "Archived",
   "gift-day": {
     "past": "Gift day was {date}",
     "none": "No gift day set yet"
@@ -27,55 +19,44 @@
   "hi": "Hi {name}",
   "todo": {
     "title": "To do",
-    "all-done": "Nothing to do right now.",
     "giftDay": {
-      "text": "It's gift day!",
-      "action": "Open"
+      "text": "It's gift day!"
     },
     "question": {
-      "text": "{count, plural, =1 {Your Santa asked you a question} other {Your Santa asked you # questions}}",
-      "action": "Answer"
+      "text": "{count, plural, =1 {Your Santa asked you a question} other {Your Santa asked you # questions}}"
     },
     "getGift": {
       "text": "Got your gift yet? Mark it when you have",
       "action": "Got it"
     },
     "joinRequests": {
-      "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}",
-      "action": "Let in"
+      "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}"
     },
     "readyToDraw": {
-      "text": "Everyone's in: ready to draw names",
-      "action": "Draw"
+      "text": "Everyone's in: ready to draw names"
     },
     "readyToLockIn": {
-      "text": "Everyone's in: ready to lock in",
-      "action": "Lock in"
+      "text": "Everyone's in: ready to lock in"
     },
     "draft": {
-      "text": "Your next Secret Santa isn't sent yet",
-      "action": "Open"
+      "text": "Your next Secret Santa isn't sent yet"
     },
     "noWishes": {
-      "text": "Your Santa can't see any wishes here yet",
-      "action": "Add wishes"
+      "text": "Your Santa can't see any wishes here yet"
     },
     "markReceived": {
       "text": "Tick off the gifts you got",
       "action": "Tick off"
-    }
+    },
+    "open": "Open"
   },
   "up-next": "Coming up",
   "your-groups": "Your groups",
   "open-group": "Open group",
   "see-giftee": "Your giftee",
-  "giftee-known": "You know who you're buying for.",
   "countdown": {
     "left": "{unit, select, day {{count, plural, =1 {day} other {days}}} week {{count, plural, =1 {week} other {weeks}}} month {{count, plural, =1 {month} other {months}}} other {{count, plural, =1 {year} other {years}}}} to gift day",
     "today": "Today!",
     "today-label": "it's gift day"
-  },
-  "wishlist-stat": {
-    "title": "My wishlist"
   }
 }

@@ -22,8 +22,8 @@ test('link: the emailed link signs in and opens the page that asked', async ({ p
   secrets.push(code, token);
   await page.goto(link);
   await expect(page).toHaveURL('/app');
-  // A new account has no name yet: "Home", not "Hi <first name>".
-  await expect(page.getByRole('heading', { level: 1, name: 'Home' })).toBeVisible();
+  // A new account has no name yet: "My groups", not "Hi <first name>".
+  await expect(page.getByRole('heading', { level: 1, name: 'My groups' })).toBeVisible();
 });
 
 test('passkey: add one on the account page, then sign in with it from the email field\'s autofill', async ({ page, signIn, signInPage }) => {

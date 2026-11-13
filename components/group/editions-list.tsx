@@ -1,5 +1,4 @@
-import { drawsNames } from '@/lib/schema/edition';
-import { statusTone } from './edition-phase';
+import { phaseLabel, phaseOf, statusTone } from './edition-phase';
 import { Badge } from '@/components/ui/badge';
 import { DisclosureCard } from '@/components/ui/disclosure-card';
 import { History, Trophy } from 'lucide-react';
@@ -13,6 +12,7 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
   const format = useFormatter();
 
   if (group.editions.length < 2) return null;
+  const currentCount = group.edition?.isCurrent ? group.edition.participantIds.length : 0;
   return (
     <DisclosureCard title={t('editions.title')} icon={History} tone="mint">
       <ul className="flex flex-col divide-y-2 divide-ink/10">
@@ -26,7 +26,7 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
               {edition.title}
             </Link>
             <Badge variant={statusTone[edition.status]}>
-              {edition.status === 'drawn' && !drawsNames(edition) ? t('status.locked') : t(`status.${edition.status}`)}
+              {t(`phase.${phaseLabel(phaseOf(edition.status, currentCount), edition.kind)}`)}
             </Badge>
             {index === 0 && <Badge variant="mint">{t('editions.current')}</Badge>}
             {edition.champions.length > 0 && (

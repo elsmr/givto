@@ -20,8 +20,6 @@ export default function AppHomePage() {
   const user = useRequireSession();
   const trpc = useTRPC();
   const groups = useQuery({ ...trpc.account.groups.queryOptions(), staleTime: 0 });
-  // The dashboard's wishlist count, asked for in the same request as the groups instead of after them.
-  useQuery(trpc.wish.list.queryOptions());
 
   return (
     <AppShell app>
@@ -58,6 +56,6 @@ export default function AppHomePage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['dashboard', 'group']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['dashboard', 'group']) },
 });

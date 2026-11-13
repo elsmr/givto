@@ -1,7 +1,7 @@
 // Sign-in details and locale (part 1). Part 2 (passkeys, preferences,
 // dashboard, export, deletion): s5-account.spec.ts.
 import type { APIRequestContext } from '@playwright/test';
-import { daysUntil } from '@/components/dashboard/days-until';
+import { daysBetween, todayIn } from '@/lib/local-date';
 import {
   authPost,
   expect,
@@ -30,10 +30,10 @@ const withToken = (request: APIRequestContext, token: string) => authPost(reques
 
 test('gift day countdown uses the edition time zone', () => {
   const lateEvening = new Date('2026-12-23T23:30:00Z'); // 24 Dec 00:30 in Brussels
-  expect(daysUntil('2026-12-24', 'Europe/Brussels', lateEvening)).toBe(0);
-  expect(daysUntil('2026-12-24', 'America/New_York', lateEvening)).toBe(1);
-  expect(daysUntil('2026-12-24', 'UTC', new Date('2026-11-24T10:00:00Z'))).toBe(30);
-  expect(daysUntil('2026-12-24', 'UTC', new Date('2026-12-26T10:00:00Z'))).toBe(-2);
+  expect(daysBetween(todayIn('Europe/Brussels', lateEvening), '2026-12-24')).toBe(0);
+  expect(daysBetween(todayIn('America/New_York', lateEvening), '2026-12-24')).toBe(1);
+  expect(daysBetween(todayIn('UTC', new Date('2026-11-24T10:00:00Z')), '2026-12-24')).toBe(30);
+  expect(daysBetween(todayIn('UTC', new Date('2026-12-26T10:00:00Z')), '2026-12-24')).toBe(-2);
 });
 
 test('code sign-in invalidates the link from the same email', async ({ request, secrets }) => {
