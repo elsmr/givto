@@ -31,14 +31,14 @@ export const notifyJoinRequest = (db: Collections, groupId: string, memberId: st
         groupId: group._id,
         memberId: organizer.id,
         render: () => {
-          const props = { locale: to.locale, group: group.name, name: member.name, url: groupUrl(to.locale, group.slug) };
+          const props = { locale: to.locale, group: group.name, name: member.name, url: groupUrl(group.slug) };
           return { subject: joinRequestSubject(props), body: JoinRequestEmail(props) };
         },
       });
     }
   });
 
-/** "You're in": the organizer approved the request. */
+/** "You're in": the organizer let them in. */
 export const notifyJoined = (db: Collections, groupId: string, memberId: string) =>
   safely('joined', async () => {
     const group = await db.groups.findOne({ _id: groupId });
@@ -52,7 +52,7 @@ export const notifyJoined = (db: Collections, groupId: string, memberId: string)
       groupId: group._id,
       memberId: member.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug) };
+        const props = { locale: to.locale, group: group.name, url: groupUrl(group.slug) };
         return { subject: joinedSubject(props), body: JoinedEmail(props) };
       },
     });

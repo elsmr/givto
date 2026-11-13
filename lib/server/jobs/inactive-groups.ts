@@ -52,7 +52,7 @@ export const cleanUpInactiveGroups = async (db: Collections, now: Date) => {
           memberId: organizer.id,
           render: () => {
             const date = formatLocalDate(isoDate(new Date(now.getTime() + WARNING_DAYS * DAY)), to.locale);
-            const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), date, months: retention.inactiveGroupMonths };
+            const props = { locale: to.locale, group: group.name, url: groupUrl(group.slug), date, months: retention.inactiveGroupMonths };
             return { subject: groupDeletionSubject(props), body: GroupDeletionEmail(props) };
           },
         })

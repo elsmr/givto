@@ -8,7 +8,7 @@ import { emailTranslator } from './ui/translator';
 export const joinedSubject = ({ locale, group }: Pick<NoticeProps, 'locale' | 'group'>) =>
   emailTranslator(locale)('joined.subject', { group });
 
-/** "You're in": the organizer approved a join request. */
+/** "You're in": the organizer let them in. */
 export const JoinedEmail = ({ locale, group, url }: NoticeProps) => {
   const t = emailTranslator(locale);
   return (

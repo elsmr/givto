@@ -4,7 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { ExternalLink } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { formatPrice } from './format-price';
+import { formatBudget } from '@/lib/format-budget';
 import { shopName } from './shop-name';
 
 /** The page's title, imported with the link, as a tooltip on its chip. */
@@ -36,7 +36,7 @@ export const WishBuyLinks = ({ links }: { links: WishLink[] }) => {
               className={buttonVariants({ variant: 'neutral', size: 'sm', className: 'max-w-full shadow-sm' })}
             >
               <span className="min-w-0 truncate">{shopName(link.url)}</span>
-              {link.price && <span className="mono font-normal">{formatPrice(link.price, locale)}</span>}
+              {link.price && <span className="mono font-normal">{formatBudget(link.price, locale)}</span>}
               <ExternalLink aria-hidden="true" />
               <span className="sr-only">{t('new-tab')}</span>
             </a>

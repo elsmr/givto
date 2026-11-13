@@ -2,7 +2,7 @@ import { Card, CardContent, CardDivider } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useLocale, useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
-import { formatPrice } from './format-price';
+import { formatBudget } from '@/lib/format-budget';
 import { WishBadges } from './wish-badges';
 import { Badge } from '@/components/ui/badge';
 import { WishBuyLinks } from './wish-buy-links';
@@ -33,7 +33,7 @@ export const WishCard = ({ wish, inBudget, position, status, children, className
   const t = useTranslations('wishlist');
   const locale = useLocale();
   const picture = wish.links.find((link) => link.imageId);
-  const details = [wish.price && formatPrice(wish.price, locale), wish.variant].filter(Boolean).join(' · ');
+  const details = [wish.price && formatBudget(wish.price, locale), wish.variant].filter(Boolean).join(' · ');
 
   return (
     <Card size="sm" className={cn('@container/wish', className)}>
