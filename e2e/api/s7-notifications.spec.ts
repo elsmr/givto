@@ -78,11 +78,11 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   });
 
   await test.step('late joiner is approved and slots in (Ann → Dan → Bob): "you\'re in" in Dutch, only Ann hears "new giftee", Dan gets the draw email, without a cron run', async () => {
-    // Approval after the draw slots Dan in at a random place where the exclusions allow it (S4).
-    // Only Ann may give to Dan, so the place is Ann → Dan → Bob and later steps can rely on it.
+    // Approval after the draw slots Dan in at a random place where the keep-apart rows allow it (S4).
+    // Dan is kept apart from Olive, Cee and Kid, so the only place is Ann → Dan → Bob and later steps can rely on it.
     // Set before approving: the approval itself mails the place.
-    const exclusions = [m.olive, m.bob, m.cee, kid].map((santa) => ({ from: santa.id, to: danId }));
-    await db.groups.updateOne({ _id: family._id }, { $set: { exclusions } });
+    const households = [m.olive, m.cee, kid].map((other, i) => ({ id: `${'0'.repeat(23)}${i}`, memberIds: [other.id, danId] }));
+    await db.groups.updateOne({ _id: family._id }, { $set: { households } });
     ok(await olive.trpc.mutate('membership.approve', { groupSlug: family.slug, memberId: danId }));
     const joined = await mails(dan, 'joined');
     expect(joined).toHaveLength(1);

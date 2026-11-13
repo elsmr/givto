@@ -1,8 +1,7 @@
 // Pure core of migration 001 (ticket 58): old users and groups in, v2 documents and a report out.
 import { ObjectId } from 'mongodb';
-import { toExclusions, type KeepApartPair } from '../../lib/exclusions';
 import type { Edition, EditionStatus } from '../../lib/schema/edition';
-import type { Exclusion, Group } from '../../lib/schema/group';
+import type { Group, Household } from '../../lib/schema/group';
 import type { Member } from '../../lib/schema/member';
 import type { Wish } from '../../lib/schema/wish';
 import type { UserDoc } from '../../lib/server/db';
@@ -197,7 +196,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
       } else assignments[from] = to;
     }
 
-    const exclusions = toV2Exclusions(old.exclusions, memberIdOf, (rule) => note('exclusionDropped', { group: groupId, rule }));
+    const households = toV2Households(groupId, old.exclusions, memberIdOf, (rule) => note('exclusionDropped', { group: groupId, rule }));
 
     const hasDraw = Object.keys(assignments).length > 0;
     const assignedAt = old.assignedAt === null || old.assignedAt === undefined ? null : timestamp(old.assignedAt, now);
@@ -214,11 +213,9 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
       name: name ?? FALLBACK_GROUP_NAME,
       locale: 'en',
       timeZone: TIME_ZONE,
-      defaults: { exchangeMode: 'inPerson' },
       createdBy: organizer.userId!,
       members: people,
-      exclusions,
-      households: [],
+      households,
       createdAt,
       updatedAt: now,
     });
@@ -268,7 +265,7 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
     managedMembers: groups.reduce((sum, g) => sum + g.members.filter((m) => m.managedBy).length, 0),
     draws: editions.filter((e) => e.draw).length,
     assignments: editions.reduce((sum, e) => sum + Object.keys(e.draw?.assignments ?? {}).length, 0),
-    exclusions: groups.reduce((sum, g) => sum + g.exclusions.length, 0),
+    keepApartRows: groups.reduce((sum, g) => sum + g.households.length, 0),
     wishes: wishes.length,
     wishDuplicatesMerged: merged,
   };
@@ -276,16 +273,17 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
   return { users: keptUsers, groups: withHidden, editions, wishes, report: { source: {}, planned, conflicts } };
 };
 
-/** Old exclusions (user ids, both ways in master's draw) → v2 standing exclusions between member ids. */
-const toV2Exclusions = (rules: unknown, memberIdOf: Map<string, string>, dropped: (rule: unknown) => void): Exclusion[] => {
-  const pairs = asArray(rules).flatMap((rule): KeepApartPair[] => {
+/** Old exclusions (user ids, both ways in master's draw) → keep-apart rows of two between member ids. */
+const toV2Households = (groupId: string, rules: unknown, memberIdOf: Map<string, string>, dropped: (rule: unknown) => void): Household[] => {
+  const pairs = asArray(rules).flatMap((rule): [string, string][] => {
     const from = isRecord(rule) ? memberIdOf.get(hexId(rule.from) ?? '') : undefined;
     const to = isRecord(rule) ? memberIdOf.get(hexId(rule.to) ?? '') : undefined;
     if (from && to && from !== to) return [[from, to]];
     dropped(isRecord(rule) ? { from: short(rule.from), to: short(rule.to) } : short(rule));
     return [];
   });
-  return [...new Map(toExclusions(pairs).map((e): [string, Exclusion] => [`${e.from}>${e.to}`, e])).values()];
+  const unique = [...new Map(pairs.map((pair): [string, string[]] => [pair.toSorted().join('>'), pair.toSorted()])).values()];
+  return unique.map((memberIds, i) => ({ id: derivedId('household', groupId, String(i)), memberIds }));
 };
 
 /** One cleaned old wish list item → a v2 wish document. */

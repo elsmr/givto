@@ -44,7 +44,6 @@ export const Member = v.object({
   invitedBy: v.optional(Id),
   joinedAt: v.optional(v.date()),
   removedAt: v.optional(v.date()),
-  lastSeenAt: v.optional(v.date()),
   wishlistView: WishlistView,
   /** The address from the account's address book that this group's Santas post to (80); absent or removed = the default. */
   addressId: v.optional(Id),

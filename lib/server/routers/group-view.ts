@@ -1,5 +1,4 @@
 import { ObjectId } from 'mongodb';
-import { toKeepApartPairs } from '../../exclusions';
 import { badgesOf, champions } from '../../guess-results';
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
@@ -102,8 +101,7 @@ export const groupView = async (
             requiresApproval: group.joinLink.requiresApproval,
             maxMembers: group.joinLink.maxMembers,
           },
-          /** Keep-apart rows; older pairs as rows of two. */
-          households: [...group.households.map((h) => h.memberIds), ...toKeepApartPairs(group.exclusions)],
+          households: group.households.map((h) => h.memberIds),
         }
       : undefined,
   };

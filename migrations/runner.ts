@@ -3,8 +3,9 @@ import type { Db } from 'mongodb';
 import * as v1ToV2 from './001-v1-to-v2';
 import * as shownWishIds from './002-shown-wish-ids';
 import * as guessRows from './003-guess-rows';
+import * as keepApartRows from './004-keep-apart-rows';
 
-const migrations = [v1ToV2, shownWishIds, guessRows];
+const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows];
 
 export type MigrationResult = { id: string; status: 'applied before' | 'dry run' | 'applied'; report?: Awaited<ReturnType<typeof v1ToV2.up>> };
 

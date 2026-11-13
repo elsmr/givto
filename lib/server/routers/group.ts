@@ -77,10 +77,8 @@ export const groupRouter = router({
       name: input.name,
       locale: ctx.user.locale === 'nl' ? 'nl' : 'en',
       timeZone: input.timeZone,
-      defaults: { exchangeMode, ...optional },
       createdBy: ctx.user.id,
       members: [organizer],
-      exclusions: [],
       households: [],
       joinLink: { token: randomToken(), revoked: false, requiresApproval: false, createdAt: now },
       createdAt: now,
@@ -123,7 +121,7 @@ export const groupRouter = router({
       return groupView(ctx.db, ctx.group, ctx.member, edition, editions);
     }),
 
-  /** Keep-apart rows (26), replacing older pairs. Before the draw; refuses rows that make the draw impossible. */
+  /** Keep-apart rows (26). Before the draw; refuses rows that make the draw impossible. */
   setKeepApart: organizerProcedure.input(KeepApartInput).mutation(async ({ ctx, input }) => {
     const edition = await currentEdition(ctx.db, ctx.group._id);
     if (edition && isDrawn(edition)) throw new AppError('ALREADY_DRAWN');
@@ -140,7 +138,6 @@ export const groupRouter = router({
       {
         $set: {
           households: input.households.map((memberIds) => ({ id: newId(), memberIds })),
-          exclusions: [],
           updatedAt: new Date(),
         },
       }

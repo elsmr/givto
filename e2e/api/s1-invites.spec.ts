@@ -50,7 +50,7 @@ test('invited email joining via the link = the same person', async ({ signIn }) 
   expect(members.find((m) => m.name === 'Hal')?.status).toBe('joined');
 });
 
-test('keep apart: rows saved, overlapping too; older pairs read as rows; impossible or repeated refused', async ({ signIn, db }) => {
+test('keep apart: rows saved, overlapping too; impossible or repeated refused', async ({ signIn }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const group = await createFamily(ann);
   await joinAll(group, [[bob, 'Bob'], [cee, 'Cee'], [dan, 'Dan']]);
@@ -66,13 +66,6 @@ test('keep apart: rows saved, overlapping too; older pairs read as rows; impossi
   expect(codeOf(everyone)).toBe('DRAW_IMPOSSIBLE');
   expect(codeOf(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, annId]] }))).toBe('INVALID_INPUT');
   expect(await rows()).toHaveLength(2);
-
-  await db.groups.updateOne({ slug }, { $set: { households: [], exclusions: [{ from: annId, to: ceeId }, { from: ceeId, to: annId }] } });
-  expect(await rows()).toEqual([[annId, ceeId].toSorted()]);
-  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, ceeId]] }));
-  const stored = (await db.groups.findOne({ slug }))!;
-  expect(stored.exclusions, 'saved as a row').toEqual([]);
-  expect(stored.households.map((h) => h.memberIds)).toEqual([[annId, ceeId]]);
 });
 
 test('leave before the draw; organizer can’t leave; leaving after the draw works (S4 patches the draw)', async ({ signIn, db }) => {

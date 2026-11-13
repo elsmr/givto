@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { EmailSafeText, Id, Locale, Price, SingleLine, TimeZone } from './common';
+import { EmailSafeText, Id, Locale, SingleLine, TimeZone } from './common';
 import { Member } from './member';
 
 export const MIN_PARTICIPANTS = 3;
@@ -11,10 +11,6 @@ export const GroupName = EmailSafeText(80);
 
 export const ExchangeMode = v.picklist(['inPerson', 'byPost', 'both']);
 export type ExchangeMode = v.InferOutput<typeof ExchangeMode>;
-
-/** Directed: member `from` must not give to member `to` (34). Same shape as `Exclusion` in lib/draw. */
-export const Exclusion = v.object({ from: Id, to: Id });
-export type Exclusion = v.InferOutput<typeof Exclusion>;
 
 /** A keep-apart row (26): nobody gives to someone in a row they're in. A person can be in several. */
 export const Household = v.object({
@@ -38,13 +34,6 @@ export const JoinLink = v.object({
 });
 export type JoinLink = v.InferOutput<typeof JoinLink>;
 
-/** Prefilled into each new edition. */
-export const EditionDefaults = v.object({
-  exchangeMode: ExchangeMode,
-  budget: v.optional(Price),
-});
-export type EditionDefaults = v.InferOutput<typeof EditionDefaults>;
-
 /** Fields the organizer edits. */
 export const GroupFields = v.object({
   name: GroupName,
@@ -52,14 +41,14 @@ export const GroupFields = v.object({
   locale: Locale,
   /** Gift day, reminders and scheduled draws follow it; edition dates are local dates here. */
   timeZone: TimeZone,
-  defaults: EditionDefaults,
 });
 export type GroupFields = v.InferOutput<typeof GroupFields>;
 
 /**
  * `groups` collection: the persistent people (members embedded: small, atomic updates),
- * join link, standing exclusions/households and edition defaults. Each Secret Santa is an
- * edition (`editions` collection); the group itself has no lifecycle, only archived/deleted.
+ * join link and standing keep-apart rows. Each Secret Santa is an edition (`editions`
+ * collection), which starts from the previous one's settings; the group itself has no
+ * lifecycle, only archived/deleted.
  */
 export const Group = v.object({
   _id: Id,
@@ -68,8 +57,7 @@ export const Group = v.object({
   /** User id of the creator. */
   createdBy: Id,
   members: v.pipe(v.array(Member), v.maxLength(MAX_MEMBERS)),
-  /** Standing exclusions, applied to every edition's draw. */
-  exclusions: v.array(Exclusion),
+  /** Standing keep-apart rows, applied to every edition's draw. */
   households: v.array(Household),
   joinLink: v.optional(JoinLink),
   /** Set when the organizer deleted their account and the role passed to `toMemberId` (55); the notice email sets `notifiedAt`. */
