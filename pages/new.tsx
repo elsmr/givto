@@ -21,5 +21,5 @@ export default function NewSecretSantaPage() {
 }
 
 export const getStaticProps: GetStaticProps = async () => ({
-  props: { messages: await loadMessages('en', ['create', 'join', 'group']) },
+  props: { messages: await loadMessages('en', ['create', 'join', 'group', 'auth']) },
 });

@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
       },
       origin: new URL(requireEnv('BETTER_AUTH_URL')).origin,
       locale,
-      messages: await loadMessages(locale, ['join', 'group']),
+      messages: await loadMessages(locale, ['join', 'group', 'auth']),
     },
   };
 };
