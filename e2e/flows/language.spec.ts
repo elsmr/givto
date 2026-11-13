@@ -27,7 +27,7 @@ test('an English account on an old /nl app link: /app, never Dutch', async ({ pa
   await recordPaints(page);
   await page.goto('/nl/app');
   await expect(page).toHaveURL('/app');
-  await expect(page.getByRole('heading', { name: 'Home' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'My groups' })).toBeVisible();
   expect(await painted(page)).toEqual([skipLink.en]);
 });
 

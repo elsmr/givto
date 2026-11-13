@@ -38,17 +38,12 @@
   },
   "waiting": {
     "ready": "You're all set",
-    "todo": "Add your wishes",
-    "wait": "Nothing to do until {organizer} draws names.",
-    "wait-on": "Nothing to do until {organizer} draws names on {date}.",
-    "email": "We'll email you as soon as names are drawn.",
+    "wait": "Nothing to do until {organizer} draws names. We'll email you.",
+    "wait-on": "Nothing to do until {organizer} draws names on {date}. We'll email you.",
     "in": "You're in",
     "wishes": "{count, plural, one {# wish} other {# wishes}} in this group",
-    "no-wishes": "No wishes in this group yet",
     "add": "Add a wish",
-    "todo-address": "Add your address",
     "address": "Address added",
-    "no-address": "No address yet",
     "add-address": "Add your address"
   },
   "draft": {
@@ -67,7 +62,8 @@
     "changed": "Your giftee changed on {date}: someone joined or left.",
     "not-in": "You're not in this draw.",
     "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you.",
-    "show": "Show"
+    "show": "Show",
+    "load-failed": "We couldn't load your giftee."
   },
   "next": {
     "title": "Same again next year?",

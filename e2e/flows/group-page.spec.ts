@@ -38,6 +38,7 @@ test('the stepper shows the current phase, from join to done', async ({ page, ne
   const edition = { groupSlug: group.slug, editionNumber: 1 };
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
+  await expect(page, 'the group name in the tab').toHaveTitle('Stepper · Givto');
 
   await test.step('two people in: Join', () => expectPhase(page, 'Join'));
 
@@ -76,16 +77,16 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
 
   await test.step('before the draw: no My giftee tab', async () => {
     await page.goto(`/g/${group.slug}#giftee`);
-    await expect(tabs, 'my wishes here and who is in as counts').toHaveText(['Overview', 'My wishlist', 'People 3']);
+    await expect(tabs, 'my wishes here and who is in as counts').toHaveText(['Overview', 'Wishlist', 'People 3']);
     await expect(tab(page, 'Overview'), 'an unknown tab falls back to the overview').toHaveAttribute('aria-selected', 'true');
   });
 
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   await page.goto(`/g/${group.slug}`);
-  await expect(tabs).toHaveText(['Overview', 'My giftee', 'My wishlist', 'People 3']);
+  await expect(tabs).toHaveText(['Overview', 'My giftee', 'Wishlist', 'People 3']);
 
   await test.step('switching keeps the tab in the hash, and a reload keeps it', async () => {
-    for (const [name, hash] of [['People', '#people'], ['My wishlist', '#wishlist'], ['My giftee', '#giftee']] as const) {
+    for (const [name, hash] of [['People', '#people'], ['Wishlist', '#wishlist'], ['My giftee', '#giftee']] as const) {
       await tab(page, name).click();
       await expect(tab(page, name)).toHaveAttribute('aria-selected', 'true');
       await expect(page.getByRole('tabpanel', { name })).toBeVisible();
@@ -121,21 +122,21 @@ test('a member before the draw: adding wishes is the to-do, then all set until t
   await signInPage(page, bob);
   await page.goto(`/g/${group.slug}`);
 
-  await test.step('no wishes here: Add your wishes', async () => {
-    await expect(page.getByRole('heading', { name: 'Add your wishes' })).toBeVisible();
-    await expect(page.getByText('No wishes in this group yet')).toBeVisible();
+  await test.step("no wishes here: You're in, with Add a wish", async () => {
+    await expect(page.getByRole('heading', { name: "You're in" })).toBeVisible();
+    await expect(page.getByText('Nothing to do until'), 'not while there is').toHaveCount(0);
     await expect(page.getByText('Hi Bob'), 'no greeting').toHaveCount(0);
     await page.getByRole('button', { name: 'Add a wish' }).click();
-    await expect(tab(page, 'My wishlist')).toHaveAttribute('aria-selected', 'true');
+    await expect(tab(page, 'Wishlist')).toHaveAttribute('aria-selected', 'true');
   });
 
   await test.step('a wish shown here: all set', async () => {
     ok(await bob.trpc.mutate('wish.create', { title: 'Warm socks', groupSlugs: [group.slug] }));
     await page.goto(`/g/${group.slug}`);
     await expect(page.getByRole('heading', { name: "You're all set" })).toBeVisible();
-    await expect(page.getByText("Nothing to do until Ann draws names. We'll email you as soon as names are drawn.")).toBeVisible();
+    await expect(page.getByText("Nothing to do until Ann draws names. We'll email you.")).toBeVisible();
     await expect(page.getByText('1 wish in this group')).toBeVisible();
-    await expect(tab(page, 'My wishlist')).toHaveText('My wishlist 1');
+    await expect(tab(page, 'Wishlist')).toHaveText('Wishlist 1');
   });
 });
 
@@ -260,7 +261,7 @@ test('conspiracy: two people post on Ann’s board, Ann sees nothing of it', asy
     await expect(annPage.getByRole('heading', { name: "Bob's board" })).toBeVisible();
     await expect(annPage.getByRole('heading', { name: "Cee's board" })).toBeVisible();
     await expect(annPage.getByRole('heading', { name: "Ann's board" })).toHaveCount(0);
-    for (const tabName of ['Overview', 'Boards', 'My wishlist', 'People']) {
+    for (const tabName of ['Overview', 'Boards', 'Wishlist', 'People']) {
       await tab(annPage, tabName).click();
       await expect(annPage.getByText('Polaroid?')).toHaveCount(0);
       await expect(annPage.getByText('I’m in')).toHaveCount(0);

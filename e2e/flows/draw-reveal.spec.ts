@@ -151,7 +151,6 @@ test('by post: a member adds their address from the overview and picks one for t
   await test.step('Bob adds his address from the waiting card', async () => {
     await signInPage(page, bob);
     await page.goto(`/g/${group.slug}`);
-    await expect(page.getByText('No address yet')).toBeVisible();
     await page.getByRole('button', { name: 'Add your address' }).click();
     await expect(page.getByLabel('Street and number')).toBeFocused();
     await page.getByLabel('Street and number').fill('Bobstraat 12');
@@ -162,7 +161,6 @@ test('by post: a member adds their address from the overview and picks one for t
     await expect(page.getByText('Address saved')).toBeVisible();
     await expect(page.getByText("You're all set")).toBeVisible();
     await expect(page.getByText('Address added')).toBeVisible();
-    await expect(page.getByText('Sending to:')).toBeVisible();
     await expect(page.locator('address')).toContainText('Bobstraat 12');
   });
 

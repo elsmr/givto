@@ -28,7 +28,7 @@ export const GroupTabBar = ({ tabs, counts = {} }: { tabs: readonly GroupTab[]; 
             id={`group-tab-${tab}`}
             className="h-auto min-h-14 flex-1 basis-0 flex-col gap-0.5 px-1 py-1.5 text-xs leading-tight whitespace-normal sm:min-h-11 sm:flex-row sm:gap-2 sm:text-base [&_svg:not([class*='size-'])]:size-5"
           >
-            {/* Phones: the count sits on the icon (CSS content, so the tab's text stays "My wishlist 1"), keeping the label on one line. */}
+            {/* Phones: the count sits on the icon (CSS content, so the tab's text stays "Wishlist 1"), keeping the label on one line. */}
             <span
               data-count={counts[tab] || undefined}
               className="relative max-sm:data-count:after:absolute max-sm:data-count:after:-top-1.5 max-sm:data-count:after:left-full max-sm:data-count:after:-ml-0.5 max-sm:data-count:after:border-2 max-sm:data-count:after:border-outline max-sm:data-count:after:bg-surface max-sm:data-count:after:px-1 max-sm:data-count:after:font-mono max-sm:data-count:after:text-[0.625rem] max-sm:data-count:after:leading-tight max-sm:data-count:after:text-ink max-sm:data-count:after:content-[attr(data-count)]"

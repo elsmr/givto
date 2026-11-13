@@ -1,8 +1,7 @@
-import { statusTone } from '@/components/group/edition-phase';
+import { phaseLabel, phaseOf, statusTone } from '@/components/group/edition-phase';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDivider } from '@/components/ui/card';
 import type { RouterOutputs } from '@/lib/client/trpc';
-import { drawsNames } from '@/lib/schema/edition';
 import { Gift } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
@@ -10,12 +9,15 @@ import { GiftDayCountdown } from './gift-day-label';
 
 export type DashboardGroup = RouterOutputs['account']['groups'][number];
 
-export const StatusBadge = ({ group }: { group: DashboardGroup }) => {
-  const t = useTranslations('dashboard.status');
-  if (group.archived) return <Badge>{t('archived')}</Badge>;
+const StatusBadge = ({ group }: { group: DashboardGroup }) => {
+  const t = useTranslations();
+  if (group.archived) return <Badge>{t('dashboard.archived')}</Badge>;
   const { edition } = group;
-  // Locked in (88) shares the drawn status.
-  return edition && <Badge variant={statusTone[edition.status]}>{edition.status === 'drawn' && !drawsNames(edition) ? t('locked') : t(edition.status)}</Badge>;
+  return (
+    edition && (
+      <Badge variant={statusTone[edition.status]}>{t(`group.phase.${phaseLabel(phaseOf(edition.status, edition.participantCount), edition.kind)}`)}</Badge>
+    )
+  );
 };
 
 export const GroupCard = ({ group }: { group: DashboardGroup }) => {

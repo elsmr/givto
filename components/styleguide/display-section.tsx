@@ -1,4 +1,4 @@
-import { statusTone } from '@/components/group/edition-phase';
+import { phaseOf, statusTone } from '@/components/group/edition-phase';
 import { AvatarStack } from '@/components/group/avatar-stack';
 import { PersonAvatar } from '@/components/group/person-avatar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -17,7 +17,7 @@ const badgeVariants = [
 ] as const;
 
 export const BadgesSection = () => {
-  const t = useTranslations('dashboard.status');
+  const t = useTranslations('group.phase');
 
   return (
     <StyleguideSection
@@ -39,7 +39,7 @@ export const BadgesSection = () => {
       <StyleguideRow label="Edition status (statusTone)">
         {editionStatuses.map((status) => (
           <Captioned key={status} caption={`${status} → ${statusTone[status]}`}>
-            <Badge variant={statusTone[status]}>{t(status)}</Badge>
+            <Badge variant={statusTone[status]}>{t(phaseOf(status, 0))}</Badge>
           </Captioned>
         ))}
       </StyleguideRow>

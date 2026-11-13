@@ -2,7 +2,7 @@ import { drawsNames, type EditionKind } from '@/lib/schema/edition';
 import { cn } from '@/lib/utils';
 import { Check, Gift, Lock, PartyPopper, ShoppingBag, Shuffle, UserPlus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { phases, type Phase } from './edition-phase';
+import { phaseLabel, phases, type Phase } from './edition-phase';
 
 const icons = { join: UserPlus, draw: Shuffle, shop: ShoppingBag, giftday: Gift, done: PartyPopper };
 
@@ -37,9 +37,7 @@ export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: 
             />
             <span className="flex min-w-0 items-center gap-1">
               <Icon aria-hidden="true" className="size-4 shrink-0" />
-              <span className="break-words hyphens-auto">
-                {step === 'draw' && lockIn ? t('lock-in') : t(step)}
-              </span>
+              <span className="break-words hyphens-auto">{t(phaseLabel(step, kind))}</span>
             </span>
             {index < current && <span className="sr-only">{t('done-state')}</span>}
           </li>

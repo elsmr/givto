@@ -2,6 +2,7 @@ import { IconTile } from '@/components/ui/icon-tile';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { LoadFailed } from '@/components/shell/load-failed';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 import { useTRPC } from '@/lib/client/trpc';
@@ -34,6 +35,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
   };
 
   if (mine.isPending) return <Skeleton className="h-48" />;
+  if (mine.isError) return <LoadFailed message={t('load-failed')} onRetry={() => void mine.refetch()} />;
   if (!mine.data) return null;
   const { inEdition, giftee, changedAt } = mine.data;
   if (!giftee) {
@@ -87,13 +89,13 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
             inert={shown}
             onClick={reveal}
             className={cn(
-              'flex min-h-40 flex-col items-center justify-center gap-2 border-2 border-dashed border-control bg-page p-6 text-center text-ink transition-colors hover:bg-primary-muted',
+              'group flex min-h-40 flex-col items-center justify-center gap-2 border-2 border-dashed border-control bg-page p-6 text-center text-ink transition-colors hover:bg-primary-muted',
               shown && 'invisible'
             )}
           >
             <IconTile icon={Gift} tone="yellow" className="mb-1 size-12" />
             <span className="text-xl font-bold">{t('tap')}</span>
-            <span className="text-sm text-muted">{t('hint')}</span>
+            <span className="text-sm text-muted group-hover:text-ink">{t('hint')}</span>
           </button>
         </div>
         <p aria-live="polite" className="sr-only">

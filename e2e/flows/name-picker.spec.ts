@@ -1,8 +1,8 @@
-// Name picker (70): /pick for anyone, and the same picker from a group's ⋯ menu.
-import type { Locator, Page } from '@playwright/test';
-import { expect, ok, test } from '../fixtures';
+// Name picker (70): /pick for anyone.
+import type { Page } from '@playwright/test';
+import { expect, test } from '../fixtures';
 
-const picked = (page: Page | Locator) => page.getByRole('list', { name: 'Picked' }).getByRole('listitem');
+const picked = (page: Page) => page.getByRole('list', { name: 'Picked' }).getByRole('listitem');
 
 test.describe('reduced motion', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } });
@@ -43,27 +43,7 @@ test.describe('reduced motion', () => {
     await page.getByRole('textbox', { name: 'Namen' }).fill('Ann, Bob');
     await page.getByRole('button', { name: 'Kies' }).click();
     await expect(page.getByRole('status')).toHaveText(/^Gekozen: (Ann|Bob)$/);
-  });
-
-  test('a member picks from the ⋯ menu, starting with the people who joined', async ({ page, signIn, signInPage }) => {
-    const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
-    const group = ok(await ann.trpc.mutate('group.create', { name: 'Picker', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
-    for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
-      ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
-    }
-    await signInPage(page, bob);
-    await page.goto(`/g/${group.slug}`);
-    await page.getByRole('button', { name: 'More' }).click();
-    await expect(page.getByRole('menuitem')).toHaveText(['Pick a name']);
-    await page.getByRole('menuitem', { name: 'Pick a name' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Pick a name' });
-    await expect(dialog.getByRole('textbox', { name: 'Names' })).toHaveValue('Ann\nBob\nCee');
-    await dialog.getByRole('textbox', { name: 'Names' }).fill('Ann\nBob\nCee\nDee');
-    await dialog.getByLabel('How many').fill('4');
-    await dialog.getByRole('switch', { name: 'Spin for each name' }).click();
-    await dialog.getByRole('button', { name: 'Pick' }).click();
-    await expect(picked(dialog)).toHaveCount(4);
-    expect((await picked(dialog).allInnerTexts()).toSorted()).toEqual(['Ann', 'Bob', 'Cee', 'Dee']);
+    await expect(page.getByRole('link', { name: 'Start een Secret Santa' }), 'the Dutch home').toHaveAttribute('href', '/nl');
   });
 });
 

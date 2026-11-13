@@ -1,4 +1,4 @@
-import type { EditionStatus } from '@/lib/schema/edition';
+import { drawsNames, type EditionKind, type EditionStatus } from '@/lib/schema/edition';
 import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import type { GroupEdition } from './group-data';
 
@@ -14,6 +14,9 @@ export const phaseOf = (status: EditionStatus, participantCount: number): Phase 
 
 export const editionPhase = ({ status, participantIds }: Pick<GroupEdition, 'status' | 'participantIds'>): Phase =>
   phaseOf(status, participantIds.length);
+
+/** The `group.phase` label of a phase, the one word for where an edition is (stepper and status chips). No draw (88): the step is locking it in. */
+export const phaseLabel = (phase: Phase, kind?: EditionKind) => (phase === 'draw' && !drawsNames({ kind }) ? 'lock-in' : phase);
 
 /** Chip colour per edition status, the same everywhere a status shows. */
 export const statusTone = {

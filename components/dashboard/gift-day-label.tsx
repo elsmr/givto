@@ -1,8 +1,7 @@
-import { countdown, formatLocalDate } from '@/lib/local-date';
+import { countdown, daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
 import { cn } from '@/lib/utils';
 import { CalendarDays } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { daysUntil } from './days-until';
 
 const GiftDayLabel = ({ date }: { date?: string }) => {
   const t = useTranslations('dashboard.gift-day');
@@ -20,7 +19,7 @@ const GiftDayLabel = ({ date }: { date?: string }) => {
 /** The time to gift day as a big number with a small label (2 / months to gift day); the sentence when there's no countdown. */
 export const GiftDayCountdown = ({ date, timeZone, size = 'md' }: { date?: string; timeZone: string; size?: 'md' | 'lg' }) => {
   const t = useTranslations('dashboard.countdown');
-  const days = date === undefined ? undefined : daysUntil(date, timeZone);
+  const days = date === undefined ? undefined : daysBetween(todayIn(timeZone), date);
   if (days === undefined || days < 0) return <GiftDayLabel date={date} />;
   const when = countdown(days);
 

@@ -38,17 +38,12 @@
   },
   "waiting": {
     "ready": "Je bent helemaal klaar",
-    "todo": "Voeg je wensen toe",
-    "wait": "Niks te doen tot {organizer} de lootjes trekt.",
-    "wait-on": "Niks te doen tot {organizer} de lootjes trekt op {date}.",
-    "email": "We mailen je zodra er geloot is.",
+    "wait": "Niks te doen tot {organizer} de lootjes trekt. We mailen je.",
+    "wait-on": "Niks te doen tot {organizer} de lootjes trekt op {date}. We mailen je.",
     "in": "Je doet mee",
     "wishes": "{count, plural, one {# wens} other {# wensen}} in deze groep",
-    "no-wishes": "Nog geen wensen in deze groep",
     "add": "Wens toevoegen",
-    "todo-address": "Vul je adres in",
     "address": "Adres ingevuld",
-    "no-address": "Nog geen adres",
     "add-address": "Adres invullen"
   },
   "draft": {
@@ -67,7 +62,8 @@
     "changed": "Je persoon is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
     "not-in": "Je doet niet mee aan deze loting.",
     "not-fitted": "Je deed mee na de loting en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw loten.",
-    "show": "Tonen"
+    "show": "Tonen",
+    "load-failed": "We konden je persoon niet laden."
   },
   "next": {
     "title": "Volgend jaar weer?",

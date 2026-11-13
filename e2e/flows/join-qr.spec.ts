@@ -54,7 +54,9 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}`);
 
-  await test.step('two people in: Draw names is disabled and says how many more on hover', async () => {
+  await test.step('two people in: Draw names is disabled and says how many more on hover; copying the link is the main action', async () => {
+    await expect(card(page).getByRole('button', { name: 'Copy link' })).toHaveText('Copy link');
+    await expect(card(page).getByLabel('Invite by email'), 'email invites are in the settings').toHaveCount(0);
     await expect(draw).toBeDisabled();
     await expect(draw).toHaveAccessibleDescription('Drawing names needs 1 more person.');
     await draw.hover({ force: true });
@@ -63,6 +65,7 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     await page.reload();
     await expect(draw).toBeEnabled();
     await expect(card(page).getByRole('button', { name: 'Draw names' }), 'not in the card').toHaveCount(0);
+    await expect(card(page).getByRole('button', { name: 'Copy link' }), 'an icon once enough are in').toHaveText('');
   });
 
   await test.step('organizer: avatars named on hover, the draw rules, the link row', async () => {
@@ -85,7 +88,7 @@ test('Get everyone in: avatars with names on hover and the invite part; Draw nam
     const bobPage = await newPage();
     await signInPage(bobPage, bob);
     await bobPage.goto(`/g/${group.slug}`);
-    await expect(bobPage.getByRole('heading', { name: 'Add your wishes' })).toBeVisible();
+    await expect(bobPage.getByRole('heading', { name: "You're in" })).toBeVisible();
     await expect(card(bobPage)).toHaveCount(0);
     await expect(bobPage.getByRole('img', { name: '3 people are in: Ann, Bob, and Cee' })).toBeVisible();
     await expect(bobPage.getByLabel('Join link')).toHaveCount(0);
@@ -107,10 +110,10 @@ test('join link turned off or missing: the card makes a new one', async ({ page,
     await test.step(why, async () => {
       await turnOff();
       await page.goto(`/g/${group.slug}`);
-      await expect(page.getByText('The join link is turned off.')).toBeVisible();
+      await expect(page.getByText('The join link is off.')).toBeVisible();
       await page.getByRole('button', { name: 'Make a new link' }).click();
       await expect(page.getByLabel('Join link')).toHaveValue(/\/join\?token=/);
-      await expect(page.getByText('The join link is turned off.')).toHaveCount(0);
+      await expect(page.getByText('The join link is off.')).toHaveCount(0);
     });
   }
 });

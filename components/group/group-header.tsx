@@ -7,7 +7,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import type { GroupData } from './group-data';
 
-/** Group name and edition; for the organizer Draw names (while open) and Settings (61); ⋯ for everyone (64, 70). Budget and exchange are in the details. */
+/** Group name and edition; for the organizer Draw names (while open), Settings (61) and ⋯ (64). Budget and exchange are in the details. */
 export const GroupHeader = ({ group }: { group: GroupData }) => {
   const t = useTranslations('group');
   const { edition } = group;

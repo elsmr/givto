@@ -1,6 +1,6 @@
 {
-  "title": "Home",
-  "page-title": "Home · Givto",
+  "title": "Mijn groepen",
+  "page-title": "Mijn groepen · Givto",
   "start": "Start een Secret Santa",
   "load-failed": "We konden je groepen niet laden.",
   "empty": {
@@ -10,15 +10,7 @@
   "past": "Eerder",
   "organizer": "Jij bent de organisator",
   "no-edition": "Nog geen Secret Santa",
-  "status": {
-    "draft": "Nog niet verstuurd",
-    "open": "Open",
-    "drawn": "Geloot",
-    "locked": "Vastgelegd",
-    "giftday": "Pakjesdag!",
-    "done": "Afgelopen",
-    "archived": "Gearchiveerd"
-  },
+  "archived": "Gearchiveerd",
   "gift-day": {
     "past": "Pakjesdag was op {date}",
     "none": "Nog geen pakjesdag gekozen"
@@ -27,55 +19,44 @@
   "hi": "Hoi {name}",
   "todo": {
     "title": "Te doen",
-    "all-done": "Niets te doen op dit moment.",
     "giftDay": {
-      "text": "Het is pakjesdag!",
-      "action": "Openen"
+      "text": "Het is pakjesdag!"
     },
     "question": {
-      "text": "{count, plural, =1 {Je Santa stelde je een vraag} other {Je Santa stelde je # vragen}}",
-      "action": "Antwoorden"
+      "text": "{count, plural, =1 {Je Santa stelde je een vraag} other {Je Santa stelde je # vragen}}"
     },
     "getGift": {
       "text": "Heb je je cadeau al? Duid het aan als je het hebt",
       "action": "Ik heb het"
     },
     "joinRequests": {
-      "text": "{count, plural, =1 {1 persoon wil meedoen} other {# mensen willen meedoen}}",
-      "action": "Binnenlaten"
+      "text": "{count, plural, =1 {1 persoon wil meedoen} other {# mensen willen meedoen}}"
     },
     "readyToDraw": {
-      "text": "Iedereen is er: klaar om te loten",
-      "action": "Loten"
+      "text": "Iedereen is er: klaar om te loten"
     },
     "readyToLockIn": {
-      "text": "Iedereen is er: klaar om vast te leggen",
-      "action": "Vastleggen"
+      "text": "Iedereen is er: klaar om vast te leggen"
     },
     "draft": {
-      "text": "Je volgende Secret Santa is nog niet verstuurd",
-      "action": "Openen"
+      "text": "Je volgende Secret Santa is nog niet verstuurd"
     },
     "noWishes": {
-      "text": "Je Santa ziet hier nog geen wensen",
-      "action": "Wensen toevoegen"
+      "text": "Je Santa ziet hier nog geen wensen"
     },
     "markReceived": {
       "text": "Vink de cadeaus af die je kreeg",
       "action": "Afvinken"
-    }
+    },
+    "open": "Openen"
   },
   "up-next": "Binnenkort",
   "your-groups": "Je groepen",
   "open-group": "Groep openen",
   "see-giftee": "Je persoon",
-  "giftee-known": "Je weet voor wie je een cadeau koopt.",
   "countdown": {
     "left": "{unit, select, day {{count, plural, =1 {dag} other {dagen}}} week {{count, plural, =1 {week} other {weken}}} month {{count, plural, =1 {maand} other {maanden}}} other {{count, plural, =1 {jaar} other {jaar}}}} tot pakjesdag",
     "today": "Vandaag!",
     "today-label": "het is pakjesdag"
-  },
-  "wishlist-stat": {
-    "title": "Mijn verlanglijstje"
   }
 }
