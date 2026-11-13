@@ -90,7 +90,7 @@ export const migrateV1 = async (db: Db, { apply, now = new Date(), source }: { a
   return { ...report, written, verified };
 };
 
-const readTarget = async (db: Db, users: V1User[], groups: V1Group[]): Promise<Target> => {
+export const readTarget = async (db: Db, users: V1User[], groups: V1Group[]): Promise<Target> => {
   const emails = [...new Set(users.flatMap((user) => email(user.email) ?? []))];
   const slugs = groups.flatMap((group) => (isSlug(group.slug) ? [group.slug] : []));
   const [accounts, owners] = await Promise.all([

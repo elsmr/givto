@@ -59,6 +59,8 @@ export interface Plan {
   groups: Group[];
   editions: Edition[];
   wishes: Wish[];
+  /** Each old group's list per owner, key `<groupId>:<owner>`, in that list's own order (migration 005). */
+  lists: Map<string, string[]>;
   report: Report;
 }
 
@@ -270,7 +272,8 @@ export const planV1ToV2 = (v1: { users: V1User[]; groups: V1Group[] }, target: T
     wishDuplicatesMerged: merged,
   };
   for (const [owner, ids] of wishIdsOf) if (ids.length > MAX_WISHES) note('tooManyWishes', { owner, count: ids.length });
-  return { users: keptUsers, groups: withHidden, editions, wishes, report: { source: {}, planned, conflicts } };
+  const lists = new Map([...shownIn].map(([key, ids]) => [key, [...ids]]));
+  return { users: keptUsers, groups: withHidden, editions, wishes, lists, report: { source: {}, planned, conflicts } };
 };
 
 /** Old exclusions (user ids, both ways in master's draw) → keep-apart rows of two between member ids. */
