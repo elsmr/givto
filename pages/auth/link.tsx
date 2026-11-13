@@ -33,6 +33,6 @@ export default function MagicLinkPage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['auth']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['auth']) },
 });

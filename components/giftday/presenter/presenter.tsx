@@ -20,9 +20,9 @@ import { PresenterLoading } from './presenter-loading';
 import { PresenterSettings } from './presenter-settings';
 import { PresenterStage } from './presenter-stage';
 
-export const notice = (text: string) => (
+export const notice = (text: string, variant?: 'danger') => (
   <div className="mx-auto w-full max-w-xl px-6 py-16">
-    <Alert>
+    <Alert variant={variant}>
       <AlertDescription>{text}</AlertDescription>
     </Alert>
   </div>
@@ -84,7 +84,7 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
       </div>
     );
   }
-  if (group.error || view.error) return frame(notice(t('errors.INTERNAL')));
+  if (group.error || view.error) return frame(notice(t('errors.INTERNAL'), 'danger'));
   if (group.data && !isOrganizer) return frame(notice(t('present.only-organizer')));
   if (group.data && !editionNumber) return frame(notice(t('present.no-order')));
   if (view.data && !view.data.unwrapOrder) {

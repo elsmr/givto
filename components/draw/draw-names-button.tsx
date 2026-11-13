@@ -70,7 +70,7 @@ export const DrawNamesButton = ({ group, edition }: { group: GroupData; edition:
     return (
       <Tooltip>
         <TooltipTrigger render={<span className="inline-flex" />}>
-          <Button focusableWhenDisabled disabled aria-describedby={reasonId}>
+          <Button disabled aria-describedby={reasonId}>
             <Icon aria-hidden="true" />
             {t('draw')}
           </Button>

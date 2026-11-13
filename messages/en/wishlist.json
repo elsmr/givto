@@ -6,7 +6,7 @@
   "empty-hint": "Add your first wish: type it, or paste a link to a shop.",
   "count": "{count, plural, =0 {No wishes yet} one {# wish} other {# wishes}}",
   "list-title": "Your wishes",
-  "hide-hint": "Reorder per group, on its “My wishlist” tab.",
+  "hide-hint": "Reorder per group, on its “Wishlist” tab.",
   "add-title": "Add a wish",
   "import": {
     "busy": "Reading the page…",

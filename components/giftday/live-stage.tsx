@@ -45,7 +45,7 @@ export const LiveStage = ({ groupSlug }: { groupSlug: string }) => {
       </div>
     );
   }
-  if (group.error || giftDay.error) return frame(notice(t('errors.INTERNAL')));
+  if (group.error || giftDay.error) return frame(notice(t('errors.INTERNAL'), 'danger'));
   if (!view || !order?.started) {
     const loading = !group.data || (edition && !isBeforeDraw(edition) && !view);
     return frame(

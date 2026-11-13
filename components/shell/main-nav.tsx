@@ -11,7 +11,7 @@ export const MainNav = ({ user }: { user: CurrentUser | null }) => {
     <nav aria-label={t('main-navigation')} className="flex items-center gap-4">
       {user ? (
         <Link href="/app" prefetch={false} className={buttonVariants({ variant: 'neutral' })}>
-          {t('open-app')}
+          {t('home')}
         </Link>
       ) : (
         <Link href="/auth/sign-in" prefetch={false} className={buttonVariants()}>

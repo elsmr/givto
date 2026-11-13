@@ -146,7 +146,7 @@ test('the app nav: a bar at the bottom on phones, a rail on desktop; the tabs fi
   await signInPage(page, bob);
   await page.goto(`/g/${group.slug}`);
   const nav = page.getByRole('navigation', { name: 'Main' });
-  await expect(nav.getByRole('link', { name: 'Home' }), 'group pages live under Home').toHaveAttribute('aria-current', 'true');
+  await expect(nav.getByRole('link', { name: 'My groups' }), 'group pages live under My groups').toHaveAttribute('aria-current', 'true');
   const viewport = page.viewportSize()!;
 
   const box = async () => (await nav.boundingBox())!;

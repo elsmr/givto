@@ -26,8 +26,7 @@
       "text": "{count, plural, =1 {Your Santa asked you a question} other {Your Santa asked you # questions}}"
     },
     "getGift": {
-      "text": "Bought your gift yet?",
-      "action": "Mark it"
+      "text": "Bought your gift yet?"
     },
     "joinRequests": {
       "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}"
@@ -45,8 +44,7 @@
       "text": "Your Santa can't see any wishes here yet"
     },
     "markReceived": {
-      "text": "Tick off the gifts you got",
-      "action": "Tick off"
+      "text": "Tick off the gifts you got"
     },
     "open": "Open"
   },

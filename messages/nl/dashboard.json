@@ -26,8 +26,7 @@
       "text": "{count, plural, =1 {Je Santa stelde je een vraag} other {Je Santa stelde je # vragen}}"
     },
     "getGift": {
-      "text": "Heb je je cadeau al gekocht?",
-      "action": "Markeren"
+      "text": "Heb je je cadeau al gekocht?"
     },
     "joinRequests": {
       "text": "{count, plural, =1 {1 persoon wil meedoen} other {# mensen willen meedoen}}"
@@ -45,8 +44,7 @@
       "text": "Je Santa ziet hier nog geen wensen"
     },
     "markReceived": {
-      "text": "Vink de cadeaus af die je kreeg",
-      "action": "Afvinken"
+      "text": "Vink de cadeaus af die je kreeg"
     },
     "open": "Openen"
   },

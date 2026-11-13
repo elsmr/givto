@@ -31,6 +31,6 @@ export default function SignInPage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['auth']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['auth']) },
 });

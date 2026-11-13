@@ -129,10 +129,10 @@ export const NamePicker = () => {
           )}
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" disabled={busy || pool.length === 0} focusableWhenDisabled>
+          <Button type="submit" disabled={busy || pool.length === 0}>
             {t('pick')}
           </Button>
-          <Button type="button" variant="neutral" onClick={startOver} disabled={busy || picked.length === 0} focusableWhenDisabled>
+          <Button type="button" variant="neutral" onClick={startOver} disabled={busy || picked.length === 0}>
             {t('start-over')}
           </Button>
           {names.length > 0 && <p className="text-sm text-muted">{t('left', { left: pool.length, total: names.length })}</p>}
