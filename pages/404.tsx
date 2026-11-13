@@ -6,6 +6,6 @@ export default function NotFoundPage() {
   return <ErrorPage statusCode={404} />;
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['errors']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['errors']) },
 });

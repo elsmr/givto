@@ -54,6 +54,6 @@ export default function AccountPage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['account']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['account']) },
 });
