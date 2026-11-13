@@ -27,5 +27,5 @@ export default function PresentPage() {
 export const getStaticPaths: GetStaticPaths = async () => ({ paths: [], fallback: 'blocking' });
 
 export const getStaticProps: GetStaticProps = async () => ({
-  props: { messages: await loadMessages('en', ['giftday', 'group', 'guess']) },
+  props: { messages: await loadMessages('en', ['giftday', 'group', 'guess', 'settings']) },
 });
