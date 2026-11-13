@@ -45,7 +45,7 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
       groupId: group._id,
       memberId: member.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, organizer: organizer.name, url: inviteUrl(to.locale, group.slug, token) };
+        const props = { locale: to.locale, group: group.name, organizer: organizer.name, url: inviteUrl(group.slug, token) };
         return { subject: joinReminderSubject(props), body: JoinReminderEmail(props) };
       },
     }).catch(async (error: unknown) => {

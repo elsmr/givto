@@ -34,7 +34,7 @@ const kindOf = (parts: ReminderPart[], posted: boolean) => {
 /** The email for one due reminder: its parts, each with its own link. */
 const reminderParts = (group: Group, edition: Edition, to: Recipient, { parts }: DueReminder, today: string): ReminderParts => {
   const date = (local: string | undefined) => local && formatLocalDate(local, to.locale);
-  const home = groupUrl(to.locale, group.slug);
+  const home = groupUrl(group.slug);
   const giftDay = edition.giftDay?.date;
   const postBy = edition.exchangeMode !== 'inPerson' ? edition.postBy : undefined;
   const whiteElephant = edition.kind === 'whiteElephant';
@@ -75,7 +75,7 @@ const scheduledReminders = async (db: Collections, group: Group, edition: Editio
       memberId: member.id,
       slots: due.slots,
       render: (unsubscribe) => {
-        const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), forName: to.forName, unsubscribe, ...reminderParts(group, edition, to, due, today) };
+        const props = { locale: to.locale, group: group.name, url: groupUrl(group.slug), forName: to.forName, unsubscribe, ...reminderParts(group, edition, to, due, today) };
         return { subject: reminderSubject(props), body: ReminderEmail(props) };
       },
     });
@@ -103,7 +103,7 @@ const giftDayReminders = async (db: Collections, group: Group, edition: Edition,
       editionId: edition._id,
       memberId: member.id,
       render: (unsubscribe) => {
-        const p = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug), unsubscribe, time, place, callUrl };
+        const p = { locale: to.locale, group: group.name, url: groupUrl(group.slug), unsubscribe, time, place, callUrl };
         return { subject: reminderGiftDaySubject(p), body: ReminderGiftDayEmail(p) };
       },
     });

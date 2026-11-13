@@ -22,7 +22,7 @@ interface WishFormProps {
   onSubmit: (input: WishInput) => void;
   onCancel?: () => void;
   autoFocus?: boolean;
-  /** The add card: labels for screen readers only, and no "More details". */
+  /** The add card: tighter, and no "More details". */
   compact?: boolean;
   /** Beside the buttons, e.g. the groups that see the wish. */
   children?: ReactNode;
@@ -82,7 +82,7 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
   return (
     <form onSubmit={submit} className={cn('flex flex-col', compact ? 'gap-3' : 'gap-4')}>
       <Field>
-        <FieldLabel htmlFor={`${id}-title`} className={cn(compact && 'sr-only')}>
+        <FieldLabel htmlFor={`${id}-title`}>
           {t('form.title')}
         </FieldLabel>
         <Input
@@ -98,7 +98,7 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
         />
       </Field>
       <Field>
-        <FieldLabel htmlFor={`${id}-description`} className={cn(compact && 'sr-only')}>
+        <FieldLabel htmlFor={`${id}-description`}>
           {t('form.description')}
         </FieldLabel>
         <Textarea

@@ -1,7 +1,7 @@
 import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 
-test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees who's still shopping", async ({ page, signIn, signInPage, db }) => {
+test("I've bought the gift: Dibs! pre-checked, add a line, saved; the organizer sees who's still shopping", async ({ page, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [ann] = people;
   const group = await drawnGroup(people, 'Shopping');
@@ -17,8 +17,8 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}#giftee`);
   await page.getByRole('button', { name: "Tap to see who you're buying for" }).click();
-  await page.getByRole('button', { name: "I've got my gift" }).click();
-  const dialog = page.getByRole('dialog', { name: 'What did you get?' });
+  await page.getByRole('button', { name: "I've bought the gift" }).click();
+  const dialog = page.getByRole('dialog', { name: 'What did you buy?' });
   await expect(dialog.getByRole('checkbox', { name: 'Moomin mug' }), 'Dibs! pre-checked').toBeChecked();
   await expect(dialog.getByRole('checkbox', { name: 'Green socks' })).not.toBeChecked();
   await dialog.getByLabel('Something else').fill('A scarf');
@@ -26,7 +26,7 @@ test("I've got my gift: Dibs! pre-checked, add a line, saved; the organizer sees
   await expect(dialog.getByText('A scarf')).toBeVisible();
   await dialog.getByRole('button', { name: 'Save' }).click();
   await expect(dialog).toBeHidden();
-  await expect(page.getByText("You've got 2 gifts")).toBeVisible();
+  await expect(page.getByText("You've bought 2 gifts")).toBeVisible();
   const mugCard = page.getByRole('listitem').filter({ has: page.getByRole('heading', { name: 'Moomin mug' }) });
   await expect(mugCard.getByText('Bought'), 'the same card, marked bought (73)').toBeVisible();
   await expect(mugCard.getByRole('link', { name: /^bol\.com/ })).toHaveAttribute('rel', 'noopener noreferrer nofollow ugc');

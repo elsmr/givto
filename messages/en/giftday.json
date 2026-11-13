@@ -46,7 +46,7 @@
     "description": "Hope you got something lovely. Mark the wishes you got: they're archived, so nobody buys them again.",
     "got-it": "I got this",
     "got-it-label": "I got this: {title}",
-    "marked": "Marked as received: {title}",
+    "marked": "Got “{title}”",
     "undo": "Undo"
   },
   "present": {

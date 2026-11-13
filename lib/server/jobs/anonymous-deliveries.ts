@@ -36,7 +36,7 @@ export const deliverAnonymousMessages = async (db: Collections, now: Date) => {
           editionId: nudge.editionId,
           memberId: nudge.gifteeMemberId,
           render: (unsubscribe) => {
-            const url = to.forName ? groupUrl(to.locale, found.group.slug) : siteUrl(to.locale, '/wishlist');
+            const url = to.forName ? groupUrl(found.group.slug) : siteUrl(to.locale, '/wishlist');
             const props = { locale: to.locale, group: found.group.name, url, forName: to.forName, unsubscribe, kind: nudge.kind };
             return { subject: psstSubject(props), body: PsstEmail(props) };
           },
@@ -60,7 +60,7 @@ export const deliverAnonymousMessages = async (db: Collections, now: Date) => {
           editionId: question.editionId,
           memberId: question.gifteeMemberId,
           render: (unsubscribe) => {
-            const props = { locale: to.locale, group: found.group.name, url: groupUrl(to.locale, found.group.slug), forName: to.forName, unsubscribe, question: question.text };
+            const props = { locale: to.locale, group: found.group.name, url: groupUrl(found.group.slug), forName: to.forName, unsubscribe, question: question.text };
             return { subject: questionSubject(props), body: QuestionEmail(props) };
           },
         })
@@ -87,7 +87,7 @@ export const deliverAnonymousMessages = async (db: Collections, now: Date) => {
           editionId: question.editionId,
           memberId: question.askerMemberId,
           render: (unsubscribe) => {
-            const props = { locale: to.locale, group: found.group.name, url: groupUrl(to.locale, found.group.slug), forName: to.forName, unsubscribe, question: question.text, answer };
+            const props = { locale: to.locale, group: found.group.name, url: groupUrl(found.group.slug), forName: to.forName, unsubscribe, question: question.text, answer };
             return { subject: answerSubject(props), body: AnswerEmail(props) };
           },
         })

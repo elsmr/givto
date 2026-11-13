@@ -2,7 +2,7 @@ import { Badge, badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldLabel } from '@/components/ui/field';
-import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger, withTooltip } from '@/components/ui/tooltip';
 import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
@@ -15,7 +15,7 @@ type AccountGroup = RouterOutputs['account']['groups'][number];
 /** Not archived and not done: its Santas may still buy a wish it shows. */
 export const isActiveGroup = (group: AccountGroup) => !group.archived && group.edition?.status !== 'done';
 
-/** For a wish more than one active group shows, as two Santas might buy it: "Also in Family." (also-in) or "Shown in Family and Work." (shown-in). */
+/** For a wish more than one active group shows, as two Santas might buy it: "Also in Family" (also-in) or "Shown in Family and Work." (shown-in). */
 export const AlsoInNote = ({ groups, kind = 'also-in' }: { groups: string[]; kind?: 'also-in' | 'shown-in' }) => {
   const t = useTranslations('wishlist.form');
   const format = useFormatter();
@@ -93,7 +93,6 @@ export const WishGroupsPicker = ({ shownIn, onChange, wishTitle }: WishGroupsPic
       <PopoverContent align={wishTitle ? 'end' : 'start'}>
         <PopoverHeader>
           <PopoverTitle>{t('show-in')}</PopoverTitle>
-          <PopoverDescription>{t('show-in-hint')}</PopoverDescription>
         </PopoverHeader>
         <ul className="-m-1 flex max-h-72 flex-col gap-3 overflow-y-auto p-1">
           {choices.map((group) => (

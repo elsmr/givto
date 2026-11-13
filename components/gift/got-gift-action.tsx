@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { GotGiftForm } from './got-gift-form';
 
 /**
- * "I've got my gift" on the giftee tab (63): what I got, private to me; stops the gift reminders. By post (87), once
+ * "I've bought the gift" on the giftee tab (63): what I bought, private to me; stops the gift reminders. By post (87), once
  * marked: "I've posted it", then whether my giftee said it arrived. Inline: buttons and badges for an action row.
  */
 export const GotGiftAction = ({ groupSlug, editionNumber }: { groupSlug: string; editionNumber: number }) => {
@@ -41,10 +41,8 @@ export const GotGiftAction = ({ groupSlug, editionNumber }: { groupSlug: string;
   );
   const save = useMutation(
     trpc.gift.set.mutationOptions({
-      onSuccess: ({ marked, wishIds, lines }) => {
-        setOpen(false);
-        toast.add({ title: marked ? t('saved', { count: wishIds.length + lines.length }) : t('cleared'), type: 'success' });
-      },
+      // The button shows the new count.
+      onSuccess: () => setOpen(false),
       onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
       onSettled: invalidate,
     })
@@ -65,9 +63,8 @@ export const GotGiftAction = ({ groupSlug, editionNumber }: { groupSlug: string;
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('dialog-title')}</DialogTitle>
-            <DialogDescription>{t('dialog-description', { name: giftee.name })}</DialogDescription>
+            <DialogDescription>{t('dialog-description')}</DialogDescription>
           </DialogHeader>
-          <p className="text-sm text-muted">{t('private', { name: giftee.name })}</p>
           <GotGiftForm list={list.data} initial={mine.data} busy={save.isPending} onSubmit={(draft) => save.mutate({ ...input, ...draft })} />
         </DialogContent>
       </Dialog>

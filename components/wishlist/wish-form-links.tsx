@@ -3,7 +3,7 @@ import { withTooltip } from '@/components/ui/tooltip';
 import type { WishLink } from '@/lib/schema/wish';
 import { ImageOff, X } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { formatPrice } from './format-price';
+import { formatBudget } from '@/lib/format-budget';
 import { shopName } from './shop-name';
 import { WishImage } from './wish-image';
 
@@ -32,7 +32,7 @@ export const WishFormLinks = ({ links, onChange }: WishFormLinksProps) => {
             <div className="flex min-w-0 flex-1 flex-col">
               <span className="mono truncate text-xs font-semibold">{shop}</span>
               <span className="line-clamp-2 text-sm break-words">{link.title ?? link.url}</span>
-              {link.price && <span className="mono text-sm text-muted">{formatPrice(link.price, locale)}</span>}
+              {link.price && <span className="mono text-sm text-muted">{formatBudget(link.price, locale)}</span>}
             </div>
             {link.imageId &&
               withTooltip(

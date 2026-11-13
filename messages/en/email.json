@@ -55,7 +55,7 @@
     "subject": "{name} wants to join {group}",
     "preheader": "Let them in, or not: it's up to you.",
     "title": "Someone wants to join",
-    "body": "{name} used the group link to join “{group}”. You asked to approve new people first, so they're waiting for you.",
+    "body": "{name} used the join link to join “{group}”. You let people in yourself, so they're waiting for you.",
     "button": "Review the request"
   },
   "joined": {
@@ -69,7 +69,7 @@
     "subject": "{count, plural, one {{name} joined {group}} other {# people joined {group}}}",
     "preheader": "{count, plural, one {# person is} other {# people are}} in now.",
     "title": "{count, plural, one {Someone joined} other {# people joined}}",
-    "body": "Joined “{group}” through the group link yesterday:",
+    "body": "Joined “{group}” through the join link yesterday:",
     "total": "{count, plural, one {# person is} other {# people are}} in now.",
     "button": "See who's in"
   },
@@ -148,13 +148,13 @@
       "button": "Add my address"
     },
     "gift": {
-      "subject": "Got your gift yet?",
+      "subject": "Bought your gift yet?",
       "subject-post": "Post your gift by {date}",
-      "title": "Got your gift yet?",
+      "title": "Bought your gift yet?",
       "title-post": "Time to post your gift",
       "body": "Gift day for “{group}” is {date}. Still shopping? Your giftee's wishlist has ideas.",
       "body-post": "Your gift for “{group}” should be in the post by {postBy}, so it arrives before gift day ({date}). Their address is in Givto.",
-      "mark": "Got it already? Tap “I've got my gift” in Givto and we'll stop reminding you.",
+      "mark": "Bought it already? Tap “I've bought the gift” in Givto and we'll stop reminding you.",
       "button": "Open my giftee's wishlist"
     },
     "ready": {

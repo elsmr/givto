@@ -17,7 +17,7 @@ type GotGiftFormProps = {
   onSubmit: (draft: GiftDraft) => void;
 };
 
-/** Tick the wishes you got (Dibs! ones start ticked) and add the rest as short lines (63). */
+/** Tick the wishes you bought (Dibs! ones start ticked) and add the rest as short lines (63). */
 export const GotGiftForm = ({ list, initial, busy, onSubmit }: GotGiftFormProps) => {
   const t = useTranslations('wishlist.got-gift');
   const tGiftee = useTranslations('wishlist.giftee');

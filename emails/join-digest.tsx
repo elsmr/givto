@@ -11,7 +11,7 @@ type JoinDigestProps = NoticeProps & { names: string[]; people: number };
 export const joinDigestSubject = ({ locale, group, names }: Pick<JoinDigestProps, 'locale' | 'group' | 'names'>) =>
   emailTranslator(locale)('join-digest.subject', { count: names.length, name: names[0], group });
 
-/** To the organizer, the day after people joined through the group link (63): who, and how many are in now. */
+/** To the organizer, the day after people joined through the join link (63): who, and how many are in now. */
 export const JoinDigestEmail = ({ locale, group, url, unsubscribe, names, people }: JoinDigestProps) => {
   const t = emailTranslator(locale);
   return (

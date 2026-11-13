@@ -4,7 +4,6 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
-import { EyeOff, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { AddWish } from './add-wish';
 import { ArchivedWishes } from './archived-wishes';
@@ -55,14 +54,7 @@ export const MyWishlist = () => {
                   />
                 )}
               />
-              <p className="flex items-start gap-2 text-sm text-muted">
-                <EyeOff aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-                <span>
-                  {t.rich('hide-hint', {
-                    groups: () => <Users role="img" aria-label={t('form.groups')} className="inline size-4 align-text-bottom" />,
-                  })}
-                </span>
-              </p>
+              <p className="text-sm text-muted">{t('hide-hint')}</p>
             </section>
           )}
           </div>

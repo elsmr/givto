@@ -56,7 +56,7 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
       editionId: edition._id,
       memberId: santa.id,
       render: () => {
-        const url = token ? inviteUrl(to.locale, group.slug, token) : groupUrl(to.locale, group.slug);
+        const url = token ? inviteUrl(group.slug, token) : groupUrl(group.slug);
         const props = { locale: to.locale, group: group.name, url, forName: to.forName };
         if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);

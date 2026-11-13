@@ -48,7 +48,7 @@ export const sendWishlistDigests = async (db: Collections, now: Date) => {
         const props = {
           locale: to.locale,
           group: found.group.name,
-          url: groupUrl(to.locale, found.group.slug),
+          url: groupUrl(found.group.slug),
           forName: to.forName,
           unsubscribe,
           added: added.map((wish) => wish.title),

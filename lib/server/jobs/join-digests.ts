@@ -50,7 +50,7 @@ export const sendJoinDigests = async (db: Collections, now: Date, groupIds?: str
           groupId: group._id,
           memberId: organizer.id,
           render: (unsubscribe) => {
-            const props = { locale: to.locale, group: group.name, url: `${groupUrl(to.locale, group.slug)}#people`, unsubscribe, names, people };
+            const props = { locale: to.locale, group: group.name, url: `${groupUrl(group.slug)}#people`, unsubscribe, names, people };
             return { subject: joinDigestSubject(props), body: JoinDigestEmail(props) };
           },
         });

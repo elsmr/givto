@@ -22,7 +22,7 @@ export const sendHandoverNotices = async (db: Collections, now: Date) => {
           groupId: group._id,
           memberId: handover.toMemberId,
           render: () => {
-            const props = { locale: to.locale, group: group.name, url: groupUrl(to.locale, group.slug) };
+            const props = { locale: to.locale, group: group.name, url: groupUrl(group.slug) };
             return { subject: organizerHandoverSubject(props), body: OrganizerHandoverEmail(props) };
           },
         })

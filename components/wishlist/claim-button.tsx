@@ -28,33 +28,33 @@ export const ClaimButton = ({ input, title, claim, canClaim }: ClaimButtonProps)
   const remove = useMutation(trpc.claim.remove.mutationOptions(options));
   const busy = add.isPending || remove.isPending;
 
-  if (claim === 'taken') {
-    return (
-      <p className="flex items-center gap-2 text-sm text-muted">
-        <Badge>{t('taken')}</Badge>
-        {t('taken-hint')}
-      </p>
-    );
-  }
-  if (claim === 'mine') {
-    return (
-      <div className="flex flex-wrap items-center gap-3">
-        <Badge variant="mint">
-          <Check aria-hidden="true" />
-          {t('mine')}
-        </Badge>
-        {canClaim && (
-          <Button variant="neutral" size="sm" disabled={busy} aria-label={t('unclaim-label', { title })} onClick={() => remove.mutate(input)}>
-            {t('unclaim')}
-          </Button>
-        )}
-      </div>
-    );
-  }
-  if (!canClaim) return null;
+  if (claim === 'taken') return <Badge>{t('taken')}</Badge>;
+  const mine = claim === 'mine';
+  if (!mine && !canClaim) return null;
+  // One button for Dibs! and Undo keeps focus on it; the status says what happened.
   return (
-    <Button size="sm" className="w-fit" disabled={busy} aria-label={t('claim-label', { title })} onClick={() => add.mutate(input)}>
-      {t('claim')}
-    </Button>
+    <div className="flex flex-wrap items-center gap-3">
+      <span role="status">
+        {mine ? (
+          <Badge variant="mint">
+            <Check aria-hidden="true" />
+            {t('mine')}
+          </Badge>
+        ) : (
+          remove.isSuccess && <span className="sr-only">{t('unclaimed')}</span>
+        )}
+      </span>
+      {canClaim && (
+        <Button
+          variant={mine ? 'neutral' : 'default'}
+          size="sm"
+          disabled={busy}
+          aria-label={mine ? t('unclaim-label', { title }) : t('claim-label', { title })}
+          onClick={() => (mine ? remove : add).mutate(input)}
+        >
+          {mine ? t('unclaim') : t('claim')}
+        </Button>
+      )}
+    </div>
   );
 };

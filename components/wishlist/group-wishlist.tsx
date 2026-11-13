@@ -1,3 +1,4 @@
+import { LoadFailed } from '@/components/shell/load-failed';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,6 +15,7 @@ import { WishListEditor } from './wish-list-editor';
 /** "My wishlist in this group" (61): add a new wish or pick one from your wishlist that this group doesn't show yet; what it sees in its own order, editable like /wishlist. */
 export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('wishlist.group');
+  const tWishlist = useTranslations('wishlist');
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const viewKey = trpc.wish.groupView.queryKey({ groupSlug });
@@ -42,7 +44,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <AddWish groupSlug={groupSlug} empty={!view.isPending && wishes.length === 0} />
+        <AddWish groupSlug={groupSlug} empty={view.isSuccess && wishes.length === 0} />
         {hidden.length > 0 && (
           <section aria-labelledby={`${groupSlug}-pick`} className="flex flex-col gap-2">
             <h3 id={`${groupSlug}-pick`} className="text-sm font-semibold text-muted">
@@ -59,6 +61,8 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         )}
         {view.isPending ? (
           <Skeleton className="h-24" />
+        ) : view.isError ? (
+          <LoadFailed message={tWishlist('errors.generic')} onRetry={() => void view.refetch()} />
         ) : (
           shown.length > 0 && (
             <WishListEditor
