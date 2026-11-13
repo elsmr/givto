@@ -31,7 +31,11 @@ export const withPairRows = ({ households, exclusions = [] }: OldGroup, newId: (
 export const up = async (db: Db, { apply }: { apply: boolean; now?: Date }): Promise<MigrationReport> => {
   const groups = await db
     .collection<OldGroup>('groups')
-    .find({ $or: [{ exclusions: { $exists: true } }, { defaults: { $exists: true } }] }, { projection: { households: 1, exclusions: 1 } })
+    // v2 groups only: in a dry run, `groups` may still hold the old documents (migration 001 not applied).
+    .find(
+      { households: { $type: 'array' }, $or: [{ exclusions: { $exists: true } }, { defaults: { $exists: true } }] },
+      { projection: { households: 1, exclusions: 1 } }
+    )
     .toArray();
   const changes = groups.map((group) => ({ _id: group._id, ...withPairRows(group, () => new ObjectId().toHexString()) }));
   const oneWay = changes.flatMap(({ _id, oneWay }) => oneWay.map((rule) => ({ group: _id, ...rule })));

@@ -9,9 +9,9 @@ import { AppError } from '../errors';
 import { deleteWishImage, findWishImage } from '../import/wish-images';
 import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { drawParticipantIds } from '../draw/rules';
-import { authedProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
+import { authedProcedure, editionProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
-import { activeGroupsOf, inArchive, listWishes, toWishView, visibleWishes, wishOwnerId } from '../wishlist/wish-view';
+import { activeGroupsOf, inArchive, listWishes, savedWishView, toWishView, visibleWishes, wishOwnerId } from '../wishlist/wish-view';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
@@ -183,6 +183,19 @@ export const wishRouter = router({
       alsoIn: active.filter((group) => group.shownWishIds.includes(wish._id)).map(({ name }) => ({ name })),
     });
     return [...shown.map((wish) => withAlsoIn(wish, true)), ...hidden.map((wish) => withAlsoIn(wish, false))];
+  }),
+
+  /**
+   * A done edition's wishlists as they were when it ended (100), for everyone who was in it; mine first. Null before
+   * it's done, in a white elephant, or for someone who wasn't in it. `saved: false`: it ended before they were kept.
+   */
+  editionLists: editionProcedure.query(({ ctx: { group, edition, member } }) => {
+    if (edition.status !== 'done' || !wishesOn(edition) || !drawParticipantIds(group, edition).includes(member.id)) return null;
+    const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
+    const lists = (edition.wishlists ?? [])
+      .map(({ memberId, wishes }) => ({ memberId, name: nameOf(memberId), mine: memberId === member.id, wishes: wishes.map(savedWishView) }))
+      .toSorted((a, b) => Number(b.mine) - Number(a.mine) || a.name.localeCompare(b.name));
+    return { saved: Boolean(edition.wishlists), lists };
   }),
 
   /** Reorder this group's wishes: put a shown wish at `toIndex` of the group's list. The global order stays. */

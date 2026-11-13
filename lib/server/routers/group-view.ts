@@ -36,8 +36,11 @@ export const groupView = async (
   editions: EditionListItem[]
 ) => {
   const isOrganizer = me.role === 'organizer';
-  const visible = group.members.filter((m) =>
-    isOrganizer ? m.status !== 'removed' : m.status === 'joined' || m.status === 'invited'
+  const participantIds = edition ? drawParticipantIds(group, edition) : [];
+  // A done edition shows everyone who was in it, also those who left the group since (100).
+  const wasIn = new Set(edition?.status === 'done' ? participantIds : []);
+  const visible = group.members.filter(
+    (m) => wasIn.has(m.id) || (isOrganizer ? m.status !== 'removed' : m.status === 'joined' || m.status === 'invited')
   );
   const emails = isOrganizer ? await memberEmails(db, group) : new Map<string, string>();
   const bounced = isOrganizer ? await suppressedEmails(db, [...emails.values()]) : new Set<string>();
@@ -91,7 +94,7 @@ export const groupView = async (
       reveal: edition.reveal.enabled,
       hasPreviousEdition: Boolean(edition.previousEditionId),
       calendarSequence: edition.calendarSequence ?? 0,
-      participantIds: drawParticipantIds(group, edition),
+      participantIds,
     },
     organizer: isOrganizer
       ? {

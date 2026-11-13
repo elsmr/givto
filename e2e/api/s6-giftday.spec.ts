@@ -137,7 +137,9 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
   await test.step('once the edition is done: no shuffling, and the reveal is out without the presenter', async () => {
     await setStatus('done');
     expect(code(await ann.trpc.mutate('giftday.shuffle', edition))).toBe('EDITION_CLOSED');
-    expect(ok(await dan.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
+    const closed = ok(await dan.trpc.query('giftday.get', edition)).reveal;
+    expect(closed.revealed, 'no big reveal').toBe(false);
+    expect(closed.pairs, 'but a done edition shows who gave to whom (100)').toHaveLength(5);
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: true }));
     expect(ok(await dan.trpc.query('giftday.get', edition)).reveal.revealed).toBe(true);
     expect((await editionOf(db, slug)).reveal.revealedAt).toBeUndefined();

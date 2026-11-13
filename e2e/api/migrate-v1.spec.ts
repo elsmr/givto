@@ -141,7 +141,8 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       const [seen] = callAs(db, group.members.find((m) => m.id === santaId)!.userId!, [
         { path: 'claim.gifteeWishlist', input: { groupSlug: newerSlug, editionNumber: 1 } },
       ]);
-      expect(seen.wishes.map((w: { title: string }) => w.title)).toEqual(['BOARD GAME', 'Scarf']);
+      // Done before wishlists were kept (100): not today's list.
+      expect(seen).toMatchObject({ saved: false, wishes: [] });
     });
 
     await test.step('edge wishes, a user in no group with and without wishes, a wishlist outside the group', async () => {

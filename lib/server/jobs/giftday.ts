@@ -7,6 +7,7 @@ import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
 import { guessesOf, santaStepOn } from '../guess/guesses';
 import { log } from '../log';
+import { saveWishlists } from '../wishlist/wish-view';
 import { isRevealed } from '../routers/giftday-view';
 
 /** UTC+14: no edition anywhere reaches its gift day before the local date here. */
@@ -75,7 +76,7 @@ export const runGiftDayTransitions = async (db: Collections, now: Date, editionI
       { $set: { status: next, ...changedAt, ...order, updatedAt: now } }
     );
     if (result.modifiedCount === 0) continue;
-    if (next === 'done') await saveResults(db, edition, now);
+    if (next === 'done') await Promise.all([saveResults(db, edition, now), saveWishlists(db, group, edition)]);
     moved[next].push(edition._id);
   }
   if (moved.giftday.length + moved.done.length > 0) {

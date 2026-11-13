@@ -104,6 +104,7 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
       { $or: [{ 'results.points.memberId': mine }, { 'results.nailedIds': mine }] },
       { $pull: { 'results.points': { memberId: mine }, 'results.nailedIds': mine } }
     ),
+    db.editions.updateMany({ 'wishlists.memberId': mine }, { $pull: { wishlists: { memberId: mine } } }),
   ]);
   await db.wishes.deleteMany({ ownerId: user.id });
 

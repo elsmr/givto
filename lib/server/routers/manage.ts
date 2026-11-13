@@ -9,6 +9,7 @@ import { AppError } from '../errors';
 import { newUnwrapOrder, saveResults } from '../jobs/giftday';
 import { currentEdition } from '../membership';
 import { organizerEditionProcedure, router } from '../trpc';
+import { saveWishlists } from '../wishlist/wish-view';
 
 /** Each action is only offered in its status: another one means it isn't there yet, or it just changed. */
 const wrongStatus = ({ status }: Edition) =>
@@ -63,10 +64,10 @@ const toGiftDayToday = async (db: Collections, group: Group, edition: Edition, f
  * drawn or giftday → done now (finish gift day, or before a new edition starts, 77). A gift day
  * still ahead becomes today, so retention and the "what you got" to-do follow the real end.
  */
-export const finishEdition = async (db: Collections, edition: Edition, timeZone: string) => {
+export const finishEdition = async (db: Collections, group: Group, edition: Edition) => {
   if (!isDrawn(edition)) throw wrongStatus(edition);
   const now = new Date();
-  const today = todayIn(timeZone, now);
+  const today = todayIn(group.timeZone, now);
   const saved = await db.editions.updateOne(
     { _id: edition._id, status: edition.status },
     {
@@ -79,7 +80,7 @@ export const finishEdition = async (db: Collections, edition: Edition, timeZone:
     }
   );
   if (saved.matchedCount === 0) throw new AppError('EDITION_CHANGED');
-  await saveResults(db, edition, now);
+  await Promise.all([saveResults(db, edition, now), saveWishlists(db, group, edition)]);
 };
 
 /**
@@ -96,7 +97,7 @@ export const manageRouter = router({
   /** giftday → done now, without waiting for the next day. */
   finishGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
     if (ctx.edition.status !== 'giftday') throw wrongStatus(ctx.edition);
-    await finishEdition(ctx.db, ctx.edition, ctx.group.timeZone);
+    await finishEdition(ctx.db, ctx.group, ctx.edition);
     return { ok: true };
   }),
 

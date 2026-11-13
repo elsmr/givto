@@ -76,6 +76,14 @@
     "cancel": "Keep it",
     "got": "Got it"
   },
+  "edition": {
+    "intro": "Everyone's wishlist as it was when this Secret Santa ended.",
+    "mine": "My wishlist",
+    "title": "{name}'s wishlist",
+    "empty": "No wishes.",
+    "not-saved": "This Secret Santa ended before Givto kept wishlists, so there's nothing to look back on here.",
+    "not-in": "Only people who were in this Secret Santa see its wishlists."
+  },
   "group": {
     "title": "My wishlist in this group",
     "hide": "Hide “{title}” in this group",
@@ -93,7 +101,8 @@
     "taken": "Taken",
     "taken-hint": "Someone else is getting this one.",
     "bought": "Bought",
-    "gone": "No longer on the list"
+    "gone": "No longer on the list",
+    "not-saved": "This Secret Santa ended before Givto kept wishlists."
   },
   "got-gift": {
     "private": "Only you see this. {name} never does; on gift day the presenter only knows how many gifts to unwrap.",

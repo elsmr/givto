@@ -11,8 +11,6 @@ export const retention = {
   sessionDays: 60,
   /** Claims, gifts marked, guesses, tips, questions and nudges, counted from gift day. */
   editionMessagesMonths: 3,
-  /** The draw stays until the next edition is drawn (avoid last year's pairs), at most this long. */
-  drawMaxMonths: 24,
   /** Groups without edition activity; deleted after an email warning. */
   inactiveGroupMonths: 24,
   /** Sentry keeps errors 30 days on the free Developer plan; paid plans keep them 90. Raise this when upgrading. */
@@ -21,4 +19,4 @@ export const retention = {
   sentEmailsDays: 400,
 };
 
-export const privacyUpdatedOn = '2026-11-11';
+export const privacyUpdatedOn = '2026-11-13';
