@@ -12,11 +12,12 @@ import { DisclosureCard } from '@/components/ui/disclosure-card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { IconTile, type Tone } from '@/components/ui/icon-tile';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { ProgressRow } from '@/components/ui/progress-row';
 import { SettingsGroup, SettingsRow, settingsHelpId } from '@/components/ui/settings-group';
 import { Switch } from '@/components/ui/switch';
 import { StatCard } from '@/components/ui/stat-card';
 import { toast } from '@/components/ui/toast';
-import { CalendarDays, Gift, Heart, History, PenLine, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { CalendarDays, Gift, Heart, History, Mailbox, PenLine, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
 import { Captioned, StyleguideRow, StyleguideSection } from './styleguide-section';
 
 const tones: { tone: Tone; icon: LucideIcon }[] = [
@@ -101,6 +102,11 @@ export const StatCardsSection = () => (
         />
       </Captioned>
     </div>
+    <StyleguideRow label="ProgressRow: an organizer's done count, in a <ul>">
+      <ul className="w-full max-w-md">
+        <ProgressRow icon={Mailbox} tone="yellow" title="Addresses" value="4/6" detail="Still missing: Bob and Eve." />
+      </ul>
+    </StyleguideRow>
   </StyleguideSection>
 );
 

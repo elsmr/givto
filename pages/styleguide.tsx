@@ -158,6 +158,6 @@ export default function StyleguidePage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['dashboard', 'group']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['dashboard', 'group']) },
 });

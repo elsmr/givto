@@ -126,19 +126,6 @@ function Field({
   );
 }
 
-function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="field-content"
-      className={cn(
-        'group/field-content flex flex-1 flex-col gap-0.5 leading-snug',
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
 // The (?) sits next to the label, not in it: a button inside a <label> is invalid HTML.
 function FieldLabel({
   className,
@@ -168,19 +155,6 @@ function FieldLabel({
     </div>
   ) : (
     label
-  );
-}
-
-function FieldTitle({ className, ...props }: React.ComponentProps<'div'>) {
-  return (
-    <div
-      data-slot="field-label"
-      className={cn(
-        'flex w-fit items-center gap-2 text-sm font-bold group-data-[disabled=true]/field:opacity-50',
-        className,
-      )}
-      {...props}
-    />
   );
 }
 
@@ -293,6 +267,4 @@ export {
   FieldLegend,
   FieldSeparator,
   FieldSet,
-  FieldContent,
-  FieldTitle,
 };

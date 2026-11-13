@@ -42,6 +42,8 @@ function Button({
   return (
     <ButtonPrimitive
       data-slot="button"
+      // Disabled while pending keeps focus on the button instead of dropping it to <body>.
+      focusableWhenDisabled
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

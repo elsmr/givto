@@ -20,6 +20,6 @@ export default function NewSecretSantaPage() {
   );
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale }) => ({
-  props: { messages: await loadMessages(locale, ['create', 'join', 'group']) },
+export const getStaticProps: GetStaticProps = async () => ({
+  props: { messages: await loadMessages('en', ['create', 'join', 'group']) },
 });

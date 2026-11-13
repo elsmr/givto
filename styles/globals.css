@@ -97,6 +97,13 @@
     scroll-behavior: smooth;
   }
 
+  /* Keeps focused fields clear of the sticky bottom app nav on phones (WCAG 2.4.11). */
+  @media (width < 48rem) {
+    html {
+      scroll-padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+  }
+
   h1,
   h2,
   h3,
@@ -114,6 +121,11 @@
   :focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 3px;
+  }
+
+  /* The purple ring is under 3:1 on these fills; dark mode has its own rule below. */
+  :root:not([data-theme='dark']) :is(.bg-coral, .bg-mint, .bg-primary-muted) {
+    --color-focus: #111111;
   }
 
   /* Tailwind v4 leaves buttons on the default cursor. */
