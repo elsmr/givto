@@ -2,6 +2,7 @@
   "close": "Close",
   "close-toast": "Close notification",
   "loading": "Loading…",
+  "notifications": "Notifications",
   "field": {
     "optional": "optional",
     "more-info": "More info"

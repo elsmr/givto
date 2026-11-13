@@ -29,9 +29,11 @@ function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
 }
 
 function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
+  const t = useTranslations('ui');
   return (
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
+      aria-label={t('notifications')}
       className={cn(
         'pointer-events-none fixed inset-x-4 bottom-24 z-50 md:bottom-4 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full',
         className,
@@ -134,32 +136,17 @@ function ToastClose({
   );
 }
 
+const toastIcons: Record<string, React.ReactNode> = {
+  success: <CircleCheckIcon aria-hidden="true" />,
+  info: <InfoIcon aria-hidden="true" />,
+  warning: <TriangleAlertIcon aria-hidden="true" />,
+  error: <OctagonXIcon className="text-danger" aria-hidden="true" />,
+  loading: <Loader2Icon className="animate-spin" aria-hidden="true" />,
+};
+
 function ToastIcon({ type }: { type: string | undefined }) {
-  let icon: React.ReactNode = null;
-
-  if (type === 'success') {
-    icon = <CircleCheckIcon aria-hidden="true" />;
-  }
-
-  if (type === 'info') {
-    icon = <InfoIcon aria-hidden="true" />;
-  }
-
-  if (type === 'warning') {
-    icon = <TriangleAlertIcon aria-hidden="true" />;
-  }
-
-  if (type === 'error') {
-    icon = <OctagonXIcon className="text-danger" aria-hidden="true" />;
-  }
-
-  if (type === 'loading') {
-    icon = <Loader2Icon className="animate-spin" aria-hidden="true" />;
-  }
-
-  if (!icon) {
-    return null;
-  }
+  const icon = type && toastIcons[type];
+  if (!icon) return null;
 
   return (
     <span
@@ -206,9 +193,6 @@ function Toaster({
   );
 }
 
-const createToastManager = ToastPrimitive.createToastManager;
-const useToastManager = ToastPrimitive.useToastManager;
-
 export {
   Toaster,
   Toast,
@@ -220,7 +204,5 @@ export {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-  createToastManager,
   toast,
-  useToastManager,
 };
