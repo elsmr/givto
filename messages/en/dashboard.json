@@ -37,8 +37,8 @@
       "action": "Answer"
     },
     "getGift": {
-      "text": "Got your gift yet? Mark it when you have",
-      "action": "Got it"
+      "text": "Bought your gift yet?",
+      "action": "Mark it"
     },
     "joinRequests": {
       "text": "{count, plural, =1 {1 person wants to join} other {# people want to join}}",

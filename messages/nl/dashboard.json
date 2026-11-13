@@ -37,8 +37,8 @@
       "action": "Antwoorden"
     },
     "getGift": {
-      "text": "Heb je je cadeau al? Duid het aan als je het hebt",
-      "action": "Ik heb het"
+      "text": "Heb je je cadeau al gekocht?",
+      "action": "Markeren"
     },
     "joinRequests": {
       "text": "{count, plural, =1 {1 persoon wil meedoen} other {# mensen willen meedoen}}",

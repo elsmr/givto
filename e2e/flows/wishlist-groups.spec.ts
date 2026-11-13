@@ -47,7 +47,7 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     const pick = tab.getByRole('region', { name: 'Or add one from your wishlist' });
     await expect(pick.getByRole('button')).toHaveCount(2);
     await pick.getByRole('button', { name: 'Add “Cookbook” to this group' }).click();
-    await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends.')).toBeVisible();
+    await expect(tab.getByRole('listitem').filter({ hasText: 'Cookbook' }).getByText('Also in Friends')).toBeVisible();
     await expect(pick.getByRole('button')).toHaveText(['Wool socks']);
     await expect.poll(async () => ok(await olive.trpc.query('wish.groupView', { groupSlug: family.slug })).filter((wish) => wish.shown).map((wish) => wish.title)).toEqual(['Cookbook']);
   });
@@ -90,12 +90,11 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     await signInPage(familySanta, family.santa);
     const wishlist = await openGifteeWishlist(familySanta, family.slug);
     await expect(wishTitles(wishlist)).toHaveText(['Cookbook']);
-    await expect(wishlist.getByText('Someone else is getting this one.')).toBeVisible();
+    await expect(wishlist.getByText('Taken', { exact: true })).toBeVisible();
     await expect(wishlist.getByRole('button', { name: /Dibs on/ })).toHaveCount(0);
   });
 
-  // "Also in Friends." says Santas "see each other's Dibs!": the words, not a claim.
-  const claimText = /Dibs(?!!, but)|Taken|Someone else is getting|No longer on the list/;
+  const claimText = /Dibs|Taken|No longer on the list/;
   await test.step('Olive never sees a claim', async () => {
     for (const path of ['/wishlist', `/g/${family.slug}#wishlist`, `/g/${friends.slug}#wishlist`]) {
       await page.goto(path);

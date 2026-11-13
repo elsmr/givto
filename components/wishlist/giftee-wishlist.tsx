@@ -1,3 +1,4 @@
+import { LoadFailed } from '@/components/shell/load-failed';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,14 +23,16 @@ interface GifteeWishlistProps {
 /** "Your giftee's wishlist" with Dibs!, then tips from others and your questions. Renders nothing before the draw or when you're not in it. */
 export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps) => {
   const t = useTranslations('wishlist.giftee');
+  const tWishlist = useTranslations('wishlist');
   const trpc = useTRPC();
   const list = useQuery(trpc.claim.gifteeWishlist.queryOptions({ groupSlug, editionNumber }));
-  // What I marked as bought (63); the same query as the "I've got my gift" card.
+  // What I marked as bought (63); the same query as the "I've bought the gift" button.
   const gift = useQuery({ ...trpc.gift.mine.queryOptions({ groupSlug, editionNumber }), enabled: Boolean(list.data?.canClaim) });
   const bought = new Set(gift.data?.marked ? gift.data.wishIds : []);
   const [revealed] = useGifteeRevealed(groupSlug, editionNumber);
 
   if (list.isPending) return <Skeleton className="h-40" />;
+  if (list.isError) return <LoadFailed message={tWishlist('errors.generic')} onRetry={() => void list.refetch()} />;
   // Names the giftee: stays hidden until the reveal card is tapped.
   if (!list.data || !revealed) return null;
   const { giftee, budget, canClaim, wishes } = list.data;

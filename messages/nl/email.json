@@ -55,7 +55,7 @@
     "subject": "{name} wil meedoen met {group}",
     "preheader": "Laat je ze toe? Jij beslist.",
     "title": "Iemand wil meedoen",
-    "body": "{name} wil via de groepslink meedoen met “{group}”. Je wilde nieuwe deelnemers eerst goedkeuren, dus ze wachten op jou.",
+    "body": "{name} gebruikte de link om mee te doen aan “{group}”. Je laat mensen zelf toe, dus ze wachten op jou.",
     "button": "Bekijk de aanvraag"
   },
   "joined": {
@@ -69,7 +69,7 @@
     "subject": "{count, plural, one {{name} doet mee met {group}} other {# mensen doen mee met {group}}}",
     "preheader": "Nu {count, plural, one {# deelnemer} other {# deelnemers}}.",
     "title": "{count, plural, one {Iemand doet mee} other {# mensen doen mee}}",
-    "body": "Sinds gisteren via de groepslink bij “{group}”:",
+    "body": "Sinds gisteren via de link om mee te doen bij “{group}”:",
     "total": "Nu {count, plural, one {doet # persoon} other {doen # mensen}} mee.",
     "button": "Bekijk wie meedoet"
   },
@@ -148,13 +148,13 @@
       "button": "Adres invullen"
     },
     "gift": {
-      "subject": "Heb je je cadeau al?",
+      "subject": "Heb je je cadeau al gekocht?",
       "subject-post": "Verstuur je cadeau vóór {date}",
-      "title": "Heb je je cadeau al?",
+      "title": "Heb je je cadeau al gekocht?",
       "title-post": "Tijd om je cadeau te versturen",
       "body": "Pakjesdag voor “{group}” is {date}. Nog aan het zoeken? Het verlanglijstje van je persoon staat vol ideeën.",
       "body-post": "Je cadeau voor “{group}” moet vóór {postBy} op de post, zodat het er vóór pakjesdag ({date}) is. Het adres staat in Givto.",
-      "mark": "Heb je het al? Tik in Givto op “Ik heb mijn cadeau”, dan herinneren we je er niet meer aan.",
+      "mark": "Al gekocht? Tik in Givto op “Ik heb het cadeau gekocht”, dan herinneren we je er niet meer aan.",
       "button": "Open het verlanglijstje"
     },
     "ready": {

@@ -48,7 +48,7 @@
     "description": "Hopelijk heb je iets leuks gekregen. Duid de wensen aan die je kreeg: ze worden gearchiveerd, zodat niemand ze nog eens koopt.",
     "got-it": "Gekregen",
     "got-it-label": "{title} gekregen",
-    "marked": "Gekregen: {title}",
+    "marked": "“{title}” gekregen",
     "undo": "Ongedaan maken"
   },
   "present": {
