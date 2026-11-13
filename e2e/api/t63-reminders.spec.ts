@@ -123,7 +123,7 @@ test('join digest: the morning after, who joined through the link (not email inv
   expect(dutch.subject).toBe('Bob doet mee met Overzicht');
 
   // Dee organizes too, but turned the digest off.
-  ok(await dee.trpc.mutate('account.setNotifications', { reminders: true, wishlistUpdates: true, santaMessages: true, nextYear: true, joins: false }));
+  ok(await dee.trpc.mutate('account.setNotifications', { reminders: true, wishlistUpdates: true, santaMessages: true, joins: false }));
   const quiet = ok(await create(dee, 'Quiet', 'Dee'));
   ok(await cee.trpc.mutate('join.accept', { groupSlug: quiet.slug, token: quiet.joinToken, name: 'Cee' }));
   await runAt(ann, `${tomorrow}T12:00:00.000Z`, { groupIds: [(await db.groups.findOne({ slug: quiet.slug }))!._id] });

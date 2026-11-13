@@ -10,7 +10,7 @@
     "saved": "Naam opgeslagen",
     "invalid": "Gebruik 1 tot 50 tekens, zonder links of @.",
     "color-label": "Kleur van je avatar",
-    "color-hint": "Meteen opgeslagen, in al je groepen. Tot je er een kiest, kiest elke groep er een voor je.",
+    "color-hint": "Gebruikt in al je groepen.",
     "color-error": "Dat is niet opgeslagen. Probeer het zo opnieuw.",
     "colors": {
       "primary-muted": "Lila",
@@ -21,7 +21,7 @@
   },
   "address": {
     "title": "Postadressen",
-    "description": "Alleen je Santa ziet er een, in een Secret Santa waarbij de cadeaus met de post gaan. Groepen gebruiken je standaardadres, tenzij je er daar een ander kiest.",
+    "description": "Alleen je Santa ziet het, als de cadeaus met de post gaan.",
     "default": "Standaard",
     "make-default": "Als standaard instellen",
     "default-saved": "Standaardadres gewijzigd",
@@ -80,7 +80,6 @@
     "reminders": "Herinneringen voor deadlines en pakjesdag",
     "wishlistUpdates": "Als je persoon het verlanglijstje aanpast of een tip krijgt",
     "santaMessages": "Psst!-hints en vragen van je Santa",
-    "nextYear": "Een jaarlijkse herinnering om het opnieuw te doen (organisatoren)",
     "joins": "Wie via de groepslink meedoet, één keer per dag (organisatoren)",
     "saved": "E-mailinstellingen opgeslagen"
   },

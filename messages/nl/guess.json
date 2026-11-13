@@ -11,12 +11,12 @@
     "so-far": "Gokken tot nu toe"
   },
   "dialog": {
-    "title": "Wie is jouw Santa?",
+    "title": "Wie is wiens Santa?",
     "description": "Een punt voor elk goed geraden paar. Niemand ziet je gokken tot die Santa's op pakjesdag bekend zijn.",
     "yours": "Jouw Santa",
     "cancel": "Nog niet",
     "save": "Bewaar je gokken",
-    "saved": "Gokken bewaard. Je hoort het als jij aan de beurt bent op pakjesdag.",
+    "saved": "Gokken bewaard",
     "row": "Santa van {giftee}",
     "you": "Jij",
     "no-guess": "Geen gok"
@@ -46,9 +46,7 @@
   },
   "settings": {
     "switch": "Raad je Santa",
-    "description": "Iedereen raadt wie aan wie geeft, voor punten. Op pakjesdag toont de presentatie elke Santa, wat iedereen gokte en de ranglijst. Uit: de Santa's blijven geheim.",
-    "on": "Raad je Santa staat aan",
-    "off": "Raad je Santa staat uit: de Santa's blijven geheim"
+    "description": "Iedereen raadt wie wiens Santa is, voor punten. De presentatie toont elke Santa tijdens de beurten."
   },
   "errors": {
     "GUESSING_CLOSED": "Gokken kan niet meer.",

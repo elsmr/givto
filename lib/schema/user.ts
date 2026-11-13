@@ -10,8 +10,6 @@ export const NotificationPrefs = v.object({
   wishlistUpdates: v.optional(v.boolean(), true),
   /** Psst! nudges and questions from your Santa (30, 52). */
   santaMessages: v.optional(v.boolean(), true),
-  /** Yearly "Same again next year" reminder for organizers (33). */
-  nextYear: v.optional(v.boolean(), true),
   /** Organizers: a daily summary of who joined through the group link (63). */
   joins: v.optional(v.boolean(), true),
 });

@@ -17,7 +17,7 @@ export const AvoidPreviousSetting = ({ groupSlug, edition }: { groupSlug: string
   const refresh = useRefreshEdition(groupSlug);
   const setAvoidPrevious = useMutation(
     trpc.settings.setAvoidPrevious.mutationOptions({
-      onSuccess: (_, { enabled }) => toast.add({ title: enabled ? t('avoid-previous.on') : t('avoid-previous.off'), type: 'success' }),
+      onSuccess: () => toast.add({ title: t('saved'), type: 'success' }),
       onError: (error) => toast.add({ title: t(`errors.${settingsErrorKey(error)}`), type: 'error' }),
       onSettled: refresh,
     })

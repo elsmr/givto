@@ -245,7 +245,7 @@ test('after gift day: same again next year, then open the new edition', async ({
     const avoidPrevious = page.getByRole('switch', { name: 'Not the same as last time' });
     await expect(avoidPrevious).toBeChecked();
     await avoidPrevious.click();
-    await expect(page.getByText('Anyone can draw the same person as last time')).toBeVisible();
+    await expect(page.getByText('Saved', { exact: true })).toBeVisible();
     await page.reload();
     await expect(avoidPrevious).not.toBeChecked();
   });

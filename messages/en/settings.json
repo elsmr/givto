@@ -32,9 +32,7 @@
   },
   "avoid-previous": {
     "label": "Not the same as last time",
-    "help": "Nobody draws the person they had last time. Nobody sees who that was, not even you.",
-    "on": "Nobody draws the same person as last time",
-    "off": "Anyone can draw the same person as last time"
+    "help": "Nobody draws the person they had last time. Nobody sees who that was, not even you."
   },
   "people": {
     "title": "People",
@@ -56,9 +54,10 @@
   "keep-apart-drawn": "Names are drawn, so who's kept apart can't change for this edition.",
   "redraw": {
     "title": "Re-draw",
-    "description": "Draw all names again. Everyone may get someone new, and Dibs! of people whose giftee changes are cleared. If people already bought gifts, they'll have to start over.",
+    "description": "Everyone may get someone new.",
     "button": "Re-draw names",
     "confirm-title": "Draw all names again?",
+    "confirm-description": "Draw all names again. Everyone may get someone new, and Dibs! of people whose giftee changes are cleared. If people already bought gifts, they'll have to start over.",
     "confirm": "Yes, re-draw",
     "cancel": "Keep the current draw",
     "done": "Names re-drawn"

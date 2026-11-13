@@ -7,7 +7,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { authErrorKey, type AuthErrorKey } from './auth-error-key';
 import { useCooldown } from './use-cooldown';
 
-const RESEND_AFTER_SECONDS = 60;
+export const RESEND_AFTER_SECONDS = 60;
 
 /** Step two: the emailed code, with resend (after a cooldown) and "use another email". */
 export const CodeForm = ({
@@ -74,7 +74,9 @@ export const CodeForm = ({
             onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
           />
           {error && <FieldError>{t(`errors.${error}`)}</FieldError>}
-          {resent && <p role="status" className="text-sm">{t('check-email.resent')}</p>}
+          <p role="status" className="text-sm empty:hidden">
+            {resent && t('check-email.resent')}
+          </p>
           <FieldDescription id="sign-in-code-hint">{t('check-email.spam')}</FieldDescription>
         </Field>
         <Button type="submit" disabled={busy || otp.length !== 6}>

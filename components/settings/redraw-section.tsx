@@ -39,7 +39,7 @@ export const RedrawSection = ({ group, edition }: { group: GroupData; edition: G
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t('confirm-title')}</DialogTitle>
-            <DialogDescription>{t('description')}</DialogDescription>
+            <DialogDescription>{t('confirm-description')}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose render={<Button variant="neutral" />}>{t('cancel')}</DialogClose>

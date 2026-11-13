@@ -36,7 +36,7 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
 
   return (
     <SettingsGroup id="danger" title={t('danger.title')} icon={TriangleAlert} tone="yellow" collapsible className="bg-coral [--color-muted:var(--color-ink)] [&>summary:hover]:bg-transparent">
-      <SettingsRow label={t('danger.button')} description={t('danger.description')}>
+      <SettingsRow label={t('danger.description')}>
         <Dialog>
           <DialogTrigger render={<Button variant="neutral" />}>{t('danger.button')}</DialogTrigger>
           <DialogContent>

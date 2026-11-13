@@ -32,9 +32,7 @@
   },
   "avoid-previous": {
     "label": "Niet dezelfde persoon als vorige keer",
-    "help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet.",
-    "on": "Niemand krijgt dezelfde persoon als vorige keer",
-    "off": "Iedereen kan dezelfde persoon krijgen als vorige keer"
+    "help": "Niemand krijgt dezelfde persoon als vorige keer. Niemand ziet wie dat was, jij ook niet."
   },
   "people": {
     "title": "Deelnemers",
@@ -56,9 +54,10 @@
   "keep-apart-drawn": "Er is al geloot, dus wie niet samen mag, verandert voor deze editie niet meer.",
   "redraw": {
     "title": "Opnieuw loten",
-    "description": "Loot opnieuw. Iedereen kan iemand anders krijgen; krijg je iemand anders, dan komt wat je al geclaimd had weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
+    "description": "Iedereen kan iemand anders krijgen.",
     "button": "Opnieuw loten",
     "confirm-title": "Opnieuw loten?",
+    "confirm-description": "Loot opnieuw. Iedereen kan iemand anders krijgen; krijg je iemand anders, dan komt wat je al geclaimd had weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
     "confirm": "Ja, opnieuw loten",
     "cancel": "Huidige loting houden",
     "done": "Er is opnieuw geloot"
