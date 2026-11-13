@@ -1,7 +1,7 @@
 {
   "tips": {
     "title": "Tips for someone's Santa",
-    "intro": "Know what someone would love? Leave a tip for their Santa.",
+    "intro": "Only their Santa sees it.",
     "about": "Who is it about?",
     "about-placeholder": "Pick someone",
     "text": "Your tip",
@@ -85,7 +85,6 @@
     "questions-intro": "Your Santa sees your answer. You'll never know who asked.",
     "question-for": "For {name}",
     "answer": "Your answer",
-    "answer-placeholder": "Write your answer",
     "answer-submit": "Send answer",
     "answered": "Your answer"
   },

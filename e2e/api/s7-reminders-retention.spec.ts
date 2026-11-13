@@ -45,7 +45,7 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
     editionDoc(partyGroup, 1, 'drawn', party, { giftDay: { date: today(morningZone), time: '19:30', place: 'The barn' }, draw: circle(party) }),
   ]);
 
-  ok(await bob.trpc.mutate('account.setNotifications', { reminders: false, wishlistUpdates: true, santaMessages: true, nextYear: true }));
+  ok(await bob.trpc.mutate('account.setNotifications', { reminders: false, wishlistUpdates: true, santaMessages: true }));
   await db.emailSuppressions.insertOne({ _id: ann.email, reason: 'bounce', at: new Date() });
   await run('reminders');
   await run('reminders');

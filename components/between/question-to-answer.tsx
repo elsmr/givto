@@ -47,7 +47,6 @@ export const QuestionToAnswer = ({ input, question }: { input: EditionInput; que
               required
               maxLength={1000}
               className="min-h-16"
-              placeholder={t('answer-placeholder')}
               value={text}
               onChange={(event) => setText(event.target.value)}
             />

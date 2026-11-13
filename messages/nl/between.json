@@ -1,14 +1,14 @@
 {
   "tips": {
     "title": "Tips voor iemands Santa",
-    "intro": "Weet je wat iemand leuk zou vinden? Geef hun Santa een tip.",
+    "intro": "Alleen hun Santa ziet je tip.",
     "about": "Over wie gaat het?",
     "about-placeholder": "Kies iemand",
     "text": "Je tip",
     "text-placeholder": "bv. spaart Moomin-mokken, draagt maat M",
     "anonymous": "Anoniem plaatsen",
     "add": "Geef een tip",
-    "added": "Tip bewaard. Alleen de Santa van {name} ziet hem.",
+    "added": "Tip opgeslagen. Alleen de Santa van {name} ziet hem.",
     "mine-title": "Jouw tips",
     "about-name": "Over {name}",
     "anonymous-badge": "Anoniem",
@@ -17,7 +17,7 @@
     "delete": "Verwijderen",
     "delete-label": "Je tip over {name} verwijderen",
     "deleted": "Tip verwijderd",
-    "save": "Bewaren",
+    "save": "Opslaan",
     "cancel": "Annuleren",
     "closed": "Tips zijn gesloten voor deze Secret Santa.",
     "nobody": "Nog niemand om een tip over te geven."
@@ -40,7 +40,7 @@
     "delete": "Verwijderen",
     "delete-label": "Je bericht op het prikbord van {name} verwijderen",
     "deleted": "Bericht verwijderd",
-    "save": "Bewaren",
+    "save": "Opslaan",
     "cancel": "Annuleren",
     "closed": "Dit prikbord is gesloten.",
     "wishes-title": "Verlanglijstje van {name}",
@@ -85,7 +85,6 @@
     "questions-intro": "Je Santa ziet je antwoord. Jij komt nooit te weten wie het vroeg.",
     "question-for": "Voor {name}",
     "answer": "Je antwoord",
-    "answer-placeholder": "Schrijf je antwoord",
     "answer-submit": "Antwoord sturen",
     "answered": "Je antwoord"
   },

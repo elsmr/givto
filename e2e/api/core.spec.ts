@@ -57,7 +57,7 @@ test('sign in with the emailed code; me.get, me.setLocale, reused code, sign-out
     const me = ok(await ann.trpc.query('me.get'));
     expect(me.email).toBe(email);
     expect(me.locale).toBe('nl');
-    expect(me.notifications).toEqual({ reminders: true, wishlistUpdates: true, santaMessages: true, nextYear: true, joins: true });
+    expect(me.notifications).toEqual({ reminders: true, wishlistUpdates: true, santaMessages: true, joins: true });
     expect(readServerLog(), 'procedure lines are logged').toMatch(/me\.get/);
   });
 

@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, ArrowRight, Check, Dices, Gift, Sparkles, VenetianMask } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useId } from 'react';
 import type { usePresenterActions } from './use-presenter-actions';
 
 type PresenterControlsProps = { actions: ReturnType<typeof usePresenterActions>; oneByOne: boolean };
@@ -11,6 +13,7 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
   const t = useTranslations('giftday');
   const tGuess = useTranslations('guess.present');
   const tSwap = useTranslations('giftday.swap');
+  const labelId = useId();
   const { phase, spinStatus, busy, santaToShow } = actions;
   // White elephant (89): the turn ends with an opened gift (or, at the final steal, keeping theirs); steals are on the table.
   const swapTurn = phase === 'turn' && actions.swap;
@@ -38,22 +41,23 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
         {t('present.previous')}
       </Button>
       <form
-        className="flex flex-wrap items-center gap-3"
+        className="flex flex-wrap items-end gap-3"
         onSubmit={(event) => {
           event.preventDefault();
           actions.next();
         }}
       >
         {swapTurn && !swapTurn.final && (
-          <Input
-            type="text"
-            aria-label={tSwap('label')}
-            placeholder={tSwap('label-placeholder')}
-            maxLength={60}
-            value={actions.label}
-            onChange={(event) => actions.setLabel(event.target.value)}
-            className="w-56"
-          />
+          <Field className="w-56">
+            <FieldLabel htmlFor={labelId}>{tSwap('label')}</FieldLabel>
+            <Input
+              id={labelId}
+              type="text"
+              maxLength={60}
+              value={actions.label}
+              onChange={(event) => actions.setLabel(event.target.value)}
+            />
+          </Field>
         )}
         {actions.last && (
           <Button type="button" variant="neutral" size="lg" disabled={busy} onClick={actions.last}>

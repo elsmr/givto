@@ -59,37 +59,36 @@ export const LiveGuess = ({ input, current, result }: LiveGuessProps) => {
   const row = mine.data?.rows.find((r) => r.memberId === current.memberId);
 
   if (!row) return null;
-  if (result) {
-    return (
-      <div aria-live="polite" className="flex flex-col gap-2">
-        <GuessTally tally={result.tally} />
-        {row.santa && <p>{t.rich('card.you-guessed', { guess: row.santa.name, name })}</p>}
-      </div>
-    );
-  }
-  if (!row.open) return null;
   return (
-    <fieldset className="flex flex-col gap-3">
-      <legend className="font-heading text-lg font-bold">{t('live.ask')}</legend>
-      <p className="text-muted">{t('live.hint')}</p>
-      <div className="flex flex-wrap gap-2">
-        {mine.data!.people
-          .filter((person) => person.memberId !== current.memberId)
-          .map((person) => {
-            const picked = row.santa?.memberId === person.memberId;
-            return (
-              <Button
-                key={person.memberId}
-                variant={picked ? 'default' : 'neutral'}
-                aria-pressed={picked}
-                onClick={() => !set.isPending && set.mutate({ ...input, rows: [{ gifteeMemberId: current.memberId, santaMemberId: person.memberId }] })}
-              >
-                {picked && <Check aria-hidden="true" />}
-                {person.name}
-              </Button>
-            );
-          })}
+    <>
+      <div aria-live="polite" className="flex flex-col gap-2 empty:hidden">
+        {result && <GuessTally tally={result.tally} />}
+        {result && row.santa && <p>{t.rich('card.you-guessed', { guess: row.santa.name, name })}</p>}
       </div>
-    </fieldset>
+      {!result && row.open && (
+        <fieldset className="flex flex-col gap-3">
+          <legend className="font-heading text-lg font-bold">{t('live.ask')}</legend>
+          <p className="text-muted">{t('live.hint')}</p>
+          <div className="flex flex-wrap gap-2">
+            {mine.data!.people
+              .filter((person) => person.memberId !== current.memberId)
+              .map((person) => {
+                const picked = row.santa?.memberId === person.memberId;
+                return (
+                  <Button
+                    key={person.memberId}
+                    variant={picked ? 'default' : 'neutral'}
+                    aria-pressed={picked}
+                    onClick={() => !set.isPending && set.mutate({ ...input, rows: [{ gifteeMemberId: current.memberId, santaMemberId: person.memberId }] })}
+                  >
+                    {picked && <Check aria-hidden="true" />}
+                    {person.name}
+                  </Button>
+                );
+              })}
+          </div>
+        </fieldset>
+      )}
+    </>
   );
 };

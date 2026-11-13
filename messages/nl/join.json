@@ -38,11 +38,6 @@
     "send-code": "Stuur me een code"
   },
   "code": {
-    "sent": "We hebben een code van 6 cijfers en een inloglink gestuurd naar {email}. Vul de code in, of klik op de link in de e-mail.",
-    "label": "Code",
-    "help": "Hij werkt één keer en verloopt na 10 minuten.",
-    "resend": "Stuur een nieuwe code",
-    "change-email": "Ander e-mailadres",
     "errors": {
       "rate-limited": "Dat zijn veel codes. Wacht een paar minuten en probeer opnieuw.",
       "code-wrong": "Die code klopt niet. Check de e-mail en probeer opnieuw.",

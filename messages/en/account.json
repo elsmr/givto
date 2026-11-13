@@ -10,7 +10,7 @@
     "saved": "Name saved",
     "invalid": "Use 1 to 50 characters, without links or @.",
     "color-label": "Avatar colour",
-    "color-hint": "Saved at once, in all your groups. Until you pick one, each group picks one for you.",
+    "color-hint": "Used in all your groups.",
     "color-error": "That didn't save. Try again in a moment.",
     "colors": {
       "primary-muted": "Lilac",
@@ -21,7 +21,7 @@
   },
   "address": {
     "title": "Postal addresses",
-    "description": "Only your Santa sees one, in a Secret Santa that sends gifts by post. Groups use your default unless you pick another there.",
+    "description": "Only your Santa sees it, when gifts go by post.",
     "default": "Default",
     "make-default": "Make default",
     "default-saved": "Default address changed",
@@ -80,7 +80,6 @@
     "reminders": "Reminders before deadlines and gift day",
     "wishlistUpdates": "When your giftee changes their wishlist or gets a tip",
     "santaMessages": "Psst! hints and questions from your Santa",
-    "nextYear": "A yearly reminder to do it again (organizers)",
     "joins": "Who joined through the group link, once a day (organizers)",
     "saved": "Email settings saved"
   },

@@ -38,11 +38,6 @@
     "send-code": "Send me a code"
   },
   "code": {
-    "sent": "We sent a 6-digit code and a sign-in link to {email}. Enter the code, or click the link in the email.",
-    "label": "Code",
-    "help": "It works once and expires in 10 minutes.",
-    "resend": "Send a new code",
-    "change-email": "Use another email",
     "errors": {
       "rate-limited": "That's a lot of codes. Wait a few minutes and try again.",
       "code-wrong": "That code isn't right. Check the email and try again.",

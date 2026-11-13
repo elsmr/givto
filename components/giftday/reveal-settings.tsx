@@ -12,6 +12,7 @@ import { useRefreshGiftDay } from './use-refresh-gift-day';
 /** Organizer setting (31), off by default: off again hides the pairs from everyone. */
 export const RevealSetting = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('giftday.reveal');
+  const tSettings = useTranslations('settings');
   const id = useId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -19,7 +20,7 @@ export const RevealSetting = ({ groupSlug, edition }: { groupSlug: string; editi
   const onError = useGiftDayError();
   const setReveal = useMutation(
     trpc.giftday.setReveal.mutationOptions({
-      onSuccess: (_, { enabled }) => toast.add({ title: enabled ? t('on') : t('off'), type: 'success' }),
+      onSuccess: () => toast.add({ title: tSettings('saved'), type: 'success' }),
       onError,
       onSettled: () =>
         Promise.all([queryClient.invalidateQueries({ queryKey: trpc.group.get.queryKey({ groupSlug }) }), refresh()]),

@@ -8,7 +8,7 @@ import { inviteTokenFrom } from '../api/s1-group';
 const enterCode = async (page: Page, email: string, secrets: string[]) => {
   const { code, token } = readSignInMail(await latestMail(email));
   secrets.push(code, token);
-  await page.getByLabel('Code').fill(code);
+  await page.getByLabel('6-digit code').fill(code);
 };
 
 /** Signed out on /new → share screen; returns the join link it shows. */

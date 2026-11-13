@@ -8,19 +8,17 @@ import { useTranslations } from 'next-intl';
 import { useId } from 'react';
 import { useGuessError } from './use-guess-error';
 
-/**
- * Organizer setting (62), on by default: it says plainly that Santas are shown at the turns, so
- * groups that want them secret for good know to switch it off.
- */
+/** Organizer setting (62), on by default: it says plainly that Santas are shown at the turns. */
 export const GuessSetting = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
   const t = useTranslations('guess.settings');
+  const tSettings = useTranslations('settings');
   const id = useId();
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const onError = useGuessError();
   const setEnabled = useMutation(
     trpc.guess.setEnabled.mutationOptions({
-      onSuccess: (_, { enabled }) => toast.add({ title: enabled ? t('on') : t('off'), type: 'success' }),
+      onSuccess: () => toast.add({ title: tSettings('saved'), type: 'success' }),
       onError,
       onSettled: () =>
         Promise.all([

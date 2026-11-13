@@ -11,12 +11,12 @@
     "so-far": "Guesses so far"
   },
   "dialog": {
-    "title": "Who's your Santa?",
+    "title": "Who's whose Santa?",
     "description": "A point for every pair you get right. Nobody sees your guesses until those Santas are shown on gift day.",
     "yours": "Your Santa",
     "cancel": "Not yet",
     "save": "Save guesses",
-    "saved": "Guesses saved. You'll find out at your turn on gift day.",
+    "saved": "Guesses saved",
     "row": "{giftee}'s Santa",
     "you": "You",
     "no-guess": "No guess"
@@ -46,9 +46,7 @@
   },
   "settings": {
     "switch": "Guess your Santa",
-    "description": "Everyone guesses who gives to whom, for points. On gift day the presenter shows each Santa, everyone's guesses and the leaderboard. Off: Santas stay secret.",
-    "on": "Guess your Santa is on",
-    "off": "Guess your Santa is off: Santas stay secret"
+    "description": "Everyone guesses who's whose Santa, for points. The presenter shows each Santa at their turn."
   },
   "errors": {
     "GUESSING_CLOSED": "Guessing is closed.",
