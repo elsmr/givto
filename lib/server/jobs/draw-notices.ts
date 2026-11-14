@@ -11,7 +11,7 @@ import { memberRecipient } from '../mail/recipients';
 import { groupUrl, inviteUrl } from '../mail/urls';
 import { hashToken, randomToken } from '../membership';
 import { runEach } from './run-each';
-import { startWishlistSnapshot } from './wishlist-changes';
+import { startWishlistSnapshot } from '../wishlist/wishlist-changes';
 
 /**
  * "Names are drawn" to every Santa once, and "you have a new giftee" when a Santa's giftee

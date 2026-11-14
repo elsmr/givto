@@ -3,16 +3,17 @@ import { findStuckGivers } from '../../draw';
 import { toExclusions } from '../../exclusions';
 import { todayIn } from '../../local-date';
 import { Id, PersonName, Price, TimeZone } from '../../schema/common';
-import { defaultEditionTitle, drawsNames, EditionKind, GiftDay, isDrawn, isPosted, type Edition } from '../../schema/edition';
+import { defaultEditionTitle, drawsNames, EditionKind, GiftDay, isDrawn, type Edition } from '../../schema/edition';
 import { ExchangeMode, GroupName, MAX_MEMBERS, MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { drawParticipantIds } from '../draw/rules';
+import { compactGiftDay, compactPrice } from '../edition/fields';
 import { AppError } from '../errors';
+import { groupView } from '../group/group-view';
 import { currentEdition, memberProfile, randomToken } from '../membership';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, memberProcedure, organizerProcedure, router } from '../trpc';
-import { groupView } from './group-view';
 
 const GROUPS_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 10 };
 
@@ -33,20 +34,6 @@ const KeepApartInput = v.object({
     v.array(v.pipe(v.array(Id), v.minLength(2), v.maxLength(MAX_MEMBERS))),
     v.maxLength(MAX_MEMBERS * MAX_MEMBERS)
   ),
-});
-
-/** The call link only when gifts go by post (87). */
-export const compactGiftDay = ({ date, time, place, callUrl }: GiftDay, exchangeMode: ExchangeMode): GiftDay => ({
-  date,
-  ...(time && { time }),
-  ...(place && { place }),
-  ...(callUrl && isPosted({ exchangeMode }) && { callUrl }),
-});
-
-export const compactPrice = ({ currency, amount, maxAmount }: Price): Price => ({
-  currency,
-  amount,
-  ...(maxAmount !== undefined && { maxAmount }),
 });
 
 export const groupRouter = router({

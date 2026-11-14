@@ -3,8 +3,10 @@ import { drawsNames, isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { swapState, type SwapState } from '../../swap-turns';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
+import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
-import { guessingOn, santaStepOn } from '../guess/guesses';
+import { giftCounts } from '../gift/marks';
+import { guessesOf, guessingOn, santaStepOn } from '../guess/guesses';
 
 /**
  * The big reveal (31), when it's on: out once the presenter revealed it on gift day, or when gift
@@ -138,3 +140,7 @@ export const giftDayView = (group: Group, edition: Edition, counts: GiftCounts, 
     guessing: guessing && { ...guessing, results: revealed ? byGiftee(guessing.results) : guessing.results },
   };
 };
+
+/** giftday.get, also pushed by the gift day stream (97). */
+export const memberView = async (db: Collections, group: Group, edition: Edition) =>
+  giftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition));

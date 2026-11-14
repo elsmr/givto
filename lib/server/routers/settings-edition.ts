@@ -5,9 +5,9 @@ import { LocalDate, MultiLine, Price } from '../../schema/common';
 import { checkEditionDates, drawsNames, EditionKind, EditionTitle, GiftDay, isBeforeDraw, type Edition } from '../../schema/edition';
 import { ExchangeMode, MIN_PARTICIPANTS } from '../../schema/group';
 import { allRules, drawParticipantIds, drawRules } from '../draw/rules';
+import { compactGiftDay, compactPrice } from '../edition/fields';
 import { AppError } from '../errors';
 import { organizerEditionProcedure } from '../trpc';
-import { compactGiftDay, compactPrice } from './group';
 
 /** Scheduled draws run at this local time on the draw date. */
 export const DRAW_TIME = '09:00';

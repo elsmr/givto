@@ -3,7 +3,7 @@ import superjson from 'superjson';
 import type { Edition } from '../schema/edition';
 import type { Collections } from './db';
 import { log } from './log';
-import { memberView } from './routers/giftday';
+import { memberView } from './giftday/giftday-view';
 
 interface Subscriber {
   /** The member view, superjson. */

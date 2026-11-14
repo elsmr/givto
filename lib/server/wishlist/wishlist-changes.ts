@@ -1,5 +1,5 @@
 import { newId, type Collections } from '../db';
-import { visibleWishes } from '../wishlist/wish-view';
+import { visibleWishes } from './wish-view';
 import type { Member } from '../../schema/member';
 import type { Wish } from '../../schema/wish';
 

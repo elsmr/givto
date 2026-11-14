@@ -5,9 +5,9 @@ import { isDuplicateKey, newId } from '../db';
 import { santaAndGiftee } from '../draw/rules';
 import { AppError } from '../errors';
 import { dropGiftWish } from '../gift/marks';
-import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
 import { santaWishes, savedWishView, toWishView, visibleWishes } from '../wishlist/wish-view';
+import { markGifteeWishlistSeen } from '../wishlist/wishlist-changes';
 
 const WishInput = v.object({ wishId: Id });
 

@@ -3,13 +3,13 @@ import { drawsNames, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '..
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
+import { newUnwrapOrder } from '../edition/status';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
+import { memberView, presenterGiftDayView } from '../giftday/giftday-view';
+import { AdvanceInput, advanceUnwrapping } from '../giftday/unwrap-advance';
 import { guessesOf } from '../guess/guesses';
-import { newUnwrapOrder } from '../jobs/giftday';
 import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
-import { giftDayView, presenterGiftDayView } from './giftday-view';
-import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
 const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
   groupName: group.name,
@@ -18,10 +18,6 @@ const presenterView = async (db: Collections, group: Group, edition: Edition) =>
   status: edition.status,
   ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
 });
-
-/** giftday.get, also pushed by the gift day stream (97). */
-export const memberView = async (db: Collections, group: Group, edition: Edition) =>
-  giftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition));
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({

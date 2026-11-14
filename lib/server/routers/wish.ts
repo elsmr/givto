@@ -7,11 +7,11 @@ import { WishFields, type Wish } from '../../schema/wish';
 import { newId, type Collections } from '../db';
 import { AppError } from '../errors';
 import { deleteWishImage, findWishImage } from '../import/wish-images';
-import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { drawParticipantIds } from '../draw/rules';
 import { authedProcedure, editionProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
 import { activeGroupsOf, inArchive, listWishes, savedWishView, toWishView, visibleWishes, wishOwnerId } from '../wishlist/wish-view';
+import { markWishlistChanged } from '../wishlist/wishlist-changes';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;

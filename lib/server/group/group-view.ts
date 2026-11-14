@@ -3,10 +3,10 @@ import { champions } from '../../guess-results';
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
+import { boardPeople } from '../between/boards';
 import type { Collections } from '../db';
 import { drawParticipantIds } from '../draw/rules';
 import { guessingOn } from '../guess/guesses';
-import { boardPeople } from './board';
 import { suppressedEmails } from '../mail/suppression';
 
 /** Organizer only (privacy rules): emails of accounts, or of pending email invites. */

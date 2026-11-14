@@ -7,7 +7,7 @@ import { groupUrl } from '../mail/urls';
 import { visibleWishes } from '../wishlist/wish-view';
 import { editionContext } from './edition-context';
 import { runEach } from './run-each';
-import { toSnapshot } from './wishlist-changes';
+import { toSnapshot } from '../wishlist/wishlist-changes';
 import { wishlistDiff } from './wishlist-diff';
 
 /**
