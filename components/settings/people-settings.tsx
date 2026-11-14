@@ -72,7 +72,7 @@ const PeopleList = ({ group, edition }: { group: GroupData; edition: GroupEditio
     <div className="flex flex-col gap-3">
       {!beforeDraw && <p className="text-sm text-muted">{!drawsNames(edition) ? t('people.locked') : t('people.drawn')}</p>}
       {setParticipants.error && <FieldError>{t(`errors.${settingsErrorKey(setParticipants.error)}`)}</FieldError>}
-      <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
+      <ul className="flex flex-col divide-y-2 divide-dashed divide-outline">
         {people.map((person) => (
           <PersonRow
             key={person.id}

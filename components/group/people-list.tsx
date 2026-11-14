@@ -21,7 +21,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
         </IconCardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        <ul className="flex flex-col divide-y-2 divide-dashed divide-ink/30">
+        <ul className="flex flex-col divide-y-2 divide-dashed divide-outline">
           {people.map((person) => (
             <li key={person.id} className="flex items-center gap-3 py-2.5">
               <PersonAvatar id={person.id} name={person.name} color={person.avatarColor} />
