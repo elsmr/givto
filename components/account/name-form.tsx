@@ -1,3 +1,4 @@
+import { appErrorCode } from '@/components/group/app-error-code';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -22,7 +23,7 @@ export const NameForm = ({ name, email }: { name: string; email: string }) => {
       },
     })
   );
-  const invalid = setName.error?.data?.appCode === 'INVALID_INPUT';
+  const invalid = appErrorCode(setName.error) === 'INVALID_INPUT';
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

@@ -89,11 +89,11 @@
     "answered": "Je antwoord"
   },
   "errors": {
-    "generic": "Er ging iets mis. Probeer het opnieuw.",
-    "invalid": "Controleer de tekst en probeer het opnieuw.",
-    "rate-limited": "Dat is de limiet voor nu. Probeer het later opnieuw.",
-    "closed": "Deze Secret Santa is daarvoor gesloten.",
-    "gone": "Dit is niet meer beschikbaar. Vernieuw de pagina.",
-    "wrong-kind": "Hun verlanglijstje is net veranderd. Vernieuw en probeer het opnieuw."
+    "INTERNAL": "Er ging iets mis. Probeer het opnieuw.",
+    "INVALID_INPUT": "Controleer de tekst en probeer het opnieuw.",
+    "RATE_LIMITED": "Dat is de limiet voor nu. Probeer het later opnieuw.",
+    "EDITION_CLOSED": "Deze Secret Santa is daarvoor gesloten.",
+    "NOT_FOUND": "Dit is niet meer beschikbaar. Vernieuw de pagina.",
+    "WRONG_NUDGE_KIND": "Hun verlanglijstje is net veranderd. Vernieuw en probeer het opnieuw."
   }
 }

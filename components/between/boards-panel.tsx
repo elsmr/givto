@@ -154,7 +154,7 @@ export const BoardsPanel = ({ input }: { input: EditionInput }) => {
   const trpc = useTRPC();
   const list = useQuery(trpc.board.list.queryOptions(input));
   if (list.isPending) return <Skeleton className="h-40" />;
-  if (list.isError) return <LoadFailed message={tErrors('generic')} onRetry={() => void list.refetch()} />;
+  if (list.isError) return <LoadFailed message={tErrors('INTERNAL')} onRetry={() => void list.refetch()} />;
   const view = list.data;
   if (!view) return null;
 

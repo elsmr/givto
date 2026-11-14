@@ -89,11 +89,11 @@
     "answered": "Your answer"
   },
   "errors": {
-    "generic": "Something went wrong. Try again.",
-    "invalid": "Check the text and try again.",
-    "rate-limited": "That's the limit for now. Try again later.",
-    "closed": "This Secret Santa is closed for that.",
-    "gone": "This is no longer available. Refresh the page.",
-    "wrong-kind": "Their wishlist just changed. Refresh and try again."
+    "INTERNAL": "Something went wrong. Try again.",
+    "INVALID_INPUT": "Check the text and try again.",
+    "RATE_LIMITED": "That's the limit for now. Try again later.",
+    "EDITION_CLOSED": "This Secret Santa is closed for that.",
+    "NOT_FOUND": "This is no longer available. Refresh the page.",
+    "WRONG_NUDGE_KIND": "Their wishlist just changed. Refresh and try again."
   }
 }

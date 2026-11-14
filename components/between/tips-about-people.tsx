@@ -18,7 +18,7 @@ export const TipsAboutPeople = ({ input }: { input: EditionInput }) => {
   const authored = useQuery(trpc.tip.authored.queryOptions(input));
 
   if (authored.isPending) return <Skeleton className="h-48" />;
-  if (authored.isError) return <LoadFailed message={tErrors('generic')} onRetry={() => void authored.refetch()} />;
+  if (authored.isError) return <LoadFailed message={tErrors('INTERNAL')} onRetry={() => void authored.refetch()} />;
   if (!authored.data) return null;
   const { canWrite, people, tips } = authored.data;
 
