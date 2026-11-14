@@ -2,8 +2,9 @@ import { phaseOf } from '@/components/group/edition-phase';
 import { PhaseStepper } from '@/components/group/phase-stepper';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardDivider, CardHeader } from '@/components/ui/card';
-import { ArrowRight, Gift } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
+import { ArrowRight, CalendarDays, Gift } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { GiftDayCountdown } from './gift-day-label';
 import type { DashboardGroup } from './group-card';
@@ -11,8 +12,11 @@ import type { DashboardGroup } from './group-card';
 /** The group whose gift day comes first, big: countdown, where it is, the way in. */
 export const UpNextCard = ({ group }: { group: DashboardGroup }) => {
   const t = useTranslations('dashboard');
+  const locale = useLocale();
   const { edition } = group;
   const href = `/g/${group.slug}`;
+  // The countdown says how long; the day itself goes here. Past or missing dates already show as a sentence above.
+  const giftDay = edition?.giftDay && daysBetween(todayIn(edition.timeZone), edition.giftDay) >= 0 ? edition.giftDay : undefined;
 
   return (
     <Card className="shadow-brand!">
@@ -27,7 +31,13 @@ export const UpNextCard = ({ group }: { group: DashboardGroup }) => {
         </CardContent>
       )}
       <CardDivider />
-      <CardContent className="flex flex-wrap justify-end gap-3">
+      <CardContent className="flex flex-wrap items-center justify-end gap-3">
+        {giftDay && (
+          <p className="mr-auto flex items-center gap-2 font-semibold">
+            <CalendarDays aria-hidden="true" className="size-5 shrink-0" />
+            {formatLocalDate(giftDay, locale)}
+          </p>
+        )}
         {edition?.gifteeReady && (
           <Link href={`${href}#giftee`} className={buttonVariants({ variant: 'neutral' })}>
             <Gift aria-hidden="true" />
