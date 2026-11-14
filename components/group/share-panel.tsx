@@ -6,13 +6,14 @@ import { withTooltip } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { Check, Copy, QrCode, Share2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { JoinQrCode } from './join-qr-code';
 import { joinUrl } from './join-url';
 
 type SharePanelProps = { slug: string; token: string; groupName: string; primary?: boolean };
 
 const segment = 'h-auto min-h-11 shrink-0 border-0 border-l-2 border-outline';
+const subscribeNever = () => () => {};
 
 /**
  * The join link (45) as one row with Copy, QR (in a popover) and Share (where the browser can) attached.
@@ -20,11 +21,11 @@ const segment = 'h-auto min-h-11 shrink-0 border-0 border-l-2 border-outline';
  */
 export const SharePanel = ({ slug, token, groupName, primary = false }: SharePanelProps) => {
   const t = useTranslations('group.share');
-  const [canShare, setCanShare] = useState(false);
+  // No share button on the server and first render, so hydration matches.
+  const canShare = useSyncExternalStore(subscribeNever, () => typeof navigator.share === 'function', () => false);
   const [copied, setCopied] = useState(false);
   const url = joinUrl(slug, token);
 
-  useEffect(() => setCanShare(typeof navigator.share === 'function'), []);
   useEffect(() => {
     if (!copied) return;
     const timer = setTimeout(() => setCopied(false), 2000);
