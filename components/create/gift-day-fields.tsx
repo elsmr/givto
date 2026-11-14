@@ -57,9 +57,9 @@ export const ExchangeField = ({ draft, onChange }: FieldsProps) => {
 
   if (!asked && draft.exchangeMode === 'inPerson') {
     return (
-      <button type="button" className="w-fit text-sm text-muted underline underline-offset-4 hover:text-ink" onClick={() => setAsked(true)}>
+      <Button type="button" variant="ghost" size="sm" className="w-fit" onClick={() => setAsked(true)}>
         {t('ask')}
-      </button>
+      </Button>
     );
   }
   return (

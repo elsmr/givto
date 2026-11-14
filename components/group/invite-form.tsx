@@ -91,7 +91,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
     <form onSubmit={submit} className="flex flex-col gap-3">
       <Field data-invalid={notAnEmail ? 'true' : undefined}>
         <FieldLabel htmlFor={id}>{t('label')}</FieldLabel>
-        <div className="flex min-h-11 flex-wrap items-center gap-1.5 border-2 border-control bg-surface p-1.5 focus-within:outline-3 focus-within:outline-offset-3 focus-within:outline-focus">
+        <div className="flex min-h-11 flex-wrap items-center gap-1.5 border-2 border-control bg-surface p-1.5 has-aria-invalid:border-danger focus-within:border-focus focus-within:shadow-[inset_0_0_0_1px_var(--color-focus)]">
           {emails.map((email) => (
             <span
               key={email}
@@ -103,7 +103,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
               <span className="truncate">{email}</span>
               {withTooltip(
                 t('remove', { email }),
-                <button type="button" className="grid size-6 shrink-0 place-items-center hover:bg-surface" onClick={() => remove(email)}>
+                <button type="button" className="relative grid size-6 shrink-0 place-items-center after:absolute after:-inset-2 hover:bg-surface" onClick={() => remove(email)}>
                   <X aria-hidden="true" className="size-4" />
                 </button>
               )}
