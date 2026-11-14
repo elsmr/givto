@@ -2,7 +2,7 @@ import { createHash, randomInt, timingSafeEqual } from 'node:crypto';
 import { ObjectId } from 'mongodb';
 import * as v from 'valibot';
 import { DeleteAccountEmail, deleteAccountSubject } from '../../../emails/delete-account';
-import { Id, PersonName } from '../../schema/common';
+import { Id, Locale, PersonName } from '../../schema/common';
 import { AvatarColor, MAX_ADDRESSES, NotificationPrefs, PostalAddress } from '../../schema/user';
 import { deleteAccount } from '../account/delete';
 import { exportAccount } from '../account/export';
@@ -21,6 +21,26 @@ const ownAccount = (userId: string) => ({ _id: new ObjectId(userId) });
 
 /** The signed-in person's account (55): profile, preferences, address book (80), their groups, export and deletion. */
 export const accountRouter = router({
+  /** The signed-in person's own profile. */
+  get: authedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.users.findOne(ownAccount(ctx.user.id));
+    if (!user) throw new AppError('UNAUTHENTICATED');
+    return {
+      id: ctx.user.id,
+      name: user.name,
+      email: user.email,
+      locale: user.locale,
+      notifications: v.parse(NotificationPrefs, user.notifications ?? {}),
+      avatarColor: user.avatarColor,
+    };
+  }),
+
+  /** Remembers a manual language switch on the account (signed out, the NEXT_LOCALE cookie does this). */
+  setLocale: authedProcedure.input(v.object({ locale: Locale })).mutation(async ({ ctx, input }) => {
+    await ctx.db.users.updateOne(ownAccount(ctx.user.id), { $set: { locale: input.locale, updatedAt: new Date() } });
+    return { locale: input.locale };
+  }),
+
   groups: authedProcedure.query(({ ctx }) => accountGroups(ctx.db, ctx.user.id)),
 
   /** Every group shows the new name too: members carry a copy of the account's. */

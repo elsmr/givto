@@ -18,7 +18,7 @@ export const useWishMutations = () => {
   const create = useMutation(trpc.wish.create.mutationOptions({ onSuccess: refresh }));
   const update = useMutation(trpc.wish.update.mutationOptions({ onSuccess: refresh }));
   const archive = useMutation(trpc.wish.archive.mutationOptions({ onSuccess: refresh }));
-  const receive = useMutation(trpc.giftday.markReceived.mutationOptions({ onSuccess: refresh }));
+  const receive = useMutation(trpc.wish.markReceived.mutationOptions({ onSuccess: refresh }));
   const restore = useMutation(trpc.wish.restore.mutationOptions({ onSuccess: refresh }));
   const remove = useMutation(trpc.wish.delete.mutationOptions({ onSuccess: refresh }));
   const move = useMutation(

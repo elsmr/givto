@@ -17,7 +17,7 @@ export const useSetLocale = () => {
   const router = useRouter();
   const setClientLocale = useContext(ClientLocale);
   const signedIn = Boolean(useCurrentUser());
-  const saveLocale = useMutation(useTRPC().me.setLocale.mutationOptions());
+  const saveLocale = useMutation(useTRPC().account.setLocale.mutationOptions());
 
   return async (locale: Locale) => {
     rememberLocale(locale);

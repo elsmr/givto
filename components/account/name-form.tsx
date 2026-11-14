@@ -18,7 +18,7 @@ export const NameForm = ({ name, email }: { name: string; email: string }) => {
       onSuccess: async () => {
         toast.add({ title: t('profile.saved') });
         authClient.$store.notify('$sessionSignal');
-        await queryClient.invalidateQueries({ queryKey: trpc.me.get.queryKey() });
+        await queryClient.invalidateQueries({ queryKey: trpc.account.get.queryKey() });
       },
     })
   );

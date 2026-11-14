@@ -16,7 +16,7 @@ export const AvatarColorSelect = ({ name, color }: { name: string; color?: Avata
   const save = useMutation(
     trpc.account.setAvatarColor.mutationOptions({
       onError: () => setChoice(color),
-      onSettled: () => queryClient.invalidateQueries({ queryKey: trpc.me.get.queryKey() }),
+      onSettled: () => queryClient.invalidateQueries({ queryKey: trpc.account.get.queryKey() }),
     })
   );
   const choose = (next: AvatarColor) => {

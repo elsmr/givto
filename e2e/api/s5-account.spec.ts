@@ -43,7 +43,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     expect((await ann.trpc.mutate('account.setName', { name: 'see www.evil.test' })).status).toBe(400);
     const prefs = { reminders: false, wishlistUpdates: true, santaMessages: false, joins: false };
     expect((await ann.trpc.mutate('account.setNotifications', prefs)).status).toBe(200);
-    const me = ok(await ann.trpc.query('me.get'));
+    const me = ok(await ann.trpc.query('account.get'));
     expect(me.name).toBe(`Annabel ${tag}`);
     expect(me.notifications).toEqual(prefs);
   });
@@ -93,7 +93,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     const wrong = String((Number(code) + 1) % 1e6).padStart(6, '0');
     expect((await ann.trpc.mutate('account.delete', { code: wrong })).error?.data.appCode).toBe('INVALID_CODE');
     ok(await ann.trpc.mutate('account.delete', { code }));
-    expect((await ann.trpc.query('me.get')).status).toBe(401);
+    expect((await ann.trpc.query('account.get')).status).toBe(401);
     expect((await bob.trpc.mutate('account.delete', { code })).error?.data.appCode).toBe('INVALID_CODE');
   });
 

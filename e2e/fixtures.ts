@@ -82,7 +82,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       secrets.push(email, code, token);
       const res = await signInWithCode(client.request, email, code, options);
       expect(res.status(), await res.text()).toBe(200);
-      const me = ok(await client.trpc.query('me.get'));
+      const me = ok(await client.trpc.query('account.get'));
       return { ...client, id: me.id, email };
     });
   },

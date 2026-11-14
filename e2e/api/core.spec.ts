@@ -32,14 +32,14 @@ test('health', async ({ newClient }) => {
 
 test('me without a session → UNAUTHENTICATED with request id', async ({ newClient }) => {
   const { trpc } = await newClient();
-  const { status, error } = await trpc.query('me.get');
+  const { status, error } = await trpc.query('account.get');
   expect(status).toBe(401);
   expect(error?.data.appCode).toBe('UNAUTHENTICATED');
   expect(error?.data.requestId).toMatch(/^[0-9a-f-]{36}$/);
   expect(error?.data).not.toHaveProperty('stack');
 });
 
-test('sign in with the emailed code; me.get, me.setLocale, reused code, sign-out', async ({ newClient, secrets }) => {
+test('sign in with the emailed code; account.get, account.setLocale, reused code, sign-out', async ({ newClient, secrets }) => {
   const ann = await newClient();
   const email = uniqueEmail('ann');
   const { code } = await test.step('new account takes the browser language', async () => {
@@ -53,18 +53,18 @@ test('sign in with the emailed code; me.get, me.setLocale, reused code, sign-out
     return signIn;
   });
 
-  await test.step('me.get', async () => {
-    const me = ok(await ann.trpc.query('me.get'));
+  await test.step('account.get', async () => {
+    const me = ok(await ann.trpc.query('account.get'));
     expect(me.email).toBe(email);
     expect(me.locale).toBe('nl');
     expect(me.notifications).toEqual({ reminders: true, wishlistUpdates: true, santaMessages: true, joins: true });
     expect(readServerLog(), 'procedure lines are logged').toMatch(/me\.get/);
   });
 
-  await test.step('me.setLocale (and invalid input → INVALID_INPUT with issues)', async () => {
-    expect((await ann.trpc.mutate('me.setLocale', { locale: 'en' })).status).toBe(200);
-    expect(ok(await ann.trpc.query('me.get')).locale).toBe('en');
-    const bad = await ann.trpc.mutate('me.setLocale', { locale: 'fr' } as never);
+  await test.step('account.setLocale (and invalid input → INVALID_INPUT with issues)', async () => {
+    expect((await ann.trpc.mutate('account.setLocale', { locale: 'en' })).status).toBe(200);
+    expect(ok(await ann.trpc.query('account.get')).locale).toBe('en');
+    const bad = await ann.trpc.mutate('account.setLocale', { locale: 'fr' } as never);
     expect(bad.status).toBe(400);
     expect(bad.error?.data.appCode).toBe('INVALID_INPUT');
     expect(bad.error?.data.issues?.[0].path).toBe('locale');
@@ -81,7 +81,7 @@ test('sign in with the emailed code; me.get, me.setLocale, reused code, sign-out
     expect((await authPost(ann.request, '/sign-out', {})).status()).toBe(200);
     // The old cookie, sent again: the session is gone on the server, not just in this jar.
     const stale = await newClient({ storageState: session });
-    expect((await stale.trpc.query('me.get')).status).toBe(401);
+    expect((await stale.trpc.query('account.get')).status).toBe(401);
   });
 });
 
@@ -91,7 +91,7 @@ test('sign in with the magic link token (POST); reused token rejected', async ({
   const { code, token } = await requestSignIn(bob.request, email);
   secrets.push(email, code, token);
   expect((await authPost(bob.request, '/magic-link/verify-token', { token })).status()).toBe(200);
-  expect(ok(await bob.trpc.query('me.get')).email).toBe(email);
+  expect(ok(await bob.trpc.query('account.get')).email).toBe(email);
   const again = await authPost((await newClient()).request, '/magic-link/verify-token', { token });
   expect(again.status()).toBe(400);
   expect((await again.json()).code).toBe('INVALID_TOKEN');

@@ -147,7 +147,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
     });
     expect(res.status).toBe(200);
-    expect(ok(await cee.trpc.query('me.get')).notifications.santaMessages).toBe(false);
+    expect(ok(await cee.trpc.query('account.get')).notifications.santaMessages).toBe(false);
     expect(psst.html, 'footer link to the page').toContain(`/unsubscribe?t=${oneClick.split('t=')[1]}`);
     ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'Favourite colour?' }));
     await run('deliveries');

@@ -156,6 +156,21 @@ export const wishRouter = router({
   }),
 
   /** Drag or keyboard reorder: put the wish at `toIndex` of the list. */
+  /** "I got this" (owner only): after gift day, or any time from the wishlist. Received wishes leave every list and every Santa's view. */
+  markReceived: authedProcedure
+    .input(v.object({ wishId: Id, received: v.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date();
+      const saved = await ctx.db.wishes.updateOne(
+        { _id: input.wishId, ownerId: ctx.user.id },
+        input.received
+          ? { $set: { receivedAt: now, updatedAt: now } }
+          : { $unset: { receivedAt: true }, $set: { updatedAt: now } }
+      );
+      if (saved.matchedCount === 0) throw new AppError('NOT_FOUND');
+      return { wishId: input.wishId, received: input.received };
+    }),
+
   move: authedProcedure
     .input(v.object({ ...WishInput.entries, toIndex: v.pipe(v.number(), v.integer(), v.minValue(0)) }))
     .mutation(async ({ ctx, input }) => {

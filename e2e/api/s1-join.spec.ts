@@ -27,7 +27,7 @@ test('create after verifying the email (dotted name ok, URL name and past gift d
   expect(data.edition?.budget).toEqual({ currency: 'EUR', amount: 2500 });
   expect(data.members[0].email).toBe(ann.email);
   expect(data.organizer?.joinLink?.token).toBe(joinToken);
-  expect(ok(await ann.trpc.query('me.get')).name).toBe('Ann.Smith');
+  expect(ok(await ann.trpc.query('account.get')).name).toBe('Ann.Smith');
   expect(readServerLog(), 'procedure lines are logged').toMatch(/group\.create/);
 });
 

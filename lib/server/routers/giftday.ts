@@ -9,7 +9,7 @@ import { giftCounts } from '../gift/marks';
 import { guessesOf } from '../guess/guesses';
 import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
 import { testHooksEnabled } from '../test-hooks';
-import { authedProcedure, editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
+import { editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
 import { giftDayView, presenterGiftDayView } from './giftday-view';
 import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
@@ -88,21 +88,6 @@ export const giftdayRouter = router({
     );
     return { ok: true };
   }),
-
-  /** "I got this" (owner only): after gift day, or any time from the wishlist. Received wishes leave every list and every Santa's view. */
-  markReceived: authedProcedure
-    .input(v.object({ wishId: Id, received: v.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const now = new Date();
-      const saved = await ctx.db.wishes.updateOne(
-        { _id: input.wishId, ownerId: ctx.user.id },
-        input.received
-          ? { $set: { receivedAt: now, updatedAt: now } }
-          : { $unset: { receivedAt: true }, $set: { updatedAt: now } }
-      );
-      if (saved.matchedCount === 0) throw new AppError('NOT_FOUND');
-      return { wishId: input.wishId, received: input.received };
-    }),
 
   /** Tests only (lib/server/test-hooks.ts): what the scheduled job does, optionally at a given time. */
   runDue: publicProcedure
