@@ -1,4 +1,5 @@
 import { ForYouSection } from '@/components/between/for-you-section';
+import { LeaveTipLink } from '@/components/between/new-tip-dialog';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
 import { GiftArrivalCard } from '@/components/gift/gift-arrival-card';
@@ -51,6 +52,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
           <EditionDetails edition={edition}>
             {current && <AddToCalendar groupSlug={slug} groupName={group.name} edition={edition} />}
           </EditionDetails>
+          {input && current && participates && drawsNames(edition) && <LeaveTipLink input={input} className="px-2" />}
           {(shopping || missingAddresses || emptyWishlists) && (
             <Card size="sm">
               <CardContent>

@@ -20,7 +20,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "closed": "Tips are closed for this Secret Santa.",
-    "nobody": "Nobody to leave a tip about yet."
+    "nobody": "Nobody to leave a tip about yet.",
+    "nudge": "Know what someone would love? <link>Leave a tip for their Santa</link>."
   },
   "boards": {
     "intro": "Everyone has a board where the others plan one gift for them, together. Nobody ever sees their own board.",

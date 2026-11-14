@@ -20,7 +20,8 @@
     "save": "Opslaan",
     "cancel": "Annuleren",
     "closed": "Tips zijn gesloten voor deze Secret Santa.",
-    "nobody": "Nog niemand om een tip over te geven."
+    "nobody": "Nog niemand om een tip over te geven.",
+    "nudge": "Weet je wat iemand leuk vindt? <link>Geef hun Santa een tip</link>."
   },
   "boards": {
     "intro": "Iedereen heeft een prikbord waarop de anderen samen één cadeau voor die persoon bedenken. Je eigen prikbord zie je nooit.",
