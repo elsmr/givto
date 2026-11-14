@@ -41,10 +41,11 @@ export const NameForm = ({ name, email }: { name: string; email: string }) => {
           maxLength={50}
           value={value}
           aria-invalid={invalid || undefined}
+          aria-describedby={setName.error ? 'account-name-error' : undefined}
           onChange={(event) => setValue(event.target.value)}
         />
         {setName.error && (
-          <FieldError>{invalid ? t('profile.invalid') : t('errors.generic')}</FieldError>
+          <FieldError id="account-name-error">{invalid ? t('profile.invalid') : t('errors.generic')}</FieldError>
         )}
       </Field>
       <Field>

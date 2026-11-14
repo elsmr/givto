@@ -66,9 +66,10 @@ export const DeleteAccountDialog = ({ email }: { email: string }) => {
                 className="mono max-w-48 text-2xl tracking-[0.3em]"
                 value={code}
                 aria-invalid={error ? true : undefined}
+                aria-describedby={error ? 'delete-code-error' : undefined}
                 onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
               />
-              {error && <FieldError>{t(errorKey)}</FieldError>}
+              {error && <FieldError id="delete-code-error">{t(errorKey)}</FieldError>}
             </Field>
           </form>
         ) : (

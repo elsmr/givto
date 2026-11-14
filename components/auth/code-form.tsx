@@ -70,10 +70,10 @@ export const CodeForm = ({
             className="mono max-w-48 text-2xl tracking-[0.3em]"
             value={otp}
             aria-invalid={error ? true : undefined}
-            aria-describedby="sign-in-code-hint"
+            aria-describedby={error ? 'sign-in-code-error sign-in-code-hint' : 'sign-in-code-hint'}
             onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
           />
-          {error && <FieldError>{t(`errors.${error}`)}</FieldError>}
+          {error && <FieldError id="sign-in-code-error">{t(`errors.${error}`)}</FieldError>}
           <p role="status" className="text-sm empty:hidden">
             {resent && t('check-email.resent')}
           </p>

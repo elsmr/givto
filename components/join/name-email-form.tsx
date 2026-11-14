@@ -70,9 +70,10 @@ export const NameEmailForm = ({
             autoComplete="name"
             value={name}
             aria-invalid={issues.name ? 'true' : undefined}
+            aria-describedby={issues.name ? 'person-name-error' : undefined}
             onChange={(event) => onChange({ name: event.target.value })}
           />
-          {issues.name && <FieldError>{tIssues(issues.name)}</FieldError>}
+          {issues.name && <FieldError id="person-name-error">{tIssues(issues.name)}</FieldError>}
         </Field>
         )}
         {signedInEmail ? (
@@ -89,9 +90,10 @@ export const NameEmailForm = ({
               autoComplete="email"
               value={email}
               aria-invalid={issues.email ? 'true' : undefined}
+              aria-describedby={issues.email ? 'person-email-error' : undefined}
               onChange={(event) => onChange({ email: event.target.value })}
             />
-            {issues.email && <FieldError>{tIssues('invalid_email')}</FieldError>}
+            {issues.email && <FieldError id="person-email-error">{tIssues('invalid_email')}</FieldError>}
           </Field>
         )}
       </FieldGroup>

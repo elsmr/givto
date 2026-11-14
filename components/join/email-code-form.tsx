@@ -57,10 +57,10 @@ export const EmailCodeForm = ({
           value={otp}
           onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
           aria-invalid={error ? 'true' : undefined}
-          aria-describedby="email-code-help"
+          aria-describedby={error ? 'email-code-error email-code-help' : 'email-code-help'}
           className="mono max-w-48 text-2xl tracking-[0.3em]"
         />
-        {error && <FieldError>{t(`errors.${error}`)}</FieldError>}
+        {error && <FieldError id="email-code-error">{t(`errors.${error}`)}</FieldError>}
         {/* onResend reports nothing back: busy and error tell whether it went out. */}
         <p role="status" className="text-sm empty:hidden">
           {resent && !busy && !error && tCheck('resent')}

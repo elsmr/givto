@@ -118,9 +118,10 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
                 autoComplete="name"
                 value={name}
                 aria-invalid={nameIssue ? 'true' : undefined}
+                aria-describedby={nameIssue ? 'person-name-error' : undefined}
                 onChange={(event) => setName(event.target.value)}
               />
-              {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
+              {nameIssue && <FieldError id="person-name-error">{tIssues(nameIssue)}</FieldError>}
             </Field>
           )}
           {emailCode.error && <p className="text-danger">{t(`code.errors.${emailCode.error}`)}</p>}

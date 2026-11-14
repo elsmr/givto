@@ -118,6 +118,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
             placeholder={emails.length === 0 ? t('placeholder') : undefined}
             value={text}
             aria-invalid={notAnEmail ? 'true' : undefined}
+            aria-describedby={notAnEmail ? `${id}-error` : undefined}
             onChange={(event) => {
               if (SEPARATORS.test(event.target.value)) return void addTyped(event.target.value);
               setText(event.target.value);
@@ -128,7 +129,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
           />
         </div>
         <FieldDescription>{t('help')}</FieldDescription>
-        {notAnEmail && <FieldError>{t('invalid')}</FieldError>}
+        {notAnEmail && <FieldError id={`${id}-error`}>{t('invalid')}</FieldError>}
         {Object.entries(failed)
           .filter(([email]) => emails.includes(email))
           .map(([email, code]) => (

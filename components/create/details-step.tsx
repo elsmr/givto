@@ -54,9 +54,10 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
             placeholder={t('name-placeholder')}
             value={draft.name}
             aria-invalid={nameIssue ? 'true' : undefined}
+            aria-describedby={nameIssue ? 'group-name-error' : undefined}
             onChange={(event) => onChange({ name: event.target.value })}
           />
-          {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
+          {nameIssue && <FieldError id="group-name-error">{tIssues(nameIssue)}</FieldError>}
         </Field>
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
         <BudgetFields draft={draft} onChange={onChange} />
