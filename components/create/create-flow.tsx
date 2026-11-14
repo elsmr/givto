@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { appErrorCode, knownAppError } from '../group/app-error-code';
+import { stepSegmentClass } from '../group/phase-stepper';
 import { EmailCodeForm } from '../join/email-code-form';
 import { NameEmailForm } from '../join/name-email-form';
 import { useEmailCode } from '../join/use-email-code';
@@ -25,22 +26,14 @@ type Step = 'details' | 'organizer' | 'code';
 const knownErrors = ['RATE_LIMITED', 'DATE_IN_PAST', 'INVALID_INPUT', 'UNAUTHENTICATED'] as const;
 const timeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-/** The phase stepper's look, small: done steps filled, the current one raised, the rest dashed. A status, not navigation. */
+/** The phase stepper's track, small. A status, not navigation. */
 const StepTrack = ({ step, total }: { step: number; total: number }) => {
   const t = useTranslations('create');
   return (
     <div className="flex items-center gap-3">
       <div aria-hidden="true" className="flex w-28 items-center gap-1">
         {Array.from({ length: total }, (_, index) => (
-          <span
-            key={index}
-            className={cn(
-              'h-3 flex-1 border-2 border-outline',
-              index + 1 < step && 'bg-mint',
-              index + 1 === step && 'h-4 bg-yellow shadow-sm',
-              index + 1 > step && 'border-dashed border-muted',
-            )}
-          />
+          <span key={index} className={cn('flex-1', stepSegmentClass(index + 1, step))} />
         ))}
       </div>
       <span className="text-sm">{t('step', { step, total })}</span>
