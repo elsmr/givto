@@ -1,7 +1,6 @@
 import type { RouterInputs } from '@/lib/client/trpc';
+import { toCents } from '@/lib/format-budget';
 import type { CreateDraft, EditionDetailsDraft } from './use-create-draft';
-
-const cents = (amount: string) => Math.round(Number(amount.replace(',', '.')) * 100);
 
 /** Gift day and budget as API input; absent when not filled in. Shared with the settings. */
 export const editionDetailsInput = (draft: EditionDetailsDraft) => ({
@@ -14,8 +13,8 @@ export const editionDetailsInput = (draft: EditionDetailsDraft) => ({
   ...(draft.budgetAmount && {
     budget: {
       currency: draft.currency,
-      amount: cents(draft.budgetAmount),
-      ...(draft.budgetMax && { maxAmount: cents(draft.budgetMax) }),
+      amount: toCents(draft.budgetAmount),
+      ...(draft.budgetMax && { maxAmount: toCents(draft.budgetMax) }),
     },
   }),
 });

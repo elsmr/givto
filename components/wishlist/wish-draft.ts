@@ -1,4 +1,5 @@
 import type { RouterInputs, RouterOutputs } from '@/lib/client/trpc';
+import { toCents, toMajor } from '@/lib/format-budget';
 import type { WishKind, WishLink } from '@/lib/schema/wish';
 
 export type WishView = RouterOutputs['wish']['list'][number];
@@ -28,16 +29,13 @@ export const emptyDraft: WishDraft = {
   reallyWant: false,
 };
 
-const toMajor = (cents: number | undefined) => (cents === undefined ? '' : String(cents / 100));
-const toCents = (major: string) => (major.trim() === '' ? undefined : Math.round(Number(major) * 100));
-
 export const draftFromWish = (wish: WishView): WishDraft => ({
   ...emptyDraft,
   kind: wish.kind,
   title: wish.title,
   description: wish.description ?? '',
   links: wish.links,
-  price: toMajor(wish.price?.amount),
+  price: wish.price ? toMajor(wish.price.amount) : '',
   currency: wish.price?.currency ?? emptyDraft.currency,
   variant: wish.variant ?? '',
   reallyWant: wish.reallyWant ?? false,
@@ -59,15 +57,12 @@ export const addImportedLink = (draft: WishDraft, { url, title, description, pri
 
 const optional = (text: string) => text.trim() || undefined;
 
-export const draftToInput = (draft: WishDraft): WishInput => {
-  const amount = toCents(draft.price);
-  return {
-    kind: draft.kind,
-    title: draft.title,
-    description: optional(draft.description),
-    links: draft.links,
-    price: amount === undefined ? undefined : { currency: draft.currency, amount },
-    variant: optional(draft.variant),
-    reallyWant: draft.reallyWant,
-  };
-};
+export const draftToInput = (draft: WishDraft): WishInput => ({
+  kind: draft.kind,
+  title: draft.title,
+  description: optional(draft.description),
+  links: draft.links,
+  price: draft.price.trim() ? { currency: draft.currency, amount: toCents(draft.price) } : undefined,
+  variant: optional(draft.variant),
+  reallyWant: draft.reallyWant,
+});

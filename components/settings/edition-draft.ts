@@ -2,6 +2,7 @@ import type { EditionDetailsDraft } from '@/components/create/use-create-draft';
 import { editionDetailsInput } from '@/components/create/create-input';
 import type { GroupEdition } from '@/components/group/group-data';
 import type { RouterInputs } from '@/lib/client/trpc';
+import { toMajor } from '@/lib/format-budget';
 import { todayIn } from '@/lib/local-date';
 import { drawsNames, type EditionKind } from '@/lib/schema/edition';
 
@@ -16,8 +17,6 @@ export type EditionDraft = EditionDetailsDraft & {
   notes: string;
 };
 
-const amount = (cents: number) => String(cents / 100);
-
 export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   title: edition.title,
   kind: edition.kind,
@@ -25,8 +24,8 @@ export const draftFromEdition = (edition: GroupEdition): EditionDraft => ({
   giftTime: edition.giftDay?.time ?? '',
   exchangeMode: edition.exchangeMode,
   currency: edition.budget?.currency ?? 'EUR',
-  budgetAmount: edition.budget ? amount(edition.budget.amount) : '',
-  budgetMax: edition.budget?.maxAmount !== undefined ? amount(edition.budget.maxAmount) : '',
+  budgetAmount: edition.budget ? toMajor(edition.budget.amount) : '',
+  budgetMax: edition.budget?.maxAmount !== undefined ? toMajor(edition.budget.maxAmount) : '',
   drawOn: edition.drawAt ? todayIn(edition.timeZone, edition.drawAt) : '',
   wishlistBy: edition.wishlistBy ?? '',
   postBy: edition.postBy ?? '',

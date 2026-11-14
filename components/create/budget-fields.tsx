@@ -5,9 +5,8 @@ import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { CURRENCIES } from '@/lib/format-budget';
 import type { EditionDetailsDraft } from './use-create-draft';
-
-const currencies = ['EUR', 'USD', 'GBP', 'CHF', 'SEK', 'DKK', 'NOK', 'PLN'];
 
 type BudgetFieldsProps = {
   draft: EditionDetailsDraft;
@@ -70,7 +69,7 @@ export const BudgetFields = ({ draft, onChange }: BudgetFieldsProps) => {
             {t('currency')}
           </FieldLabel>
           <NativeSelect id="budget-currency" value={draft.currency} onChange={(event) => onChange({ currency: event.target.value })}>
-            {currencies.map((currency) => (
+            {CURRENCIES.map((currency) => (
               <NativeSelectOption key={currency} value={currency}>
                 {currency}
               </NativeSelectOption>
