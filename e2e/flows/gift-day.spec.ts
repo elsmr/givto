@@ -303,7 +303,7 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
 
   await test.step('create: no posting question', async () => {
     await page.goto('/new');
-    await page.getByLabel('What are you organizing?').selectOption('whiteElephant');
+    await page.getByRole('radio', { name: 'White elephant' }).check();
     await page.getByLabel("What's your white elephant called?").fill('Swap');
     await expect(page.getByRole('button', { name: 'Sending gifts by post?' })).toHaveCount(0);
     await page.getByLabel("When's gift day?").fill('2099-12-24');
