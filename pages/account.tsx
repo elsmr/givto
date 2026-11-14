@@ -2,6 +2,7 @@ import { AccountSettings } from '@/components/account/account-settings';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
 import { LoadFailed } from '@/components/shell/load-failed';
+import { SiteLinks } from '@/components/shell/footer';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
@@ -49,6 +50,7 @@ export default function AccountPage() {
         ) : (
           <LogoAnimation variant="loading" />
         )}
+        {me.data && <SiteLinks />}
       </div>
     </AppShell>
   );
