@@ -63,7 +63,7 @@ export const DeleteAccountDialog = ({ email }: { email: string }) => {
                 maxLength={6}
                 required
                 autoFocus
-                className="max-w-48 font-mono text-2xl tracking-[0.3em]"
+                className="mono max-w-48 text-2xl tracking-[0.3em]"
                 value={code}
                 aria-invalid={error ? true : undefined}
                 onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}

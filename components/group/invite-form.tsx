@@ -96,7 +96,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
             <span
               key={email}
               className={cn(
-                'mono inline-flex max-w-full items-center gap-1 border-2 border-outline py-0.5 pr-0.5 pl-2 text-sm',
+                'inline-flex max-w-full items-center gap-1 border-2 border-outline py-0.5 pr-0.5 pl-2 text-sm',
                 failed[email] ? 'bg-coral text-ink' : 'bg-primary-muted text-ink'
               )}
             >

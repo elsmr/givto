@@ -58,7 +58,7 @@ export const EmailCodeForm = ({
           onChange={(event) => setOtp(event.target.value.replace(/\D/g, ''))}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby="email-code-help"
-          className="max-w-48 text-2xl tracking-[0.3em]"
+          className="mono max-w-48 text-2xl tracking-[0.3em]"
         />
         {error && <FieldError>{t(`errors.${error}`)}</FieldError>}
         {/* onResend reports nothing back: busy and error tell whether it went out. */}

@@ -33,7 +33,6 @@ export const WishCard = ({ wish, inBudget, position, status, children, className
   const t = useTranslations('wishlist');
   const locale = useLocale();
   const picture = wish.links.find((link) => link.imageId);
-  const details = [wish.price && formatBudget(wish.price, locale), wish.variant].filter(Boolean).join(' · ');
 
   return (
     <Card size="sm" className={cn('@container/wish', className)}>
@@ -62,9 +61,11 @@ export const WishCard = ({ wish, inBudget, position, status, children, className
             <h3 className="font-sans text-lg leading-snug font-bold break-words">{wish.title}</h3>
           </div>
           <WishBadges wish={wish} status={status} />
-          {details && (
-            <p className="mono flex flex-wrap items-center gap-2 text-sm font-semibold">
-              {details}
+          {(wish.price || wish.variant) && (
+            <p className="flex flex-wrap items-center gap-2 text-sm font-semibold">
+              {wish.price && <span className="mono">{formatBudget(wish.price, locale)}</span>}
+              {wish.price && wish.variant && <span aria-hidden="true">·</span>}
+              {wish.variant}
               {inBudget && <Badge variant="mint">{t('item.in-budget')}</Badge>}
             </p>
           )}
