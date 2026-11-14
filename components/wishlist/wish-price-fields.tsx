@@ -1,10 +1,9 @@
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
+import { CURRENCIES } from '@/lib/format-budget';
 import { useTranslations } from 'next-intl';
 import type { WishDraft } from './wish-draft';
-
-const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'SEK', 'DKK', 'NOK', 'PLN'];
 
 interface WishPriceFieldsProps {
   id: string;

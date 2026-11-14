@@ -91,19 +91,19 @@ export const InviteForm = ({ slug }: { slug: string }) => {
     <form onSubmit={submit} className="flex flex-col gap-3">
       <Field data-invalid={notAnEmail ? 'true' : undefined}>
         <FieldLabel htmlFor={id}>{t('label')}</FieldLabel>
-        <div className="flex min-h-11 flex-wrap items-center gap-1.5 border-2 border-control bg-surface p-1.5 focus-within:outline-3 focus-within:outline-offset-3 focus-within:outline-focus">
+        <div className="flex min-h-11 flex-wrap items-center gap-1.5 border-2 border-control bg-surface p-1.5 has-aria-invalid:border-danger focus-within:border-focus focus-within:shadow-[inset_0_0_0_1px_var(--color-focus)]">
           {emails.map((email) => (
             <span
               key={email}
               className={cn(
-                'mono inline-flex max-w-full items-center gap-1 border-2 border-outline py-0.5 pr-0.5 pl-2 text-sm',
+                'inline-flex max-w-full items-center gap-1 border-2 border-outline py-0.5 pr-0.5 pl-2 text-sm',
                 failed[email] ? 'bg-coral text-ink' : 'bg-primary-muted text-ink'
               )}
             >
               <span className="truncate">{email}</span>
               {withTooltip(
                 t('remove', { email }),
-                <button type="button" className="grid size-6 shrink-0 place-items-center hover:bg-surface" onClick={() => remove(email)}>
+                <button type="button" className="relative grid size-6 shrink-0 place-items-center after:absolute after:-inset-2 hover:bg-surface" onClick={() => remove(email)}>
                   <X aria-hidden="true" className="size-4" />
                 </button>
               )}
@@ -118,6 +118,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
             placeholder={emails.length === 0 ? t('placeholder') : undefined}
             value={text}
             aria-invalid={notAnEmail ? 'true' : undefined}
+            aria-describedby={notAnEmail ? `${id}-error` : undefined}
             onChange={(event) => {
               if (SEPARATORS.test(event.target.value)) return void addTyped(event.target.value);
               setText(event.target.value);
@@ -128,7 +129,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
           />
         </div>
         <FieldDescription>{t('help')}</FieldDescription>
-        {notAnEmail && <FieldError>{t('invalid')}</FieldError>}
+        {notAnEmail && <FieldError id={`${id}-error`}>{t('invalid')}</FieldError>}
         {Object.entries(failed)
           .filter(([email]) => emails.includes(email))
           .map(([email, code]) => (

@@ -11,3 +11,10 @@ export const authClient = createAuthClient({
 /** Only same-origin paths ("/g/abc"), never "//evil.test" or "https://…": no open redirects. */
 export const safeRedirect = (target: unknown, fallback = '/'): string =>
   typeof target === 'string' && /^\/(?![/\\])/.test(target) ? target : fallback;
+
+/** Better Auth resolves with `{ error }` instead of rejecting: this rejects with it, so useMutation sees the failure. */
+export const throwAuthError = async <T extends { error?: unknown } | null | undefined>(pending: Promise<T>) => {
+  const result = await pending;
+  if (result?.error) throw result.error;
+  return result;
+};

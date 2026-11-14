@@ -1,3 +1,4 @@
+import { shuffle } from '@/lib/draw';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
@@ -21,14 +22,7 @@ const slowDown = (t: number) => (1 - (1 - 0.8 * t) ** 3) / (1 - 0.2 ** 3);
 const box =
   'h-[1.3em] min-w-[min(80vw,12em)] overflow-hidden bg-surface px-8 text-center font-heading text-[clamp(3rem,9vw,9rem)] leading-[1.3em] font-extrabold text-ink bordered shadow-lg dark:border-control dark:shadow-brand';
 
-const shuffled = (items: string[]) => {
-  const result = [...items];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-};
+const shuffled = (items: string[]) => shuffle(items, (n) => Math.floor(Math.random() * n));
 
 /**
  * Laps of everyone, each in a new order, then the others once more and `target`; never one name

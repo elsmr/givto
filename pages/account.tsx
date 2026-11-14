@@ -3,10 +3,10 @@ import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
 import { LoadFailed } from '@/components/shell/load-failed';
 import { SiteLinks } from '@/components/shell/footer';
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
-import { signOut } from '@/lib/client/session';
+import { Skeleton } from '@/components/ui/skeleton';
+import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
 import { useQuery } from '@tanstack/react-query';
@@ -33,7 +33,7 @@ export default function AccountPage() {
             <Button
               variant="neutral"
               onClick={async () => {
-                await signOut();
+                await authClient.signOut();
                 // A full load: drops the cached data and beats this page's sign-in redirect.
                 location.assign('/');
               }}
@@ -48,7 +48,10 @@ export default function AccountPage() {
         ) : me.isError && user ? (
           <LoadFailed message={t('errors.generic')} onRetry={() => void me.refetch()} />
         ) : (
-          <LogoAnimation variant="loading" />
+          <div data-page-loading className="flex flex-col gap-8">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-40" />
+          </div>
         )}
         {me.data && <SiteLinks />}
       </div>

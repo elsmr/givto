@@ -5,7 +5,7 @@ import {
   DisclosureSection,
   SettingsGroupSection,
   IconTilesSection,
-  StatCardsSection,
+  ProgressRowSection,
 } from '@/components/styleguide/cards-section';
 import { ChoicesSection } from '@/components/styleguide/choices-section';
 import { ColorsSection } from '@/components/styleguide/colors-section';
@@ -58,12 +58,12 @@ const parts: Part[] = [
     sections: [
       { id: 'buttons', label: 'Buttons', Section: ButtonsSection },
       { id: 'inputs', label: 'Inputs', Section: InputsSection },
-      { id: 'choices', label: 'Checkbox and switch', Section: ChoicesSection },
+      { id: 'choices', label: 'Checkbox, switch and segmented radio', Section: ChoicesSection },
       { id: 'badges', label: 'Badges', Section: BadgesSection },
       { id: 'tabs', label: 'Tabs', Section: TabsSection },
       { id: 'cards', label: 'Cards', Section: CardsSection },
       { id: 'icon-tiles', label: 'Icon tiles', Section: IconTilesSection },
-      { id: 'stat-cards', label: 'Stat cards', Section: StatCardsSection },
+      { id: 'progress-row', label: 'Progress row', Section: ProgressRowSection },
       { id: 'disclosure-card', label: 'Disclosure card', Section: DisclosureSection },
       { id: 'settings-group', label: 'Settings group', Section: SettingsGroupSection },
       { id: 'feedback', label: 'Alerts and toasts', Section: FeedbackSection },

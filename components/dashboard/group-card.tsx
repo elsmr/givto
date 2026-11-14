@@ -25,7 +25,7 @@ export const GroupCard = ({ group }: { group: DashboardGroup }) => {
   const { edition } = group;
 
   return (
-    <Card size="sm" className="relative h-full">
+    <Card size="sm" className="relative h-full has-[a:hover]:bg-page">
       <CardContent className="flex flex-col gap-1">
         <div className="flex items-start justify-between gap-3">
           <h3 className="min-w-0 text-xl font-bold break-words">

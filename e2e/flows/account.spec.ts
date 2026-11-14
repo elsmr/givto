@@ -133,6 +133,7 @@ test('delete the account with the emailed code', async ({ page, signIn, signInPa
   await page.goto('/account');
   const before = (await mailsTo(ann.email)).length;
 
+  await page.getByText('Delete account', { exact: true }).click();
   await page.getByRole('button', { name: 'Delete my account' }).click();
   const dialog = page.getByRole('dialog', { name: 'Delete your account?' });
   await dialog.getByRole('button', { name: 'Email me a code' }).click();

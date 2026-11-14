@@ -15,9 +15,7 @@ import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { ProgressRow } from '@/components/ui/progress-row';
 import { SettingsGroup, SettingsRow, settingsHelpId } from '@/components/ui/settings-group';
 import { Switch } from '@/components/ui/switch';
-import { StatCard } from '@/components/ui/stat-card';
-import { toast } from '@/components/ui/toast';
-import { CalendarDays, Gift, Heart, History, Mailbox, PenLine, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { CalendarDays, Gift, Heart, History, Mailbox, PenLine, Settings, TriangleAlert, Users, type LucideIcon } from 'lucide-react';
 import { Captioned, StyleguideRow, StyleguideSection } from './styleguide-section';
 
 const tones: { tone: Tone; icon: LucideIcon }[] = [
@@ -78,31 +76,9 @@ export const IconTilesSection = () => (
   </StyleguideSection>
 );
 
-export const StatCardsSection = () => (
-  <StyleguideSection
-    id="stat-cards"
-    title="Stat cards"
-    description="A big number with a tiny label. With href it's a link, with onClick a button (e.g. to open the matching tab); both press."
-  >
-    <div className="grid gap-6 xs:grid-cols-2 md:grid-cols-3">
-      <Captioned caption="plain">
-        <StatCard icon={Users} tone="primary-muted" title="People" value={6} unit="joined" />
-      </Captioned>
-      <Captioned caption="href: a link">
-        <StatCard icon={Heart} tone="coral" title="My wishlist" value={4} unit="wishes" href="#stat-cards" />
-      </Captioned>
-      <Captioned caption="onClick: a button">
-        <StatCard
-          icon={Wallet}
-          tone="yellow"
-          title="Budget"
-          value="€20"
-          unit="per gift"
-          onClick={() => toast.add({ title: 'Stat card pressed', type: 'success' })}
-        />
-      </Captioned>
-    </div>
-    <StyleguideRow label="ProgressRow: an organizer's done count, in a <ul>">
+export const ProgressRowSection = () => (
+  <StyleguideSection id="progress-row" title="Progress row" description="An organizer's done count, in a <ul>.">
+    <StyleguideRow label="ProgressRow">
       <ul className="w-full max-w-md">
         <ProgressRow icon={Mailbox} tone="yellow" title="Addresses" value="4/6" detail="Still missing: Bob and Eve." />
       </ul>
@@ -149,6 +125,13 @@ export const SettingsGroupSection = () => (
     <StyleguideRow label="Collapsible">
       <SettingsGroup title="Group" icon={PenLine} collapsible className="w-full max-w-2xl">
         <SettingsRow label="Rarely changed" description="Opens on click." />
+      </SettingsGroup>
+    </StyleguideRow>
+    <StyleguideRow label="Danger (collapsible)">
+      <SettingsGroup title="Danger zone" icon={TriangleAlert} tone="yellow" collapsible danger className="w-full max-w-2xl">
+        <SettingsRow label="Deleting can't be undone.">
+          <Button variant="neutral">Delete</Button>
+        </SettingsRow>
       </SettingsGroup>
     </StyleguideRow>
     <StyleguideRow label="Plain (in a dialog)">

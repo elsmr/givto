@@ -1,5 +1,6 @@
 import { Field, FieldDescription, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { SegmentedRadio } from '@/components/ui/segmented-radio';
 import { Switch } from '@/components/ui/switch';
 import { WishKind } from '@/lib/schema/wish';
 import { useTranslations } from 'next-intl';
@@ -19,21 +20,12 @@ export const WishMoreFields = ({ id, draft, update }: WishMoreFieldsProps) => {
     <div className="flex flex-col gap-4">
       <FieldSet>
         <FieldLegend variant="label">{t('kind')}</FieldLegend>
-        <div className="flex flex-wrap gap-x-5 gap-y-2">
-          {WishKind.options.map((kind) => (
-            <label key={kind} className="flex items-center gap-2 font-semibold">
-              <input
-                type="radio"
-                name={`${id}-kind`}
-                value={kind}
-                checked={draft.kind === kind}
-                onChange={() => update({ kind })}
-                className="size-5 accent-primary"
-              />
-              {t(`kind-${kind}`)}
-            </label>
-          ))}
-        </div>
+        <SegmentedRadio
+          name={`${id}-kind`}
+          value={draft.kind}
+          onValueChange={(kind) => update({ kind })}
+          options={WishKind.options.map((kind) => ({ value: kind, label: t(`kind-${kind}`) }))}
+        />
         {draft.kind !== 'wish' && <FieldDescription>{t(`kind-${draft.kind}-hint`)}</FieldDescription>}
       </FieldSet>
       <WishPriceFields id={id} draft={draft} update={update} />

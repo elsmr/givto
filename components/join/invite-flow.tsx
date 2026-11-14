@@ -5,7 +5,6 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { authClient } from '@/lib/client/auth';
-import { signOut } from '@/lib/client/session';
 import { useTRPC } from '@/lib/client/trpc';
 import { PersonName } from '@/lib/schema/common';
 import type { JoinPreview } from '@/lib/server/join-preview';
@@ -118,9 +117,10 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
                 autoComplete="name"
                 value={name}
                 aria-invalid={nameIssue ? 'true' : undefined}
+                aria-describedby={nameIssue ? 'person-name-error' : undefined}
                 onChange={(event) => setName(event.target.value)}
               />
-              {nameIssue && <FieldError>{tIssues(nameIssue)}</FieldError>}
+              {nameIssue && <FieldError id="person-name-error">{tIssues(nameIssue)}</FieldError>}
             </Field>
           )}
           {emailCode.error && <p className="text-danger">{t(`code.errors.${emailCode.error}`)}</p>}
@@ -132,7 +132,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
               <Button size="lg" disabled={busy} onClick={() => void send()}>{t('invite.send-code')}</Button>
             )}
             {signedInEmail && signedInEmail !== email && (
-              <Button size="lg" disabled={busy} onClick={() => void signOut()}>{t('invite.sign-out')}</Button>
+              <Button size="lg" disabled={busy} onClick={() => void authClient.signOut()}>{t('invite.sign-out')}</Button>
             )}
             <Button size="lg" variant="neutral" disabled={busy} onClick={() => decline.mutate({ groupSlug: slug, token })}>
               {t('invite.decline')}

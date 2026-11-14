@@ -124,11 +124,11 @@
     "arrived": "{name} says it arrived"
   },
   "errors": {
-    "generic": "Something went wrong. Try again.",
-    "invalid": "Check the fields and try again.",
-    "taken": "Someone just called dibs on this one.",
-    "full": "Your wishlist is full (200 wishes).",
-    "rate-limited": "That's a lot at once. Try again in a few minutes.",
-    "archive-full": "Your archive is full (200 wishes). Delete some for good first."
+    "INTERNAL": "Something went wrong. Try again.",
+    "INVALID_INPUT": "Check the fields and try again.",
+    "WISH_TAKEN": "Someone just called dibs on this one.",
+    "WISHLIST_FULL": "Your wishlist is full (200 wishes).",
+    "RATE_LIMITED": "That's a lot at once. Try again in a few minutes.",
+    "ARCHIVE_FULL": "Your archive is full (200 wishes). Delete some for good first."
   }
 }

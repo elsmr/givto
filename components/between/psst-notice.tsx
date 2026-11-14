@@ -12,7 +12,7 @@ export const PsstNotice = ({ kind, forName }: { kind: NudgeKind; forName: string
     forName === null ? t(`for-you.psst-${kind}`) : t(`for-you.psst-${kind}-for`, { name: forName });
 
   return (
-    <Alert role="status" className="bg-yellow">
+    <Alert role="status" variant="yellow">
       <Sparkles aria-hidden="true" />
       <AlertTitle>{t('psst.title')}</AlertTitle>
       <AlertDescription>

@@ -1,10 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { authClient } from '@/lib/client/auth';
+import { authClient, throwAuthError } from '@/lib/client/auth';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
-import { authErrorKey, type AuthErrorKey } from './auth-error-key';
+import { authErrorKey } from './auth-error-key';
 
 /** Sends the sign-in email (code + link); `onSent` gets the address. */
 export const EmailForm = ({
@@ -16,18 +17,15 @@ export const EmailForm = ({
 }) => {
   const t = useTranslations('auth');
   const [email, setEmail] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<AuthErrorKey | null>(null);
+  const send = useMutation({
+    mutationFn: (address: string) => throwAuthError(authClient.signIn.magicLink({ email: address, callbackURL })),
+    onSuccess: (_, address) => onSent(address),
+  });
+  const error = send.error && authErrorKey(send.error);
 
-  const submit = async (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    setBusy(true);
-    setError(null);
-    const address = email.trim();
-    const result = await authClient.signIn.magicLink({ email: address, callbackURL });
-    setBusy(false);
-    if (result.error) setError(authErrorKey(result.error));
-    else onSent(address);
+    send.mutate(email.trim());
   };
 
   return (
@@ -49,7 +47,7 @@ export const EmailForm = ({
         />
         {error && <FieldError id="sign-in-email-error">{t(`errors.${error}`)}</FieldError>}
       </Field>
-      <Button type="submit" disabled={busy}>
+      <Button type="submit" disabled={send.isPending}>
         {t('send')}
       </Button>
     </form>

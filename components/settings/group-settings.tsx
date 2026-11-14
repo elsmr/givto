@@ -4,7 +4,7 @@ import { PendingRequests } from '@/components/group/pending-requests';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { LoadFailed } from '@/components/shell/load-failed';
 import { buttonVariants } from '@/components/ui/button';
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, CalendarDays, Gift, PenLine, Shuffle } from 'lucide-react';
@@ -36,7 +36,14 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const user = useRequireSession();
   const group = useQuery(trpc.group.get.queryOptions({ groupSlug: slug }));
 
-  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
+  if (!user || group.isPending) {
+    return (
+      <div data-page-loading className="flex flex-col gap-8">
+        <Skeleton className="h-20" />
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {
     return <LoadFailed message={tGroup('load-failed')} onRetry={() => void group.refetch()} />;
   }
@@ -122,7 +129,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
       />
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-start">
         <nav aria-label={t('on-this-page')} className="sticky top-8 hidden lg:col-start-2 lg:row-start-1 lg:block">
-          <ul className="divide-y-2 divide-dashed divide-ink/30 bg-surface bordered shadow-md">
+          <ul className="divide-y-2 divide-dashed divide-outline bg-surface bordered shadow-md">
             {sections.map(({ id, title }) => (
               <li key={id}>
                 <a href={`#${id}`} className="block px-4 py-2.5 font-semibold break-words text-ink no-underline hover:bg-page">

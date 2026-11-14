@@ -3,7 +3,6 @@ import { StyleguideSection } from './styleguide-section';
 const scale = [
   { className: 'mono font-heading text-6xl leading-none font-extrabold tabular-nums', sample: '12', use: 'Big number: the countdown on the hero card' },
   { className: 'font-heading text-4xl font-extrabold sm:text-5xl', sample: 'Family Secret Santa', use: 'Page title (PageHeader h1), 4xl on phones' },
-  { className: 'mono font-heading text-3xl leading-none font-extrabold tabular-nums', sample: '7', use: 'Stat number (StatCard)' },
   { className: 'font-heading text-2xl font-bold', sample: 'Your groups', use: 'Section heading (h2)' },
   { className: 'font-heading text-xl font-bold', sample: 'Gift day', use: 'Card title' },
   { className: 'text-lg', sample: 'Add a few wishes so your Santa knows what to get you.', use: 'Intro text' },

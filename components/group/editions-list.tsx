@@ -15,7 +15,7 @@ export const EditionsList = ({ group, shownNumber }: { group: GroupData; shownNu
   const currentCount = group.edition?.isCurrent ? group.edition.participantIds.length : 0;
   return (
     <DisclosureCard title={t('editions.title')} icon={History} tone="mint">
-      <ul className="flex flex-col divide-y-2 divide-ink/10">
+      <ul className="flex flex-col divide-y-2 divide-dashed divide-outline">
         {group.editions.map((edition, index) => (
           <li key={edition.number} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1">
             <Link

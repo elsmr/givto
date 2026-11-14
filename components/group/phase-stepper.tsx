@@ -6,6 +6,15 @@ import { phaseLabel, phases, type Phase } from './edition-phase';
 
 const icons = { join: UserPlus, draw: Shuffle, shop: ShoppingBag, giftday: Gift, done: PartyPopper };
 
+/** A track segment: done filled, the current one raised, the rest dashed. Also the create flow's step track. */
+export const stepSegmentClass = (index: number, current: number) =>
+  cn(
+    'h-3 border-2 border-outline',
+    index < current && 'bg-mint',
+    index === current && 'h-4 bg-yellow shadow-sm',
+    index > current && 'border-dashed border-muted',
+  );
+
 /**
  * Where an edition is (61), drawn as a progress track so it doesn't read as tabs: past phases
  * filled and ticked, the current one raised, the rest dashed. A status, not navigation.
@@ -26,15 +35,7 @@ export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: 
             aria-current={index === current ? 'step' : undefined}
             className={cn('flex min-w-0 flex-col gap-1.5 text-xs leading-tight font-bold sm:text-sm', index > current && 'font-semibold text-muted')}
           >
-            <span
-              aria-hidden="true"
-              className={cn(
-                'h-3 border-2 border-outline',
-                index < current && 'bg-mint',
-                index === current && '-mt-1 h-4 bg-yellow shadow-sm',
-                index > current && 'border-dashed border-muted',
-              )}
-            />
+            <span aria-hidden="true" className={cn(stepSegmentClass(index, current), index === current && '-mt-1')} />
             <span className="flex min-w-0 items-center gap-1">
               <Icon aria-hidden="true" className="size-4 shrink-0" />
               <span className="break-words hyphens-auto">{t(phaseLabel(step, kind))}</span>

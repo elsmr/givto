@@ -32,7 +32,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
   const [revealed] = useGifteeRevealed(groupSlug, editionNumber);
 
   if (list.isPending) return <Skeleton className="h-40" />;
-  if (list.isError) return <LoadFailed message={tWishlist('errors.generic')} onRetry={() => void list.refetch()} />;
+  if (list.isError) return <LoadFailed message={tWishlist('errors.INTERNAL')} onRetry={() => void list.refetch()} />;
   // Names the giftee: stays hidden until the reveal card is tapped.
   if (!list.data || !revealed) return null;
   const { giftee, budget, canClaim, saved, wishes } = list.data;

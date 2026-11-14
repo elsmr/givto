@@ -62,7 +62,7 @@ export const GroupWishlist = ({ groupSlug }: { groupSlug: string }) => {
         {view.isPending ? (
           <Skeleton className="h-24" />
         ) : view.isError ? (
-          <LoadFailed message={tWishlist('errors.generic')} onRetry={() => void view.refetch()} />
+          <LoadFailed message={tWishlist('errors.INTERNAL')} onRetry={() => void view.refetch()} />
         ) : (
           shown.length > 0 && (
             <WishListEditor

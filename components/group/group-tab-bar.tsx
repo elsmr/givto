@@ -32,7 +32,7 @@ export const GroupTabBar = ({ tabs, counts = {}, done = false }: { tabs: readonl
             {/* Phones: the count sits on the icon (CSS content, so the tab's text stays "Wishlist 1"), keeping the label on one line. */}
             <span
               data-count={counts[tab] || undefined}
-              className="relative max-sm:data-count:after:absolute max-sm:data-count:after:-top-1.5 max-sm:data-count:after:left-full max-sm:data-count:after:-ml-0.5 max-sm:data-count:after:border-2 max-sm:data-count:after:border-outline max-sm:data-count:after:bg-surface max-sm:data-count:after:px-1 max-sm:data-count:after:font-mono max-sm:data-count:after:text-[0.625rem] max-sm:data-count:after:leading-tight max-sm:data-count:after:text-ink max-sm:data-count:after:content-[attr(data-count)]"
+              className="mono relative max-sm:data-count:after:absolute max-sm:data-count:after:-top-1.5 max-sm:data-count:after:left-full max-sm:data-count:after:-ml-0.5 max-sm:data-count:after:border-2 max-sm:data-count:after:border-outline max-sm:data-count:after:bg-surface max-sm:data-count:after:px-1 max-sm:data-count:after:text-[0.625rem] max-sm:data-count:after:leading-tight max-sm:data-count:after:text-ink max-sm:data-count:after:content-[attr(data-count)]"
             >
               <Icon aria-hidden="true" />
             </span>

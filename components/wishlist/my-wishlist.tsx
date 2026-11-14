@@ -32,7 +32,7 @@ export const MyWishlist = () => {
           <Skeleton className="h-24" />
         </div>
       ) : wishes.isError ? (
-        <LoadFailed message={t('errors.generic')} onRetry={() => void wishes.refetch()} />
+        <LoadFailed message={t('errors.INTERNAL')} onRetry={() => void wishes.refetch()} />
       ) : (
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">

@@ -1,3 +1,4 @@
+import { knownAppError } from '@/components/group/app-error-code';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -30,12 +31,8 @@ export const DeleteAccountDialog = ({ email }: { email: string }) => {
     })
   );
   const error = requestCode.error ?? deleteAccount.error;
-  const errorKey =
-    error?.data?.appCode === 'RATE_LIMITED'
-      ? 'errors.rate-limited'
-      : error?.data?.appCode === 'INVALID_CODE' || error?.data?.appCode === 'INVALID_INPUT'
-        ? 'delete.invalid-code'
-        : 'errors.generic';
+  const errorCode = knownAppError(error, ['RATE_LIMITED', 'INVALID_CODE', 'INVALID_INPUT']);
+  const errorKey = errorCode === 'RATE_LIMITED' ? 'errors.rate-limited' : errorCode === 'INTERNAL' ? 'errors.generic' : 'delete.invalid-code';
 
   const confirm = (event: FormEvent) => {
     event.preventDefault();
@@ -63,12 +60,13 @@ export const DeleteAccountDialog = ({ email }: { email: string }) => {
                 maxLength={6}
                 required
                 autoFocus
-                className="max-w-48 font-mono text-2xl tracking-[0.3em]"
+                className="mono max-w-48 text-2xl tracking-[0.3em]"
                 value={code}
                 aria-invalid={error ? true : undefined}
+                aria-describedby={error ? 'delete-code-error' : undefined}
                 onChange={(event) => setCode(event.target.value.replace(/\D/g, ''))}
               />
-              {error && <FieldError>{t(errorKey)}</FieldError>}
+              {error && <FieldError id="delete-code-error">{t(errorKey)}</FieldError>}
             </Field>
           </form>
         ) : (

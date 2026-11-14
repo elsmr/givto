@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
-import { ChevronDown, type LucideIcon } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { DisclosureCard } from './disclosure-card';
 import { IconTile, type Tone } from './icon-tile';
 import { Label } from './label';
 
@@ -13,13 +14,15 @@ type SettingsGroupProps = {
   variant?: 'card' | 'plain';
   /** Starts closed, unless the URL hash names its `id`: for what's rarely changed. Card only. */
   collapsible?: boolean;
+  /** Coral, for what can't be undone. Card only. */
+  danger?: boolean;
   id?: string;
   className?: string;
   children: ReactNode;
 };
 
 /** Related settings under one heading, most important first: each child is a `SettingsRow` (or any block), divided. */
-export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted', variant = 'card', collapsible = false, id, className, children }: SettingsGroupProps) => {
+export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted', variant = 'card', collapsible = false, danger = false, id, className, children }: SettingsGroupProps) => {
   const headingId = useId();
   const details = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
@@ -47,8 +50,8 @@ export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted'
   const rows = (
     <div
       className={cn(
-        'flex flex-col divide-y-2 divide-dashed divide-ink/30',
-        plain ? '*:py-3 *:first:pt-0 *:last:pb-0' : 'border-t-2 border-dashed border-ink/30 *:px-6 *:py-4'
+        'flex flex-col divide-y-2 divide-dashed divide-outline',
+        plain ? '*:py-3 *:first:pt-0 *:last:pb-0' : 'border-t-2 border-dashed border-outline *:px-6 *:py-4'
       )}
     >
       {children}
@@ -63,20 +66,18 @@ export const SettingsGroup = ({ title, description, icon, tone = 'primary-muted'
       </section>
     );
   }
-  const frame = cn('scroll-mt-8 bg-surface text-ink bordered shadow-md', className);
+  // On coral, muted text is ink and the header keeps the coral on hover: grey text, and ink on the dark
+  // theme's page fill, are under 4.5:1.
+  const tint = cn(danger && 'bg-coral [--color-muted:var(--color-ink)] [&>summary:hover]:bg-transparent', className);
   if (collapsible) {
     return (
-      <details ref={details} id={id} className={cn('group/settings', frame)}>
-        <summary className="flex cursor-pointer list-none items-center gap-3 p-6 hover:bg-page [&::-webkit-details-marker]:hidden">
-          {header}
-          <ChevronDown aria-hidden="true" className="size-5 shrink-0 transition-transform group-open/settings:rotate-180" />
-        </summary>
-        {rows}
-      </details>
+      <DisclosureCard ref={details} id={id} title={title} description={description} icon={icon} tone={tone} className={tint}>
+        {children}
+      </DisclosureCard>
     );
   }
   return (
-    <section id={id} aria-labelledby={headingId} className={frame}>
+    <section id={id} aria-labelledby={headingId} className={cn('scroll-mt-8 bg-surface text-ink bordered shadow-md', tint)}>
       <div className="p-6">{header}</div>
       {rows}
     </section>

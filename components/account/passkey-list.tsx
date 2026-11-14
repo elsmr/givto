@@ -1,24 +1,20 @@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/toast';
-import { authClient } from '@/lib/client/auth';
+import { authClient, throwAuthError } from '@/lib/client/auth';
+import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { PasskeyItem } from './passkey-item';
 
 export const PasskeyList = ({ email }: { email: string }) => {
   const t = useTranslations('account');
   const passkeys = authClient.useListPasskeys();
-  const [busy, setBusy] = useState(false);
-
-  const add = async () => {
-    setBusy(true);
+  const add = useMutation({
     // The name is what the device's passkey picker shows; it can be renamed here afterwards.
-    const result = await authClient.passkey.addPasskey({ name: email });
-    setBusy(false);
-    if (result?.error) toast.add({ title: t('passkeys.add-failed'), type: 'error' });
-    else toast.add({ title: t('passkeys.added') });
-  };
+    mutationFn: () => throwAuthError(authClient.passkey.addPasskey({ name: email })),
+    onSuccess: () => toast.add({ title: t('passkeys.added') }),
+    onError: () => toast.add({ title: t('passkeys.add-failed'), type: 'error' }),
+  });
 
   return (
     <>
@@ -33,7 +29,7 @@ export const PasskeyList = ({ email }: { email: string }) => {
       ) : (
         <p className="text-muted">{t('passkeys.empty')}</p>
       )}
-      <Button className="self-start" onClick={add} disabled={busy}>
+      <Button className="self-start" onClick={() => add.mutate()} disabled={add.isPending}>
         {t('passkeys.add')}
       </Button>
     </>
