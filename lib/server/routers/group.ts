@@ -16,7 +16,7 @@ import { groupView } from './group-view';
 
 const GROUPS_PER_USER_PER_DAY = { window: 24 * 60 * 60, max: 10 };
 
-export const CreateGroupInput = v.object({
+const CreateGroupInput = v.object({
   name: GroupName,
   /** Only used while the account has no name yet. */
   organizerName: v.optional(PersonName),
@@ -132,7 +132,7 @@ export const groupRouter = router({
     const exclusions = toExclusions(input.households);
     const participants = edition ? drawParticipantIds(ctx.group, edition) : [];
     const stuck = participants.length >= MIN_PARTICIPANTS ? findStuckGivers(participants, exclusions) : null;
-    if (stuck) throw new AppError('DRAW_IMPOSSIBLE', { details: { memberIds: stuck.givers } });
+    if (stuck) throw new AppError('DRAW_IMPOSSIBLE');
     await ctx.db.groups.updateOne(
       { _id: ctx.group._id },
       {

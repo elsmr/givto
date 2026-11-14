@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { badgesOf, champions } from '../../guess-results';
+import { champions } from '../../guess-results';
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
@@ -44,7 +44,6 @@ export const groupView = async (
   );
   const emails = isOrganizer ? await memberEmails(db, group) : new Map<string, string>();
   const bounced = isOrganizer ? await suppressedEmails(db, [...emails.values()]) : new Set<string>();
-  const badges = badgesOf(editions);
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   return {
     slug: group.slug,
@@ -59,8 +58,6 @@ export const groupView = async (
       avatarColor: m.avatarColor,
       role: m.role,
       status: m.status,
-      /** Champions and badges (86), over the group's editions. */
-      badges: badges[m.id] ?? [],
       ...(isOrganizer && { email: emails.get(m.id), bounced: bounced.has(emails.get(m.id) ?? '') }),
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,

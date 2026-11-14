@@ -12,7 +12,7 @@ import { compactGiftDay, compactPrice } from './group';
 /** Scheduled draws run at this local time on the draw date. */
 export const DRAW_TIME = '09:00';
 
-export const EditionSettingsInput = v.pipe(
+const EditionSettingsInput = v.pipe(
   v.object({
     title: EditionTitle,
     /** Absent: unchanged. Changes only before the draw (or lock-in, 88). */
