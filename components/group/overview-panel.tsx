@@ -52,7 +52,6 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
           <EditionDetails edition={edition}>
             {current && <AddToCalendar groupSlug={slug} groupName={group.name} edition={edition} />}
           </EditionDetails>
-          {input && current && participates && drawsNames(edition) && <LeaveTipLink input={input} className="px-2" />}
           {(shopping || missingAddresses || emptyWishlists) && (
             <Card size="sm">
               <CardContent>
@@ -64,6 +63,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
               </CardContent>
             </Card>
           )}
+          {input && current && participates && drawsNames(edition) && <LeaveTipLink input={input} className="px-2" />}
         </div>
       )}
     </div>
