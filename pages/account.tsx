@@ -5,7 +5,7 @@ import { LoadFailed } from '@/components/shell/load-failed';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
 import { Skeleton } from '@/components/ui/skeleton';
-import { signOut } from '@/lib/client/session';
+import { authClient } from '@/lib/client/auth';
 import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
 import { useQuery } from '@tanstack/react-query';
@@ -32,7 +32,7 @@ export default function AccountPage() {
             <Button
               variant="neutral"
               onClick={async () => {
-                await signOut();
+                await authClient.signOut();
                 // A full load: drops the cached data and beats this page's sign-in redirect.
                 location.assign('/');
               }}

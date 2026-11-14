@@ -1,6 +1,6 @@
 import { FlowPage, MessageCard } from '@/components/shell/flow-page';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { signOut } from '@/lib/client/session';
+import { authClient } from '@/lib/client/auth';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -10,7 +10,7 @@ export const GroupNotFound = () => {
   const t = useTranslations('group.not-found');
   const router = useRouter();
   const switchAccount = async () => {
-    await signOut();
+    await authClient.signOut();
     await router.replace(`/auth/sign-in?redirect=${encodeURIComponent(router.asPath)}`);
   };
 
