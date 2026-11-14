@@ -14,11 +14,9 @@ import { importRouter } from './import';
 import { inviteRouter } from './invite';
 import { joinRouter } from './join';
 import { manageRouter } from './manage';
-import { meRouter } from './me';
 import { membershipRouter } from './membership';
 import { nudgeRouter } from './nudge';
 import { questionRouter } from './question';
-import { remindersRouter } from './reminders';
 import { settingsRouter } from './settings';
 import { tipRouter } from './tip';
 import { wishRouter } from './wish';
@@ -29,7 +27,6 @@ export const appRouter = router({
     await getMongoDb().command({ ping: 1 });
     return { ok: true };
   }),
-  me: meRouter,
   account: accountRouter,
   wish: wishRouter,
   claim: claimRouter,
@@ -49,7 +46,6 @@ export const appRouter = router({
   manage: manageRouter,
   gift: giftRouter,
   guess: guessRouter,
-  reminders: remindersRouter,
   address: addressRouter,
 });
 

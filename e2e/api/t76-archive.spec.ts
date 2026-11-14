@@ -71,7 +71,7 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
   });
 
   await test.step('received (got it) wishes are in the archive, marked as such; restore brings them back', async () => {
-    ok(await olive.trpc.mutate('giftday.markReceived', { wishId: mug.id, received: true }));
+    ok(await olive.trpc.mutate('wish.markReceived', { wishId: mug.id, received: true }));
     ok(await olive.trpc.mutate('wish.archive', { wishId: socks.id }));
     expect(ok(await olive.trpc.query('wish.archived')).map(({ title, received }) => ({ title, received })), 'before gift day too').toEqual([
       { title: 'Wool socks', received: false },

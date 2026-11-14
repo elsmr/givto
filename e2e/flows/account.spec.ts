@@ -41,7 +41,7 @@ test('name, language and theme', async ({ page, newPage, signIn, signInPage }) =
     await page.getByLabel('Language', { exact: true }).selectOption('Nederlands');
     await expect(page).toHaveURL('/account');
     await expect(page.getByRole('heading', { name: 'Profiel' })).toBeVisible();
-    expect(ok(await ann.trpc.query('me.get')).locale).toBe('nl');
+    expect(ok(await ann.trpc.query('account.get')).locale).toBe('nl');
   });
 
   await test.step('another browser (English, no language cookie) opens in Dutch once signed in', async () => {
@@ -148,7 +148,7 @@ test('delete the account with the emailed code', async ({ page, signIn, signInPa
   await dialog.getByLabel('6-digit code').fill(code);
   await dialog.getByRole('button', { name: 'Delete my account for good' }).click();
   await expect(page).toHaveURL('/');
-  expect((await ann.trpc.query('me.get')).status).toBe(401);
+  expect((await ann.trpc.query('account.get')).status).toBe(401);
   await page.goto('/account');
   await expect(page).toHaveURL('/auth/sign-in?redirect=%2Faccount');
 });

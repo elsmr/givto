@@ -7,11 +7,11 @@ import { WishFields, type Wish } from '../../schema/wish';
 import { newId, type Collections } from '../db';
 import { AppError } from '../errors';
 import { deleteWishImage, findWishImage } from '../import/wish-images';
-import { markWishlistChanged } from '../jobs/wishlist-changes';
 import { drawParticipantIds } from '../draw/rules';
 import { authedProcedure, editionProcedure, memberProcedure, organizerEditionProcedure, router } from '../trpc';
 import { moveWish } from '../wishlist/positions';
 import { activeGroupsOf, inArchive, listWishes, savedWishView, toWishView, visibleWishes, wishOwnerId } from '../wishlist/wish-view';
+import { markWishlistChanged } from '../wishlist/wishlist-changes';
 
 const MAX_WISHES = 200;
 const OPTIONAL_FIELDS = ['description', 'price', 'variant'] as const;
@@ -156,6 +156,21 @@ export const wishRouter = router({
   }),
 
   /** Drag or keyboard reorder: put the wish at `toIndex` of the list. */
+  /** "I got this" (owner only): after gift day, or any time from the wishlist. Received wishes leave every list and every Santa's view. */
+  markReceived: authedProcedure
+    .input(v.object({ wishId: Id, received: v.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const now = new Date();
+      const saved = await ctx.db.wishes.updateOne(
+        { _id: input.wishId, ownerId: ctx.user.id },
+        input.received
+          ? { $set: { receivedAt: now, updatedAt: now } }
+          : { $unset: { receivedAt: true }, $set: { updatedAt: now } }
+      );
+      if (saved.matchedCount === 0) throw new AppError('NOT_FOUND');
+      return { wishId: input.wishId, received: input.received };
+    }),
+
   move: authedProcedure
     .input(v.object({ ...WishInput.entries, toIndex: v.pipe(v.number(), v.integer(), v.minValue(0)) }))
     .mutation(async ({ ctx, input }) => {

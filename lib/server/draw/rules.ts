@@ -3,6 +3,7 @@ import { toExclusions } from '../../exclusions';
 import { drawsNames, type Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import { INVITE_MS } from '../../schema/invite';
+import type { Member } from '../../schema/member';
 import type { Collections } from '../db';
 import { AppError } from '../errors';
 
@@ -24,6 +25,17 @@ export const drawParticipantIds = (group: Group, edition: Edition, now = new Dat
 /** Who unwraps on gift day (32): the draw's Santas, or everyone in when the kind has no draw (88). */
 export const playerIds = (group: Group, edition: Edition): string[] =>
   drawsNames(edition) ? Object.keys(edition.draw?.assignments ?? {}) : drawParticipantIds(group, edition);
+
+/**
+ * The Santa (the caller, or the managed member they act for, 40) and their giftee in this edition's draw;
+ * no giftee before the draw or outside it.
+ */
+export const santaAndGiftee = (group: Group, edition: Edition, caller: Member, asMemberId?: string) => {
+  const santa = asMemberId ? group.members.find((m) => m.id === asMemberId && m.managedBy === caller.id) : caller;
+  if (!santa) throw new AppError('FORBIDDEN');
+  const gifteeId = edition.draw?.assignments[santa.id];
+  return { santa, giftee: group.members.find((m) => m.id === gifteeId) };
+};
 
 export interface DrawRules {
   /** Keep-apart rows (households, 26). */

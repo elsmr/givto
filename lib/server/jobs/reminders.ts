@@ -20,8 +20,11 @@ import { addCounts, runEach, type JobCounts } from './run-each';
 const GIFT_DAY_HOURS = { from: 7, to: 12 };
 const READY_SOON_DAYS = 14;
 
-/** For tests (`reminders.runDue`): only these editions (reminders) and groups (join digests, expired invitees); invite reminders not at all. */
-export interface ReminderScope {
+/**
+ * Tests only (pages/api/cron/[job].ts): only these editions (draws, gift day, reminders) and groups (join digests, expired
+ * invitees); invite reminders not at all.
+ */
+export interface JobScope {
   editionIds?: string[];
   groupIds?: string[];
 }
@@ -111,7 +114,7 @@ const giftDayReminders = async (db: Collections, group: Group, edition: Edition,
 };
 
 /** Reminders (29, 63), the organizer's join digest and expired invitees out (98); idempotent. Runs with every tick. */
-export const sendReminders = async (db: Collections, now: Date, scope?: ReminderScope) => {
+export const sendReminders = async (db: Collections, now: Date, scope?: JobScope) => {
   const editions = await db.editions
     .find({ status: { $in: ['open', 'drawn', 'giftday'] }, ...(scope && { _id: { $in: scope.editionIds ?? [] } }) })
     .toArray();

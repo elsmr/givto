@@ -1,8 +1,7 @@
-// Champions and badges (86): results kept when an edition becomes done, from only what was out; they outlive
-// the guesses, go with the person on account deletion and are in the export; champions and badges over
-// three editions.
+// Champions (86): results kept when an edition becomes done, from only what was out; they outlive
+// the guesses, go with the person on account deletion and are in the export; champions over three editions.
 import { newId } from '@/lib/server/db';
-import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type TestDb, type User } from '../fixtures';
 import { drawnGroup, editionOf } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
@@ -29,7 +28,7 @@ const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa')
   return ok(await ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken }));
 };
 
-test('results at done: only what was out; outlive the guesses; champions and badges; export; account deletion', async ({ signIn, db }) => {
+test('results at done: only what was out; outlive the guesses; champions; export; account deletion', async ({ signIn, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const [ann, bob, cee] = people;
   const group = await drawnGroup(people, 'Champions');
@@ -43,8 +42,8 @@ test('results at done: only what was out; outlive the guesses; champions and bad
     return points && { points, nailedIds, drawSize };
   };
   const view = async (user: User) => {
-    const { editions, members } = ok(await user.trpc.query('group.get', { groupSlug: group.slug }));
-    return { champions: editions.map((e) => e.champions), badges: Object.fromEntries(members.map((m) => [m.name, m.badges])) };
+    const { editions } = ok(await user.trpc.query('group.get', { groupSlug: group.slug }));
+    return editions.map((e) => e.champions);
   };
 
   await test.step('done with nothing out (reveal off, no turn): nothing kept', async () => {
@@ -52,7 +51,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
     expect(await results()).toBeUndefined();
     ok(await ann.trpc.mutate('manage.finishGiftDay', at));
     expect(await results()).toBeUndefined();
-    expect((await view(bob)).champions).toEqual([[]]);
+    expect(await view(bob)).toEqual([[]]);
   });
 
   await test.step("done after Ann's turn: only her Santa scores; a shared title", async () => {
@@ -65,10 +64,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
       nailedIds: [],
       drawSize: 4,
     });
-    expect(await view(cee)).toEqual({
-      champions: [['Bob', 'Cee']],
-      badges: { Ann: [], Bob: [{ kind: 'champion', count: 1 }], Cee: [{ kind: 'champion', count: 1 }], Dan: [] },
-    });
+    expect(await view(cee)).toEqual([['Bob', 'Cee']]);
   });
 
   await test.step('reopened, big reveal on, done again: everything scores', async () => {
@@ -80,15 +76,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
       nailedIds: [B, D],
       drawSize: 4,
     });
-    expect(await view(ann)).toEqual({
-      champions: [['Bob']],
-      badges: {
-        Ann: [],
-        Bob: [{ kind: 'champion', count: 1 }, { kind: 'perfect', count: 1 }, { kind: 'nailed', count: 1 }],
-        Cee: [],
-        Dan: [{ kind: 'nailed', count: 1 }],
-      },
-    });
+    expect(await view(ann)).toEqual([['Bob']]);
     const exported = (user: User) => user.trpc.query('account.export').then((r) => ok(r).editions.map((e) => e.result));
     expect(await exported(bob)).toEqual([{ points: 3, nailedIt: true }]);
     expect(await exported(cee)).toEqual([{ points: 1, nailedIt: false }]);
@@ -104,7 +92,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
     expect(await results()).toEqual(kept);
   });
 
-  await test.step('three editions: shared titles, back to back, perfect boards', async () => {
+  await test.step('three editions: shared titles', async () => {
     const first = (await db.editions.findOne({ _id: edition._id }))!;
     const later = (number: number, points: Record<string, number>, nailedIds: string[]) => ({
       ...first,
@@ -114,15 +102,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
       results: { points: Object.entries(points).map(([memberId, p]) => ({ memberId, points: p })), nailedIds, drawSize: 4, savedAt: new Date() },
     });
     await db.editions.insertMany([later(2, { [B]: 2, [C]: 2 }, [C]), later(3, { [D]: 3, [B]: 1 }, [D])]);
-    expect(await view(bob)).toEqual({
-      champions: [['Dan'], ['Bob', 'Cee'], ['Bob']],
-      badges: {
-        Ann: [],
-        Bob: [{ kind: 'champion', count: 2 }, { kind: 'backToBack', count: 1 }, { kind: 'perfect', count: 1 }, { kind: 'nailed', count: 1 }],
-        Cee: [{ kind: 'champion', count: 1 }, { kind: 'nailed', count: 1 }],
-        Dan: [{ kind: 'champion', count: 1 }, { kind: 'perfect', count: 1 }, { kind: 'nailed', count: 2 }],
-      },
-    });
+    expect(await view(bob)).toEqual([['Dan'], ['Bob', 'Cee'], ['Bob']]);
   });
 
   await test.step("Bob deletes his account: his entries go from every edition's results", async () => {
@@ -132,7 +112,7 @@ test('results at done: only what was out; outlive the guesses; champions and bad
     await expect.poll(async () => (mails = (await mailsTo(bob.email)).filter((mail) => mail.tags.length === 0)).length).toBe(before + 1);
     ok(await bob.trpc.mutate('account.delete', { code: mails.at(-1)!.text.match(/\b(\d{6})\b/)![1] }));
     expect(await db.editions.countDocuments({ $or: [{ 'results.points.memberId': B }, { 'results.nailedIds': B }] })).toBe(0);
-    expect((await view(cee)).champions).toEqual([['Dan'], ['Cee'], ['Cee', 'Dan']]);
+    expect(await view(cee)).toEqual([['Dan'], ['Cee'], ['Cee', 'Dan']]);
   });
 });
 
@@ -145,7 +125,7 @@ test('the gift day job keeps the results when it moves an edition to done', asyn
   await play(at, people, ids);
   ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
   const edition = await editionOf(db, group.slug);
-  ok(await ann.trpc.mutate('giftday.runDue', { now: '2099-12-26T12:00:00.000Z', editionIds: [edition._id] }));
+  await runJob('giftday', { now: '2099-12-26T12:00:00.000Z', editionIds: [edition._id] });
   const after = (await db.editions.findOne({ _id: edition._id }))!;
   expect(after.status).toBe('done');
   expect(after.results?.points.map((entry) => entry.points)).toEqual([3, 1, 1]);

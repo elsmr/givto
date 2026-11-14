@@ -1,6 +1,6 @@
 // S4 draw & settings (other groups): "not the same as last time" that
-// can't be met, the scheduled draw (test-only `draw.runDue`, scoped to its editions), deleting a group.
-import { expect, ok, test } from '../fixtures';
+// can't be met, the scheduled draw (the draws job at a chosen time, scoped to its editions), deleting a group.
+import { expect, ok, runJob, test } from '../fixtures';
 import { codeOf, createGroup, editionOf, expectValidDraw, join, memberIdOf } from './s4-group';
 
 test('"not the same as last time" that makes the draw impossible is refused without names', async ({ signIn, db }) => {
@@ -33,10 +33,9 @@ test('"not the same as last time" that makes the draw impossible is refused with
   expect(reopened.draw?.assignments).toEqual({});
 });
 
-// Draw dates in 2099 and `editionIds` on every runDue: it never draws another test's edition.
-test('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async ({ signIn, newClient, db }) => {
+// Draw dates in 2099 and `editionIds` on every run: it never draws another test's edition.
+test('scheduled draw runs via runDueDraws once its time has come; impossible ones drop the schedule', async ({ signIn, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
-  const { trpc } = await newClient();
   const scheduled = await createGroup(ann, 'Scheduled');
   const tooSmall = await createGroup(ann, 'Too small');
   const bystander = await createGroup(ann, 'Bystander');
@@ -47,7 +46,7 @@ test('scheduled draw runs via runDueDraws once its time has come; impossible one
   const editionIds = [(await editionOf(db, scheduled.slug, 1))._id, (await editionOf(db, tooSmall.slug, 1))._id];
   const drawAt = (await editionOf(db, scheduled.slug, 1)).drawAt;
   expect(drawAt).toBeTruthy();
-  const runAt = async (offset: number) => ok(await trpc.mutate('draw.runDue', { now: new Date(drawAt!.getTime() + offset).toISOString(), editionIds }));
+  const runAt = (offset: number) => runJob('draws', { now: new Date(drawAt!.getTime() + offset).toISOString(), editionIds });
 
   const tooEarly = await runAt(-60_000);
   expect(tooEarly.drawn).not.toContain((await editionOf(db, scheduled.slug, 1))._id);

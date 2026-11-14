@@ -3,7 +3,7 @@ import { getDb } from '@/lib/server/db';
 import { AppError } from '@/lib/server/errors';
 import { subscribeGiftDay } from '@/lib/server/giftday-stream';
 import { log } from '@/lib/server/log';
-import { memberView } from '@/lib/server/routers/giftday';
+import { memberView } from '@/lib/server/giftday/giftday-view';
 import { memberEdition } from '@/lib/server/trpc';
 import { getHTTPStatusCodeFromError } from '@trpc/server/http';
 import superjson from 'superjson';

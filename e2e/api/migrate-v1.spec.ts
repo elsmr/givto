@@ -226,7 +226,7 @@ test('a migrated person signs in with the emailed code and finds their old group
     const { code, token } = await requestSignIn(client.request, annEmail);
     secrets.push(code, token);
     expect((await signInWithCode(client.request, annEmail, code)).status()).toBe(200);
-    const me = ok(await client.trpc.query('me.get'));
+    const me = ok(await client.trpc.query('account.get'));
     expect(me).toMatchObject({ id: hex(ann), name: 'Ann', email: annEmail });
     expect(me.locale).toBeUndefined();
     const session = await (await client.request.get('/api/auth/get-session')).json();

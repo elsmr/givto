@@ -119,19 +119,19 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
     const santa = [ann, cee, dan, eve][santaIds.indexOf(santaId)];
     const santaSees = async () => ok(await santa.trpc.query('claim.gifteeWishlist', edition))!.wishes.some((w) => w.id === wish.id);
     expect(await santaSees()).toBe(true);
-    expect(code(await santa.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: true }))).toBe('NOT_FOUND');
-    expect(code(await zed.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: true }))).toBe('NOT_FOUND');
+    expect(code(await santa.trpc.mutate('wish.markReceived', { wishId: wish.id, received: true }))).toBe('NOT_FOUND');
+    expect(code(await zed.trpc.mutate('wish.markReceived', { wishId: wish.id, received: true }))).toBe('NOT_FOUND');
     expect(await santaSees()).toBe(true);
 
-    ok(await bob.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: true }));
+    ok(await bob.trpc.mutate('wish.markReceived', { wishId: wish.id, received: true }));
     expect((await db.wishes.findOne({ _id: wish.id }))!.receivedAt).toBeTruthy();
     expect(await santaSees()).toBe(false);
     expect(ok(await bob.trpc.query('wish.list')).some((w) => w.id === wish.id)).toBe(false);
     expect(ok(await bob.trpc.query('wish.groupView', { groupSlug: slug })).some((w) => w.id === wish.id)).toBe(false);
 
-    ok(await bob.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: false }));
+    ok(await bob.trpc.mutate('wish.markReceived', { wishId: wish.id, received: false }));
     expect(await santaSees()).toBe(true);
-    ok(await bob.trpc.mutate('giftday.markReceived', { wishId: wish.id, received: true }));
+    ok(await bob.trpc.mutate('wish.markReceived', { wishId: wish.id, received: true }));
   });
 
   await test.step('once the edition is done: no shuffling, and the reveal is out without the presenter', async () => {

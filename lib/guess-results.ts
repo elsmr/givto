@@ -62,35 +62,3 @@ export const champions = (points: Points) => {
   const top = Math.max(0, ...points.map((entry) => entry.points));
   return top === 0 ? [] : points.filter((entry) => entry.points === top).map((entry) => entry.memberId);
 };
-
-export const badgeKinds = ['champion', 'backToBack', 'perfect', 'nailed'] as const;
-export type BadgeKind = (typeof badgeKinds)[number];
-
-type KeptResults = { points: Points; nailedIds: string[]; drawSize: number };
-
-/**
- * A group's badges per member over its editions. Back to back: champion in edition n and n − 1.
- * Perfect board: every pair right, which only a full board with every pair out reaches (your own giftee's row doesn't
- * count); not in a draw of two, where nobody can miss.
- */
-export const badgesOf = (editions: { number: number; results?: KeptResults }[]) => {
-  const championsIn = new Map(editions.map((edition) => [edition.number, edition.results ? champions(edition.results.points) : []]));
-  const earned = editions.flatMap(({ number, results }) => {
-    if (!results) return [];
-    const won = championsIn.get(number) ?? [];
-    return [
-      ...won.map((memberId) => [memberId, 'champion'] as const),
-      ...won.filter((memberId) => championsIn.get(number - 1)?.includes(memberId)).map((memberId) => [memberId, 'backToBack'] as const),
-      ...results.points.filter((entry) => results.drawSize > 2 && entry.points === results.drawSize - 1).map((entry) => [entry.memberId, 'perfect'] as const),
-      ...results.nailedIds.map((memberId) => [memberId, 'nailed'] as const),
-    ];
-  });
-  return Object.fromEntries(
-    Object.entries(Object.groupBy(earned, ([memberId]) => memberId)).map(([memberId, mine]) => [
-      memberId,
-      badgeKinds
-        .map((kind) => ({ kind, count: mine!.filter(([, k]) => k === kind).length }))
-        .filter((badge) => badge.count > 0),
-    ])
-  );
-};

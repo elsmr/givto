@@ -1,14 +1,10 @@
-import { randomInt } from 'node:crypto';
-import { shuffle } from '../../draw';
-import { editionResults } from '../../guess-results';
 import { todayIn } from '../../local-date';
-import { isDrawn, type Edition, type EditionStatus } from '../../schema/edition';
+import { isDrawn, type EditionStatus } from '../../schema/edition';
 import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
-import { guessesOf, santaStepOn } from '../guess/guesses';
+import { newUnwrapOrder, saveResults } from '../edition/status';
 import { log } from '../log';
 import { saveWishlists } from '../wishlist/wish-view';
-import { isRevealed } from '../routers/giftday-view';
 
 /** UTC+14: no edition anywhere reaches its gift day before the local date here. */
 const FURTHEST_AHEAD_ZONE = 'Pacific/Kiritimati';
@@ -22,33 +18,10 @@ export const giftDayStatus = (status: EditionStatus, giftDay: string, today: str
   return today === giftDay ? 'giftday' : 'done';
 };
 
-/** Unwrap order (32): a random order of everyone in the draw, independent of who drew whom. */
-export const newUnwrapOrder = (memberIds: string[], now: Date): NonNullable<Edition['unwrapOrder']> => ({
-  memberIds: shuffle(memberIds, randomInt),
-  shuffledAt: now,
-});
-
 /**
- * Champions and badges (86): keeps the scores of `edition` (as it was before done) once done, from only what is out
- * by then: the Santas shown at turns, or everyone with the big reveal on. Finished again after a reopen: written
- * again, unless retention deleted the guesses by then.
- */
-export const saveResults = async (db: Collections, edition: Edition, now: Date) => {
-  if ((await db.guesses.countDocuments({ editionId: edition._id }, { limit: 1 })) === 0) return;
-  const done = { ...edition, status: 'done' as const };
-  const assignments = edition.draw?.assignments ?? {};
-  const shown = santaStepOn(done) ? (edition.unwrapOrder?.progress?.santaShownIds ?? []) : [];
-  const results = editionResults(isRevealed(done) ? Object.keys(assignments) : shown, assignments, await guessesOf(db, done));
-  await db.editions.updateOne(
-    { _id: edition._id },
-    results.points.length > 0 ? { $set: { results: { ...results, savedAt: now } } } : { $unset: { results: true } }
-  );
-};
-
-/**
- * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron) or
- * via the test trigger `giftday.runDue`. Entering gift day shuffles the unwrap order if nobody has.
- * `editionIds` (test trigger only) limits it to those editions, so a test never moves another test's.
+ * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron).
+ * Entering gift day shuffles the unwrap order if nobody has.
+ * `editionIds` (tests only, see JobScope) limits it to those editions, so a test never moves another test's.
  */
 export const runGiftDayTransitions = async (db: Collections, now: Date, editionIds?: string[]) => {
   const editions = await db.editions

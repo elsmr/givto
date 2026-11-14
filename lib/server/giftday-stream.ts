@@ -3,7 +3,7 @@ import superjson from 'superjson';
 import type { Edition } from '../schema/edition';
 import type { Collections } from './db';
 import { log } from './log';
-import { memberView } from './routers/giftday';
+import { memberView } from './giftday/giftday-view';
 
 interface Subscriber {
   /** The member view, superjson. */
@@ -44,12 +44,12 @@ const watch = async (db: Collections) => {
 
 /** The edition's member view after every change to it, until the returned unsubscribe. */
 export const subscribeGiftDay = (db: Collections, editionId: string, subscriber: Subscriber) => {
-  subscribers.set(editionId, new Set([...(subscribers.get(editionId) ?? []), subscriber]));
+  subscribers.set(editionId, (subscribers.get(editionId) ?? new Set()).add(subscriber));
   if (!changes) void watch(db);
   return () => {
-    const rest = [...(subscribers.get(editionId) ?? [])].filter((s) => s !== subscriber);
-    if (rest.length > 0) subscribers.set(editionId, new Set(rest));
-    else subscribers.delete(editionId);
+    const set = subscribers.get(editionId);
+    set?.delete(subscriber);
+    if (set?.size === 0) subscribers.delete(editionId);
     if (subscribers.size === 0 && changes) {
       changes.close().catch((error: unknown) => log.warn({ err: error }, 'gift day stream close failed'));
       changes = null;

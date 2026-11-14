@@ -1,7 +1,7 @@
 // Draw notices go out with the draw (68): "Names are drawn" and "You have a new giftee" are sent
 // within the request of draw.run, a late joiner, someone leaving, a re-draw or a scheduled draw,
 // without any cron call (the `api` project never runs the crons).
-import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type TestDb, type User } from '../fixtures';
 import { createGroup, editionOf, join } from './s4-group';
 
 /** Already there when the request returns. */
@@ -71,7 +71,7 @@ test('a scheduled draw mails right away', async ({ signIn, db }) => {
   for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) await join(person, group, name);
   const { _id } = await editionOf(db, group.slug, 1);
   await db.editions.updateOne({ _id }, { $set: { drawAt: new Date('2099-12-01T00:00:00Z') } });
-  expect(ok(await ann.trpc.mutate('draw.runDue', { now: '2099-12-01T00:00:00.000Z', editionIds: [_id] })).drawn).toEqual([_id]);
+  expect((await runJob('draws', { now: '2099-12-01T00:00:00.000Z', editionIds: [_id] })).drawn).toEqual([_id]);
   for (const user of [ann, bob, cee]) await expectMails(user, 'namesDrawn', 1);
   await expectAllNotified(db, group.slug);
 });

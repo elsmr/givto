@@ -1,6 +1,6 @@
 // Gift day (part 2; 31, 32): turns one by one, the gift day job, status by
 // the edition's local date. Part 1: s6-giftday.spec.ts.
-import { expect, ok, runCron, test } from '../fixtures';
+import { expect, ok, runCron, runJob, test } from '../fixtures';
 import { code, drawnGroup, editionOf } from './s6-helpers';
 
 test('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same for everyone, organizer-only', async ({ signIn, db }) => {
@@ -84,7 +84,7 @@ test('status follows the local date: Auckland (ahead of UTC) and Los Angeles (be
   const bystander = (await drawnGroup(people, 'Bystander')).slug;
   const idsOf = (slugs: string[]) => Promise.all(slugs.map(async (slug) => (await editionOf(db, slug))._id));
   const editionIds = await idsOf([auckland, losAngeles]);
-  const runAt = async (now: string, ids = editionIds) => ok(await people[0].trpc.mutate('giftday.runDue', { now, editionIds: ids }));
+  const runAt = (now: string, ids = editionIds) => runJob('giftday', { now, editionIds: ids });
   const statuses = async () => [(await editionOf(db, auckland)).status, (await editionOf(db, losAngeles)).status];
 
   await runAt('2099-12-23T10:00:00.000Z'); // Auckland 23rd 23:00, LA 23rd 02:00

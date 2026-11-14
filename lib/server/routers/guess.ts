@@ -2,9 +2,9 @@ import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { isDuplicateKey, newId } from '../db';
 import { AppError } from '../errors';
+import { giftDayView } from '../giftday/giftday-view';
 import { guessesOf, guessingOn, guessOpen } from '../guess/guesses';
 import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
-import { giftDayView } from './giftday-view';
 
 /**
  * Guess your Santa (62, 82, 94): who I think gives to whom, a row per giftee, changeable until that giftee's Santa is

@@ -4,14 +4,14 @@ import { runDeliveries } from './deliveries';
 import { runDueDraws } from './draws';
 import { runGiftDayTransitions } from './giftday';
 import { runRetention } from './retention';
-import { sendReminders } from './reminders';
+import { sendReminders, type JobScope } from './reminders';
 import { sendWishlistDigests } from './wishlist-digests';
 
-type Job = (db: Collections, now: Date) => Promise<object>;
+type Job = (db: Collections, now: Date, scope?: JobScope) => Promise<object>;
 
 const frequent: Record<string, Job> = {
-  draws: (_db, now) => runDueDraws(now),
-  giftday: runGiftDayTransitions,
+  draws: (_db, now, scope) => runDueDraws(now, scope?.editionIds),
+  giftday: (db, now, scope) => runGiftDayTransitions(db, now, scope?.editionIds),
   deliveries: runDeliveries,
   digests: sendWishlistDigests,
   reminders: sendReminders,
@@ -19,11 +19,11 @@ const frequent: Record<string, Job> = {
 
 // One scheduled call for all frequent jobs: free schedulers cap the number of runs (59).
 // Draws first, so their notices go out in the same tick. A failing job doesn't stop the rest.
-const tick: Job = async (db, now) => {
+const tick: Job = async (db, now, scope) => {
   const results: Record<string, unknown> = {};
   for (const [name, job] of Object.entries(frequent)) {
     try {
-      results[name] = await job(db, now);
+      results[name] = await job(db, now, scope);
     } catch (error) {
       log.error({ err: error, job: name }, 'tick job failed');
       results[name] = { failed: true };

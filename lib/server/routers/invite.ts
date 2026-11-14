@@ -21,7 +21,7 @@ const INVITES_PER_GROUP_PER_DAY = { window: 24 * 60 * 60, max: 50 };
 const TokenInput = v.object({ groupSlug: Slug, token: v.string() });
 
 /** Until they accept and say their name, an invitee goes by their email's local part ("jan.peeters" → "jan peeters"): no dots, so never link-like. */
-export const standInName = (email: string) => email.split('@')[0].replace(/[._+-]+/g, ' ').trim().slice(0, 50) || 'Guest';
+const standInName = (email: string) => email.split('@')[0].replace(/[._+-]+/g, ' ').trim().slice(0, 50) || 'Guest';
 
 export const inviteRouter = router({
   /**

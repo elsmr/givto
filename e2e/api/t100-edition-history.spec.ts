@@ -13,7 +13,7 @@ test('a done edition keeps its wishlists, people and draw', async ({ signIn, db 
   ok(await bob.trpc.mutate('wish.create', { title: 'Not here' }));
   ok(await ann.trpc.mutate('draw.run', first));
   const scarf = ok(await bob.trpc.mutate('wish.create', { title: 'Scarf', groupSlugs }));
-  ok(await bob.trpc.mutate('giftday.markReceived', { wishId: scarf.id, received: true }));
+  ok(await bob.trpc.mutate('wish.markReceived', { wishId: scarf.id, received: true }));
   ok(await ann.trpc.mutate('manage.startGiftDay', first));
   ok(await ann.trpc.mutate('manage.finishGiftDay', first));
 

@@ -7,8 +7,8 @@ import { ObjectId } from 'mongodb';
 import { newId } from '@/lib/server/db';
 import nlEmail from '@/messages/nl/email.json' with { type: 'json' };
 import { appEnv, BASE_URL } from '../env';
-import { expect, mailsTo, ok, test, uniqueEmail, type User } from '../fixtures';
-import { circle, DAY, editionDoc, expectMails, groupDoc, mails, member, run, today } from './s7-seed';
+import { expect, mailsTo, ok, runJob, test, uniqueEmail, type User } from '../fixtures';
+import { circle, DAY, editionDoc, expectMails, groupDoc, mails, member, today } from './s7-seed';
 
 const trio = (olive: User, ann: User, bob: User) => [member(olive, 'Olive', { role: 'organizer' }), member(ann, 'Ann'), member(bob, 'Bob')];
 
@@ -47,8 +47,8 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
 
   ok(await bob.trpc.mutate('account.setNotifications', { reminders: false, wishlistUpdates: true, santaMessages: true }));
   await db.emailSuppressions.insertOne({ _id: ann.email, reason: 'bounce', at: new Date() });
-  await run('reminders');
-  await run('reminders');
+  await runJob('reminders');
+  await runJob('reminders');
   await expectMails(olive, 'reminderGift', 1, 'Family');
   await expectMails(olive, 'reminderCombined', 1, 'Family'); // for Kid: no wishes
   await expectMails(cee, 'reminderCombined', 1, 'Family');
@@ -117,7 +117,7 @@ test('retention: messages after 3 months; draws stay; orphan images', async ({ s
     }))
   );
   await db.wishes.updateOne({ _id: wish.id }, { $set: { links: [{ url: 'https://shop.test/lamp' }, { url: 'https://shop.test/lamp-2', imageId: used.toHexString() }] } });
-  const result = await run('retention');
+  const result = await runJob('retention');
   // Counts cover the whole database (a parallel run may have done ours): the shape here, our documents below.
   for (const key of ['editionMessages', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
@@ -149,7 +149,7 @@ test('retention without a gift day: counted from done or the next edition; the l
     await db.tips.insertOne({ ...base, _id: newId(), authorMemberId: people[0].id, aboutMemberId: people[1].id, text: 'Tip', anonymous: false, updatedAt: base.createdAt });
     await db.guesses.insertOne({ ...base, _id: newId(), guesserMemberId: people[1].id, gifteeMemberId: people[1].id, santaMemberId: people[2].id, updatedAt: base.createdAt });
   }
-  await run('retention');
+  await runJob('retention');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
   const kept = async ({ _id: editionId }: { _id: string }) =>
     (await db.claims.countDocuments({ editionId })) + (await db.tips.countDocuments({ editionId })) + (await db.guesses.countDocuments({ editionId }));
@@ -170,7 +170,7 @@ test('retention: bounce records go once no account or pending invite uses the ad
   await db.invites.insertMany([invite(declined, { usedAt: new Date() }), invite(invitee)]);
   const kept = [invitee, dan.email];
   await db.emailSuppressions.insertMany([gone, declined, ...kept].map((_id) => ({ _id, reason: 'bounce' as const, at: new Date() })));
-  await run('retention');
+  await runJob('retention');
   const left = (await db.emailSuppressions.find({ _id: { $in: [gone, declined, ...kept] } }).toArray()).map((s) => s._id).sort();
   expect(left, 'pending invite and account keep theirs').toEqual([...kept].sort());
 });
@@ -182,14 +182,14 @@ test('retention: an inactive group gets one warning, then goes 30 days later', a
   const sleepy = groupDoc(olive, 'Sleepy', people, { createdAt: stale, updatedAt: stale });
   await db.groups.insertOne(sleepy);
   await db.editions.insertOne(editionDoc(sleepy, 1, 'done', people, { createdAt: stale, updatedAt: stale }));
-  await run('retention');
-  await run('retention');
+  await runJob('retention');
+  await runJob('retention');
   await expectMails(olive, 'groupDeletionWarning', 1, 'Sleepy');
   const [warning] = await mails(olive, 'groupDeletionWarning', 'Sleepy');
   expect(warning.subject).toMatch(/^Sleepy will be deleted on /);
   expect(await db.groups.countDocuments({ _id: sleepy._id })).toBe(1);
   await db.sentNotifications.updateOne({ _id: `groupDeletionWarning:${sleepy._id}` }, { $set: { sentAt: new Date(Date.now() - 31 * DAY) } });
-  await run('retention');
+  await runJob('retention');
   expect((await db.groups.countDocuments({ _id: sleepy._id })) + (await db.editions.countDocuments({ groupId: sleepy._id }))).toBe(0);
 });
 

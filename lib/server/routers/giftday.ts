@@ -1,17 +1,15 @@
 import * as v from 'valibot';
-import { Id } from '../../schema/common';
 import { drawsNames, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
+import { newUnwrapOrder } from '../edition/status';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
+import { memberView, presenterGiftDayView } from '../giftday/giftday-view';
+import { AdvanceInput, advanceUnwrapping } from '../giftday/unwrap-advance';
 import { guessesOf } from '../guess/guesses';
-import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
-import { testHooksEnabled } from '../test-hooks';
-import { authedProcedure, editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
-import { giftDayView, presenterGiftDayView } from './giftday-view';
-import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
+import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 
 const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
   groupName: group.name,
@@ -20,10 +18,6 @@ const presenterView = async (db: Collections, group: Group, edition: Edition) =>
   status: edition.status,
   ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
 });
-
-/** giftday.get, also pushed by the gift day stream (97). */
-export const memberView = async (db: Collections, group: Group, edition: Edition) =>
-  giftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition));
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
@@ -88,27 +82,4 @@ export const giftdayRouter = router({
     );
     return { ok: true };
   }),
-
-  /** "I got this" (owner only): after gift day, or any time from the wishlist. Received wishes leave every list and every Santa's view. */
-  markReceived: authedProcedure
-    .input(v.object({ wishId: Id, received: v.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const now = new Date();
-      const saved = await ctx.db.wishes.updateOne(
-        { _id: input.wishId, ownerId: ctx.user.id },
-        input.received
-          ? { $set: { receivedAt: now, updatedAt: now } }
-          : { $unset: { receivedAt: true }, $set: { updatedAt: now } }
-      );
-      if (saved.matchedCount === 0) throw new AppError('NOT_FOUND');
-      return { wishId: input.wishId, received: input.received };
-    }),
-
-  /** Tests only (lib/server/test-hooks.ts): what the scheduled job does, optionally at a given time. */
-  runDue: publicProcedure
-    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())), editionIds: v.optional(v.array(Id)) }))
-    .mutation(async ({ ctx, input }) => {
-      if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
-      return runGiftDayTransitions(ctx.db, input.now ? new Date(input.now) : new Date(), input.editionIds);
-    }),
 });

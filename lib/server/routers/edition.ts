@@ -2,10 +2,10 @@ import * as v from 'valibot';
 import { todayIn } from '../../local-date';
 import { defaultEditionTitle, EditionTitle, isBeforeDraw, type Edition } from '../../schema/edition';
 import { isDuplicateKey, newId } from '../db';
+import { finishEdition } from '../edition/status';
 import { AppError } from '../errors';
 import { currentEdition } from '../membership';
 import { organizerEditionProcedure, organizerProcedure, router } from '../trpc';
-import { finishEdition } from './manage';
 
 /** Editions (33, 77): a new one as a draft any time after the draw, opened once the organizer is happy. */
 export const editionRouter = router({

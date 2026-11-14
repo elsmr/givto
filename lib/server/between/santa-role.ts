@@ -3,6 +3,7 @@ import { Id } from '../../schema/common';
 import type { Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Member } from '../../schema/member';
+import { santaAndGiftee } from '../draw/rules';
 import { AppError } from '../errors';
 import { editionProcedure, santaOfProcedure } from '../trpc';
 
@@ -27,12 +28,7 @@ export const findSantaRole = (
   caller: Member,
   asMemberId: string | undefined
 ): SantaRole | null => {
-  const santa = asMemberId
-    ? group.members.find((m) => m.id === asMemberId && m.managedBy === caller.id)
-    : caller;
-  if (!santa) throw new AppError('FORBIDDEN');
-  const gifteeId = edition.draw?.assignments[santa.id];
-  const giftee = group.members.find((m) => m.id === gifteeId);
+  const { santa, giftee } = santaAndGiftee(group, edition, caller, asMemberId);
   if (!giftee || giftee.id === caller.id) return null;
   return { santa, giftee, answersOwnQuestions: giftee.managedBy === caller.id };
 };

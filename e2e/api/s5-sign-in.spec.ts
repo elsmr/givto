@@ -50,7 +50,7 @@ test('link sign-in (POST, token in body) invalidates the code', async ({ newClie
   const email = uniqueEmail('link');
   const { code, token } = await requestSignInLink(request, email, secrets);
   expect((await withToken(request, token)).status()).toBe(200);
-  expect(ok(await trpc.query('me.get')).email).toBe(email);
+  expect(ok(await trpc.query('account.get')).email).toBe(email);
   expect((await signInWithCode(request, email, code)).status()).toBe(400);
 });
 
@@ -78,14 +78,14 @@ test('link landing page loads without the token reaching the server', async ({ r
 
 test('locale: new account takes the browser language; NEXT_LOCALE cookie beats Accept-Language', async ({ signIn }) => {
   const ann = await signIn('ann', { headers: { 'accept-language': 'nl-NL,nl;q=0.9' } });
-  expect(ok(await ann.trpc.query('me.get')).locale).toBe('nl');
+  expect(ok(await ann.trpc.query('account.get')).locale).toBe('nl');
   const dee = await signIn('dee', { headers: { cookie: 'NEXT_LOCALE=nl', 'accept-language': 'en' } });
-  expect(ok(await dee.trpc.query('me.get')).locale).toBe('nl');
+  expect(ok(await dee.trpc.query('account.get')).locale).toBe('nl');
 });
 
 test('locale: the account setting wins for sign-in emails', async ({ signIn, secrets }) => {
   const ann = await signIn('ann', { headers: { 'accept-language': 'nl-NL,nl;q=0.9' } });
-  expect((await ann.trpc.mutate('me.setLocale', { locale: 'en' })).status).toBe(200);
+  expect((await ann.trpc.mutate('account.setLocale', { locale: 'en' })).status).toBe(200);
   const { mail } = await requestSignInLink(ann.request, ann.email, secrets, { headers: { 'accept-language': 'nl' } });
   expect(mail.subject).toBe('Sign in to Givto');
 });

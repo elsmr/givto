@@ -19,9 +19,9 @@ export const ReceivedButton = ({ wishId, title }: { wishId: string; title: strin
       queryClient.invalidateQueries(trpc.wish.list.pathFilter()),
     ]);
   // The row is gone by the time someone clicks undo, so undo calls the client directly.
-  const undo = () => client.giftday.markReceived.mutate({ wishId, received: false }).then(refresh, onError);
+  const undo = () => client.wish.markReceived.mutate({ wishId, received: false }).then(refresh, onError);
   const mark = useMutation(
-    trpc.giftday.markReceived.mutationOptions({
+    trpc.wish.markReceived.mutationOptions({
       onSuccess: async () => {
         await refresh();
         toast.add({ title: t('marked', { title }), type: 'success', actionProps: { children: t('undo'), onClick: undo } });

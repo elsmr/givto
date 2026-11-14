@@ -1,6 +1,6 @@
 // Email invitees who haven't answered yet are in the draw (98); declining or letting the invite
 // expire takes them out like leaving does.
-import { expect, latestMail, ok, test, uniqueEmail, type TestDb, type User } from '../fixtures';
+import { expect, latestMail, ok, runJob, test, uniqueEmail, type TestDb, type User } from '../fixtures';
 import { codeOf, createFamily, inviteTokenFrom, joinAll, memberByEmail, signInEmail } from './s1-group';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -63,7 +63,7 @@ test('an expired invite: not counted for the draw, and taken out after it', asyn
   ok(await ann.trpc.mutate('draw.run', late.edition));
   expect((await assignmentsOf(db, late.slug))[late.memberId]).toBeDefined();
   const { _id: groupId } = (await db.groups.findOne({ slug: late.slug }))!;
-  ok(await ann.trpc.mutate('reminders.runDue', { now: new Date(Date.now() + 8 * DAY).toISOString(), groupIds: [groupId] }));
+  await runJob('reminders', { now: new Date(Date.now() + 8 * DAY).toISOString(), groupIds: [groupId] });
   const after = await assignmentsOf(db, late.slug);
   expect(Object.keys(after)).toHaveLength(3);
   expect([...Object.keys(after), ...Object.values(after)]).not.toContain(late.memberId);

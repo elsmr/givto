@@ -15,7 +15,7 @@ export const NotificationSettings = ({ prefs }: { prefs: NotificationPrefs }) =>
   const save = useMutation(
     trpc.account.setNotifications.mutationOptions({
       onSuccess: (saved) => {
-        queryClient.setQueryData(trpc.me.get.queryKey(), (me) => me && { ...me, notifications: saved });
+        queryClient.setQueryData(trpc.account.get.queryKey(), (me) => me && { ...me, notifications: saved });
         toast.add({ title: t('notifications.saved') });
       },
       onError: () => toast.add({ title: t('errors.generic'), type: 'error' }),

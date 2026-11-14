@@ -15,7 +15,7 @@ import { SignOutEverywhere } from './sign-out-everywhere';
 import { ThemeSelect } from './theme-select';
 
 /** Profile, postal addresses, sign-in, preferences, then data; deleting the account last, on its own coral card. */
-export const AccountSettings = ({ me }: { me: RouterOutputs['me']['get'] }) => {
+export const AccountSettings = ({ me }: { me: RouterOutputs['account']['get'] }) => {
   const t = useTranslations('account');
 
   return (
