@@ -1,8 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/toast';
-import { authClient } from '@/lib/client/auth';
+import { authClient, throwAuthError } from '@/lib/client/auth';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
+import { useMutation } from '@tanstack/react-query';
 import { KeyRound } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
@@ -20,26 +21,27 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
   const [editing, setEditing] = useState(false);
   const editButton = useFocusAfterEdit(editing);
   const [value, setValue] = useState(name);
-  const [busy, setBusy] = useState(false);
+  const failed = () => toast.add({ title: t('errors.generic'), type: 'error' });
+  const rename = useMutation({
+    mutationFn: () => throwAuthError(authClient.passkey.updatePasskey({ id: passkey.id, name: value.trim() })),
+    onSuccess: () => setEditing(false),
+    onError: failed,
+  });
+  const remove = useMutation({
+    mutationFn: () => throwAuthError(authClient.passkey.deletePasskey({ id: passkey.id })),
+    onSuccess: () => toast.add({ title: t('passkeys.removed') }),
+    onError: failed,
+  });
 
-  const run = async (action: () => Promise<{ error: unknown }>, success?: string) => {
-    setBusy(true);
-    const { error } = await action();
-    setBusy(false);
-    if (error) toast.add({ title: t('errors.generic'), type: 'error' });
-    else if (success) toast.add({ title: success });
-    return !error;
-  };
-
-  const rename = async (event: FormEvent) => {
+  const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (await run(() => authClient.passkey.updatePasskey({ id: passkey.id, name: value.trim() }))) setEditing(false);
+    rename.mutate();
   };
 
   if (editing) {
     return (
       <li className="flex flex-col gap-3 border-2 border-outline p-3">
-        <form onSubmit={rename} className="flex flex-col gap-3 xs:flex-row">
+        <form onSubmit={submit} className="flex flex-col gap-3 xs:flex-row">
           <Input
             aria-label={t('passkeys.rename-label', { name })}
             value={value}
@@ -49,7 +51,7 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
             onChange={(event) => setValue(event.target.value)}
           />
           <div className="flex gap-3">
-            <Button type="submit" disabled={busy}>{t('passkeys.save')}</Button>
+            <Button type="submit" disabled={rename.isPending}>{t('passkeys.save')}</Button>
             <Button type="button" variant="ghost" onClick={() => setEditing(false)}>{t('passkeys.cancel')}</Button>
           </div>
         </form>
@@ -72,9 +74,9 @@ export const PasskeyItem = ({ passkey }: { passkey: PasskeySummary }) => {
         </Button>
         <Button
           variant="danger"
-          disabled={busy}
+          disabled={remove.isPending}
           aria-label={t('passkeys.remove-label', { name })}
-          onClick={() => run(() => authClient.passkey.deletePasskey({ id: passkey.id }), t('passkeys.removed'))}
+          onClick={() => remove.mutate()}
         >
           {t('passkeys.remove')}
         </Button>
