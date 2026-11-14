@@ -1,3 +1,4 @@
+import { Alert, AlertTitle } from '@/components/ui/alert';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { Gift } from 'lucide-react';
@@ -12,9 +13,9 @@ export const GiftsToOpen = ({ groupSlug, editionNumber }: { groupSlug: string; e
 
   if (!count) return null;
   return (
-    <p className="flex items-center gap-2 bg-surface px-4 py-2 text-lg font-semibold bordered">
-      <Gift aria-hidden="true" className="size-5" />
-      {t('to-open', { count })}
-    </p>
+    <Alert>
+      <Gift aria-hidden="true" />
+      <AlertTitle>{t('to-open', { count })}</AlertTitle>
+    </Alert>
   );
 };

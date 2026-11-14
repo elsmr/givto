@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/toast';
-import { CircleAlert, Info } from 'lucide-react';
+import { Check, CircleAlert, Info, Sparkles } from 'lucide-react';
 import { StyleguideRow, StyleguideSection } from './styleguide-section';
 
 export const FeedbackSection = () => (
@@ -17,6 +17,15 @@ export const FeedbackSection = () => (
         <Info aria-hidden="true" />
         <AlertTitle>The draw is on 1 December</AlertTitle>
         <AlertDescription>People can still join until then.</AlertDescription>
+      </Alert>
+      <Alert variant="yellow">
+        <Sparkles aria-hidden="true" />
+        <AlertTitle>Psst!</AlertTitle>
+        <AlertDescription>Your Santa would love some ideas.</AlertDescription>
+      </Alert>
+      <Alert variant="mint">
+        <Check aria-hidden="true" />
+        <AlertTitle>Everyone has unwrapped.</AlertTitle>
       </Alert>
       <Alert variant="danger">
         <CircleAlert aria-hidden="true" />

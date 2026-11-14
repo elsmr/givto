@@ -11,6 +11,8 @@ const alertVariants = cva(
       variant: {
         default: 'bg-surface text-ink',
         danger: 'bg-coral text-ink',
+        yellow: 'bg-yellow text-ink',
+        mint: 'bg-mint text-ink',
       },
     },
     defaultVariants: {

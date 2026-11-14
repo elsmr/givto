@@ -1,4 +1,5 @@
 import { GuessVerdict } from '@/components/guess/guess-verdict';
+import { Alert } from '@/components/ui/alert';
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import type { RouterOutputs } from '@/lib/client/trpc';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,7 @@ type GiftDay = RouterOutputs['giftday']['get'];
 type UnwrapNowProps = { order: NonNullable<GiftDay['unwrapOrder']>; guessing?: GiftDay['guessing']; swap?: GiftDay['swap']; className?: string };
 
 const name = (chunks: ReactNode) => <strong>{chunks}</strong>;
+const box = 'flex items-center gap-4 text-base';
 
 /**
  * On gift day, for everyone's phone: who's unwrapping now, as the presenter steps (who's next stays a
@@ -26,17 +28,17 @@ export const UnwrapNow = ({ order, guessing, swap, className }: UnwrapNowProps) 
   if (order.finished) {
     return (
       <>
-        {/* The same live div as a turn below, so React keeps it mounted and the finish is announced. */}
-        <div aria-live="polite" className={cn('bg-mint p-3 font-semibold text-ink bordered', className)}>
+        {/* The same live Alert as a turn below, so React keeps it mounted and the finish is announced. */}
+        <Alert variant="mint" aria-live="polite" className={cn(box, 'font-semibold', className)}>
           {t('finished')}
-        </div>
+        </Alert>
         {table}
       </>
     );
   }
   return (
     <>
-      <div aria-live="polite" className={cn('flex items-center gap-4 bg-yellow p-4 text-ink bordered shadow-md', className)}>
+      <Alert variant="yellow" aria-live="polite" className={cn(box, className)}>
         {order.current && <LogoAnimation key={order.turn} variant="celebrate" className="size-12 shrink-0" />}
         <div className="flex min-w-0 flex-col gap-1">
           {order.current ? (
@@ -62,7 +64,7 @@ export const UnwrapNow = ({ order, guessing, swap, className }: UnwrapNowProps) 
             </p>
           )}
         </div>
-      </div>
+      </Alert>
       {table}
     </>
   );
