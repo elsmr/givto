@@ -152,7 +152,7 @@ test('the app nav: a bar at the bottom on phones, a rail on desktop; the tabs fi
   const box = async () => (await nav.boundingBox())!;
   if (testInfo.project.name === 'mobile') {
     await expect.poll(async () => Math.round((await box()).y + (await box()).height)).toBe(viewport.height);
-    await page.getByRole('contentinfo').scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await expect.poll(async () => Math.round((await box()).y + (await box()).height), 'still stuck to the bottom').toBe(viewport.height);
     await page.evaluate(() => window.scrollTo(0, 0));
   } else {
