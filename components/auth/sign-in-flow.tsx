@@ -7,9 +7,10 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { CodeForm } from './code-form';
 import { EmailForm } from './email-form';
+import { GoogleSignIn } from './google-sign-in';
 import { PasskeyButton } from './passkey-button';
 
-/** Email → code (or the emailed link), or a passkey; then on to `redirect` (a same-origin path). */
+/** Email → code (or the emailed link), Google, or a passkey; then on to `redirect` (a same-origin path). */
 export const SignInFlow = ({ redirect }: { redirect: string }) => {
   const t = useTranslations('auth');
   const router = useRouter();
@@ -39,6 +40,7 @@ export const SignInFlow = ({ redirect }: { redirect: string }) => {
       <FieldSeparator className="*:data-[slot=field-separator-content]:bg-surface [&_[role=separator]]:border-dashed">
         {t('or')}
       </FieldSeparator>
+      <GoogleSignIn callbackURL={redirect} separator={false} />
       <PasskeyButton onSignedIn={done} />
     </div>
   );

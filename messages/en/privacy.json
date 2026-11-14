@@ -5,7 +5,7 @@
   "stored": {
     "title": "What we store and why",
     "account": "<b>Your account:</b> your name, email address, language and email settings. To sign you in and send the emails you need, like your draw and reminders.",
-    "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part) and your sessions with the device's IP address and browser. To keep your account safe.",
+    "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part), which Google account you linked (its ID, if you sign in with Google) and your sessions with the device's IP address and browser. To keep your account safe.",
     "groups": "<b>Groups and Secret Santas:</b> group names, people's names, Keep apart rows, dates, a video-call link, budget, the draw, your guesses at who gives to whom and your points from guessing. The organizer also sees everyone's email address. To run your Secret Santa.",
     "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, what you marked with “I've got my gift” and, by post, whether you posted it and whether yours arrived, tips, questions and Psst! messages. So your Santa knows what to get you. When a Secret Santa is over, the wishlists in it are kept as they were.",
     "addresses": "<b>Postal addresses:</b> the ones you add, kept on your account until you remove them or delete your account. Only shown to your Santa in a Secret Santa that sends gifts by post, from the draw until gift day is over. The organizer sees who hasn't added one, never the address.",
@@ -34,6 +34,7 @@
     "mongodb": "<b>MongoDB Atlas:</b> the database.",
     "mailgun": "<b>Mailgun:</b> sending emails.",
     "sentry": "<b>Sentry:</b> error reports, so we can fix bugs.",
+    "google": "<b>Google:</b> only if you sign in with Google. Google tells us your name and email address; we don't keep your photo or any access to your Google account.",
     "own-logs": "Mailgun, our hosting and the database backups keep their own logs and backups for a limited time, under their own terms."
   },
   "rights": {

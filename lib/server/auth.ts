@@ -7,7 +7,7 @@ import { emailOTP } from 'better-auth/plugins/email-otp';
 import { magicLink } from 'better-auth/plugins/magic-link';
 import * as v from 'valibot';
 import { SignInEmail, signInSubject } from '../../emails/sign-in';
-import { locales, type Locale } from '../schema/common';
+import { locales, PersonName, type Locale } from '../schema/common';
 import { scrub } from '../scrub';
 import { getDb, getMongoClient, getMongoDb } from './db';
 import { requireEnv } from './env';
@@ -22,10 +22,15 @@ const SIGN_IN_EXPIRES_IN = 10 * 60;
 /** Per address, on top of Better Auth's per-IP limits. */
 const SIGN_IN_EMAILS_PER_ADDRESS = { window: 15 * 60, max: 5 };
 
-// Everything else Better Auth (or a plugin) exposes is a 404 over HTTP: no password, no
-// social, no profile updates that would bypass our validation (names go through tRPC).
+// Everything else Better Auth (or a plugin) exposes is a 404 over HTTP: no password, no OAuth
+// tokens, no profile updates that would bypass our validation (names go through tRPC).
 const HTTP_PATHS = new Set([
   '/sign-in/magic-link',
+  '/sign-in/social',
+  '/callback/:id',
+  '/link-social',
+  '/list-accounts',
+  '/unlink-account',
   '/magic-link/verify-token',
   '/sign-in/email-otp',
   '/passkey/generate-register-options',
@@ -45,7 +50,13 @@ const HTTP_PATHS = new Set([
 ]);
 
 // Signing in with one of these ends every other pending code and link for the address.
-const SIGN_IN_PATHS = new Set(['/sign-in/email-otp', '/magic-link/verify', '/passkey/verify-authentication']);
+const SIGN_IN_PATHS = new Set(['/sign-in/email-otp', '/magic-link/verify', '/passkey/verify-authentication', '/callback/:id']);
+
+/** A provider's name only when it would pass our own form; otherwise '' and the app asks for one. */
+export const providerName = (name: unknown): string => {
+  const result = v.safeParse(PersonName, name);
+  return result.success ? result.output : '';
+};
 
 /** Pending magic links store `{"type":"magic-link","email":…}` as their value (only the token is hashed). */
 export const deletePendingSignIns = async (email: string): Promise<void> => {
@@ -74,6 +85,18 @@ const createAuth = () => {
     secret: requireEnv('BETTER_AUTH_SECRET'),
     database: mongodbAdapter(getMongoDb(), { client: getMongoClient(), usePlural: true }),
     session: { expiresIn: retention.sessionDays * 24 * 60 * 60, updateAge: 24 * 60 * 60 },
+    socialProviders: {
+      // Off without credentials (e.g. local dev); the button is hidden the same way (next.config.js).
+      ...(process.env.GOOGLE_CLIENT_ID && {
+        google: { clientId: process.env.GOOGLE_CLIENT_ID, clientSecret: requireEnv('GOOGLE_CLIENT_SECRET') },
+      }),
+    },
+    account: {
+      // Google proves the email; it's only an identity, its tokens are never used.
+      updateAccountOnSignIn: false,
+      // Email sign-in has no `accounts` row, so Google can be the only one and still be unlinked.
+      accountLinking: { allowUnlinkingAll: true },
+    },
     user: {
       additionalFields: {
         locale: { type: [...locales], required: false, defaultValue: 'en', input: false },
@@ -88,9 +111,16 @@ const createAuth = () => {
     databaseHooks: {
       user: {
         create: {
-          // New accounts start with the browser's language.
-          before: async (user, ctx) => ({
-            data: { ...user, locale: preferredLocale(ctx?.request?.headers ?? ctx?.headers) },
+          // New accounts start with the browser's language. No profile photo: avatars are colours.
+          before: async ({ image: _image, ...user }, ctx) => ({
+            data: { ...user, name: providerName(user.name), locale: preferredLocale(ctx?.request?.headers ?? ctx?.headers) },
+          }),
+        },
+      },
+      account: {
+        create: {
+          before: async ({ accessToken: _a, refreshToken: _r, idToken: _i, accessTokenExpiresAt: _ae, refreshTokenExpiresAt: _re, ...account }) => ({
+            data: account,
           }),
         },
       },

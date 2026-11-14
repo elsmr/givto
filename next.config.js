@@ -6,6 +6,8 @@ export default withSentryConfig(
     // The dashboard moved; old links and bookmarks keep working.
     redirects: async () => [{ source: '/groups', destination: '/app', permanent: true }],
     experimental: { globalNotFound: true },
+    // Build-time: the sign-in pages are static. The server reads GOOGLE_CLIENT_ID at runtime (lib/server/auth.ts).
+    env: { GOOGLE_SIGN_IN: process.env.GOOGLE_CLIENT_ID ? '1' : '' },
   },
   {
     // Source maps upload only when SENTRY_AUTH_TOKEN, SENTRY_ORG and SENTRY_PROJECT are set.

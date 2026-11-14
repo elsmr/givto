@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { appErrorCode, knownAppError } from '../group/app-error-code';
 import { fieldIssue, type FieldIssue } from '../group/field-issue';
+import { GoogleSignIn } from '../auth/google-sign-in';
 import { EmailCodeForm } from './email-code-form';
 import { JoinIntro } from './join-intro';
 import { useEmailCode } from './use-email-code';
@@ -138,6 +139,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
               {t('invite.decline')}
             </Button>
           </div>
+          {!signedInEmail && <GoogleSignIn callbackURL={router.asPath} />}
         </div>
       )}
     </JoinIntro>

@@ -32,6 +32,8 @@ export const appEnv: Record<string, string> = {
   BETTER_AUTH_URL: BASE_URL,
   BETTER_AUTH_SECRET: 'test-secret-test-secret-test-secret-0123',
   BETTER_AUTH_TELEMETRY: '0',
+  GOOGLE_CLIENT_ID: 'test-google-client-id',
+  GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
   CRON_SECRET,
   MAILGUN_WEBHOOK_SIGNING_KEY: 'test-webhook-signing-key',
   LOG_LEVEL: 'debug',

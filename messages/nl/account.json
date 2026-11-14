@@ -75,6 +75,20 @@
     "remove-label": "{name} verwijderen",
     "removed": "Passkey verwijderd"
   },
+  "google": {
+    "title": "Google",
+    "description": "Log in met je Google-account in plaats van een code per e-mail. Het moet hetzelfde e-mailadres gebruiken als je Givto-account.",
+    "link": "Google koppelen",
+    "linked": "Google gekoppeld",
+    "linked-on": "Gekoppeld op {date}",
+    "unlink": "Ontkoppelen",
+    "unlinked": "Google ontkoppeld. Je kunt nog altijd inloggen met je e-mail.",
+    "errors": {
+      "email-mismatch": "Dat Google-account gebruikt een ander e-mailadres. Kies het account met {email}.",
+      "linked-elsewhere": "Dat Google-account is al gekoppeld aan een ander Givto-account.",
+      "generic": "Google koppelen lukte niet. Probeer het opnieuw."
+    }
+  },
   "notifications": {
     "title": "E-mailmeldingen",
     "reminders": "Herinneringen voor deadlines en pakjesdag",
