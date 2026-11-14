@@ -2,9 +2,9 @@ import { AccountSettings } from '@/components/account/account-settings';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { AppShell } from '@/components/shell/app-shell';
 import { LoadFailed } from '@/components/shell/load-failed';
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
+import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from '@/lib/client/session';
 import { useTRPC } from '@/lib/client/trpc';
 import { loadMessages } from '@/messages/load';
@@ -47,7 +47,10 @@ export default function AccountPage() {
         ) : me.isError && user ? (
           <LoadFailed message={t('errors.generic')} onRetry={() => void me.refetch()} />
         ) : (
-          <LogoAnimation variant="loading" />
+          <div data-page-loading className="flex flex-col gap-8">
+            <Skeleton className="h-64" />
+            <Skeleton className="h-40" />
+          </div>
         )}
       </div>
     </AppShell>

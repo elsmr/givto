@@ -1,5 +1,5 @@
 import { LoadFailed } from '@/components/shell/load-failed';
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
@@ -20,7 +20,14 @@ export const GroupHome = ({ slug, editionNumber }: { slug: string; editionNumber
   const user = useRequireSession();
   const group = useQuery(trpc.group.get.queryOptions({ groupSlug: slug, editionNumber }));
 
-  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
+  if (!user || group.isPending) {
+    return (
+      <div data-page-loading className="flex flex-col gap-8">
+        <Skeleton className="h-20" />
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
   if (group.error) {
     const code = appErrorCode(group.error);
     if (code === 'GROUP_NOT_FOUND') return <GroupNotFound />;

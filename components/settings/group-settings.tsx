@@ -4,7 +4,7 @@ import { PendingRequests } from '@/components/group/pending-requests';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { LoadFailed } from '@/components/shell/load-failed';
 import { buttonVariants } from '@/components/ui/button';
-import { LogoAnimation } from '@/components/logo-animation/logo-animation';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useTRPC } from '@/lib/client/trpc';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, CalendarDays, Gift, PenLine, Shuffle } from 'lucide-react';
@@ -36,7 +36,14 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
   const user = useRequireSession();
   const group = useQuery(trpc.group.get.queryOptions({ groupSlug: slug }));
 
-  if (!user || group.isPending) return <LogoAnimation variant="loading" />;
+  if (!user || group.isPending) {
+    return (
+      <div data-page-loading className="flex flex-col gap-8">
+        <Skeleton className="h-20" />
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
   if (group.error && appErrorCode(group.error) !== 'GROUP_NOT_FOUND') {
     return <LoadFailed message={tGroup('load-failed')} onRetry={() => void group.refetch()} />;
   }

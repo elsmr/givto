@@ -10,7 +10,7 @@ export const FeedbackSection = () => (
   <StyleguideSection
     id="feedback"
     title="Alerts, toasts and loading"
-    description="Alerts stay on the page while something is true; toasts confirm what just happened; skeletons hold the layout while data loads."
+    description="Alerts stay on the page while something is true; toasts confirm what just happened. While a page's data loads, skeletons hold its layout (/app, /wishlist, /account, the group and its settings); the logo animation is for flows and steps in between (sign-in link, join, create, the presenter)."
   >
     <div className="flex max-w-xl flex-col gap-4">
       <Alert>
