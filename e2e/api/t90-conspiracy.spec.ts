@@ -2,7 +2,7 @@
 // a board reaches its subject, the organizer only sees boards as a participant, and tips never show board posts.
 import enEmail from '@/messages/en/email.json' with { type: 'json' };
 import { newId } from '@/lib/server/db';
-import { expect, mailsTo, ok, test, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type User } from '../fixtures';
 import { code } from './s6-helpers';
 import { newMember, seedEdition, seedGroup } from './seed-groups';
 
@@ -149,7 +149,7 @@ test('conspiracy: lock-in and wishlist reminders, never a gift one; to-dos to ma
   }
   ok(await ann.trpc.mutate('wish.create', { title: 'Socks', groupSlugs: [group.slug] }));
   const editionIds = [(await db.editions.findOne({ groupId: (await db.groups.findOne({ slug: group.slug }))!._id }))!._id];
-  const runAt = async (now: string) => ok(await ann.trpc.mutate('reminders.runDue', { now, editionIds }));
+  const runAt = (now: string) => runJob('reminders', { now, editionIds });
   const todosOf = async (user: User) => ok(await user.trpc.query('account.groups')).find((g) => g.slug === group.slug)?.todos;
 
   expect(await todosOf(ann)).toEqual([{ kind: 'readyToLockIn' }]);

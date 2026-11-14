@@ -1,7 +1,7 @@
 // Champions (86): results kept when an edition becomes done, from only what was out; they outlive
 // the guesses, go with the person on account deletion and are in the export; champions over three editions.
 import { newId } from '@/lib/server/db';
-import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type TestDb, type User } from '../fixtures';
 import { drawnGroup, editionOf } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
@@ -125,7 +125,7 @@ test('the gift day job keeps the results when it moves an edition to done', asyn
   await play(at, people, ids);
   ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
   const edition = await editionOf(db, group.slug);
-  ok(await ann.trpc.mutate('giftday.runDue', { now: '2099-12-26T12:00:00.000Z', editionIds: [edition._id] }));
+  await runJob('giftday', { now: '2099-12-26T12:00:00.000Z', editionIds: [edition._id] });
   const after = (await db.editions.findOne({ _id: edition._id }))!;
   expect(after.status).toBe('done');
   expect(after.results?.points.map((entry) => entry.points)).toEqual([3, 1, 1]);

@@ -46,9 +46,9 @@ export const saveResults = async (db: Collections, edition: Edition, now: Date) 
 };
 
 /**
- * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron) or
- * via the test trigger `giftday.runDue`. Entering gift day shuffles the unwrap order if nobody has.
- * `editionIds` (test trigger only) limits it to those editions, so a test never moves another test's.
+ * Gift day status transitions, by each edition's local date. Idempotent; runs with the scheduled jobs (cron).
+ * Entering gift day shuffles the unwrap order if nobody has.
+ * `editionIds` (tests only, see JobScope) limits it to those editions, so a test never moves another test's.
  */
 export const runGiftDayTransitions = async (db: Collections, now: Date, editionIds?: string[]) => {
   const editions = await db.editions

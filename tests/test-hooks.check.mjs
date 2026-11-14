@@ -1,6 +1,6 @@
 // Run: pnpm test (or node --import ./tests/ts-hooks.mjs tests/test-hooks.check.mjs)
-// The test-only procedures (draw.runDue, giftday.runDue) throw NOT_FOUND unless this gate is open;
-// e2e/api/test-hooks.spec.ts checks they're wired to it (open under the e2e server's flag).
+// The cron endpoint (pages/api/cron/[job].ts) reads a test run's time and scope only when this gate is open;
+// e2e/api/test-hooks.spec.ts checks it's wired to it (open under the e2e server's flag).
 import assert from 'node:assert/strict';
 import { testHooksEnabled } from '../lib/server/test-hooks.ts';
 

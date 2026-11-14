@@ -5,8 +5,8 @@
 // edition, never on the job's counts. Part 2 (reminders, webhook, retention): s7-reminders-retention.spec.ts.
 import { randomBytes } from 'node:crypto';
 import nlEmail from '@/messages/nl/email.json' with { type: 'json' };
-import { expect, latestMail, ok, runCron, test, type SentMail } from '../fixtures';
-import { circle, drawOf, editionDoc, expectMails, groupDoc, mails, member, run, today } from './s7-seed';
+import { expect, latestMail, ok, runCron, runJob, test, type SentMail } from '../fixtures';
+import { circle, drawOf, editionDoc, expectMails, groupDoc, mails, member, today } from './s7-seed';
 
 test('cron: secret required, unknown jobs 404', async () => {
   expect((await runCron('deliveries', { authorization: null })).status).toBe(401);
@@ -21,7 +21,7 @@ test('deliveries leaves a drawn edition without pending notices alone', async ({
   const edition = editionDoc(quiet, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: circle(people) });
   await db.groups.insertOne(quiet);
   await db.editions.insertOne(edition);
-  await run('deliveries');
+  await runJob('deliveries');
   for (const user of [ann, bob, cee]) expect(await mails(user, 'namesDrawn')).toHaveLength(0);
   expect(await db.sentNotifications.countDocuments({ _id: { $regex: `^drawn:${edition._id}:` } })).toBe(0);
 });
@@ -59,12 +59,12 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   });
 
   await test.step('names drawn: one email per Santa, once, never naming the giftee; managed members via their manager', async () => {
-    await run('deliveries');
+    await runJob('deliveries');
     await expectMails(olive, 'namesDrawn', 2, 'Family');
     for (const user of [ann, bob, cee]) await expectMails(user, 'namesDrawn', 1, 'Family');
     expect(await drawNotices(), 'five Santas, five notices').toBe(5);
     await expect.poll(noticesPending, { message: 'caught up' }).toBeUndefined();
-    await run('deliveries');
+    await runJob('deliveries');
     expect(await drawNotices(), 'second tick sends nothing').toBe(5);
     for (const [user, giftee] of [[ann, 'Bob'], [bob, 'Cee'], [cee, 'Kid']] as const) {
       const [mail, ...more] = await mails(user, 'namesDrawn');
@@ -107,9 +107,9 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   let psst!: SentMail;
   await test.step('Psst!: emailed on the next run, once, with nothing about the Santa', async () => {
     ok(await bob.trpc.mutate('nudge.send', { ...E1, kind: 'emptyWishlist' }));
-    await run('deliveries');
+    await runJob('deliveries');
     await expectMails(cee, 'psst', 1);
-    await run('deliveries');
+    await runJob('deliveries');
     [psst] = await mails(cee, 'psst');
     expect(await mails(cee, 'psst')).toHaveLength(1);
     expectAnonymous(psst);
@@ -121,15 +121,15 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
 
   await test.step('question to the giftee, answer to the Santa: once each, the question without the asker', async () => {
     const { id: questionId } = ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'What size are your feet?' }));
-    await run('deliveries');
+    await runJob('deliveries');
     await expectMails(cee, 'question', 1);
     const [question] = await mails(cee, 'question');
     expect(question.text).toContain('What size are your feet?');
     expectAnonymous(question);
     ok(await cee.trpc.mutate('question.answer', { ...E1, questionId, text: 'Size 39' }));
-    await run('deliveries');
+    await runJob('deliveries');
     await expectMails(bob, 'answer', 1);
-    await run('deliveries');
+    await runJob('deliveries');
     const answers = await mails(bob, 'answer');
     expect(answers).toHaveLength(1);
     expect(answers[0].text).toContain('Size 39');
@@ -150,7 +150,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     expect(ok(await cee.trpc.query('account.get')).notifications.santaMessages).toBe(false);
     expect(psst.html, 'footer link to the page').toContain(`/unsubscribe?t=${oneClick.split('t=')[1]}`);
     ok(await bob.trpc.mutate('question.ask', { ...E1, text: 'Favourite colour?' }));
-    await run('deliveries');
+    await runJob('deliveries');
     await expect
       .poll(() => db.questions.countDocuments({ editionId: e1._id, notifiedAt: { $exists: false } }), { message: 'in-app delivery still marked' })
       .toBe(0);
@@ -165,13 +165,13 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
 
   await test.step('wishlist digest: 3 quick adds → one email after the quiet period, listing them', async () => {
     for (const title of ['Moomin mug', 'Green socks', 'A good novel']) ok(await ann.trpc.mutate('wish.create', { title, groupSlugs: [family.slug] }));
-    await run('digests');
+    await runJob('digests');
     expect(await mails(olive, 'wishlistUpdated'), 'quiet period').toHaveLength(0);
     expect((await pending())!.notifyAfter!.getTime(), 'still waiting').toBeGreaterThan(Date.now());
     await digestNow();
-    await run('digests');
+    await runJob('digests');
     await expectMails(olive, 'wishlistUpdated', 1);
-    await run('digests');
+    await runJob('digests');
     const [digest, ...more] = await mails(olive, 'wishlistUpdated');
     expect(more).toHaveLength(0);
     for (const title of ['Moomin mug', 'Green socks', 'A good novel']) expect(digest.text, title).toContain(title);
@@ -182,20 +182,20 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Gone again', groupSlugs: [family.slug] }));
     ok(await ann.trpc.mutate('wish.delete', { wishId: wish.id }));
     await digestNow();
-    await run('digests');
+    await runJob('digests');
     await expectBatchTaken();
     expect(await mails(olive, 'wishlistUpdated'), 'no changes').toHaveLength(1);
     const [first] = ok(await ann.trpc.query('wish.list'));
     ok(await ann.trpc.mutate('wish.move', { wishId: first.id, toIndex: 2 }));
     ok(await ann.trpc.mutate('wish.create', { title: 'Secret wish' }));
     await digestNow();
-    await run('digests');
+    await runJob('digests');
     await expectBatchTaken();
     expect(await mails(olive, 'wishlistUpdated'), 'not shown in this group').toHaveLength(1);
     ok(await ann.trpc.mutate('wish.create', { title: 'Seen it', groupSlugs: [family.slug] }));
     ok(await olive.trpc.query('claim.gifteeWishlist', E1));
     await digestNow();
-    await run('digests');
+    await runJob('digests');
     await expectBatchTaken();
     expect(await mails(olive, 'wishlistUpdated'), 'seen').toHaveLength(1);
   });
@@ -204,16 +204,16 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
     const wish = ok(await ann.trpc.mutate('wish.create', { title: 'Edited a lot', groupSlugs: [family.slug] }));
     await setPending({ firstChangeAt: new Date(Date.now() - 25 * 3600 * 1000) });
     ok(await ann.trpc.mutate('wish.update', { wishId: wish.id, title: 'Edited a lot, again' }));
-    await run('digests');
+    await runJob('digests');
     await expectMails(olive, 'wishlistUpdated', 2); // no waiting for quiet
     expect((await mails(olive, 'wishlistUpdated'))[1].text).toContain('Edited a lot, again');
   });
 
   await test.step('organizer handover: the new organizer hears it once', async () => {
     await db.groups.updateOne({ _id: family._id }, { $set: { organizerHandover: { toMemberId: m.ann.id, at: new Date() } } });
-    await run('deliveries');
+    await runJob('deliveries');
     await expectMails(ann, 'organizerHandover', 1);
-    await run('deliveries');
+    await runJob('deliveries');
     expect(await mails(ann, 'organizerHandover')).toHaveLength(1);
   });
 });

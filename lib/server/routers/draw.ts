@@ -1,11 +1,6 @@
-import * as v from 'valibot';
-import { Id } from '../../schema/common';
 import { santaAndGiftee } from '../draw/rules';
 import { drawEdition, lockInEdition, redrawEdition } from '../draw/run';
-import { AppError } from '../errors';
-import { runDueDraws } from '../jobs/draws';
-import { testHooksEnabled } from '../test-hooks';
-import { editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
+import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 
 /** The draw (34). Results are never listed: each person only reads their own giftee. */
 export const drawRouter = router({
@@ -46,12 +41,4 @@ export const drawRouter = router({
     );
     return { ok: true };
   }),
-
-  /** Tests only (lib/server/test-hooks.ts): what the scheduler (S7's cron) does, optionally at a given time. */
-  runDue: publicProcedure
-    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())), editionIds: v.optional(v.array(Id)) }))
-    .mutation(async ({ input }) => {
-      if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
-      return runDueDraws(input.now ? new Date(input.now) : new Date(), input.editionIds);
-    }),
 });

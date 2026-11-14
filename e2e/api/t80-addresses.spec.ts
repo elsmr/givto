@@ -2,7 +2,7 @@
 // assigned Santa reads it, in by-post editions, from the draw until gift day is over; the organizer only
 // sees who has none.
 import enEmail from '@/messages/en/email.json' with { type: 'json' };
-import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type TestDb, type User } from '../fixtures';
 import { code, editionOf } from './s6-helpers';
 
 const home = { recipient: 'Bob Builder', lines: ['Bobstraat 12', 'Bus 3'], postalCode: '1000', city: 'Brussel', country: 'BE' as const };
@@ -139,7 +139,7 @@ test('a reminder 14 days before gift day, only to those without an address', asy
   const group = await groupOf(people, 'Remind me');
   for (const person of people) ok(await person.trpc.mutate('wish.create', { title: 'Something', groupSlugs: [group.slug] }));
   ok(await bob.trpc.mutate('account.addAddress', { address: home }));
-  ok(await bob.trpc.mutate('reminders.runDue', { now: '2099-12-10T10:00:00.000Z', editionIds: [(await editionOf(db, group.slug))._id] }));
+  await runJob('reminders', { now: '2099-12-10T10:00:00.000Z', editionIds: [(await editionOf(db, group.slug))._id] });
   const [reminder] = await mailsTo(cee.email, 'reminderAddress');
   expect(reminder.subject).toBe(`${enEmail.reminder.address.subject} · Remind me`);
   expect(await mailsTo(bob.email, 'reminderAddress')).toHaveLength(0);

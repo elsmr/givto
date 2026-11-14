@@ -17,7 +17,6 @@ import { manageRouter } from './manage';
 import { membershipRouter } from './membership';
 import { nudgeRouter } from './nudge';
 import { questionRouter } from './question';
-import { remindersRouter } from './reminders';
 import { settingsRouter } from './settings';
 import { tipRouter } from './tip';
 import { wishRouter } from './wish';
@@ -47,7 +46,6 @@ export const appRouter = router({
   manage: manageRouter,
   gift: giftRouter,
   guess: guessRouter,
-  reminders: remindersRouter,
   address: addressRouter,
 });
 

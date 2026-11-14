@@ -1,6 +1,6 @@
 // The organizer's escape hatches (64): start gift day now, finish it, back to shopping, reopen.
 import { addDays, todayIn } from '@/lib/local-date';
-import { expect, ok, test, type User } from '../fixtures';
+import { expect, ok, runJob, test, type User } from '../fixtures';
 import { code, drawnGroup, editionOf, memberIdOf } from './s6-helpers';
 
 const TZ = 'Europe/Brussels';
@@ -52,8 +52,8 @@ test('start gift day now: organizer only, today, unwrap order, nothing revealed'
   expect(JSON.stringify(view)).not.toContain('santa');
 
   // The scheduled job keeps it on gift day today and finishes it tomorrow.
-  expect(ok(await ann.trpc.mutate('giftday.runDue', { editionIds: [editionId] })).done).not.toContain(editionId);
-  expect(ok(await ann.trpc.mutate('giftday.runDue', { now: tomorrowNoon(today), editionIds: [editionId] })).done).toContain(editionId);
+  expect((await runJob('giftday', { editionIds: [editionId] })).done).not.toContain(editionId);
+  expect((await runJob('giftday', { now: tomorrowNoon(today), editionIds: [editionId] })).done).toContain(editionId);
 });
 
 test('start gift day now without a gift day date, keeping a shuffled unwrap order', async ({ signIn, db }) => {
@@ -150,7 +150,7 @@ test('back to shopping: organizer only, new date, not once anything is unwrapped
   const todos = ok(await bob.trpc.query('account.groups')).find((g) => g.slug === group.slug)!.todos;
   expect(todos.map((t) => t.kind)).not.toContain('giftDay');
   expect(ok(await bob.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
-  expect(ok(await ann.trpc.mutate('giftday.runDue', { editionIds: [editionId] })).giftday).not.toContain(editionId);
+  expect((await runJob('giftday', { editionIds: [editionId] })).giftday).not.toContain(editionId);
 });
 
 test('reopen gift day: organizer only, until tonight, latest edition with a draw only', async ({ signIn, db }) => {
@@ -181,7 +181,7 @@ test('reopen gift day: organizer only, until tonight, latest edition with a draw
   expect(reopened.reveal).toEqual(done.reveal);
   ok(await bob.trpc.mutate('tip.create', tip));
   expect(ok(await bob.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
-  expect(ok(await ann.trpc.mutate('giftday.runDue', { now: tomorrowNoon(today), editionIds: [editionId] })).done).toContain(editionId);
+  expect((await runJob('giftday', { now: tomorrowNoon(today), editionIds: [editionId] })).done).toContain(editionId);
 
   await test.step('not without the draw (retention), not once a next edition exists', async () => {
     await db.editions.updateOne({ _id: editionId }, { $unset: { draw: true } });

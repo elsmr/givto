@@ -1,7 +1,7 @@
 // White elephant (88): an edition kind with no draw. Locked in instead of drawn, every Secret Santa feature refused,
 // gift day's unwrap order from everyone in.
 import enEmail from '@/messages/en/email.json' with { type: 'json' };
-import { expect, mailsTo, ok, test, type User } from '../fixtures';
+import { expect, mailsTo, ok, runJob, test, type User } from '../fixtures';
 import { code, editionOf, memberIdOf } from './s6-helpers';
 
 const create = async (ann: User, name: string, kind?: 'whiteElephant') =>
@@ -90,7 +90,7 @@ test('white elephant: gift day by date shuffles everyone in', async ({ signIn, d
   }
   ok(await ann.trpc.mutate('draw.lockIn', { groupSlug: group.slug, editionNumber: 1 }));
   const { _id } = await editionOf(db, group.slug);
-  expect(ok(await ann.trpc.mutate('giftday.runDue', { now: '2099-12-24T12:00:00Z', editionIds: [_id] })).giftday).toContain(_id);
+  expect((await runJob('giftday', { now: '2099-12-24T12:00:00Z', editionIds: [_id] })).giftday).toContain(_id);
   const stored = await editionOf(db, group.slug);
   const ids = await Promise.all([ann, bob, cee].map((user) => memberIdOf(db, group.slug, user)));
   expect(stored.status).toBe('giftday');
@@ -134,7 +134,7 @@ test('white elephant: lock-in and bring-a-gift reminders, no wishlist ones; to-d
     ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   }
   const editionIds = [(await editionOf(db, group.slug))._id];
-  const runAt = async (now: string) => ok(await ann.trpc.mutate('reminders.runDue', { now, editionIds }));
+  const runAt = (now: string) => runJob('reminders', { now, editionIds });
   const todosOf = async (user: User) => ok(await user.trpc.query('account.groups')).find((g) => g.slug === group.slug)?.todos;
 
   expect(await todosOf(ann)).toEqual([{ kind: 'readyToLockIn' }]);

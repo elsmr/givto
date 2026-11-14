@@ -52,15 +52,16 @@ Import `test`, `expect` and helpers from `../fixtures`, never from `@playwright/
 | `setCookies(response)` | `name=value; …` a response sets (`''` when none). |
 | `uniqueEmail(name)`, `randomIp()` | |
 | `db` | Typed app collections (`db.groups`, `db.editions`, …, from `lib/server/db.ts`) and `db.raw` (Mongo `Db`) for Better Auth's `verifications`, `sessions`, `passkeys`. Worker-scoped. |
-| `runCron(job, { authorization? })` | `GET /api/cron/<job>` with the cron secret (`null`: none). `{ status, body }`. |
+| `runCron(job, { authorization?, testRun? })` | `GET /api/cron/<job>` with the cron secret (`null`: none), or `POST` with a `testRun`. `{ status, body }`. |
+| `runJob(job, testRun?)` | The job's result, expecting a 200. |
 | `readServerLog()`, `expectNotLogged(secrets)` | The app's log; no secret in it. |
 | `secrets` | Array per test; checked against the server log after the test. `signIn` and `signInWithUi` add their emails, codes and tokens; add your own. |
 
 Every test also gets a random `x-forwarded-for` for `page` and `request` (rate limits are per IP).
 
-Test-only triggers: with `E2E_TEST_HOOKS=1` (set by `env.ts`, refused when `VERCEL_ENV=production`,
-see `lib/server/test-hooks.ts`) `draw.runDue({ now, editionIds })` and `giftday.runDue({ now, editionIds })` run the
-scheduled jobs at a chosen time; `editionIds` limits the job to the test's own editions.
+Test runs: with `E2E_TEST_HOOKS=1` (set by `env.ts`, refused when `VERCEL_ENV=production`,
+see `lib/server/test-hooks.ts`) `runJob('draws' | 'giftday' | 'reminders', { now, editionIds, groupIds })` runs a
+scheduled job at a chosen time; `editionIds` and `groupIds` limit it to the test's own editions and groups.
 
 ## Patterns
 
@@ -110,7 +111,7 @@ Tests run at the same time against one app and one database.
 - Never clear shared state (`DELETE /messages`, `deleteMany({})`, `updateMany({})`).
 - Cron jobs act on the whole database: `runCron(…)` (real time) also moves and mails other
   tests' data that is due by then. So:
-  - Test hooks always get `editionIds` (`draw.runDue` and `giftday.runDue`): a test that moves
+  - Test runs always get `editionIds` (`runJob('draws' | 'giftday', …)`): a test that moves
     time never touches another test's editions.
   - By default, keep dates far ahead: gift days and draw dates in 2099 (`now` relative to them).
   - Only tests that use the real-time crons seed near today (`api/s7-*`, project `api-cron`).
@@ -143,7 +144,7 @@ ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
 ```
 
 Gift day: through the transition, scoped to your edition (`editionId` from `db.editions`):
-`ok(await ann.trpc.mutate('giftday.runDue', { now: '2099-12-24T12:00:00.000Z', editionIds: [editionId] }))`, or directly:
+`await runJob('giftday', { now: '2099-12-24T12:00:00.000Z', editionIds: [editionId] })`, or directly:
 
 ```ts
 const { _id: groupId } = (await db.groups.findOne({ slug: group.slug }))!;

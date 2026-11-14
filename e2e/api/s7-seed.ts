@@ -5,16 +5,9 @@ import { newId } from '@/lib/server/db';
 import type { Edition } from '@/lib/schema/edition';
 import type { Group } from '@/lib/schema/group';
 import type { Member } from '@/lib/schema/member';
-import { expect, mailsTo, runCron, type User } from '../fixtures';
+import { expect, mailsTo, type User } from '../fixtures';
 
 export const DAY = 24 * 3600_000;
-
-/** Runs a cron job and returns its result (counts cover the whole database: assert on own data instead). */
-export const run = async (job: string) => {
-  const { status, body } = await runCron(job);
-  expect(status, JSON.stringify(body)).toBe(200);
-  return body.result;
-};
 
 /** Mails of one kind to `user`, optionally only those mentioning `group`. */
 export const mails = async (user: Pick<User, 'email'>, kind: string, group?: string) =>

@@ -1,5 +1,4 @@
 import * as v from 'valibot';
-import { Id } from '../../schema/common';
 import { drawsNames, isDrawn, isFromGiftDay, UnwrapMode, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import type { Collections } from '../db';
@@ -7,9 +6,8 @@ import { playerIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
 import { guessesOf } from '../guess/guesses';
-import { newUnwrapOrder, runGiftDayTransitions } from '../jobs/giftday';
-import { testHooksEnabled } from '../test-hooks';
-import { editionProcedure, organizerEditionProcedure, publicProcedure, router } from '../trpc';
+import { newUnwrapOrder } from '../jobs/giftday';
+import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 import { giftDayView, presenterGiftDayView } from './giftday-view';
 import { AdvanceInput, advanceUnwrapping } from './unwrap-advance';
 
@@ -88,12 +86,4 @@ export const giftdayRouter = router({
     );
     return { ok: true };
   }),
-
-  /** Tests only (lib/server/test-hooks.ts): what the scheduled job does, optionally at a given time. */
-  runDue: publicProcedure
-    .input(v.object({ now: v.optional(v.pipe(v.string(), v.isoTimestamp())), editionIds: v.optional(v.array(Id)) }))
-    .mutation(async ({ ctx, input }) => {
-      if (!testHooksEnabled()) throw new AppError('NOT_FOUND');
-      return runGiftDayTransitions(ctx.db, input.now ? new Date(input.now) : new Date(), input.editionIds);
-    }),
 });
