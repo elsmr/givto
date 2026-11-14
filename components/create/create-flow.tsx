@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { appErrorCode, knownAppError } from '../group/app-error-code';
 import { stepSegmentClass } from '../group/phase-stepper';
+import { GoogleSignIn } from '../auth/google-sign-in';
 import { EmailCodeForm } from '../join/email-code-form';
 import { NameEmailForm } from '../join/name-email-form';
 import { useEmailCode } from '../join/use-email-code';
@@ -146,6 +147,7 @@ export const CreateFlow = () => {
               </Button>
             </NameEmailForm>
           )}
+          {step === 'organizer' && !signedInEmail && <GoogleSignIn callbackURL="/new?resume=1" errorCallbackURL="/new?resume=1" />}
           {step === 'organizer' && emailCode.error && (
             <Alert variant="danger">
               <AlertDescription>{tCode(`errors.${emailCode.error}`)}</AlertDescription>

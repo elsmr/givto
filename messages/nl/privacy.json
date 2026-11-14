@@ -5,7 +5,7 @@
   "stored": {
     "title": "Wat we bewaren en waarom",
     "account": "<b>Je account:</b> je naam, e-mailadres, taal en e-mailinstellingen. Om je in te loggen en je de mails te sturen die je nodig hebt, zoals die over de loting en herinneringen.",
-    "sign-in": "<b>Inloggen:</b> inlogcodes en -links (alleen versleuteld, nooit leesbaar), je passkeys (alleen het publieke deel) en je sessies met het IP-adres en de browser van je toestel. Om je account veilig te houden.",
+    "sign-in": "<b>Inloggen:</b> inlogcodes en -links (alleen versleuteld, nooit leesbaar), je passkeys (alleen het publieke deel), welk Google-account je koppelde (de ID ervan, als je inlogt met Google) en je sessies met het IP-adres en de browser van je toestel. Om je account veilig te houden.",
     "groups": "<b>Groepen en Secret Santa's:</b> groepsnamen, namen van deelnemers, Niet samen-rijen, data, een link naar een videogesprek, budget, de loting, je gokken wie aan wie geeft en je punten van het gokken. De organisator ziet ook ieders e-mailadres. Om je Secret Santa te laten draaien.",
     "wishes": "<b>Verlanglijstjes:</b> je wensen met de links, afbeeldingen en prijzen die je toevoegt, en ook Geclaimd!, wat je aanduidt met “Ik heb mijn cadeau” en, per post, of je het opgestuurd hebt en of het jouwe aangekomen is, tips, vragen en Psst!-berichten. Zodat je Santa weet wat je wil. Als een Secret Santa voorbij is, bewaren we de verlanglijstjes erin zoals ze toen waren.",
     "addresses": "<b>Postadressen:</b> die je toevoegt, bewaard op je account tot je ze verwijdert of je account verwijdert. Alleen zichtbaar voor je Santa in een Secret Santa waarbij de cadeaus met de post gaan, vanaf de loting tot pakjesdag voorbij is. De organisator ziet wie er nog geen heeft ingevuld, nooit het adres zelf.",
@@ -34,6 +34,7 @@
     "mongodb": "<b>MongoDB Atlas:</b> de database.",
     "mailgun": "<b>Mailgun:</b> mails versturen.",
     "sentry": "<b>Sentry:</b> foutmeldingen, zodat we bugs kunnen oplossen.",
+    "google": "<b>Google:</b> alleen als je inlogt met Google. Google geeft ons je naam en e-mailadres; we bewaren geen foto en krijgen geen toegang tot je Google-account.",
     "own-logs": "Mailgun, onze hosting en de databaseback-ups bewaren hun eigen logs en back-ups een beperkte tijd, volgens hun eigen voorwaarden."
   },
   "rights": {

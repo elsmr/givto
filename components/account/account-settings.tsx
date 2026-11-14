@@ -5,7 +5,9 @@ import { useTranslations } from 'next-intl';
 import { AvatarColorSelect } from './avatar-color-select';
 import { AddressBook } from './address-book';
 import { DeleteAccountDialog } from './delete-account-dialog';
+import { googleSignInEnabled } from '../auth/google-sign-in';
 import { ExportButton } from './export-button';
+import { GoogleAccount } from './google-account';
 import { LanguageSelect } from './language-select';
 import { NameForm } from './name-form';
 import { NotificationSettings } from './notification-settings';
@@ -28,6 +30,9 @@ export const AccountSettings = ({ me }: { me: RouterOutputs['account']['get'] })
       </SettingsGroup>
       <SettingsGroup title={t('security.title')} icon={KeyRound} tone="mint">
         <SettingsRow label={t('passkeys.title')} description={t('passkeys.description')} below={<PasskeyList email={me.email} />} />
+        {googleSignInEnabled && (
+          <SettingsRow label={t('google.title')} description={t('google.description')} below={<GoogleAccount email={me.email} />} />
+        )}
         <SettingsRow label={t('sessions.title')} description={t('sessions.description')}>
           <SignOutEverywhere />
         </SettingsRow>

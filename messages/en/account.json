@@ -75,6 +75,20 @@
     "remove-label": "Remove {name}",
     "removed": "Passkey removed"
   },
+  "google": {
+    "title": "Google",
+    "description": "Sign in with your Google account instead of an email code. It has to use the same email as your Givto account.",
+    "link": "Link Google",
+    "linked": "Google linked",
+    "linked-on": "Linked {date}",
+    "unlink": "Unlink",
+    "unlinked": "Google unlinked. You can still sign in with your email.",
+    "errors": {
+      "email-mismatch": "That Google account uses another email. Pick the one with {email}.",
+      "linked-elsewhere": "That Google account is already linked to another Givto account.",
+      "generic": "Linking Google didn't work. Try again."
+    }
+  },
   "notifications": {
     "title": "Email notifications",
     "reminders": "Reminders before deadlines and gift day",

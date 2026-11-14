@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { appErrorCode, knownAppError } from '../group/app-error-code';
 import { EmailCodeForm } from './email-code-form';
+import { GoogleSignIn } from '../auth/google-sign-in';
 import { JoinIntro } from './join-intro';
 import { JoinRequested } from './join-requested';
 import { NameEmailForm } from './name-email-form';
@@ -96,6 +97,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
           onChangeEmail={() => setStep('details')}
         />
       )}
+      {step === 'details' && !signedInEmail && <GoogleSignIn callbackURL={router.asPath} />}
       {step === 'details' && emailCode.error && (
         <Alert variant="danger">
           <AlertDescription>{t(`code.errors.${emailCode.error}`)}</AlertDescription>

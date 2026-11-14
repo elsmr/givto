@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { PrivacyList } from './privacy-list';
 import { PrivacySection } from './privacy-section';
 
-const processors = ['vercel', 'mongodb', 'mailgun', 'sentry'] as const;
+const processors = ['vercel', 'mongodb', 'mailgun', 'sentry', 'google'] as const;
 
 export const PrivacyProcessors = () => {
   const t = useTranslations('privacy.processors');

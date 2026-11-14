@@ -23,7 +23,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
   const mine = { $in: memberIds };
   const raw = getMongoDb();
 
-  const [editions, wishes, claims, gifts, arrived, guesses, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys] =
+  const [editions, wishes, claims, gifts, arrived, guesses, tips, asked, received, nudgesSent, nudgesReceived, notifications, invites, sessions, passkeys, linked] =
     await Promise.all([
       db.editions.find({ 'participants.memberId': mine }).toArray(),
       db.wishes.find({ ownerId: userId }).sort({ position: 1 }).toArray(),
@@ -40,6 +40,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
       db.invites.find({ $or: [{ email: user.email }, { memberId: mine }] }).toArray(),
       raw.collection('sessions').find({ userId: userObjectId }).toArray(),
       raw.collection('passkeys').find({ userId: userObjectId }).toArray(),
+      raw.collection('accounts').find({ userId: userObjectId }).toArray(),
     ]);
 
   return {
@@ -57,6 +58,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
     },
     sessions: sessions.map(({ createdAt, expiresAt, ipAddress, userAgent }) => ({ createdAt, expiresAt, ipAddress, userAgent })),
     passkeys: passkeys.map(({ name, deviceType, backedUp, createdAt }) => ({ name, deviceType, backedUp, createdAt })),
+    linkedAccounts: linked.map(({ providerId, accountId, createdAt }) => ({ providerId, accountId, createdAt })),
     groups: memberships.map(({ group, member }) => ({
       name: group.name,
       slug: group.slug,
