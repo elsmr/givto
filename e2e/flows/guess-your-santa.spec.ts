@@ -5,6 +5,8 @@ import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 
 test('guess and change it; phones guess at the turn; the presenter shows "From … · You guessed …" and the tally', async ({ page, browser, signIn, signInPage, db }) => {
+  // Walks the presenter step by step: too slow for the default timeout on a busy machine.
+  test.slow();
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [ann, bob] = people;
   const group = await drawnGroup(people, 'Guessing');

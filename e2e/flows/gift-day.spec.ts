@@ -85,6 +85,8 @@ const pairsShownAt = (page: Page) =>
   );
 
 test('presenter, all at once: intro, spin or skip it, turns with gift counts, the big reveal one pair at a time', async ({ page, newPage, signIn, signInPage, db }) => {
+  // Walks the presenter step by step: too slow for the default timeout on a busy machine.
+  test.slow();
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const [ann, bob] = people;
   const giftDay = await giftDayGroup(db, people, 'Presents', { mode: 'allAtOnce', counts: [2, null, 1], reveal: true });
@@ -191,6 +193,8 @@ test('/live: a member follows the presenter, guesses at the turn, and their gues
 });
 
 test('presenter, one by one: "Gift 2 of 3", and "That was the last one" when nobody counted', async ({ page, signIn, signInPage, db }) => {
+  // Walks the presenter step by step: too slow for the default timeout on a busy machine.
+  test.slow();
   const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   // First in the order 3 gifts, second unknown (their Santa marked nothing), third 1.
   const giftDay = await giftDayGroup(db, people, 'Rounds', { mode: 'oneByOne', counts: [3, null, 1], reveal: false });
@@ -298,6 +302,8 @@ test('reduced motion: the presenter still shows every name and pair', async ({ p
 });
 
 test('white elephant: create, lock in, and a four-person swap with two steals in the presenter', async ({ page, signIn, signInPage }) => {
+  // Walks the presenter step by step: too slow for the default timeout on a busy machine.
+  test.slow();
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   await signInPage(page, ann);
 
