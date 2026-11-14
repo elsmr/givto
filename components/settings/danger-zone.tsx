@@ -16,10 +16,7 @@ import { TriangleAlert } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 
-/**
- * Delete the group for everyone (27). On coral, muted text is ink and the header keeps the coral on
- * hover: grey text, and ink on the dark theme's page fill, are under 4.5:1.
- */
+/** Delete the group for everyone (27). */
 export const DangerZone = ({ slug, groupName }: { slug: string; groupName: string }) => {
   const t = useTranslations('settings');
   const trpc = useTRPC();
@@ -35,7 +32,7 @@ export const DangerZone = ({ slug, groupName }: { slug: string; groupName: strin
   );
 
   return (
-    <SettingsGroup id="danger" title={t('danger.title')} icon={TriangleAlert} tone="yellow" collapsible className="bg-coral [--color-muted:var(--color-ink)] [&>summary:hover]:bg-transparent">
+    <SettingsGroup id="danger" title={t('danger.title')} icon={TriangleAlert} tone="yellow" collapsible danger>
       <SettingsRow label={t('danger.description')}>
         <Dialog>
           <DialogTrigger render={<Button variant="neutral" />}>{t('danger.button')}</DialogTrigger>

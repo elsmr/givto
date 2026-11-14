@@ -159,7 +159,7 @@ export const AddressBook = () => {
   const { addresses = [], defaultAddressId = null } = book.data ?? {};
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {addresses.length > 0 && (
         <ul className="flex flex-col gap-3">
           {addresses.map(({ id, ...address }) => (
@@ -210,6 +210,6 @@ export const AddressBook = () => {
           </Button>
         )
       )}
-    </>
+    </div>
   );
 };

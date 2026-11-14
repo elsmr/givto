@@ -17,7 +17,7 @@ import { SettingsGroup, SettingsRow, settingsHelpId } from '@/components/ui/sett
 import { Switch } from '@/components/ui/switch';
 import { StatCard } from '@/components/ui/stat-card';
 import { toast } from '@/components/ui/toast';
-import { CalendarDays, Gift, Heart, History, Mailbox, PenLine, Settings, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { CalendarDays, Gift, Heart, History, Mailbox, PenLine, Settings, TriangleAlert, Users, Wallet, type LucideIcon } from 'lucide-react';
 import { Captioned, StyleguideRow, StyleguideSection } from './styleguide-section';
 
 const tones: { tone: Tone; icon: LucideIcon }[] = [
@@ -149,6 +149,13 @@ export const SettingsGroupSection = () => (
     <StyleguideRow label="Collapsible">
       <SettingsGroup title="Group" icon={PenLine} collapsible className="w-full max-w-2xl">
         <SettingsRow label="Rarely changed" description="Opens on click." />
+      </SettingsGroup>
+    </StyleguideRow>
+    <StyleguideRow label="Danger (collapsible)">
+      <SettingsGroup title="Danger zone" icon={TriangleAlert} tone="yellow" collapsible danger className="w-full max-w-2xl">
+        <SettingsRow label="Deleting can't be undone.">
+          <Button variant="neutral">Delete</Button>
+        </SettingsRow>
       </SettingsGroup>
     </StyleguideRow>
     <StyleguideRow label="Plain (in a dialog)">
