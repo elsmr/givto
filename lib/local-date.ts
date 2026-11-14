@@ -47,10 +47,10 @@ export const addDays = (date: string, days: number): string =>
 
 export type CountdownUnit = 'day' | 'week' | 'month' | 'year';
 
-/** `days` in the unit people would say: days under two weeks, then weeks, months and years. Keeps the sign. */
+/** `days` in the unit people would say: days under two weeks, weeks under two months, then months and years. Keeps the sign. */
 export const countdown = (days: number): { value: number; unit: CountdownUnit } => {
   const abs = Math.abs(days);
   const [value, unit]: [number, CountdownUnit] =
-    abs < 14 ? [abs, 'day'] : abs < 30 ? [Math.round(abs / 7), 'week'] : abs < 365 ? [Math.round(abs / 30.44), 'month'] : [Math.round(abs / 365), 'year'];
+    abs < 14 ? [abs, 'day'] : abs < 60 ? [Math.round(abs / 7), 'week'] : abs < 365 ? [Math.round(abs / 30.44), 'month'] : [Math.round(abs / 365), 'year'];
   return { value: days < 0 ? -value : value, unit };
 };
