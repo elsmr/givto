@@ -1,5 +1,5 @@
-import type { AppErrorCode } from '@/lib/server/errors';
 import { TRPCClientError } from '@trpc/client';
+import type { AppErrorCode } from '@/lib/server/errors';
 
 /** The server's `appCode` (lib/server/errors.ts), or INTERNAL for network and unknown errors. */
 export const appErrorCode = (error: unknown): AppErrorCode =>
