@@ -13,6 +13,7 @@ import { ClaimButton } from './claim-button';
 import { isInBudget } from './format-price';
 import { WishCard } from './wish-card';
 import { GifteeTips } from '@/components/between/giftee-tips';
+import { LeaveTipLink } from '@/components/between/new-tip-dialog';
 import { SantaQuestions } from '@/components/between/santa-questions';
 
 interface GifteeWishlistProps {
@@ -20,7 +21,7 @@ interface GifteeWishlistProps {
   editionNumber: number;
 }
 
-/** "Your giftee's wishlist" with Dibs!, then tips from others and your questions. Renders nothing before the draw or when you're not in it. */
+/** "Your giftee's wishlist" with Dibs!, then tips from others (and a way to leave one) and your questions. Renders nothing before the draw or when you're not in it. */
 export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps) => {
   const t = useTranslations('wishlist.giftee');
   const tWishlist = useTranslations('wishlist');
@@ -77,6 +78,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
           </ul>
         )}
         <GifteeTips input={{ groupSlug, editionNumber }} />
+        <LeaveTipLink input={{ groupSlug, editionNumber }} />
         <SantaQuestions input={{ groupSlug, editionNumber }} />
       </CardContent>
     </Card>

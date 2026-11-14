@@ -44,8 +44,8 @@
   "after": {
     "title": "How did it go?",
     "description": "Hope you got something lovely. Mark the wishes you got: they're archived, so nobody buys them again.",
-    "got-it": "I got this",
-    "got-it-label": "I got this: {title}",
+    "got-it": "Received",
+    "got-it-label": "Received: {title}",
     "marked": "Got “{title}”",
     "undo": "Undo"
   },

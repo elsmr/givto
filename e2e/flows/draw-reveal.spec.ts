@@ -89,6 +89,9 @@ test("My giftee: their wishlist, tips from others, ask a question and Psst!; the
     await expect(panel.getByRole('heading', { name: 'Tips from others' })).toBeVisible();
     await expect(panel.getByText('Loves green tea')).toBeVisible();
     await expect(panel.getByText(`From ${draw.nameOf(tipper)}`)).toBeVisible();
+    await panel.getByRole('button', { name: 'Leave a tip for their Santa' }).click();
+    await expect(page.getByRole('dialog', { name: 'Leave a tip' })).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   await test.step('ask a question anonymously', async () => {
