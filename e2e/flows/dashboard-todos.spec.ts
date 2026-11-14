@@ -59,7 +59,7 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
   });
 
   await test.step('no wishes → my wishlist in that group', async () => {
-    await followTodo(page, "Your Santa can't see any wishes here yet", 'Waiting');
+    await followTodo(page, "Your Santa sees an empty wishlist: add a few wishes", 'Waiting');
     await expect(page).toHaveURL(`/g/${waiting.slug}#wishlist`);
     await expect(page.getByRole('tab', { name: 'Wishlist' })).toHaveAttribute('aria-selected', 'true');
     await expect(page.getByRole('tabpanel', { name: 'Wishlist' }).getByText('Or add one from your wishlist')).toBeVisible();

@@ -6,7 +6,7 @@ import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useGiftDayError } from './use-gift-day-error';
 
-/** "I got this": the wish leaves my lists (owner only), with an undo in the toast. */
+/** "Received": the wish leaves my lists (owner only), with an undo in the toast. */
 export const ReceivedButton = ({ wishId, title }: { wishId: string; title: string }) => {
   const t = useTranslations('giftday.after');
   const trpc = useTRPC();

@@ -41,7 +41,7 @@
       "text": "Your next Secret Santa isn't sent yet"
     },
     "noWishes": {
-      "text": "Your Santa can't see any wishes here yet"
+      "text": "Your Santa sees an empty wishlist: add a few wishes"
     },
     "markReceived": {
       "text": "Tick off the gifts you got"
