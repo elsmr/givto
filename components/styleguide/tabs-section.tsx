@@ -26,7 +26,7 @@ export const TabsSection = () => (
     <StyleguideRow label="Default">
       <Tabs defaultValue="wishlist" className="max-w-md">
         <TabsList>
-          <TabsTrigger value="wishlist">My wishlist</TabsTrigger>
+          <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
           <TabsTrigger value="giftee">Your giftee</TabsTrigger>
         </TabsList>
         <TabsContent value="wishlist">Wool socks, a good book.</TabsContent>
