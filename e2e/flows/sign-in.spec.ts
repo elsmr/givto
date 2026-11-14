@@ -7,7 +7,7 @@ test('code: a private page sends you to sign-in and back', async ({ page, signIn
   await expect(page).toHaveURL('/auth/sign-in?redirect=%2Faccount');
   await signInWithUi(page, uniqueEmail('code'));
   await expect(page).toHaveURL('/account');
-  await expect(page.getByRole('heading', { name: 'Passkeys' })).toBeVisible();
+  await expect(page.getByText('Passkeys', { exact: true })).toBeVisible();
 });
 
 test('link: the emailed link signs in and opens the page that asked', async ({ page, secrets }) => {
@@ -50,5 +50,5 @@ test('passkey: add one on the account page, then sign in with it from the email 
   await page.goto('/account');
   // The virtual authenticator answers the conditional (autofill) request without a pick.
   await expect(page).toHaveURL('/account');
-  await expect(page.getByRole('heading', { name: 'Passkeys' })).toBeVisible();
+  await expect(page.getByText('Passkeys', { exact: true })).toBeVisible();
 });

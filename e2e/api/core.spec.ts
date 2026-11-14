@@ -58,7 +58,7 @@ test('sign in with the emailed code; account.get, account.setLocale, reused code
     expect(me.email).toBe(email);
     expect(me.locale).toBe('nl');
     expect(me.notifications).toEqual({ reminders: true, wishlistUpdates: true, santaMessages: true, joins: true });
-    expect(readServerLog(), 'procedure lines are logged').toMatch(/me\.get/);
+    expect(readServerLog(), 'procedure lines are logged').toMatch(/account\.get/);
   });
 
   await test.step('account.setLocale (and invalid input → INVALID_INPUT with issues)', async () => {
