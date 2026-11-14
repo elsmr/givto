@@ -58,7 +58,7 @@ const parts: Part[] = [
     sections: [
       { id: 'buttons', label: 'Buttons', Section: ButtonsSection },
       { id: 'inputs', label: 'Inputs', Section: InputsSection },
-      { id: 'choices', label: 'Checkbox and switch', Section: ChoicesSection },
+      { id: 'choices', label: 'Checkbox, switch and segmented radio', Section: ChoicesSection },
       { id: 'badges', label: 'Badges', Section: BadgesSection },
       { id: 'tabs', label: 'Tabs', Section: TabsSection },
       { id: 'cards', label: 'Cards', Section: CardsSection },
