@@ -90,7 +90,7 @@ test('Mailgun webhook: signature checked; hard bounces and complaints suppress',
   expect(await suppressed([dan.email, cee.email])).toBe(2);
 });
 
-test('retention: messages after 3 months; old draws; orphan images', async ({ signIn, db }) => {
+test('retention: messages after 3 months; draws stay; orphan images', async ({ signIn, db }) => {
   const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
   const old = trio(olive, ann, bob);
   const oldGroup = groupDoc(olive, 'Old', old);
@@ -119,28 +119,14 @@ test('retention: messages after 3 months; old draws; orphan images', async ({ si
   await db.wishes.updateOne({ _id: wish.id }, { $set: { links: [{ url: 'https://shop.test/lamp' }, { url: 'https://shop.test/lamp-2', imageId: used.toHexString() }] } });
   const result = await run('retention');
   // Counts cover the whole database (a parallel run may have done ours): the shape here, our documents below.
-  for (const key of ['editionMessages', 'draws', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
+  for (const key of ['editionMessages', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
-  expect((await after(past)).draw, "replaced by edition 2's draw").toBeUndefined();
+  expect((await after(past)).draw, 'kept for the done edition (100)').toBeTruthy();
   expect((await after(recent)).draw).toBeTruthy();
   expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
   expect(await db.guesses.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent guess stays').toBe(1);
   expect((await after(past)).results, 'champions and badges (86) outlive the guesses').toEqual(results);
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);
-});
-
-test('retention: a draw without a gift day goes after 24 months', async ({ signIn, db }) => {
-  const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
-  const people = trio(olive, ann, bob);
-  const [oldGroup, liveGroup] = [groupDoc(olive, 'Old, no gift day', people), groupDoc(olive, 'Live, no gift day', people)];
-  const old = editionDoc(oldGroup, 1, 'done', people, { draw: { ...circle(people), drawnAt: new Date(Date.now() - 25 * 30 * DAY) } });
-  const live = editionDoc(liveGroup, 1, 'drawn', people, { draw: { ...circle(people), drawnAt: new Date(Date.now() - 30 * DAY) } });
-  await db.groups.insertMany([oldGroup, liveGroup]);
-  await db.editions.insertMany([old, live]);
-  await run('retention');
-  const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
-  expect((await after(old)).draw).toBeUndefined();
-  expect((await after(live)).draw).toBeTruthy();
 });
 
 test('retention without a gift day: counted from done or the next edition; the live one keeps its data', async ({ signIn, db }) => {
@@ -168,7 +154,7 @@ test('retention without a gift day: counted from done or the next edition; the l
   const kept = async ({ _id: editionId }: { _id: string }) =>
     (await db.claims.countDocuments({ editionId })) + (await db.tips.countDocuments({ editionId })) + (await db.guesses.countDocuments({ editionId }));
   expect(await Promise.all(editions.map(kept)), 'claims, tips and guesses: 3 months after the end').toEqual([0, 3, 0, 3]);
-  expect((await after(superseded)).draw, "replaced by edition 2's draw").toBeUndefined();
+  expect((await after(superseded)).draw, 'draws stay (100)').toBeTruthy();
   expect((await after(live)).draw).toBeTruthy();
 });
 

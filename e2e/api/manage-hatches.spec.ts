@@ -94,7 +94,7 @@ test('finish gift day: organizer only, done now, edition closes, mark what you g
   expect(code(await bob.trpc.mutate('tip.create', tip))).toBe('EDITION_CLOSED');
   const todos = ok(await bob.trpc.query('account.groups')).find((g) => g.slug === group.slug)!.todos;
   expect(todos.map((t) => t.kind)).toEqual(['markReceived']);
-  expect(ok(await bob.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
+  expect(ok(await bob.trpc.query('giftday.get', edition)).reveal.pairs, 'who gave to whom, once done (100)').toHaveLength(3);
   // Same again next year is open now.
   ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
 });

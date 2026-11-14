@@ -9,17 +9,16 @@ import { AppError } from '../errors';
 /**
  * Who's in the draw: ticked for this edition and a joined member of the group, or invited by email (98) with the
  * invite still running. `invitedAt` and not the invite itself: the TTL index deletes expired invites.
+ * A done edition keeps who was in it, whatever happened in the group since (100).
  */
 export const drawParticipantIds = (group: Group, edition: Edition, now = new Date()): string[] => {
   const invitedSince = now.getTime() - INVITE_MS;
-  const isIn = new Set(
-    group.members
-      .filter((m) => m.status === 'joined' || (m.status === 'invited' && (m.invitedAt?.getTime() ?? 0) > invitedSince))
-      .map((m) => m.id)
-  );
-  return edition.participants
-    .filter((p) => p.participates && p.status !== 'declined' && isIn.has(p.memberId))
-    .map((p) => p.memberId);
+  const isIn = (memberId: string) =>
+    edition.status === 'done' ||
+    group.members.some(
+      (m) => m.id === memberId && (m.status === 'joined' || (m.status === 'invited' && (m.invitedAt?.getTime() ?? 0) > invitedSince))
+    );
+  return edition.participants.filter((p) => p.participates && p.status !== 'declined' && isIn(p.memberId)).map((p) => p.memberId);
 };
 
 /** Who unwraps on gift day (32): the draw's Santas, or everyone in when the kind has no draw (88). */
@@ -27,14 +26,14 @@ export const playerIds = (group: Group, edition: Edition): string[] =>
   drawsNames(edition) ? Object.keys(edition.draw?.assignments ?? {}) : drawParticipantIds(group, edition);
 
 export interface DrawRules {
-  /** Keep-apart rows (households) and older keep-apart pairs (26). */
+  /** Keep-apart rows (households, 26). */
   standing: Exclusion[];
   /** "Not the same as last time" (33): one-way, from the previous edition's draw. Never leaves the server. */
   previous: Exclusion[];
 }
 
 export const drawRules = async (db: Collections, group: Group, edition: Edition): Promise<DrawRules> => {
-  const standing = [...group.exclusions, ...toExclusions(group.households.map((h) => h.memberIds))];
+  const standing = toExclusions(group.households.map((h) => h.memberIds));
   if (!edition.avoidPreviousGiftees || !edition.previousEditionId) return { standing, previous: [] };
   const previousEdition = await db.editions.findOne(
     { _id: edition.previousEditionId, groupId: group._id },

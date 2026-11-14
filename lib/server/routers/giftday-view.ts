@@ -1,5 +1,5 @@
 import { boardScores, guessResults, type Boards } from '../../guess-results';
-import { isFromGiftDay, type Edition } from '../../schema/edition';
+import { drawsNames, isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { swapState, type SwapState } from '../../swap-turns';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
@@ -35,7 +35,8 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards
   const progress = edition.unwrapOrder?.progress;
   const swap = edition.kind === 'whiteElephant' && order ? swapState(order, Boolean(progress), progress?.moves ?? []) : null;
   const state = swap ?? (order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? [], counts));
-  const pairs = isRevealed(edition)
+  // Once it's done, everyone in it sees who gave to whom, big reveal or not (100).
+  const pairs = isRevealed(edition) || (edition.status === 'done' && drawsNames(edition) && edition.draw)
     ? (order ?? inDraw).map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
     : null;
   const santaShownIds = santaStepOn(edition) ? (progress?.santaShownIds ?? []) : [];

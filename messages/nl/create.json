@@ -19,9 +19,15 @@
   "details": {
     "kind": {
       "label": "Wat organiseer je?",
-      "secretSanta": "Secret Santa: loten wie voor wie koopt",
-      "whiteElephant": "White elephant: iedereen brengt een cadeau mee, zonder loting",
-      "conspiracy": "Conspiracy Santa: iedereen bedenkt samen één cadeau per persoon, zonder loting"
+      "secretSanta": "Secret Santa",
+      "whiteElephant": "White elephant",
+      "conspiracy": "Conspiracy Santa",
+      "about": "Hoe werkt {name}?",
+      "explain": {
+        "secretSanta": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Wie jouw Santa is, blijft een verrassing tot pakjesdag.",
+        "whiteElephant": "Iedereen brengt één ingepakt cadeau mee naar een gedeelde stapel. Om de beurt pak je een nieuw cadeau uit, of steel je er een dat al open is.",
+        "conspiracy": "Iedereen krijgt één cadeau van alle anderen samen. Jullie plannen elk cadeau samen, op een bord dat die persoon niet ziet."
+      }
     },
     "name": "Hoe heet je Secret Santa?",
     "name-white-elephant": "Hoe heet je white elephant?",

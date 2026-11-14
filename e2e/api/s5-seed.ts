@@ -18,8 +18,8 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
     id, name, role: 'member', status: 'joined', joinedAt: now, wishlistView: { shownWishIds: [] }, ...extra,
   });
   const group = (_id: string, slug: string, name: string, members: Member[]): Group => ({
-    _id, slug, name, locale: 'en', timeZone: 'Europe/Brussels', defaults: { exchangeMode: 'inPerson' }, createdBy: members[0].userId!,
-    members, exclusions: [], households: [], createdAt: now, updatedAt: now,
+    _id, slug, name, locale: 'en', timeZone: 'Europe/Brussels', createdBy: members[0].userId!,
+    members, households: [], createdAt: now, updatedAt: now,
   });
   await db.groups.insertMany([
     group(g.family, `fam${tag}`, 'Family', [

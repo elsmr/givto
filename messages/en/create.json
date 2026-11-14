@@ -19,9 +19,15 @@
   "details": {
     "kind": {
       "label": "What are you organizing?",
-      "secretSanta": "Secret Santa: draw names",
-      "whiteElephant": "White elephant: everyone brings a gift, no draw",
-      "conspiracy": "Conspiracy Santa: everyone plans one gift for each person, no draw"
+      "secretSanta": "Secret Santa",
+      "whiteElephant": "White elephant",
+      "conspiracy": "Conspiracy Santa",
+      "about": "How does {name} work?",
+      "explain": {
+        "secretSanta": "Everyone secretly draws one name and gets that person a gift. Nobody knows who their Santa is until gift day.",
+        "whiteElephant": "Everyone brings one wrapped gift to a shared pile. Take turns: unwrap a new one, or steal a gift someone already opened.",
+        "conspiracy": "Everyone gets one gift from all the others. You plan each person's gift together, on a board that person can't see."
+      }
     },
     "name": "What's your Secret Santa called?",
     "name-white-elephant": "What's your white elephant called?",

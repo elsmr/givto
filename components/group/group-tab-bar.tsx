@@ -8,9 +8,10 @@ const icons = { overview: LayoutGrid, giftee: Gift, boards: StickyNote, wishlist
 
 /**
  * The group home's tabs (61), a segmented control under the stepper; the app nav owns the bottom of the screen.
- * `counts`: a small badge after the label, e.g. my wishes in this group (79); none for 0.
+ * `counts`: a small badge after the label, e.g. my wishes in this group (79); none for 0. `done`: the wishlist tab
+ * holds everyone's lists (100).
  */
-export const GroupTabBar = ({ tabs, counts = {} }: { tabs: readonly GroupTab[]; counts?: Partial<Record<GroupTab, number>> }) => {
+export const GroupTabBar = ({ tabs, counts = {}, done = false }: { tabs: readonly GroupTab[]; counts?: Partial<Record<GroupTab, number>>; done?: boolean }) => {
   const t = useTranslations('group.tabs');
 
   return (
@@ -36,7 +37,7 @@ export const GroupTabBar = ({ tabs, counts = {} }: { tabs: readonly GroupTab[]; 
               <Icon aria-hidden="true" />
             </span>
             <span>
-              {t(tab)}
+              {t(done && tab === 'wishlist' ? 'wishlists' : tab)}
               {Boolean(counts[tab]) && (
                 <>
                   {' '}

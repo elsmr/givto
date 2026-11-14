@@ -56,34 +56,6 @@ const deleteEditionMessages = async (db: Collections, now: Date) => {
   return results.reduce((sum, result) => sum + result.deletedCount, 0);
 };
 
-/**
- * A past draw stays until the group's next edition is drawn (to avoid repeats), at most `drawMaxMonths`.
- * Without a gift day, any draw qualifies: the live edition's draw is never replaced, so only the age cap applies to it.
- */
-const deleteOldDraws = async (db: Collections, now: Date) => {
-  const tooOld = monthsBefore(now, retention.drawMaxMonths);
-  const editions = await db.editions
-    .find(
-      {
-        draw: { $exists: true },
-        $or: [{ 'giftDay.date': { $lt: isoDate(now) } }, { giftDay: { $exists: false } }],
-      },
-      { projection: { groupId: 1, number: 1, 'draw.drawnAt': 1 } }
-    )
-    .toArray();
-  let deleted = 0;
-  for (const edition of editions) {
-    const replaced = await db.editions.countDocuments(
-      { groupId: edition.groupId, number: { $gt: edition.number }, draw: { $exists: true } },
-      { limit: 1 }
-    );
-    if (replaced === 0 && edition.draw!.drawnAt > tooOld) continue;
-    await db.editions.updateOne({ _id: edition._id }, { $unset: { draw: true } });
-    deleted++;
-  }
-  return deleted;
-};
-
 const deleteOrphanImages = async (now: Date) => {
   const orphans = await getMongoDb()
     .collection<{ _id: ObjectId }>('wishImages.files')
@@ -109,7 +81,6 @@ const deleteOrphanImages = async (now: Date) => {
 /** Retention (55), with the periods from lib/privacy.ts that /privacy shows. Daily. */
 export const runRetention = async (db: Collections, now: Date) => ({
   editionMessages: await deleteEditionMessages(db, now),
-  draws: await deleteOldDraws(db, now),
   orphanImages: await deleteOrphanImages(now),
   suppressions: await deleteUnusedSuppressions(db, now),
   ...(await cleanUpInactiveGroups(db, now)),

@@ -11,7 +11,7 @@ type BigRevealCardProps = {
   guessing: RouterOutputs['giftday']['get']['guessing'];
 };
 
-/** The big reveal (31) once it's out: who was whose Santa. The switch is in the settings. */
+/** The big reveal (31) once it's out, and every done edition (100): who was whose Santa. The switch is in the settings. */
 export const BigRevealCard = ({ reveal, guessing }: BigRevealCardProps) => {
   const t = useTranslations('giftday.reveal');
 
@@ -28,7 +28,9 @@ export const BigRevealCard = ({ reveal, guessing }: BigRevealCardProps) => {
         <CardDescription>{t('revealed')}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
-        {guessing ? <GuessScoreboard guessing={guessing} /> : <RevealPairs pairs={reveal.pairs} />}
+        {guessing && <GuessScoreboard guessing={guessing} />}
+        {/* Without the big reveal, the scoreboard only has the Santas shown on gift day. */}
+        {(!guessing || !reveal.revealed) && <RevealPairs pairs={reveal.pairs} />}
       </CardContent>
     </Card>
   );

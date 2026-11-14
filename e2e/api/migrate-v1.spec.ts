@@ -11,6 +11,7 @@ import { User } from '@/lib/schema/user';
 import { Wish } from '@/lib/schema/wish';
 import { collections } from '@/lib/server/db';
 import { migrateV1 } from '@/migrations/001-v1-to-v2';
+import * as v1Wishlists from '@/migrations/005-v1-wishlists';
 import { runMigrations } from '@/migrations/runner';
 import { edge, generateV1 } from '@/migrations/v1-sample';
 import type { V1Group, V1User } from '@/migrations/v1-to-v2/plan';
@@ -59,8 +60,12 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
     });
 
     await test.step('apply: old collections kept as v1_*, every new document passes the v2 schemas', async () => {
-      const [result] = await runMigrations(db, { apply: true });
+      const results = await runMigrations(db, { apply: true });
+      const [result] = results;
       expect(result.status).toBe('applied');
+      const wishlists = results.find((r) => r.id === v1Wishlists.id)!.report!;
+      expect(wishlists.conflicts.unmatchedPerson.count, 'the replay finds every person 001 made').toBe(0);
+      expect(wishlists.planned.editions).toBe(await c.editions.countDocuments({ status: 'done' }));
       const names = (await db.listCollections().toArray()).map((col) => col.name);
       expect(names).toEqual(expect.arrayContaining(['v1_users', 'v1_groups', 'v1_loginCodes', 'v1_refreshTokens', 'migrations']));
       for (const user of await c.users.find().toArray()) v.parse(User, user);
@@ -141,6 +146,7 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       const [seen] = callAs(db, group.members.find((m) => m.id === santaId)!.userId!, [
         { path: 'claim.gifteeWishlist', input: { groupSlug: newerSlug, editionNumber: 1 } },
       ]);
+      expect(seen.saved, 'from the old group (005)').toBe(true);
       expect(seen.wishes.map((w: { title: string }) => w.title)).toEqual(['BOARD GAME', 'Scarf']);
     });
 
@@ -165,6 +171,21 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       const again = await migrateV1(db, { apply: true, source: { users: 'v1_users', groups: 'v1_groups' } });
       expect(again.written).toEqual({ users: 0, groups: 0, editions: 0, wishes: 0 });
       expect(await snapshot(db)).toEqual(before);
+    });
+
+    await test.step('005: done editions get their old lists, the others none; a wish deleted since stays out', async () => {
+      const done = await c.editions.find({ status: 'done' }).toArray();
+      expect(done.length).toBeGreaterThan(0);
+      expect(done.every((edition) => Array.isArray(edition.wishlists))).toBe(true);
+      expect(await c.editions.countDocuments({ status: { $ne: 'done' }, wishlists: { $exists: true } })).toBe(0);
+      const edition = done.find((e) => e.wishlists!.some((list) => list.wishes.length > 0))!;
+      const list = edition.wishlists!.find((l) => l.wishes.length > 0)!;
+      await c.wishes.deleteOne({ _id: list.wishes[0].id });
+      await c.editions.updateOne({ _id: edition._id }, { $unset: { wishlists: '' } });
+      expect((await v1Wishlists.up(db, { apply: true })).written).toEqual({ editions: 1 });
+      const again = (await c.editions.findOne({ _id: edition._id }))!.wishlists!.find((l) => l.memberId === list.memberId)!;
+      expect(again.wishes.map((w) => w.id)).toEqual(list.wishes.slice(1).map((w) => w.id));
+      expect((await v1Wishlists.up(db, { apply: true })).planned.editions, 'nothing left to do').toBe(0);
     });
   });
 });

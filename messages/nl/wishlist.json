@@ -75,6 +75,14 @@
     "cancel": "Bewaren",
     "got": "Gekregen"
   },
+  "edition": {
+    "intro": "Ieders verlanglijstje zoals het was toen deze Secret Santa eindigde.",
+    "mine": "Mijn verlanglijstje",
+    "title": "Verlanglijstje van {name}",
+    "empty": "Geen wensen.",
+    "not-saved": "Deze Secret Santa eindigde voor Givto verlanglijstjes bewaarde, dus hier valt niets terug te kijken.",
+    "not-in": "Alleen wie meedeed aan deze Secret Santa ziet de verlanglijstjes ervan."
+  },
   "group": {
     "title": "Mijn verlanglijstje in deze groep",
     "hide": "“{title}” verbergen in deze groep",
@@ -92,7 +100,8 @@
     "unclaimed": "Claim ongedaan gemaakt",
     "taken": "Al geclaimd",
     "bought": "Gekocht",
-    "gone": "Niet meer op het verlanglijstje"
+    "gone": "Niet meer op het verlanglijstje",
+    "not-saved": "Deze Secret Santa eindigde voor Givto verlanglijstjes bewaarde."
   },
   "got-gift": {
     "marked": "{count, plural, one {Je hebt # cadeau gekocht} other {Je hebt # cadeaus gekocht}}",

@@ -7,7 +7,7 @@
     "account": "<b>Your account:</b> your name, email address, language and email settings. To sign you in and send the emails you need, like your draw and reminders.",
     "sign-in": "<b>Signing in:</b> sign-in codes and links (only scrambled, never readable), your passkeys (only the public part) and your sessions with the device's IP address and browser. To keep your account safe.",
     "groups": "<b>Groups and Secret Santas:</b> group names, people's names, Keep apart rows, dates, a video-call link, budget, the draw, your guesses at who gives to whom and your points from guessing. The organizer also sees everyone's email address. To run your Secret Santa.",
-    "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, what you marked with “I've got my gift” and, by post, whether you posted it and whether yours arrived, tips, questions and Psst! messages. So your Santa knows what to get you.",
+    "wishes": "<b>Wishlists:</b> your wishes with any links, images and prices you add, plus Dibs!, what you marked with “I've got my gift” and, by post, whether you posted it and whether yours arrived, tips, questions and Psst! messages. So your Santa knows what to get you. When a Secret Santa is over, the wishlists in it are kept as they were.",
     "addresses": "<b>Postal addresses:</b> the ones you add, kept on your account until you remove them or delete your account. Only shown to your Santa in a Secret Santa that sends gifts by post, from the draw until gift day is over. The organizer sees who hasn't added one, never the address.",
     "emails": "<b>Emails we sent:</b> which email went to whom and when. So we never send the same email twice.",
     "cookies": "<b>Cookies:</b> one to keep you signed in and one to remember your language. No tracking or advertising cookies and no analytics, so no cookie banner."
@@ -19,7 +19,8 @@
     "sessions": "You're signed out after {days} days without a visit.",
     "edition-messages": "Dibs!, gifts marked as got, guesses, tips, questions and Psst! messages are deleted {months} months after gift day. Without a gift day, we count from when the edition is finished or the next one starts.",
     "results": "Points from guessing and who guessed their own Santa are kept per Secret Santa, for champions and badges, as long as the group exists. Deleting your account removes yours.",
-    "draw": "The draw is kept until the next edition's draw, so nobody gets the same giftee twice in a row, and for {months} months at most.",
+    "draw": "The draw is kept as long as the group exists: once a Secret Santa is over, everyone who was in it sees who gave to whom, and nobody gets the same giftee twice in a row.",
+    "wishlists": "When a Secret Santa is over, everyone's wishlist in it is kept as it was then (without images), for everyone who was in it to look back on, as long as the group exists. Deleting your account removes yours.",
     "groups": "Groups without any activity for {months} months are deleted. We email the organizer before we do.",
     "account": "Your account and wishlist stay until you delete them.",
     "errors": "Error reports are deleted after {days} days at most.",

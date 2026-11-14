@@ -31,7 +31,5 @@ export const expectValidDraw = (assignments: Record<string, string> | undefined,
 };
 
 /** The group's keep-apart rules as directed exclusions. */
-export const rulesOf = (group: Group): Rule[] => [
-  ...group.exclusions,
-  ...group.households.flatMap(({ memberIds }) => memberIds.flatMap((from) => memberIds.filter((to) => to !== from).map((to) => ({ from, to })))),
-];
+export const rulesOf = (group: Group): Rule[] =>
+  group.households.flatMap(({ memberIds }) => memberIds.flatMap((from) => memberIds.filter((to) => to !== from).map((to) => ({ from, to }))));

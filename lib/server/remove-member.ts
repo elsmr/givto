@@ -35,7 +35,6 @@ export const removeMember = async (db: Collections, group: Group, memberId: stri
         households: group.households
           .map((h) => ({ ...h, memberIds: h.memberIds.filter((id) => id !== memberId) }))
           .filter((h) => h.memberIds.length >= 2),
-        exclusions: group.exclusions.filter((e) => e.from !== memberId && e.to !== memberId),
         updatedAt: now,
       },
     }

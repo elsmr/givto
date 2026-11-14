@@ -80,6 +80,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
       result: edition.results?.points
         .filter((entry) => memberIds.includes(entry.memberId))
         .map(({ memberId, points }) => ({ points, nailedIt: edition.results!.nailedIds.includes(memberId) }))[0],
+      wishlist: edition.wishlists?.find((list) => memberIds.includes(list.memberId))?.wishes,
     })),
     wishes: wishes.map(({ ownerId: _ownerId, ...wish }) => wish),
     claims: claims.map(({ wishId, editionId, createdAt }) => ({ wishId, editionId, createdAt })),

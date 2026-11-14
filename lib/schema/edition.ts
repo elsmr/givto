@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import { HttpUrl, Id, LocalDate, LocalTime, MultiLine, Price, SingleLine } from './common';
 import { ExchangeMode } from './group';
+import { WishFields } from './wish';
 
 export const editionStatuses = ['draft', 'open', 'drawn', 'giftday', 'done'] as const;
 /** draft (33: nothing sent yet) → open (joinable) → drawn → giftday → done. */
@@ -130,6 +131,10 @@ export const UnwrapOrder = v.object({
   ),
 });
 
+/** A wish as a done edition keeps it (100). Without link images: those go with the wish. */
+export const SavedWish = v.object({ id: Id, ...WishFields.entries });
+export type SavedWish = v.InferOutput<typeof SavedWish>;
+
 /** The big reveal (31): organizer toggle, off by default. */
 export const Reveal = v.object({
   enabled: v.boolean(),
@@ -213,6 +218,11 @@ export const Edition = v.object({
       savedAt: v.date(),
     })
   ),
+  /**
+   * Everyone's wishlist as their group showed it when the edition ended (100), so a done edition doesn't change with
+   * later edits. Absent: it ended before wishlists were kept. Arrays, so account deletion can pull a person's entry.
+   */
+  wishlists: v.optional(v.array(v.object({ memberId: Id, wishes: v.array(SavedWish) }))),
   /** iCalendar SEQUENCE (47), absent = 0: bumped when the calendar events change, so re-imports update instead of duplicating. */
   calendarSequence: v.optional(v.pipe(v.number(), v.integer(), v.minValue(0))),
   createdAt: v.date(),

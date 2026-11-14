@@ -6,7 +6,7 @@ import { AppError } from '../errors';
 import { dropGiftWish } from '../gift/marks';
 import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
 import { editionProcedure, router, santaOfProcedure } from '../trpc';
-import { santaWishes, toWishView, visibleWishes } from '../wishlist/wish-view';
+import { santaWishes, savedWishView, toWishView, visibleWishes } from '../wishlist/wish-view';
 
 const WishInput = v.object({ wishId: Id });
 
@@ -21,6 +21,17 @@ export const claimRouter = router({
     const gifteeId = ctx.edition.draw?.assignments[ctx.member.id];
     const giftee = ctx.group.members.find((member) => member.id === gifteeId);
     if (!giftee) return null;
+    // A done edition shows the list as it was when it ended (100), never today's; nothing to claim any more.
+    if (ctx.edition.status === 'done') {
+      const saved = ctx.edition.wishlists?.find((list) => list.memberId === giftee.id)?.wishes ?? [];
+      return {
+        giftee: { name: giftee.name },
+        budget: ctx.edition.budget,
+        canClaim: false,
+        saved: Boolean(ctx.edition.wishlists),
+        wishes: saved.map((wish) => ({ ...savedWishView(wish), archived: false, claim: null })),
+      };
+    }
     await markGifteeWishlistSeen(ctx.db, ctx.edition._id, ctx.member.id);
     const wishes = await santaWishes(ctx.db, giftee, ctx.edition._id, ctx.member.id);
     const claims = await ctx.db.claims.find({ wishId: { $in: wishes.map((wish) => wish._id) } }).toArray();
@@ -34,6 +45,7 @@ export const claimRouter = router({
       giftee: { name: giftee.name },
       budget: ctx.edition.budget,
       canClaim: isDrawn(ctx.edition),
+      saved: true,
       wishes: wishes.map((wish) => ({ ...toWishView(wish), archived: wish.archived, claim: claimState(wish._id) })),
     };
   }),

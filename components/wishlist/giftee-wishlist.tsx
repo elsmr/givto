@@ -35,7 +35,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
   if (list.isError) return <LoadFailed message={tWishlist('errors.generic')} onRetry={() => void list.refetch()} />;
   // Names the giftee: stays hidden until the reveal card is tapped.
   if (!list.data || !revealed) return null;
-  const { giftee, budget, canClaim, wishes } = list.data;
+  const { giftee, budget, canClaim, saved, wishes } = list.data;
 
   return (
     <Card>
@@ -46,7 +46,7 @@ export const GifteeWishlist = ({ groupSlug, editionNumber }: GifteeWishlistProps
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         {wishes.length === 0 ? (
-          <p>{t('empty', { name: giftee.name })}</p>
+          <p>{saved ? t('empty', { name: giftee.name }) : t('not-saved')}</p>
         ) : (
           <ul className="flex flex-col divide-y-2 divide-dashed divide-outline">
             {wishes.map((wish) => (
