@@ -34,14 +34,14 @@ function FieldOptional() {
 }
 
 // A popover, not a tooltip: Base UI disables tooltips on touch devices.
-function FieldHint({ children }: { children: React.ReactNode }) {
+function FieldHint({ children, label }: { children: React.ReactNode; label?: string }) {
   const t = useTranslations('ui.field');
   return (
     <Popover>
       <PopoverTrigger
         openOnHover
         delay={150}
-        aria-label={t('more-info')}
+        aria-label={label ?? t('more-info')}
         className="-mx-2 -my-3.5 inline-flex size-11 shrink-0 cursor-help items-center justify-center text-muted hover:text-ink data-popup-open:text-ink"
       >
         <CircleHelp className="size-4" aria-hidden />
@@ -260,6 +260,7 @@ function FieldError({
 
 export {
   Field,
+  FieldHint,
   FieldLabel,
   FieldDescription,
   FieldError,
