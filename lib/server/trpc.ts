@@ -7,6 +7,7 @@ import { Id } from '../schema/common';
 import { Slug } from '../schema/group';
 import { getAuth } from './auth';
 import { getDb, type Collections } from './db';
+import { santaAndGiftee } from './draw/rules';
 import { AppError, errorData, GENERIC_ERROR_MESSAGE, isUnexpected, toAppCode } from './errors';
 import { log } from './log';
 
@@ -143,13 +144,8 @@ export const organizerEditionProcedure = editionProcedure.use(({ ctx, next }) =>
 export const santaOfProcedure = editionProcedure
   .input(v.object({ asMemberId: v.optional(Id) }))
   .use(({ ctx, input, next }) => {
-    const santa = input.asMemberId
-      ? ctx.group.members.find((m) => m.id === input.asMemberId && m.managedBy === ctx.member.id)
-      : ctx.member;
-    if (!santa) throw new AppError('FORBIDDEN');
+    const { santa, giftee } = santaAndGiftee(ctx.group, ctx.edition, ctx.member, input.asMemberId);
     if (!ctx.edition.draw) throw new AppError('NOT_DRAWN');
-    const gifteeId = ctx.edition.draw.assignments[santa.id];
-    const giftee = ctx.group.members.find((m) => m.id === gifteeId);
     if (!giftee) throw new AppError('NOT_SANTA');
     return next({ ctx: { santa, giftee } });
   });

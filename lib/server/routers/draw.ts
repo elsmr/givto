@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 import { Id } from '../../schema/common';
+import { santaAndGiftee } from '../draw/rules';
 import { drawEdition, lockInEdition, redrawEdition } from '../draw/run';
 import { AppError } from '../errors';
 import { runDueDraws } from '../jobs/draws';
@@ -29,8 +30,7 @@ export const drawRouter = router({
   /** My giftee in this edition (the reveal card), or null before the draw / when I'm not in it. */
   mine: editionProcedure.query(({ ctx }) => {
     const me = ctx.edition.participants.find((p) => p.memberId === ctx.member.id);
-    const gifteeId = ctx.edition.draw?.assignments[ctx.member.id];
-    const giftee = ctx.group.members.find((m) => m.id === gifteeId);
+    const { giftee } = santaAndGiftee(ctx.group, ctx.edition, ctx.member);
     return {
       inEdition: Boolean(me?.participates),
       giftee: giftee ? { name: giftee.name } : null,

@@ -1,8 +1,8 @@
-import { useTRPC } from '@/lib/client/trpc';
+import { useTRPC, type RouterInputs } from '@/lib/client/trpc';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useGiftDayError } from '../use-gift-day-error';
 
-type Action = 'start' | 'spin' | 'santa' | 'more' | 'last' | 'open' | 'steal' | 'keep' | 'back';
+type Action = RouterInputs['giftday']['advance']['action'];
 
 /** The presenter's steps, stored on the server; the answer is the new presenter view. */
 export const useAdvance = (groupSlug: string, editionNumber: number) => {

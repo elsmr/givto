@@ -13,6 +13,12 @@ import { guessingOn, santaStepOn } from '../guess/guesses';
 export const isRevealed = (edition: Edition) =>
   edition.reveal.enabled && ((Boolean(edition.reveal.revealedAt) && isFromGiftDay(edition)) || edition.status === 'done');
 
+/** The stored unwrap order (32) of who's in: people who left drop out; late joiners go last, so everyone still sees the same order. */
+export const unwrapPeople = (stored: string[], inDraw: string[]) => [
+  ...stored.filter((id) => inDraw.includes(id)),
+  ...inDraw.filter((id) => !stored.includes(id)),
+];
+
 /**
  * The stored unwrap order and where the unwrapping is (32). Who drew whom (`pairs`) only once revealed.
  * `counts`: gifts per person from what the Santas marked (63), from gift day on.
@@ -25,11 +31,7 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards
   const nameOf = (memberId: string) => group.members.find((m) => m.id === memberId)?.name ?? '?';
   const assignments = edition.draw?.assignments ?? {};
   const inDraw = playerIds(group, edition);
-  const stored = edition.unwrapOrder?.memberIds ?? [];
-  // People who left drop out; late joiners go last, so everyone still sees the same order.
-  const order = edition.unwrapOrder
-    ? [...stored.filter((id) => inDraw.includes(id)), ...inDraw.filter((id) => !stored.includes(id))]
-    : null;
+  const order = edition.unwrapOrder ? unwrapPeople(edition.unwrapOrder.memberIds, inDraw) : null;
   const santaOf = new Map(Object.entries(assignments).map(([santa, giftee]) => [giftee, santa]));
   const mode = edition.unwrapMode ?? 'allAtOnce';
   const progress = edition.unwrapOrder?.progress;

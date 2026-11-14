@@ -2,6 +2,7 @@ import * as v from 'valibot';
 import { Id } from '../../schema/common';
 import { isDrawn } from '../../schema/edition';
 import { isDuplicateKey, newId } from '../db';
+import { santaAndGiftee } from '../draw/rules';
 import { AppError } from '../errors';
 import { dropGiftWish } from '../gift/marks';
 import { markGifteeWishlistSeen } from '../jobs/wishlist-changes';
@@ -18,8 +19,7 @@ const WishInput = v.object({ wishId: Id });
 export const claimRouter = router({
   /** The caller's giftee's wishlist in this edition with claim states, or null before the draw / outside it. */
   gifteeWishlist: editionProcedure.query(async ({ ctx }) => {
-    const gifteeId = ctx.edition.draw?.assignments[ctx.member.id];
-    const giftee = ctx.group.members.find((member) => member.id === gifteeId);
+    const { giftee } = santaAndGiftee(ctx.group, ctx.edition, ctx.member);
     if (!giftee) return null;
     // A done edition shows the list as it was when it ended (100), never today's; nothing to claim any more.
     if (ctx.edition.status === 'done') {
