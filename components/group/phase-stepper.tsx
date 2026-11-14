@@ -31,7 +31,7 @@ export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: 
               className={cn(
                 'h-3 border-2 border-outline',
                 index < current && 'bg-mint',
-                index === current && 'h-4 bg-yellow shadow-sm',
+                index === current && '-mt-1 h-4 bg-yellow shadow-sm',
                 index > current && 'border-dashed border-muted',
               )}
             />
