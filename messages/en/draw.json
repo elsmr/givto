@@ -87,5 +87,15 @@
     "gift-day": "{group}: gift day",
     "post-by": "{group}: post your gift",
     "description": "Your Secret Santa on Givto: {url}"
+  },
+  "redraw": {
+    "title": "Re-draw",
+    "description": "Everyone may get someone new.",
+    "button": "Re-draw names",
+    "confirm-title": "Draw all names again?",
+    "confirm-description": "Draw all names again. Everyone may get someone new, and Dibs! of people whose giftee changes are cleared. If people already bought gifts, they'll have to start over.",
+    "confirm": "Yes, re-draw",
+    "cancel": "Keep the current draw",
+    "done": "Names re-drawn"
   }
 }

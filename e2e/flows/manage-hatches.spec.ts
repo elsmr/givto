@@ -84,6 +84,26 @@ test('the draw dialog says the rules, with where to edit them, and who is not in
   await expect(page).toHaveURL(`/g/${group.slug}/settings#draw`);
 });
 
+test('organizer: re-draw names from the ⋯ menu', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Redraw', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' })
+  );
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}`);
+
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByRole('menuitem', { name: 'Re-draw names' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Draw all names again?' });
+  await dialog.getByRole('button', { name: 'Yes, re-draw' }).click();
+  await expect(page.getByText('Names re-drawn')).toBeVisible();
+  await expect(dialog).toBeHidden();
+});
+
 test('organizer: a new edition from the ⋯ menu, while shopping (renamed) and once done', async ({ page, signIn, signInPage, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const year = todayIn('Europe/Brussels').slice(0, 4);

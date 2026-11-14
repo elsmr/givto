@@ -52,16 +52,6 @@
     "locked": "Het ligt vast, dus wie meedoet kan hier niet meer veranderen. Wie nu nog meedoet, is er ook bij."
   },
   "keep-apart-drawn": "Er is al geloot, dus wie niet samen mag, verandert voor deze editie niet meer.",
-  "redraw": {
-    "title": "Opnieuw loten",
-    "description": "Iedereen kan iemand anders krijgen.",
-    "button": "Opnieuw loten",
-    "confirm-title": "Opnieuw loten?",
-    "confirm-description": "Loot opnieuw. Iedereen kan iemand anders krijgen; krijg je iemand anders, dan komt wat je al geclaimd had weer vrij. Wie al een cadeau kocht, moet opnieuw beginnen.",
-    "confirm": "Ja, opnieuw loten",
-    "cancel": "Huidige loting houden",
-    "done": "Er is opnieuw geloot"
-  },
   "danger": {
     "title": "Gevarenzone",
     "description": "Als je de groep verwijdert, verdwijnt die voor iedereen, met alle edities. Ieders verlanglijstje blijft bewaard.",

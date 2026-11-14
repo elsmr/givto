@@ -8,8 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { RedrawDialog } from '@/components/settings/redraw-section';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Ellipsis, Flag, Gift, Repeat, RotateCcw, ShoppingBag } from 'lucide-react';
+import { drawsNames } from '@/lib/schema/edition';
+import { Ellipsis, Flag, Gift, Repeat, RotateCcw, ShoppingBag, Shuffle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { HatchDialog } from './hatch-dialog';
@@ -20,11 +22,13 @@ const icons = { startGiftDay: Gift, finishGiftDay: Flag, backToShopping: Shoppin
 
 /**
  * ⋯ next to the group's title, for the organizer: the ways around dates (64): start gift day now, finish it, back to
- * shopping, reopen; and a new edition (77). Each asks first. Only from the draw on, and for the group's latest edition.
+ * shopping, reopen; re-draw names while shopping (27); and a new edition (77). Each asks first. Only from the draw on, and for the group's latest edition.
  */
 export const ManageMenu = ({ group }: { group: GroupData }) => {
   const t = useTranslations('manage');
+  const tRedraw = useTranslations('draw.redraw');
   const [hatch, setHatch] = useState<Hatch | null>(null);
+  const [redraw, setRedraw] = useState(false);
   const [newEdition, setNewEdition] = useState(false);
   const edition = group.me.isOrganizer && group.edition?.isCurrent ? group.edition : undefined;
   const hatches = edition ? hatchesFor(edition.status) : [];
@@ -34,6 +38,7 @@ export const ManageMenu = ({ group }: { group: GroupData }) => {
   const underway = Boolean(giftDay.data?.unwrapOrder?.went.length || giftDay.data?.swap?.gifts.length || giftDay.data?.reveal.revealed || giftDay.data?.guessing?.results.length);
 
   if (!edition || hatches.length === 0) return null;
+  const canRedraw = edition.status === 'drawn' && drawsNames(edition);
   return (
     <>
       <DropdownMenu>
@@ -57,6 +62,12 @@ export const ManageMenu = ({ group }: { group: GroupData }) => {
               </DropdownMenuItem>
             );
           })}
+          {canRedraw && (
+            <DropdownMenuItem onClick={() => setRedraw(true)}>
+              <Shuffle aria-hidden="true" />
+              {tRedraw('button')}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => setNewEdition(true)}>
             <Repeat aria-hidden="true" />
@@ -73,6 +84,7 @@ export const ManageMenu = ({ group }: { group: GroupData }) => {
           onClose={() => setHatch(null)}
         />
       )}
+      {redraw && <RedrawDialog group={group} edition={edition} onClose={() => setRedraw(false)} />}
       {newEdition && <NewEditionDialog group={group} edition={edition} onClose={() => setNewEdition(false)} />}
     </>
   );
