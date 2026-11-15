@@ -60,3 +60,24 @@ test("a member's stream: the current view, then a new one after the presenter's 
   expect(second.unwrapOrder!.started).toBe(true);
   await events.close();
 });
+
+test('someone taken out of the group gets nothing more: their stream ends, before any reveal', async ({ signIn, db }) => {
+  const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
+  const group = await drawnGroup([ann, bob, cee, dan], 'Stream removed');
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  const res = await fetch(streamUrl(group.slug, 1), { headers: { cookie: await cookieOf(dan) }, signal: AbortSignal.timeout(15_000) });
+  const events = sseEvents(res.body!);
+  await events.next();
+
+  const danId = (await db.groups.findOne({ slug: group.slug }))!.members.find((m) => m.userId === dan.id)!.id;
+  ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: group.slug, memberId: danId }));
+  ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
+  ok(await ann.trpc.mutate('giftday.reveal', at));
+  const after: TrpcOutput<'giftday.get'>[] = [];
+  const readAll = async () => {
+    for (;;) after.push(await events.next());
+  };
+  await expect(readAll()).rejects.toThrow('stream ended');
+  expect(after.filter((view) => view.reveal.pairs)).toEqual([]);
+});

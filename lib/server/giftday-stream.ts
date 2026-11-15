@@ -3,12 +3,14 @@ import superjson from 'superjson';
 import type { Edition } from '../schema/edition';
 import type { Collections } from './db';
 import { log } from './log';
-import { memberView } from './giftday/giftday-view';
+import { memberViews } from './giftday/giftday-view';
 
 interface Subscriber {
+  /** Whose view: only while they're a joined member of the group. */
+  userId: string;
   /** The member view, superjson. */
   send: (data: string) => void;
-  /** The change stream failed: end the connection, the client reconnects. */
+  /** End the connection: the change stream failed (the client reconnects), or they're no longer a member. */
   close: () => void;
 }
 
@@ -26,8 +28,12 @@ const watch = async (db: Collections) => {
       if (!edition || !subscribers.has(edition._id)) continue;
       const group = await db.groups.findOne({ _id: edition.groupId, deletedAt: { $exists: false } });
       if (!group) continue;
-      const data = superjson.stringify(await memberView(db, group, edition));
-      for (const subscriber of subscribers.get(edition._id) ?? []) subscriber.send(data);
+      const viewOf = await memberViews(db, group, edition);
+      for (const subscriber of subscribers.get(edition._id) ?? []) {
+        const member = group.members.find((m) => m.userId === subscriber.userId && m.status === 'joined');
+        if (member) subscriber.send(superjson.stringify(viewOf(member.id)));
+        else subscriber.close();
+      }
     }
   } catch (error) {
     if (changes === stream) log.error({ err: error }, 'gift day stream failed');

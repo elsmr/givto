@@ -108,7 +108,7 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
 
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: false }));
     expect(ok(await bob.trpc.query('giftday.get', edition)).reveal.pairs).toBeNull();
-    expect((await editionOf(db, slug)).reveal.revealedAt).toBeUndefined();
+    expect((await editionOf(db, slug)).reveal.revealedAt, 'it was out: kept on record (106)').toBeInstanceOf(Date);
   });
 
   await test.step('received wishes: owner only, hidden from Santas and lists', async () => {
@@ -139,9 +139,10 @@ test('gift day: unwrap order, late joiners, presenter, reveal, received wishes, 
     expect(code(await ann.trpc.mutate('giftday.shuffle', edition))).toBe('EDITION_CLOSED');
     const closed = ok(await dan.trpc.query('giftday.get', edition)).reveal;
     expect(closed.revealed, 'no big reveal').toBe(false);
-    expect(closed.pairs, 'but a done edition shows who gave to whom (100)').toHaveLength(5);
+    expect(closed.pairs, 'a done edition keeps who drew whom secret without it (106)').toBeNull();
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: true }));
-    expect(ok(await dan.trpc.query('giftday.get', edition)).reveal.revealed).toBe(true);
-    expect((await editionOf(db, slug)).reveal.revealedAt).toBeUndefined();
+    const revealed = ok(await dan.trpc.query('giftday.get', edition)).reveal;
+    expect(revealed.revealed).toBe(true);
+    expect(revealed.pairs).toHaveLength(5);
   });
 });

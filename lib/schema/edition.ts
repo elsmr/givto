@@ -135,10 +135,15 @@ export const UnwrapOrder = v.object({
 export const SavedWish = v.object({ id: Id, ...WishFields.entries });
 export type SavedWish = v.InferOutput<typeof SavedWish>;
 
-/** The big reveal (31): organizer toggle, off by default. */
+/**
+ * The big reveal (31): organizer toggle, off by default. What's out stays on record whatever the switches and the
+ * presenter do after: `revealedAt` (also kept when switched off) and `santaShownIds`, everyone whose Santa was shown
+ * at a turn (62), which outlives `progress` (a new mode or order, the presenter's Back).
+ */
 export const Reveal = v.object({
   enabled: v.boolean(),
   revealedAt: v.optional(v.date()),
+  santaShownIds: v.optional(v.array(Id)),
 });
 
 /** Fields the organizer edits. All dates are local dates in the group's time zone. */

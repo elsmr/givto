@@ -1,12 +1,12 @@
 import { boardScores, guessResults, type Boards } from '../../guess-results';
-import { drawsNames, isFromGiftDay, type Edition } from '../../schema/edition';
+import { isFromGiftDay, type Edition } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { swapState, type SwapState } from '../../swap-turns';
 import { santaStillHidden, unwrapState, type GiftCounts } from '../../unwrap-turns';
 import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
 import { giftCounts } from '../gift/marks';
-import { guessesOf, guessingOn, santaStepOn } from '../guess/guesses';
+import { guessesOf, guessingOn, santaShownIds, santaStepOn } from '../guess/guesses';
 
 /**
  * The big reveal (31), when it's on: out once the presenter revealed it on gift day, or when gift
@@ -14,6 +14,15 @@ import { guessesOf, guessingOn, santaStepOn } from '../guess/guesses';
  */
 export const isRevealed = (edition: Edition) =>
   edition.reveal.enabled && ((Boolean(edition.reveal.revealedAt) && isFromGiftDay(edition)) || edition.status === 'done');
+
+/**
+ * Back to shopping (64) only while nothing is out: nobody unwrapped, no Santa shown at a turn (62), the big reveal never
+ * out, also when switched off since.
+ */
+export const giftDayUnderway = (edition: Edition) => {
+  const progress = edition.unwrapOrder?.progress;
+  return (progress?.turns.length ?? 0) > 0 || (progress?.moves?.length ?? 0) > 0 || santaShownIds(edition).length > 0 || Boolean(edition.reveal.revealedAt);
+};
 
 /** The stored unwrap order (32) of who's in: people who left drop out; late joiners go last, so everyone still sees the same order. */
 export const unwrapPeople = (stored: string[], inDraw: string[]) => [
@@ -39,12 +48,10 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards
   const progress = edition.unwrapOrder?.progress;
   const swap = edition.kind === 'whiteElephant' && order ? swapState(order, Boolean(progress), progress?.moves ?? []) : null;
   const state = swap ?? (order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? [], counts));
-  // Once it's done, everyone in it sees who gave to whom, big reveal or not (100).
-  const pairs = isRevealed(edition) || (edition.status === 'done' && drawsNames(edition) && edition.draw)
+  const pairs = isRevealed(edition)
     ? (order ?? inDraw).map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
     : null;
-  const santaShownIds = santaStepOn(edition) ? (progress?.santaShownIds ?? []) : [];
-  const revealedIds = isRevealed(edition) ? (order ?? inDraw) : santaShownIds;
+  const revealedIds = isRevealed(edition) ? (order ?? inDraw) : santaStepOn(edition) ? santaShownIds(edition) : [];
   const guesses = Object.fromEntries(Object.entries(boards).map(([guesser, board]) => [guesser, board[guesser]]));
   const leaderboard = boardScores(revealedIds, assignments, boards)
     .map(({ memberId, points }) => ({ memberId, name: nameOf(memberId), points }))
@@ -61,9 +68,9 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards
           .toSorted((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
       }))
     : null;
-  const santaToShow = Boolean(state && progress?.currentShown && santaStepOn(edition) && santaStillHidden(state, santaShownIds));
+  const santaToShow = Boolean(state && progress?.currentShown && santaStepOn(edition) && santaStillHidden(state, progress.santaShownIds ?? []));
   return {
-    nameOf, order, mode, progress, state, swap, revealEnabled: edition.reveal.enabled, revealed: isRevealed(edition), pairs,
+    nameOf, inDraw, order, mode, progress, state, swap, revealEnabled: edition.reveal.enabled, revealed: isRevealed(edition), pairs, underway: giftDayUnderway(edition),
     guessing: guessing && { results: guessing, right: guessing.filter((result) => result.right).length, leaderboard },
     santaToShow,
   };
@@ -79,10 +86,12 @@ const swapTable = ({ gifts, wrapped, robbed, final }: SwapState, nameOf: (member
 
 /**
  * The presenter view (organizer): the whole unwrap order with each person's gift count (null: their
- * Santa marked nothing), whose turn it is and who's up next, and the reveal pairs in unwrap order.
+ * Santa marked nothing), whose turn it is and who's up next, and the reveal pairs in unwrap order. Once done, the
+ * pairs and the guessing only when `viewerId` was in the draw, like the member view.
  */
-export const presenterGiftDayView = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards) => {
-  const { nameOf, order, mode, progress, state, swap, revealEnabled, revealed, pairs, guessing, santaToShow } = giftDayState(group, edition, counts, boards);
+export const presenterGiftDayView = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards, viewerId: string) => {
+  const { nameOf, inDraw, order, mode, progress, state, swap, revealEnabled, revealed, pairs, guessing, santaToShow } = giftDayState(group, edition, counts, boards);
+  const shown = edition.status !== 'done' || inDraw.includes(viewerId);
   const person = (memberId: string | null) => (memberId ? { memberId, name: nameOf(memberId) } : null);
   return {
     unwrapMode: mode,
@@ -107,40 +116,51 @@ export const presenterGiftDayView = (group: Group, edition: Edition, counts: Gif
           }
         : null,
     swap: swap && { ...swapTable(swap, nameOf), stealable: swap.stealable },
-    reveal: { enabled: revealEnabled, revealed, pairs },
-    guessing,
+    reveal: { enabled: revealEnabled, revealed, pairs: shown ? pairs : null },
+    guessing: shown ? guessing : null,
   };
 };
 
 /**
  * Gift day on the group home, for every member (31, 32): the unwrap order stays a surprise
  * (owner), so only who already went (in turn order) and who's unwrapping now, once the
- * presenter's reel landed on them. Reveal pairs by giftee name, not in unwrap order.
+ * presenter's reel landed on them. Reveal pairs by giftee name, not in unwrap order. The pairs and the guessing only
+ * when `viewerId` is in the draw, like a done edition's wishlists (100).
  */
 export const giftDayView = (group: Group, edition: Edition, counts: GiftCounts, boards: Boards) => {
-  const { nameOf, order, mode, progress, state, swap, revealEnabled, revealed, pairs, guessing } = giftDayState(group, edition, counts, boards);
+  const { nameOf, inDraw, order, mode, progress, state, swap, revealEnabled, revealed, pairs, guessing, underway } = giftDayState(group, edition, counts, boards);
   const wentIds = [...new Set(progress?.turns.map((turn) => turn.memberId) ?? [])];
   const byGiftee = <T extends { giftee: string }>(list: T[]) => list.toSorted((a, b) => a.giftee.localeCompare(b.giftee));
-  return {
-    unwrapMode: mode,
-    unwrapOrder:
-      order && state
-        ? {
-            shuffledAt: edition.unwrapOrder!.shuffledAt,
-            went: wentIds.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId) })),
-            started: Boolean(progress),
-            current: state.current && progress?.currentShown ? { memberId: state.current, name: nameOf(state.current) } : null,
-            turn: state.turn,
-            finished: state.finished,
-          }
-        : null,
-    swap: swap && swapTable(swap, nameOf),
-    reveal: { enabled: revealEnabled, revealed, pairs: pairs && byGiftee(pairs) },
-    // In turn order while unwrapping; by giftee once the big reveal is out, like the pairs.
-    guessing: guessing && { ...guessing, results: revealed ? byGiftee(guessing.results) : guessing.results },
+  const unwrapOrder =
+    order && state
+      ? {
+          shuffledAt: edition.unwrapOrder!.shuffledAt,
+          went: wentIds.map((memberId) => ({ memberId, name: nameOf(memberId), done: state.doneIds.includes(memberId) })),
+          started: Boolean(progress),
+          current: state.current && progress?.currentShown ? { memberId: state.current, name: nameOf(state.current) } : null,
+          turn: state.turn,
+          finished: state.finished,
+        }
+      : null;
+  const pairsByGiftee = pairs && byGiftee(pairs);
+  const swapView = swap && swapTable(swap, nameOf);
+  // In turn order while unwrapping; by giftee once the big reveal is out, like the pairs.
+  const guessingInOrder = guessing && { ...guessing, results: revealed ? byGiftee(guessing.results) : guessing.results };
+  return (viewerId: string) => {
+    const inIt = inDraw.includes(viewerId);
+    return {
+      unwrapMode: mode,
+      unwrapOrder,
+      swap: swapView,
+      reveal: { enabled: revealEnabled, revealed, pairs: inIt ? pairsByGiftee : null },
+      guessing: inIt ? guessingInOrder : null,
+      underway,
+    };
   };
 };
 
-/** giftday.get, also pushed by the gift day stream (97). */
-export const memberView = async (db: Collections, group: Group, edition: Edition) =>
-  giftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition));
+/** giftday.get, also pushed by the gift day stream (97): each member's view, from one read of the gifts and guesses. */
+export const memberViews = async (db: Collections, group: Group, edition: Edition) => {
+  const [counts, boards] = await Promise.all([giftCounts(db, edition), guessesOf(db, edition)]);
+  return giftDayView(group, edition, counts, boards);
+};

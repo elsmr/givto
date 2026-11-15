@@ -3,7 +3,7 @@ import { getDb } from '@/lib/server/db';
 import { AppError } from '@/lib/server/errors';
 import { subscribeGiftDay } from '@/lib/server/giftday-stream';
 import { log } from '@/lib/server/log';
-import { memberView } from '@/lib/server/giftday/giftday-view';
+import { memberViews } from '@/lib/server/giftday/giftday-view';
 import { memberEdition } from '@/lib/server/trpc';
 import { getHTTPStatusCodeFromError } from '@trpc/server/http';
 import superjson from 'superjson';
@@ -22,7 +22,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
     error instanceof AppError ? error : Promise.reject(error)
   );
   if (found instanceof AppError) return new Response(found.appCode, { status: getHTTPStatusCodeFromError(found) });
-  const { group, edition } = found;
+  const { group, member, edition } = found;
 
   const stop = new AbortController();
   const ended = AbortSignal.any([request.signal, stop.signal]);
@@ -39,6 +39,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
       };
       let changed = false;
       const unsubscribe = subscribeGiftDay(db, edition._id, {
+        userId: session.user.id,
         send: (data) => {
           changed = true;
           write(`data: ${data}\n\n`);
@@ -53,7 +54,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
         clearTimeout(timeout);
       });
       try {
-        const view = superjson.stringify(await memberView(db, group, edition));
+        const view = superjson.stringify((await memberViews(db, group, edition))(member.id));
         // A change pushed while this was built is newer than it.
         if (!changed) write(`data: ${view}\n\n`);
       } catch (error) {

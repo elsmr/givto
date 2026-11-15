@@ -126,7 +126,8 @@ test('a guess per giftee, changeable until that Santa is shown; nobody sees it b
     ok(await set(bob, at, [[D, A]]));
     expect(code(await ann.trpc.mutate('manage.backToShopping', { ...at, giftDayDate: '2099-12-23' }))).toBe('GIFT_DAY_UNDERWAY');
     ok(await advance(ann, at, 'back'));
-    expect(ok(await dan.trpc.query('giftday.get', at)).guessing!.results).toEqual([]);
+    expect(ok(await dan.trpc.query('giftday.get', at)).guessing!.results, 'back on the Santa slide: still out (106)').toEqual([result]);
+    expect(code(await set(cee, at, [[A, B]]))).toBe('GUESSING_CLOSED');
     ok(await advance(ann, at, 'santa'));
     ok(await advance(ann, at, 'last'));
     expect(ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder).toMatchObject({ turnsTaken: 1, santaToShow: false });

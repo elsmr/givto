@@ -5,6 +5,9 @@ import type { Collections } from '../db';
 /** Guess your Santa (62) is on unless the organizer switched it off, or there's no Santa to guess (88). */
 export const guessingOn = (edition: Edition) => edition.guessing !== false && drawsNames(edition);
 
+/** Everyone whose Santa was shown at a turn (62), ever. */
+export const santaShownIds = (edition: Edition) => edition.reveal.santaShownIds ?? [];
+
 /**
  * A guess for `gifteeMemberId` can change from the draw until their Santa is out (94): shown at their turn, the big
  * reveal, or gift day is over.
@@ -12,8 +15,8 @@ export const guessingOn = (edition: Edition) => edition.guessing !== false && dr
 export const guessOpen = (edition: Edition, gifteeMemberId: string) =>
   guessingOn(edition) &&
   (edition.status === 'drawn' || edition.status === 'giftday') &&
-  !(edition.reveal.enabled && edition.reveal.revealedAt) &&
-  !(edition.unwrapOrder?.progress?.santaShownIds ?? []).includes(gifteeMemberId);
+  !edition.reveal.revealedAt &&
+  !santaShownIds(edition).includes(gifteeMemberId);
 
 /** The presenter shows each person's Santa at their turn only from gift day on. */
 export const santaStepOn = (edition: Edition) => guessingOn(edition) && isFromGiftDay(edition);

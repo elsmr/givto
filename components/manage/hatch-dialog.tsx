@@ -13,6 +13,7 @@ import {
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { addDays, formatLocalDate, todayIn } from '@/lib/local-date';
+import { drawsNames } from '@/lib/schema/edition';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { hatchErrors, hatchPoints, type Hatch } from './hatches';
@@ -37,7 +38,12 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
   const [giftDayDate, setGiftDayDate] = useState(upcoming || tomorrow);
   const run = useHatch(hatch, groupSlug, onClose);
   const todayLabel = formatLocalDate(today, locale);
-  const points = hatchPoints[hatch].filter((point) => !(shuffled && point === 'startGiftDay.points.order'));
+  // Who was whose Santa (31, 62) as the reveal and guessing switches have it; there's none without a draw (88).
+  const santas = edition.reveal ? 'revealed' : edition.guessing ? 'turns' : 'secret';
+  const santaPoint = (point: string) => point === 'startGiftDay.points.secret' || point === 'finishGiftDay.points.secret';
+  const points = hatchPoints[hatch].filter(
+    (point) => !(shuffled && point === 'startGiftDay.points.order') && !(santaPoint(point) && !drawsNames(edition))
+  );
   const error = run.error && knownAppError(run.error, hatchErrors);
 
   return (
@@ -49,7 +55,7 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
         </DialogHeader>
         <ul className="flex list-disc flex-col gap-1 pl-5">
           {points.map((point) => (
-            <li key={point}>{t(point, { today: todayLabel })}</li>
+            <li key={point}>{t(point, { today: todayLabel, santas })}</li>
           ))}
         </ul>
         {hatch === 'backToShopping' && (

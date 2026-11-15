@@ -6,26 +6,26 @@ import { playerIds } from '../draw/rules';
 import { newUnwrapOrder } from '../edition/status';
 import { AppError } from '../errors';
 import { giftCounts } from '../gift/marks';
-import { memberView, presenterGiftDayView } from '../giftday/giftday-view';
+import { isRevealed, memberViews, presenterGiftDayView } from '../giftday/giftday-view';
 import { AdvanceInput, advanceUnwrapping } from '../giftday/unwrap-advance';
 import { guessesOf } from '../guess/guesses';
 import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 
-const presenterView = async (db: Collections, group: Group, edition: Edition) => ({
+const presenterView = async (db: Collections, group: Group, edition: Edition, viewerId: string) => ({
   groupName: group.name,
   title: edition.title,
   kind: edition.kind ?? 'secretSanta',
   status: edition.status,
-  ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition)),
+  ...presenterGiftDayView(group, edition, await giftCounts(db, edition), await guessesOf(db, edition), viewerId),
 });
 
 /** Gift day (31), the unwrap order (32), the big reveal and "received" wishes (38). */
 export const giftdayRouter = router({
-  /** Unwrap order and reveal state for the group home; Santas only once revealed. */
-  get: editionProcedure.query(({ ctx }) => memberView(ctx.db, ctx.group, ctx.edition)),
+  /** Unwrap order and reveal state for the group home; Santas only once revealed, and only for people in the draw. */
+  get: editionProcedure.query(async ({ ctx }) => (await memberViews(ctx.db, ctx.group, ctx.edition))(ctx.member.id)),
 
   /** The presenter view (/g/[slug]/present) is the organizer's (PLAN-v2). */
-  presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition)),
+  presenter: organizerEditionProcedure.query(({ ctx }) => presenterView(ctx.db, ctx.group, ctx.edition, ctx.member.id)),
 
   /** Shuffle (or reshuffle) the unwrap order: everyone sees the same stored order. Starts the unwrapping over. */
   shuffle: organizerEditionProcedure.mutation(async ({ ctx }) => {
@@ -57,17 +57,21 @@ export const giftdayRouter = router({
   /** The presenter's next step (organizer only); see `advanceUnwrapping`. Returns the new presenter view. */
   advance: organizerEditionProcedure.input(AdvanceInput).mutation(async ({ ctx, input }) => {
     const edition = await advanceUnwrapping(ctx.db, ctx.group, ctx.edition, input);
-    return presenterView(ctx.db, ctx.group, edition);
+    return presenterView(ctx.db, ctx.group, edition, ctx.member.id);
   }),
 
-  /** The big reveal on or off (off by default), any time. Off again hides it from everyone. */
+  /**
+   * The big reveal on or off (off by default), any time. Off again hides the pairs from everyone, but once revealed it
+   * stays on record: guesses stay closed and there's no going back to shopping.
+   */
   setReveal: organizerEditionProcedure.input(v.object({ enabled: v.boolean() })).mutation(async ({ ctx, input }) => {
     if (!drawsNames(ctx.edition) && input.enabled) throw new AppError('FORBIDDEN');
+    const now = new Date();
+    // A done edition shows the pairs without the presenter's reveal: switched off, they stay on record all the same.
+    const keepRevealed = !input.enabled && isRevealed(ctx.edition) && !ctx.edition.reveal.revealedAt;
     await ctx.db.editions.updateOne(
       { _id: ctx.edition._id },
-      input.enabled
-        ? { $set: { 'reveal.enabled': true, updatedAt: new Date() } }
-        : { $set: { 'reveal.enabled': false, updatedAt: new Date() }, $unset: { 'reveal.revealedAt': true } }
+      { $set: { 'reveal.enabled': input.enabled, ...(keepRevealed && { 'reveal.revealedAt': now }), updatedAt: now } }
     );
     return { ok: true };
   }),

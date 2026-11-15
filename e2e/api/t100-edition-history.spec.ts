@@ -42,10 +42,10 @@ test('a done edition keeps its wishlists, people and draw', async ({ signIn, db 
     expect(list.wishes.map((wish) => wish.title)).toEqual(list.giftee.name === 'Bob' ? ['Scarf', 'Kite'] : []);
   });
 
-  await test.step('who gave to whom without the big reveal; Cee, who left, is still in it', async () => {
+  await test.step('who gave to whom stays secret without the big reveal (106); Cee, who left, is still in it', async () => {
     const giftDay = ok(await ann.trpc.query('giftday.get', first));
     expect(giftDay.reveal.revealed).toBe(false);
-    expect(giftDay.reveal.pairs?.map(({ giftee }) => giftee).toSorted()).toEqual(['Ann', 'Bob', 'Cee']);
+    expect(giftDay.reveal.pairs).toBeNull();
     const past = ok(await bob.trpc.query('group.get', first));
     const ceeId = await memberIdOf(db, group.slug, cee);
     expect(past.edition?.participantIds).toContain(ceeId);

@@ -6,9 +6,10 @@ import * as guessRows from './003-guess-rows';
 import * as keepApartRows from './004-keep-apart-rows';
 import * as v1Wishlists from './005-v1-wishlists';
 import * as ownerRole from './006-owner-role';
+import * as revealSantaShownIds from './007-reveal-santa-shown-ids';
 import * as httpUrls from './008-http-urls';
 
-const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows, v1Wishlists, ownerRole, httpUrls];
+const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows, v1Wishlists, ownerRole, revealSantaShownIds, httpUrls];
 
 export const migrationIds = migrations.map(({ id }) => id);
 

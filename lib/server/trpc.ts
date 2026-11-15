@@ -101,8 +101,8 @@ const groupEdition = async (db: Collections, groupId: string, editionNumber: num
 
 /** editionProcedure's checks, for the gift day stream (97), which isn't tRPC. */
 export const memberEdition = async (db: Collections, userId: string, groupSlug: string, editionNumber: number) => {
-  const { group } = await memberGroup(db, userId, groupSlug);
-  return { group, edition: await groupEdition(db, group._id, editionNumber) };
+  const { group, member } = await memberGroup(db, userId, groupSlug);
+  return { group, member, edition: await groupEdition(db, group._id, editionNumber) };
 };
 
 /** Input `{ groupSlug }`. A joined member of the group: `ctx.group`, `ctx.member`. */

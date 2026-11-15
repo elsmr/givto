@@ -120,7 +120,7 @@ export const advanceUnwrapping = async (db: Collections, group: Group, edition: 
       : action === 'spin'
         ? { $set: { 'unwrapOrder.progress.currentShown': true } }
         : action === 'santa'
-          ? { $addToSet: { 'unwrapOrder.progress.santaShownIds': state.current } }
+          ? { $addToSet: { 'unwrapOrder.progress.santaShownIds': state.current, 'reveal.santaShownIds': state.current } }
           : backHidesSanta(state, turns, santaShownIds)
             ? { $pull: { 'unwrapOrder.progress.santaShownIds': state.current } }
             : turns.length === 0

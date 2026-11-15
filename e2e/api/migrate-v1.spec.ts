@@ -190,6 +190,32 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
   });
 });
 
+test('migration 007 copies the Santas shown at turns onto the reveal record: legacy and partial editions, dry run, re-run', async () => {
+  await withDb(async (db) => {
+    const done = ['001-v1-to-v2', '002-shown-wish-ids', '003-guess-rows', '004-keep-apart-rows', '005-v1-wishlists', '006-owner-role'];
+    await db.collection<{ _id: string; appliedAt: Date }>('migrations').insertMany(done.map((_id) => ({ _id, appliedAt: new Date() })));
+    const editions = db.collection<{ _id: string; reveal?: { santaShownIds?: string[] }; unwrapOrder?: { progress?: { santaShownIds?: string[] } } }>('editions');
+    await editions.insertMany([
+      { _id: 'legacy', unwrapOrder: { progress: { santaShownIds: ['a', 'b'] } } },
+      { _id: 'partial', reveal: { santaShownIds: ['a'] }, unwrapOrder: { progress: { santaShownIds: ['a', 'c'] } } },
+      { _id: 'current', reveal: { santaShownIds: ['a', 'b'] }, unwrapOrder: { progress: { santaShownIds: ['b'] } } },
+      { _id: 'none' },
+    ]);
+    const shown = async () => Object.fromEntries((await editions.find().toArray()).map((e) => [e._id, e.reveal?.santaShownIds?.toSorted()]));
+
+    const of007 = (results: Awaited<ReturnType<typeof runMigrations>>) => results.find(({ id }) => id === '007-reveal-santa-shown-ids');
+    const dryRun = of007(await runMigrations(db, { apply: false }));
+    expect(dryRun).toMatchObject({ id: '007-reveal-santa-shown-ids', status: 'dry run', report: { planned: { editions: 2 } } });
+    expect(await shown()).toEqual({ legacy: undefined, partial: ['a'], current: ['a', 'b'], none: undefined });
+
+    const applied = of007(await runMigrations(db, { apply: true }));
+    expect(applied).toMatchObject({ status: 'applied', report: { written: { editions: 2 } } });
+    expect(await shown()).toEqual({ legacy: ['a', 'b'], partial: ['a', 'c'], current: ['a', 'b'], none: undefined });
+
+    expect(of007(await runMigrations(db, { apply: true }))).toEqual({ id: '007-reveal-santa-shown-ids', status: 'applied before' });
+  });
+});
+
 test('a migrated person signs in with the emailed code and finds their old group, draw and wishes', async ({ db, newClient, signIn, secrets }) => {
   const dan = await signIn('dan');
   const prefix = `v1e2e_${randomBytes(4).toString('hex')}_`;
