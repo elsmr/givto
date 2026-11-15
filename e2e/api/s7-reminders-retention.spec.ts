@@ -200,7 +200,7 @@ test('owner digest: new groups with organizer emails, once a day, only when ther
   // Far ahead of every other test's data, so the windows hold only our groups.
   const base = new Date(Math.floor(Date.now() / DAY) * DAY + 500 * DAY + 12 * 3600_000);
   const at = (days: number) => ({ now: new Date(base.getTime() + days * DAY).toISOString() });
-  const first = groupDoc(olive, `Digest ${randomBytes(4).toString('hex')}`, [member(olive, 'Olive', { role: 'organizer' })], { createdAt: new Date(base.getTime() - 3600_000) });
+  const first = groupDoc(olive, `Digest ${randomBytes(4).toString('hex')}`, [member(olive, 'Olive', { role: 'owner' })], { createdAt: new Date(base.getTime() - 3600_000) });
   const orphan = groupDoc(olive, `Digest ${randomBytes(4).toString('hex')}`, [], { createdBy: newId(), createdAt: new Date(base.getTime() + DAY) });
   await db.groups.insertOne(first);
 
