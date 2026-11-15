@@ -77,10 +77,10 @@ test('signed in with a name, the details step creates; invite by email with tags
   await signInPage(page, ann);
   await page.goto('/new');
   await page.getByLabel("What's your Secret Santa called?").fill('Second');
-  await test.step('time, budget and posting only once asked for', async () => {
+  await test.step('time and budget only once asked for; in person unless picked otherwise', async () => {
     await expect(page.getByLabel('Time')).toHaveCount(0);
     await expect(page.getByLabel('Amount')).toHaveCount(0);
-    await expect(page.getByRole('radio', { name: 'Online' })).toHaveCount(0);
+    await expect(page.getByRole('radio', { name: 'In person' })).toBeChecked();
     await page.getByLabel("When's gift day?").fill('2099-12-24');
     await page.getByRole('button', { name: 'Time' }).click();
     await page.getByLabel('Time').fill('19:00');
@@ -88,7 +88,7 @@ test('signed in with a name, the details step creates; invite by email with tags
     await page.getByLabel('Amount').fill('20');
     await page.getByRole('button', { name: 'Range' }).click();
     await page.getByLabel('Up to').fill('30');
-    await page.getByRole('button', { name: 'Celebrating online?' }).click();
+    await page.getByRole('radio', { name: 'Online' }).check();
     await expect(page.getByRole('radio', { name: 'Online' })).toBeChecked();
   });
   await page.getByRole('button', { name: 'Create Secret Santa' }).click();

@@ -311,7 +311,7 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
     await page.goto('/new');
     await page.getByRole('radio', { name: 'White elephant' }).check();
     await page.getByLabel("What's your white elephant called?").fill('Swap');
-    await expect(page.getByRole('button', { name: 'Celebrating online?' })).toHaveCount(0);
+    await expect(page.getByRole('radio', { name: 'Online' })).toHaveCount(0);
     await page.getByLabel("When's gift day?").fill('2099-12-24');
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Your name').fill('Ann');
