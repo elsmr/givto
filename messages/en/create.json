@@ -22,6 +22,11 @@
       "secretSanta": "Secret Santa",
       "whiteElephant": "White elephant",
       "conspiracy": "Conspiracy Santa",
+      "subtitle": {
+        "secretSanta": "Everyone draws a name in secret",
+        "whiteElephant": "Bring a gift, steal a gift",
+        "conspiracy": "Plan each gift together"
+      },
       "about": "How does {name} work?",
       "explain": {
         "secretSanta": "Everyone draws one name in secret and gets that person a gift. Nobody draws their own name, and nobody finds out who their Santa is until gift day.",
@@ -46,11 +51,12 @@
       "time": "Time"
     },
     "exchange": {
-      "label": "How do gifts change hands?",
+      "label": "How are you celebrating?",
       "inPerson": "In person",
-      "byPost": "By post",
-      "both": "In person or by post",
-      "ask": "Sending gifts by post?"
+      "online": "Online",
+      "inPerson-help": "Everyone hands over their gift on gift day.",
+      "online-help": "Gifts go by post: everyone adds an address. Unwrap together on a video call.",
+      "ask": "Celebrating online?"
     },
     "budget": {
       "legend": "Budget",

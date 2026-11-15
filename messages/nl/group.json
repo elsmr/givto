@@ -4,11 +4,7 @@
   "summary": {
     "gift-day": "Pakjesdag",
     "no-gift-day": "Nog niet gekozen",
-    "exchange-modes": {
-      "inPerson": "Cadeaus persoonlijk geven",
-      "byPost": "Cadeaus per post",
-      "both": "Cadeaus persoonlijk of per post"
-    },
+    "online": "Online vieren",
     "budget": "Budget: {budget}",
     "no-budget": "Geen budget",
     "draw-on": "Er wordt geloot op {date}",

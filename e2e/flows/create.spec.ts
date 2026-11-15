@@ -80,7 +80,7 @@ test('signed in with a name, the details step creates; invite by email with tags
   await test.step('time, budget and posting only once asked for', async () => {
     await expect(page.getByLabel('Time')).toHaveCount(0);
     await expect(page.getByLabel('Amount')).toHaveCount(0);
-    await expect(page.getByLabel('How do gifts change hands?')).toHaveCount(0);
+    await expect(page.getByRole('radio', { name: 'Online' })).toHaveCount(0);
     await page.getByLabel("When's gift day?").fill('2099-12-24');
     await page.getByRole('button', { name: 'Time' }).click();
     await page.getByLabel('Time').fill('19:00');
@@ -88,8 +88,8 @@ test('signed in with a name, the details step creates; invite by email with tags
     await page.getByLabel('Amount').fill('20');
     await page.getByRole('button', { name: 'Range' }).click();
     await page.getByLabel('Up to').fill('30');
-    await page.getByRole('button', { name: 'Sending gifts by post?' }).click();
-    await page.getByLabel('How do gifts change hands?').selectOption('both');
+    await page.getByRole('button', { name: 'Celebrating online?' }).click();
+    await expect(page.getByRole('radio', { name: 'Online' })).toBeChecked();
   });
   await page.getByRole('button', { name: 'Create Secret Santa' }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Second is ready!' })).toBeVisible();
@@ -99,7 +99,7 @@ test('signed in with a name, the details step creates; invite by email with tags
   expect(created.edition).toMatchObject({
     giftDay: { date: '2099-12-24', time: '19:00' },
     budget: { amount: 2000, maxAmount: 3000, currency: 'EUR' },
-    exchangeMode: 'both',
+    exchangeMode: 'byPost',
   });
 
   await test.step('emails become tags: × and Backspace remove them, a non-address stays with a hint', async () => {
