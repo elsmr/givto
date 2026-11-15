@@ -57,7 +57,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     expect(byName.Family.edition!.status).toBe('drawn');
     expect(byName.Family.edition!.gifteeReady).toBe(true);
     expect(byName.Family.edition!.giftDay).toBe('2099-12-24');
-    expect(byName.Family.role).toBe('organizer');
+    expect(byName.Family.role).toBe('owner');
     expect(byName.Solo.edition!.gifteeReady).toBe(false);
     expect(JSON.stringify(data), 'no draw data').not.toContain(ids.m.bob);
     expect((await (await newClient()).trpc.query('account.groups')).status).toBe(401);
@@ -115,7 +115,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     expect(annMember.status).toBe('removed');
     expect(annMember.name).toBe('Deleted account');
     expect(annMember.userId).toBeUndefined();
-    expect(family.members.find((m) => m.id === ids.m.bob)!.role).toBe('organizer');
+    expect(family.members.find((m) => m.id === ids.m.bob)!.role).toBe('owner');
     expect(family.members.find((m) => m.id === ids.m.kid)!.managedBy).toBe(ids.m.bob);
     expect(family.createdBy).toBe(bob.id);
     expect(family.organizerHandover!.toMemberId).toBe(ids.m.bob);

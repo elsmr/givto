@@ -16,7 +16,7 @@ test('cron: secret required, unknown jobs 404', async () => {
 
 test('deliveries leaves a drawn edition without pending notices alone', async ({ signIn, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
-  const people = [member(ann, 'Ann', { role: 'organizer' }), member(bob, 'Bob'), member(cee, 'Cee')];
+  const people = [member(ann, 'Ann', { role: 'owner' }), member(bob, 'Bob'), member(cee, 'Cee')];
   const quiet = groupDoc(ann, 'Quiet', people);
   const edition = editionDoc(quiet, 1, 'drawn', people, { giftDay: { date: today('Europe/Brussels', 10) }, draw: circle(people) });
   await db.groups.insertOne(quiet);
@@ -30,7 +30,7 @@ test('a family edition: join request, draw notices, Psst!, questions, unsubscrib
   const [olive, ann, bob, cee, dan] = await Promise.all(['olive', 'ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   // Family: Olive organizes and manages Kid; Dan asks to join through the link. Locale nl, so
   // people without an account get Dutch; account holders get their own language.
-  const m = { olive: member(olive, 'Olive', { role: 'organizer' }), ann: member(ann, 'Ann'), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
+  const m = { olive: member(olive, 'Olive', { role: 'owner' }), ann: member(ann, 'Ann'), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
   const kid = member(null, 'Kid', { managedBy: m.olive.id });
   const linkToken = randomBytes(18).toString('base64url');
   const family = groupDoc(olive, 'Family', [...Object.values(m), kid], {

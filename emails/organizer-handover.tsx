@@ -8,7 +8,7 @@ import { emailTranslator } from './ui/translator';
 export const organizerHandoverSubject = ({ locale, group }: Pick<NoticeProps, 'locale' | 'group'>) =>
   emailTranslator(locale)('organizer-handover.subject', { group });
 
-/** The organizer deleted their account and the role passed to this member (55, `group.organizerHandover`). */
+/** The owner deleted their account and the role passed to this member (55, `group.organizerHandover`). */
 export const OrganizerHandoverEmail = ({ locale, group, url }: NoticeProps) => {
   const t = emailTranslator(locale);
   return (

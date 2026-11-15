@@ -37,7 +37,7 @@ export const sendJoinDigests = async (db: Collections, now: Date, groupIds?: str
     const names = linkJoinersOn(group, yesterday, timeZone).map((m) => m.name);
     if (names.length === 0) continue;
     const people = group.members.filter((m) => m.status === 'joined').length;
-    const organizers = group.members.filter((m) => m.role === 'organizer' && m.status === 'joined');
+    const organizers = group.members.filter((m) => m.role !== 'member' && m.status === 'joined');
     counts.push(
       await runEach('joinDigest', organizers, async (organizer) => {
         const to = await memberRecipient(db, group, organizer);

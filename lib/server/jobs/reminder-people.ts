@@ -47,7 +47,7 @@ export const reminderPeople = async (db: Collections, group: Group, edition: Edi
   const people: { member: Member; person: ReminderPerson; history: SentReminder[] }[] = [];
   for (const member of group.members.filter((m) => m.status === 'joined')) {
     const participant = participants.find((p) => p.memberId === member.id);
-    const isOrganizer = member.role === 'organizer';
+    const isOrganizer = member.role !== 'member';
     if (!participant && !isOrganizer) continue;
     people.push({
       member,

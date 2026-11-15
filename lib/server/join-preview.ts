@@ -4,7 +4,7 @@ import type { EditionKind } from '../schema/edition';
 import { JoinLink, Slug, type Group } from '../schema/group';
 import type { Invite } from '../schema/invite';
 import type { Collections } from './db';
-import { firstName, hashToken, organizerOf } from './membership';
+import { firstName, hashToken, ownerOf } from './membership';
 
 const JoinToken = JoinLink.entries.token;
 const InviteToken = v.pipe(v.string(), v.regex(/^[A-Za-z0-9_-]{16,64}$/));
@@ -56,7 +56,7 @@ export type JoinPreview = {
 
 export const joinLinkPreview = (group: Group): JoinPreview => ({
   groupName: group.name,
-  organizerFirstName: firstName(organizerOf(group)?.name ?? ''),
+  organizerFirstName: firstName(ownerOf(group)?.name ?? ''),
   requiresApproval: group.joinLink?.requiresApproval ?? false,
 });
 

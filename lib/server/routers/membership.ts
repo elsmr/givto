@@ -9,9 +9,9 @@ import { memberProcedure, organizerProcedure, router } from '../trpc';
 const MemberInput = v.object({ memberId: Id });
 
 export const membershipRouter = router({
-  /** Leave the group (48), before or after the draw: the draw is patched so everyone left keeps a giftee. */
+  /** Leave the group (48), before or after the draw: the draw is patched so everyone left keeps a giftee. Organizers can, the owner can't. */
   leave: memberProcedure.mutation(async ({ ctx }) => {
-    if (ctx.member.role === 'organizer') throw new AppError('ORGANIZER_CANNOT_LEAVE');
+    if (ctx.member.role === 'owner') throw new AppError('OWNER_CANNOT_LEAVE');
     await removeMember(ctx.db, ctx.group, ctx.member.id);
     return { ok: true };
   }),

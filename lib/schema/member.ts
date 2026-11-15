@@ -2,7 +2,8 @@ import * as v from 'valibot';
 import { Id, Locale, PersonName } from './common';
 import { AvatarColor } from './user';
 
-export const MemberRole = v.picklist(['organizer', 'member']);
+/** One owner per group; organizers run it with them, only the owner names organizers or deletes the group. */
+export const MemberRole = v.picklist(['owner', 'organizer', 'member']);
 export type MemberRole = v.InferOutput<typeof MemberRole>;
 
 /**

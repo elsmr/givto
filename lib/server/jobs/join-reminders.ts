@@ -5,7 +5,7 @@ import { newId } from '../db';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { inviteUrl } from '../mail/urls';
-import { hashToken, organizerOf, randomToken } from '../membership';
+import { hashToken, ownerOf, randomToken } from '../membership';
 import { removeMember } from '../remove-member';
 import { runEach } from './run-each';
 
@@ -30,7 +30,7 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
   return runEach('joinReminder', invites, async (invite) => {
     const group = await db.groups.findOne({ _id: invite.groupId, deletedAt: { $exists: false } });
     const member = group?.members.find((m) => m.id === invite.memberId && m.status === 'invited');
-    const organizer = group && organizerOf(group);
+    const organizer = group && (group.members.find((m) => m.id === member?.invitedBy && m.role !== 'member') ?? ownerOf(group));
     const to = group && member && (await memberRecipient(db, group, member));
     if (!group || !member || !organizer || !to) return 'skipped';
     const key = `reminder:join:${group._id}:${member.id}`;

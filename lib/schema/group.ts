@@ -60,7 +60,7 @@ export const Group = v.object({
   /** Standing keep-apart rows, applied to every edition's draw. */
   households: v.array(Household),
   joinLink: v.optional(JoinLink),
-  /** Set when the organizer deleted their account and the role passed to `toMemberId` (55); the notice email sets `notifiedAt`. */
+  /** Set when the owner deleted their account and the role passed to `toMemberId` (55); the notice email sets `notifiedAt`. */
   organizerHandover: v.optional(v.object({ toMemberId: Id, at: v.date(), notifiedAt: v.optional(v.date()) })),
   createdAt: v.date(),
   updatedAt: v.date(),

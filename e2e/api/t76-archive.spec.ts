@@ -22,10 +22,10 @@ test('archive, restore, received, delete for good: who sees archived wishes', as
 
   // Group A: Sam → Olive → Cee → Sam. Group B: Ben → Olive → Ben.
   const shows = (wishes: { id: string }[]) => ({ wishlistView: { shownWishIds: wishes.map((wish) => wish.id) } });
-  const [aOlive, aSam, aCee] = [newMember(olive, 'Olive', { role: 'organizer', ...shows([socks, book, mug]) }), newMember(sam, 'Sam'), newMember(cee, 'Cee')];
+  const [aOlive, aSam, aCee] = [newMember(olive, 'Olive', { role: 'owner', ...shows([socks, book, mug]) }), newMember(sam, 'Sam'), newMember(cee, 'Cee')];
   const a = await seedGroup(db, 'arca', olive, [aOlive, aSam, aCee]);
   // Socks not shown in B.
-  const [bBen, bOlive] = [newMember(ben, 'Ben', { role: 'organizer' }), newMember(olive, 'Olive', shows([book, mug]))];
+  const [bBen, bOlive] = [newMember(ben, 'Ben', { role: 'owner' }), newMember(olive, 'Olive', shows([book, mug]))];
   const b = await seedGroup(db, 'arcb', olive, [bBen, bOlive]);
   await seedEdition(db, a, 1, 'drawn', { draw: assignments([[aSam, aOlive], [aOlive, aCee], [aCee, aSam]]) });
   await seedEdition(db, b, 1, 'drawn', { draw: assignments([[bBen, bOlive], [bOlive, bBen]]) });

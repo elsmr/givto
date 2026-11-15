@@ -5,8 +5,9 @@ import * as shownWishIds from './002-shown-wish-ids';
 import * as guessRows from './003-guess-rows';
 import * as keepApartRows from './004-keep-apart-rows';
 import * as v1Wishlists from './005-v1-wishlists';
+import * as ownerRole from './006-owner-role';
 
-const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows, v1Wishlists];
+const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows, v1Wishlists, ownerRole];
 
 export type MigrationResult = { id: string; status: 'applied before' | 'dry run' | 'applied'; report?: Awaited<ReturnType<typeof v1ToV2.up>> };
 

@@ -21,7 +21,7 @@ export const notifyJoinRequest = (db: Collections, groupId: string, memberId: st
     const group = await db.groups.findOne({ _id: groupId });
     const member = group?.members.find((m) => m.id === memberId && m.status === 'requested');
     if (!group || !member) return;
-    for (const organizer of group.members.filter((m) => m.role === 'organizer')) {
+    for (const organizer of group.members.filter((m) => m.role !== 'member')) {
       const to = await memberRecipient(db, group, organizer);
       if (!to) continue;
       await sendNotice(db, {

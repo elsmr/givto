@@ -91,10 +91,10 @@
     "button": "Show my new giftee"
   },
   "organizer-handover": {
-    "subject": "You're now the organizer of {group}",
-    "preheader": "The previous organizer deleted their account.",
-    "title": "You're the organizer now",
-    "body": "The organizer of “{group}” deleted their Givto account, so the group passed to you: you've been in it the longest. You can now invite people, change the dates and run the draw.",
+    "subject": "You're now the owner of {group}",
+    "preheader": "The previous owner deleted their account.",
+    "title": "You're the owner now",
+    "body": "The owner of “{group}” deleted their Givto account, so the group passed to you. You can now invite people, change the dates, run the draw and choose who organizes it with you.",
     "button": "Open the group"
   },
   "psst": {

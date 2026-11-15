@@ -53,7 +53,7 @@ export const groupRouter = router({
       id: newId(),
       userId: ctx.user.id,
       ...profile,
-      role: 'organizer',
+      role: 'owner',
       status: 'joined',
       joinedAt: now,
       wishlistView: { shownWishIds: [] },

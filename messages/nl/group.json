@@ -15,6 +15,7 @@
   "people": {
     "title": "Deelnemers",
     "organizer": "Organisator",
+    "owner": "Eigenaar",
     "you": "Jij",
     "status": {
       "invited": "Uitgenodigd",

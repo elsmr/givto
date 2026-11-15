@@ -8,7 +8,7 @@ export type People = Record<'olive' | 'ann' | 'bob' | 'cee' | 'dan' | 'nina' | '
 
 export const seedBetween = async (db: TestDb, people: People) => {
   const m = {
-    olive: newMember(people.olive, 'Olive', { role: 'organizer' }),
+    olive: newMember(people.olive, 'Olive', { role: 'owner' }),
     ann: newMember(people.ann, 'Ann'),
     bob: newMember(people.bob, 'Bob'),
     cee: newMember(people.cee, 'Cee'),

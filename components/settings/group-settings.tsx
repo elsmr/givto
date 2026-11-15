@@ -113,7 +113,7 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
         </SettingsGroup>
       ),
     },
-    { id: 'danger', title: t('danger.title'), content: <DangerZone slug={slug} groupName={data.name} /> },
+    ...(data.me.isOwner ? [{ id: 'danger', title: t('danger.title'), content: <DangerZone slug={slug} groupName={data.name} /> }] : []),
   ];
 
   return (

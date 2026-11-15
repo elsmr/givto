@@ -53,7 +53,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
   return groups.map((group) => {
     const member = memberOf(group);
     const edition = latest.get(group._id);
-    const isOrganizer = member.role === 'organizer';
+    const isOrganizer = member.role !== 'member';
     const participantCount = edition ? drawParticipantIds(group, edition).length : 0;
     const ownIds = ownIdsByGroup.get(group._id) ?? [];
     const unanswered = questions.filter(

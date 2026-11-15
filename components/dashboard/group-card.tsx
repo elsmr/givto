@@ -48,7 +48,7 @@ export const GroupCard = ({ group }: { group: DashboardGroup }) => {
               {t('giftee-ready')}
             </Badge>
           )}
-          {group.role === 'organizer' && <p className="mono text-xs text-muted">{t('organizer')}</p>}
+          {group.role !== 'member' && <p className="mono text-xs text-muted">{t('organizer')}</p>}
         </div>
       </CardContent>
     </Card>
