@@ -7,7 +7,7 @@
     "code": "Check je e-mail"
   },
   "create": "Secret Santa aanmaken",
-  "create-white-elephant": "White elephant aanmaken",
+  "create-white-elephant": "White Elephant aanmaken",
   "create-conspiracy": "Conspiracy Santa aanmaken",
   "errors": {
     "RATE_LIMITED": "Dat zijn veel Secret Santa's voor één dag. Probeer het morgen opnieuw.",
@@ -20,7 +20,7 @@
     "kind": {
       "label": "Wat organiseer je?",
       "secretSanta": "Secret Santa",
-      "whiteElephant": "White elephant",
+      "whiteElephant": "White Elephant",
       "conspiracy": "Conspiracy Santa",
       "subtitle": {
         "secretSanta": "Iedereen trekt in het geheim een naam",
@@ -42,7 +42,7 @@
       }
     },
     "name": "Hoe heet je Secret Santa?",
-    "name-white-elephant": "Hoe heet je white elephant?",
+    "name-white-elephant": "Hoe heet je White Elephant?",
     "name-conspiracy": "Hoe heet je Conspiracy Santa?",
     "name-placeholder": "bv. Familie",
     "next": "Volgende",

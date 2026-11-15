@@ -26,11 +26,11 @@ export type EditionKind = v.InferOutput<typeof EditionKind>;
 /** Everything that hangs off the draw (giftees, tips, Q&A, guessing, the big reveal) only exists for these. */
 export const drawsNames = ({ kind }: { kind?: EditionKind }) => (kind ?? 'secretSanta') === 'secretSanta';
 
-/** Someone shops for you, so your wishlist matters: not in a white elephant (88). */
+/** Someone shops for you, so your wishlist matters: not in a White Elephant (88). */
 export const wishesOn = ({ kind }: { kind?: EditionKind }) => kind !== 'whiteElephant';
 
 /** Kind names stay English in Dutch too, like "Secret Santa". */
-const kindTitles: Record<EditionKind, string> = { secretSanta: 'Secret Santa', whiteElephant: 'White elephant', conspiracy: 'Conspiracy Santa' };
+const kindTitles: Record<EditionKind, string> = { secretSanta: 'Secret Santa', whiteElephant: 'White Elephant', conspiracy: 'Conspiracy Santa' };
 
 /** Gifts go by post (80, 87): `byPost` or `both`. */
 export const isPosted = ({ exchangeMode }: { exchangeMode: ExchangeMode }) => exchangeMode !== 'inPerson';
@@ -98,7 +98,7 @@ export const UnwrapTurn = v.object({ memberId: Id, last: v.boolean() });
 export type UnwrapTurn = v.InferOutput<typeof UnwrapTurn>;
 
 /**
- * One move in a white elephant swap (89): open the next wrapped gift (numbered in opening order, with an optional
+ * One move in a White Elephant swap (89): open the next wrapped gift (numbered in opening order, with an optional
  * label the presenter typed), steal an opened one, or, at the first player's final steal, keep theirs.
  */
 export const SwapMove = v.object({
@@ -121,7 +121,7 @@ export const UnwrapOrder = v.object({
     v.object({
       startedAt: v.date(),
       turns: v.array(UnwrapTurn),
-      /** White elephant (89): the swap's moves instead of `turns` (lib/swap-turns.ts). */
+      /** White Elephant (89): the swap's moves instead of `turns` (lib/swap-turns.ts). */
       moves: v.optional(v.array(SwapMove)),
       /** The presenter's "Who's next?" reel has landed on the current person (until then members don't see who). */
       currentShown: v.boolean(),

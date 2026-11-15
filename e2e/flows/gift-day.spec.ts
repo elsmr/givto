@@ -309,13 +309,13 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
 
   await test.step('create: no posting question', async () => {
     await page.goto('/new');
-    await page.getByRole('radio', { name: 'White elephant' }).check();
-    await page.getByLabel("What's your white elephant called?").fill('Swap');
+    await page.getByRole('radio', { name: 'White Elephant' }).check();
+    await page.getByLabel("What's your White Elephant called?").fill('Swap');
     await expect(page.getByRole('radio', { name: 'Online' })).toHaveCount(0);
     await page.getByLabel("When's gift day?").fill('2099-12-24');
     await page.getByRole('button', { name: 'Next' }).click();
     await page.getByLabel('Your name').fill('Ann');
-    await page.getByRole('button', { name: 'Create white elephant' }).click();
+    await page.getByRole('button', { name: 'Create White Elephant' }).click();
     await expect(page.getByRole('heading', { level: 1, name: 'Swap is ready!' })).toBeVisible();
   });
   const link = new URL(await page.getByLabel('Join link').inputValue());

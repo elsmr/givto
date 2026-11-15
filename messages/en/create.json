@@ -7,7 +7,7 @@
     "code": "Check your email"
   },
   "create": "Create Secret Santa",
-  "create-white-elephant": "Create white elephant",
+  "create-white-elephant": "Create White Elephant",
   "create-conspiracy": "Create Conspiracy Santa",
   "errors": {
     "RATE_LIMITED": "That's a lot of Secret Santas for one day. Try again tomorrow.",
@@ -20,7 +20,7 @@
     "kind": {
       "label": "What are you organizing?",
       "secretSanta": "Secret Santa",
-      "whiteElephant": "White elephant",
+      "whiteElephant": "White Elephant",
       "conspiracy": "Conspiracy Santa",
       "subtitle": {
         "secretSanta": "Everyone draws a name in secret",
@@ -42,7 +42,7 @@
       }
     },
     "name": "What's your Secret Santa called?",
-    "name-white-elephant": "What's your white elephant called?",
+    "name-white-elephant": "What's your White Elephant called?",
     "name-conspiracy": "What's your Conspiracy Santa called?",
     "name-placeholder": "e.g. Family",
     "next": "Next",

@@ -3,7 +3,7 @@
     "title": "{organizer} invited you to {group}",
     "generic-title": "You're invited to a Secret Santa",
     "description": "Join the Secret Santa on Givto: add your wishlist and find out who you're buying for.",
-    "description-whiteElephant": "Join the white elephant on Givto: everyone brings one gift, then picks or steals one on gift day.",
+    "description-whiteElephant": "Join the White Elephant on Givto: everyone brings one gift, then picks or steals one on gift day.",
     "description-conspiracy": "Join the Conspiracy Santa on Givto: plan one gift for each person together, behind their back."
   },
   "unavailable": {
@@ -17,7 +17,7 @@
   "intro": {
     "title": "You're invited!",
     "description": "Join the Secret Santa: add your wishlist and find out who you're buying for.",
-    "description-whiteElephant": "Join the white elephant: everyone brings one gift, then picks or steals one on gift day.",
+    "description-whiteElephant": "Join the White Elephant: everyone brings one gift, then picks or steals one on gift day.",
     "description-conspiracy": "Join the Conspiracy Santa: plan one gift for each person together, behind their back.",
     "approval": "The organizer lets people in, so you'll be in once they've said yes.",
     "organizer": "Organizer: {name}",

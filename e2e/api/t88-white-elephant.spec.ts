@@ -26,7 +26,7 @@ test('white elephant: locks in without a draw, refuses Secret Santa features, un
 
   await test.step('created in person, titled after the kind', async () => {
     const stored = await editionOf(db, group.slug);
-    expect(stored).toMatchObject({ kind: 'whiteElephant', exchangeMode: 'inPerson', title: 'White elephant 2099' });
+    expect(stored).toMatchObject({ kind: 'whiteElephant', exchangeMode: 'inPerson', title: 'White Elephant 2099' });
     expect(ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).edition).toMatchObject({ kind: 'whiteElephant', guessing: false });
   });
 
@@ -124,7 +124,7 @@ test('white elephant: the kind changes before lock-in only, and the next edition
   await db.editions.updateOne({ _id: switched._id }, { $set: { status: 'done' } });
   ok(await ann.trpc.mutate('edition.startNext', { groupSlug: group.slug }));
   const next = (await db.editions.findOne({ groupId: switched.groupId, number: 2 }))!;
-  expect(next).toMatchObject({ kind: 'whiteElephant', title: `White elephant ${next.year}` });
+  expect(next).toMatchObject({ kind: 'whiteElephant', title: `White Elephant ${next.year}` });
 });
 
 test('white elephant: lock-in and bring-a-gift reminders, no wishlist ones; to-dos to match', async ({ signIn, db }) => {
