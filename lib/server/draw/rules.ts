@@ -22,9 +22,14 @@ export const drawParticipantIds = (group: Group, edition: Edition, now = new Dat
   return edition.participants.filter((p) => p.participates && p.status !== 'declined' && isIn(p.memberId)).map((p) => p.memberId);
 };
 
-/** Who unwraps on gift day (32): the draw's Santas, or everyone in when the kind has no draw (88). */
+/**
+ * Who unwraps on gift day (32): the draw's Santas still in the edition, or everyone in when the kind has no draw (88).
+ * Someone who left but stays in the draw (gift day had started, or no draw works without them) has no turn (105).
+ */
 export const playerIds = (group: Group, edition: Edition): string[] =>
-  drawsNames(edition) ? Object.keys(edition.draw?.assignments ?? {}) : drawParticipantIds(group, edition);
+  drawsNames(edition)
+    ? Object.keys(edition.draw?.assignments ?? {}).filter((id) => edition.participants.some((p) => p.memberId === id && p.participates))
+    : drawParticipantIds(group, edition);
 
 /**
  * The Santa (the caller, or the managed member they act for, 40) and their giftee in this edition's draw;

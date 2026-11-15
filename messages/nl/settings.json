@@ -45,6 +45,8 @@
     "remove-title": "{name} verwijderen?",
     "remove-before": "{name} verlaat de groep en doet niet mee aan de loting. Het verlanglijstje blijft van {name}.",
     "remove-after": "{name} verlaat de groep. Er is al geloot: de Santa van {name} krijgt iemand anders, voor de rest verandert er niets.",
+    "remove-redraw": "{name} verlaat de groep. Zonder {name} kan de loting niet blijven zoals ze is, dus er wordt voor iedereen opnieuw geloot. Alleen wie een ander persoon krijgt, krijgt een e-mail.",
+    "remove-giftday": "{name} verlaat de groep. Het is al pakjesdag, dus niemand krijgt een ander persoon: {name} pakt gewoon niet mee uit.",
     "remove-confirm": "{name} verwijderen",
     "removed": "{name} verwijderd",
     "make-organizer": "Maak organisator",

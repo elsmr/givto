@@ -1,4 +1,5 @@
 import { DrawError } from '@/components/draw/draw-error';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import type { GroupData, GroupEdition } from '@/components/group/group-data';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ import { SettingsRow } from '@/components/ui/settings-group';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { useMutation } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 type RedrawProps = { group: GroupData; edition: GroupEdition };
@@ -70,5 +71,31 @@ export const RedrawSection = ({ group, edition }: RedrawProps) => {
       </Button>
       {open && <RedrawDialog group={group} edition={edition} onClose={() => setOpen(false)} />}
     </SettingsRow>
+  );
+};
+
+/**
+ * Organizer only, while drawn (105): people in who couldn't be slotted in after the draw, and people who left but
+ * stay in it because no draw works without them. Re-draw, or leave it.
+ */
+export const DrawGapsNote = ({ group, edition }: RedrawProps) => {
+  const t = useTranslations('draw.gaps');
+  const tRedraw = useTranslations('draw.redraw');
+  const format = useFormatter();
+  const [open, setOpen] = useState(false);
+  const { notInDraw = [], leftInDraw = [] } = group.organizer ?? {};
+
+  if (notInDraw.length + leftInDraw.length === 0) return null;
+  return (
+    <Alert variant="yellow">
+      <AlertDescription className="flex flex-col gap-3">
+        {notInDraw.length > 0 && <p>{t('not-in', { names: format.list(notInDraw) })}</p>}
+        {leftInDraw.length > 0 && <p>{t('left', { names: format.list(leftInDraw) })}</p>}
+        <Button variant="neutral" className="self-start" onClick={() => setOpen(true)}>
+          {tRedraw('button')}
+        </Button>
+      </AlertDescription>
+      {open && <RedrawDialog group={group} edition={edition} onClose={() => setOpen(false)} />}
+    </Alert>
   );
 };

@@ -5,18 +5,19 @@ type Assignments = Record<string, string>;
 type RandomInt = (max: number) => number;
 
 /**
- * Late joiner: A→B becomes A→joiner→B, for a random A where both new pairs are allowed.
- * Only A's giftee changes. Null when nobody fits.
+ * Late joiner: A→B becomes A→joiner→B, for a random A where both new pairs are allowed and who hasn't
+ * `started` on B's gift. Only A's giftee changes. Null when nobody fits.
  */
 export const slotIn = (
   assignments: Assignments,
   joiner: string,
   exclusions: Exclusion[],
-  randomInt: RandomInt
+  randomInt: RandomInt,
+  started: string[] = []
 ): Assignments | null => {
   const allowed = allowedBy(exclusions);
   const santas = Object.keys(assignments).filter(
-    (santa) => allowed(santa, joiner) && allowed(joiner, assignments[santa])
+    (santa) => !started.includes(santa) && allowed(santa, joiner) && allowed(joiner, assignments[santa])
   );
   if (santas.length === 0) return null;
   const santa = santas[randomInt(santas.length)];

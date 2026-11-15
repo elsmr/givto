@@ -4,6 +4,8 @@ import { Id, TimeZone } from '../../schema/common';
 import { GroupName, MAX_MEMBERS } from '../../schema/group';
 import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
+import { removalRedraws } from '../draw/patch';
+import { currentEdition } from '../membership';
 import { removeMember } from '../remove-member';
 import { organizerEditionProcedure, organizerProcedure, ownerProcedure, router } from '../trpc';
 import { DRAW_TIME, setAvoidPrevious, updateEdition } from './settings-edition';
@@ -74,7 +76,16 @@ export const settingsRouter = router({
       return { ok: true };
     }),
 
-  /** Take someone out of the group, also after the draw (the draw is patched, 48). Only the owner takes out an organizer. */
+  /** Removing them re-draws everyone's names (105): the remove dialog says so first. */
+  removalRedraws: organizerProcedure.input(v.object({ memberId: Id })).query(async ({ ctx, input }) => {
+    const edition = await currentEdition(ctx.db, ctx.group._id);
+    return edition ? removalRedraws(ctx.db, ctx.group, edition, input.memberId) : false;
+  }),
+
+  /**
+   * Take someone out of the group, also after the draw (the draw is patched, 48, or re-drawn; refused with the draw's
+   * error when no draw works without them, 105). Only the owner takes out an organizer.
+   */
   removePerson: organizerProcedure.input(v.object({ memberId: Id })).mutation(async ({ ctx, input }) => {
     const person = ctx.group.members.find((m) => m.id === input.memberId && m.status !== 'removed');
     if (!person) throw new AppError('NOT_FOUND');

@@ -53,6 +53,7 @@
     "INVALID_INPUT": "Er klopt iets niet. Check je naam en probeer opnieuw.",
     "INVITE_INVALID": "Deze uitnodiging is al gebruikt of verlopen.",
     "INVITE_EMAIL_MISMATCH": "Deze uitnodiging is voor een ander e-mailadres.",
+    "NAME_TAKEN": "Er is hier al een {name}. Voeg een initiaal toe?",
     "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
   },
   "invite": {

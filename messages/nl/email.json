@@ -88,6 +88,7 @@
     "preheader": "Er veranderde iets in de loting, en dat raakt jou.",
     "title": "Je persoon is veranderd",
     "body": "Na de loting kwam er iemand bij of ging er iemand weg in “{group}”, dus je koopt nu voor iemand anders. Voor de rest verandert er niets.",
+    "body-redrawn": "De organisator heeft opnieuw geloot in “{group}”, dus je koopt nu voor iemand anders.",
     "button": "Bekijk wie ik nu heb"
   },
   "organizer-handover": {

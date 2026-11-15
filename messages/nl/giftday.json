@@ -39,6 +39,7 @@
     "button": "Onthul wie wiens Santa was",
     "revealed": "Dit is wie wiens Santa was.",
     "pairs-label": "Wie wiens Santa was",
+    "left": "{name} (vertrokken)",
     "pair": "<name>{giftee}</name> kreeg een cadeau van <name>{santa}</name>"
   },
   "after": {

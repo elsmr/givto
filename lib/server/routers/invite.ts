@@ -8,7 +8,7 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
-import { addToCurrentEdition, currentEdition, hashToken, memberProfile, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, currentEdition, hashToken, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
 import { sendMail } from '../mail';
 import { inviteUrl } from '../mail/urls';
 import { enforceRateLimit } from '../rate-limit';
@@ -35,17 +35,26 @@ export const inviteRouter = router({
       await enforceRateLimit(`invite:group:${ctx.group._id}`, INVITES_PER_GROUP_PER_DAY);
       const account = await ctx.db.users.findOne({ email: input.email }, { projection: { locale: 1, name: 1 } });
       const accountId = account?._id.toHexString();
-      if (ctx.group.members.some((m) => m.userId === accountId && placeHolding.includes(m.status))) {
-        throw new AppError('ALREADY_MEMBER');
-      }
+      const accountMember = accountId ? ctx.group.members.find((m) => m.userId === accountId) : undefined;
+      if (accountMember && placeHolding.includes(accountMember.status)) throw new AppError('ALREADY_MEMBER');
 
       const now = new Date();
-      const pending = await ctx.db.invites.findOne({ groupId: ctx.group._id, email: input.email, usedAt: { $exists: false } });
-      const memberId = pending?.memberId ?? newId();
-      if (pending) {
-        await ctx.db.invites.deleteMany({ memberId });
+      // One member per person (105): someone invited, removed or declining before gets their member back.
+      const earlier = await ctx.db.invites.findOne({ groupId: ctx.group._id, email: input.email }, { sort: { createdAt: -1 } });
+      const reused =
+        accountMember ??
+        ctx.group.members.find((m) => m.id === earlier?.memberId && !placeHolding.includes(m.status) && (!m.userId || m.userId === accountId));
+      const memberId = reused?.id ?? newId();
+      if (reused) {
+        await ctx.db.invites.deleteMany({ memberId, usedAt: { $exists: false } });
         // The draw reads how long the invite runs from here (draw/rules.ts).
-        await ctx.db.groups.updateOne({ _id: ctx.group._id, 'members.id': memberId }, { $set: { 'members.$.invitedAt': now } });
+        await ctx.db.groups.updateOne(
+          { _id: ctx.group._id, 'members.id': memberId },
+          {
+            $set: { 'members.$.status': 'invited', 'members.$.invitedAt': now, 'members.$.invitedBy': ctx.member.id, updatedAt: now },
+            $unset: { 'members.$.removedAt': true, 'members.$.leftAt': true },
+          }
+        );
       } else {
         const member: Member = {
           id: memberId,
@@ -100,8 +109,8 @@ export const inviteRouter = router({
     const found = await findPendingInvite(ctx.db, input.groupSlug, input.token);
     if (!found) throw new AppError('INVITE_INVALID');
     if (found.invite.email !== ctx.user.email.toLowerCase()) throw new AppError('INVITE_EMAIL_MISMATCH');
-    // Before the invite is used up: without a name the person comes back to give one.
-    const profile = await memberProfile(ctx.db, ctx.user.id, input.name);
+    // Before the invite is used up: without a name, or with one that's taken, the person comes back to give one.
+    const profile = await memberProfile(ctx.db, ctx.user.id, input.name, (name) => nameTaken(found.group, name, found.invite.memberId));
     const now = new Date();
     const used = await ctx.db.invites.updateOne(
       { _id: found.invite._id, usedAt: { $exists: false } },
@@ -111,8 +120,13 @@ export const inviteRouter = router({
 
     const { group, invite } = found;
     if (!group.members.some((m) => m.userId === ctx.user.id && placeHolding.includes(m.status))) {
-      await ctx.db.groups.updateOne(
-        { _id: group._id, members: { $elemMatch: { id: invite.memberId, status: 'invited' } } },
+      const joined = await ctx.db.groups.updateOne(
+        {
+          _id: group._id,
+          members: { $elemMatch: { id: invite.memberId, status: 'invited' } },
+          // One member per account (105).
+          $nor: [{ members: { $elemMatch: { userId: ctx.user.id, id: { $ne: invite.memberId } } } }],
+        },
         {
           $set: {
             'members.$.userId': ctx.user.id,
@@ -124,7 +138,7 @@ export const inviteRouter = router({
           },
         }
       );
-      await addToCurrentEdition(ctx.db, group._id, invite.memberId);
+      if (joined.modifiedCount > 0) await addToCurrentEdition(ctx.db, group._id, invite.memberId);
     }
     return { slug: group.slug };
   }),

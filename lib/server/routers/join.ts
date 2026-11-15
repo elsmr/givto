@@ -5,7 +5,7 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findGroupByJoinLink, joinLinkPreview } from '../join-preview';
-import { addToCurrentEdition, memberProfile, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
 import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
@@ -38,9 +38,6 @@ export const joinRouter = router({
       if (existing && placeHolding.includes(existing.status)) {
         return { slug: group.slug, status: existing.status };
       }
-      const profile = await memberProfile(ctx.db, ctx.user.id, input.name);
-      const status = group.joinLink.requiresApproval ? 'requested' : 'joined';
-      const now = new Date();
       const invite = existing
         ? null
         : await ctx.db.invites.findOne(
@@ -49,6 +46,12 @@ export const joinRouter = router({
           );
       // Someone rejoining keeps what they showed here before; anyone new, invitees included, starts with nothing shown.
       const reusedId = existing?.id ?? invite?.memberId;
+      const reused = group.members.find((m) => m.id === reusedId);
+      // Removed by an organizer or turned away: only a new invite brings them back (105).
+      if (reused?.status === 'removed' && !reused.leftAt) throw new AppError('JOIN_LINK_INVALID');
+      const profile = await memberProfile(ctx.db, ctx.user.id, input.name, (name) => nameTaken(group, name, reusedId));
+      const status = group.joinLink.requiresApproval ? 'requested' : 'joined';
+      const now = new Date();
       const cap = Math.min(group.joinLink.maxMembers ?? MAX_MEMBERS, MAX_MEMBERS);
       const hasRoom = {
         $expr: {
@@ -66,6 +69,8 @@ export const joinRouter = router({
               members: {
                 $elemMatch: { id: reusedId, status: { $nin: placeHolding }, userId: { $in: [undefined, ctx.user.id] } },
               },
+              // One member per account (105).
+              $nor: [{ members: { $elemMatch: { userId: ctx.user.id, id: { $ne: reusedId } } } }],
               ...hasRoom,
             },
             {

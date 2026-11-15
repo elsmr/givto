@@ -60,8 +60,9 @@
     "buying-for": "Je koopt een cadeau voor",
     "hide": "Verbergen",
     "changed": "Je persoon is veranderd op {date}: er kwam iemand bij of er ging iemand weg.",
+    "changed-redrawn": "Je persoon is veranderd op {date}: de organisator heeft opnieuw geloot.",
     "not-in": "Je doet niet mee aan deze loting.",
-    "not-fitted": "Je deed mee na de loting en we konden je er niet tussen schuiven zonder de regels te breken. De organisator kan opnieuw loten.",
+    "not-fitted": "Je deed mee na de loting, en we konden je er niet tussen schuiven zonder de regels te breken of iemand een ander persoon te geven die al aan het shoppen is. De organisator kan opnieuw loten.",
     "show": "Tonen",
     "load-failed": "We konden je persoon niet laden."
   },
@@ -87,6 +88,10 @@
     "gift-day": "{group}: pakjesdag",
     "post-by": "{group}: cadeau op de post doen",
     "description": "Je Secret Santa op Givto: {url}"
+  },
+  "gaps": {
+    "not-in": "Niet in de loting: {names}. Ze kwamen erbij na de loting en pasten er niet tussen zonder de regels te breken of iemand een ander persoon te geven die al met een cadeau bezig is. Loot opnieuw om ze mee te laten doen, of laat het zo: dan doen ze deze keer niet mee.",
+    "left": "Vertrokken, maar nog in de loting: {names}. Met de huidige regels kon er zonder hen niet opnieuw geloot worden. Pas de regels aan en loot opnieuw, of laat het zo."
   },
   "redraw": {
     "title": "Opnieuw loten",

@@ -47,7 +47,7 @@ export const KeepApartSection = ({ group, edition, organizer }: KeepApartSection
           <div className="flex flex-col gap-6">
             <KeepApartRowsEditor rows={rows} members={joined} onChange={setRows} />
             <div className="flex flex-col gap-3">
-              <FeasibilityNote participantIds={edition.participantIds} exclusions={toExclusions(complete)} members={joined} />
+              <FeasibilityNote participantIds={edition.participantIds} exclusions={toExclusions(complete)} members={group.members} />
               {errorCode && <FieldError>{t(`errors.${errorCode === 'DRAW_IMPOSSIBLE' ? 'DRAW_IMPOSSIBLE' : 'INTERNAL'}`)}</FieldError>}
               <Button variant="neutral" className="self-start" disabled={save.isPending} onClick={() => save.mutate({ groupSlug: group.slug, households: complete })}>
                 {t('save')}

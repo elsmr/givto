@@ -30,6 +30,11 @@ for (let i = 0; i < 50; i++) {
   const next = slotIn(cycle, 'eve', slotRules, randomInt);
   assert.deepEqual(next, { ...cycle, cee: 'eve', eve: 'dan' });
 }
+// Santas who started on their gift keep their giftee: only Dan is free.
+for (let i = 0; i < 50; i++) {
+  assert.deepEqual(slotIn(cycle, 'eve', [], randomInt, ['ann', 'bob', 'cee']), { ...cycle, dan: 'eve', eve: 'ann' });
+}
+assert.equal(slotIn(cycle, 'eve', [], randomInt, ['ann', 'bob', 'cee', 'dan']), null);
 // Nobody fits: Eve may give to nobody.
 assert.equal(slotIn(cycle, 'eve', ['ann', 'bob', 'cee', 'dan'].map((to) => ({ from: 'eve', to })), randomInt), null);
 

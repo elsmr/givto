@@ -24,13 +24,13 @@ test('"not the same as last time" that makes the draw impossible is refused with
   ok(await ann.trpc.mutate('draw.run', next));
   expect(codeOf(await ann.trpc.mutate('settings.setAvoidPrevious', { ...next, enabled: false }))).toBe('ALREADY_DRAWN');
   expectValidDraw((await editionOf(db, trio.slug, 2)).draw?.assignments, [a, b, c]);
-  // Down to one person: nobody can be matched, the edition goes back to open for the organizer.
+  // Down to one person: nobody can be matched, so the removal is refused and the draw stays (105).
   ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: trio.slug, memberId: b }));
   expectValidDraw((await editionOf(db, trio.slug, 2)).draw?.assignments, [a, c]);
-  ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: trio.slug, memberId: c }));
-  const reopened = await editionOf(db, trio.slug, 2);
-  expect(reopened.status).toBe('open');
-  expect(reopened.draw?.assignments).toEqual({});
+  expect(codeOf(await ann.trpc.mutate('settings.removePerson', { groupSlug: trio.slug, memberId: c }))).toBe('TOO_FEW_PEOPLE');
+  const kept = await editionOf(db, trio.slug, 2);
+  expect(kept.status).toBe('drawn');
+  expectValidDraw(kept.draw?.assignments, [a, c]);
 });
 
 // Draw dates in 2099 and `editionIds` on every run: it never draws another test's edition.

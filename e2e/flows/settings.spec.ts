@@ -2,7 +2,7 @@
 // link, removing someone after the draw, and the next edition after gift day.
 import { todayIn } from '@/lib/local-date';
 import type { Page } from '@playwright/test';
-import { expect, ok, test, type User } from '../fixtures';
+import { expect, ok, test, uniqueEmail, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
 
@@ -127,6 +127,53 @@ test('keep apart: rows of people, a stuck row is named, and the draw follows the
     await page.reload();
     await expect(keepApart).toContainText("Names are drawn, so who's kept apart can't change for this edition.");
     await expect(keepApart.getByRole('button', { name: 'Save' })).toHaveCount(0);
+  });
+});
+
+test('keep apart: a stuck row names invited people too', async ({ page, signIn, signInPage, secrets }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann] = people;
+  const group = await openGroup(people, 'Invited');
+  const invitees = [uniqueEmail('ivy'), uniqueEmail('ike')];
+  secrets.push(...invitees);
+  for (const email of invitees) ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, email }));
+  const standIns = ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).members.filter((m) => m.status === 'invited').map((m) => m.name);
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}/settings`);
+  const keepApart = settingsGroup(page, 'The draw').getByRole('group', { name: 'Keep apart' });
+  const row1 = keepApart.getByRole('group', { name: 'Row 1' });
+  await keepApart.getByRole('button', { name: 'Add a row' }).click();
+  for (const name of ['Ann', 'Bob', 'Cee']) await row1.getByLabel('Add someone…').selectOption(name);
+  await expect(keepApart.getByRole('status')).toContainText(`can only give to ${standIns.join(' and ')}`);
+  await expect(keepApart.getByRole('status')).not.toContainText('?');
+});
+
+test('a removal that breaks the draw: the dialog says the names get re-drawn; with no draw left it says why', async ({ page, signIn, signInPage, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const group = await openGroup(people, 'Stuck');
+  const id = Object.fromEntries((await db.groups.findOne({ slug: group.slug }))!.members.map((m) => [m.name, m.id]));
+  // Ann may only give to Bob and get from him: without Bob nobody can be matched with her.
+  ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: group.slug, households: [[id.Ann, id.Cee], [id.Ann, id.Dan]] }));
+  ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}/settings`);
+  const row = settingsGroup(page, 'People').getByRole('listitem').filter({ has: page.getByText('Bob', { exact: true }) });
+  await row.getByRole('button', { name: 'Remove' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Remove Bob?' });
+
+  await test.step('the warning before, the reason after', async () => {
+    await expect(dialog).toContainText("Bob leaves the group. Without Bob the names can't stay as they are, so they're drawn again for everyone. Only people whose giftee changes get an email.");
+    await dialog.getByRole('button', { name: 'Remove Bob' }).click();
+    await expect(dialog.getByRole('alert')).toHaveText("Ann can't give to anyone. Change who's kept apart, then try again.");
+    expect((await db.groups.findOne({ slug: group.slug }))!.members.find((m) => m.id === id.Bob)?.status).toBe('joined');
+  });
+
+  await test.step('Bob leaves himself: he stays in the draw and the overview says so', async () => {
+    ok(await bob.trpc.mutate('membership.leave', { groupSlug: group.slug }));
+    await page.goto(`/g/${group.slug}`);
+    await expect(page.getByText(/^Left, but still in the draw: Bob\./)).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Re-draw names' })).toBeVisible();
   });
 });
 
