@@ -1,56 +1,144 @@
 {
   "hero": {
     "eyebrow": "Secret Santa for family and friends",
-    "title": "Organize a Secret Santa with one link",
-    "lead": "Share a link with your family or friends so everyone can join. Givto draws the names and keeps the wishlists.",
+    "title": "Organize a Secret Santa without the fuss",
+    "lead": "Invite your family or friends by link or by email. Givto draws the names, keeps the wishlists and runs gift day.",
     "cta": "Start a Secret Santa",
     "how-it-works": "How it works",
-    "note": "Free. No passwords and no app to install."
+    "claims": "What you get",
+    "claim": {
+      "free": "Free",
+      "ads": "No ads",
+      "passwords": "No passwords",
+      "open": "Open source"
+    }
+  },
+  "games": {
+    "title": "Pick your game",
+    "lead": "The classic, or a twist on it. Givto runs all three.",
+    "secretSanta": {
+      "title": "Secret Santa",
+      "description": "Everyone secretly draws one name and gets that person a gift. Nobody knows who their Santa is until gift day."
+    },
+    "whiteElephant": {
+      "title": "White elephant",
+      "description": "Everyone brings one wrapped gift to a shared pile. Take turns: unwrap a new one, or steal one that's already open."
+    },
+    "conspiracy": {
+      "title": "Conspiracy Santa",
+      "description": "Everyone gets one gift from all the others, planned together on a board that person can't see."
+    }
   },
   "steps": {
     "title": "How it works",
-    "create": {
-      "title": "Start a Secret Santa",
-      "description": "Give it a name. Add a gift day and a budget if you like."
-    },
-    "share": {
-      "title": "Share the link",
-      "description": "Send the link to your family or friends. You don't need their email addresses."
-    },
-    "join": {
-      "title": "Everyone joins",
-      "description": "People open the link, enter their name and email and confirm with a code."
+    "start": {
+      "title": "Start and invite",
+      "description": "Give it a name, a gift day and a budget. Share the link or its QR code, or invite people by email."
     },
     "draw": {
       "title": "Draw names",
-      "description": "When everyone's in, draw names. Each person only sees who they're buying for."
+      "description": "Draw when everyone's in, or on a date you pick. Each person only sees who they're buying for."
     },
     "wishlists": {
       "title": "Fill in your wishlist",
-      "description": "Add a few wishes so your Santa knows what to get you."
+      "description": "Add a few wishes so your Santa knows what to get you. Paste a shop link and Givto fills in the details."
     },
     "gift-day": {
       "title": "Gift day",
-      "description": "Unwrap your gifts in turns, and end with the big reveal if you like."
+      "description": "Unwrap in turns, around the table or on a video call, and guess who your Santa was."
     }
   },
-  "features": {
-    "title": "Also in Givto",
+  "spotlights": {
     "wishlist": {
       "title": "One wishlist for all your groups",
-      "description": "Keep one wishlist for every group you're in. Hide wishes from a group if you want."
+      "description": "Keep one wishlist and choose which groups see each wish. Santas call Dibs! on what they're buying, so you don't get the same gift from two groups.",
+      "mock": {
+        "title": "My wishlist",
+        "socks": "Wool socks",
+        "game": "Cascadia, the board game",
+        "book": "A good cookbook",
+        "family": "Family",
+        "friends": "Book club",
+        "dibs": "Dibs!",
+        "hidden": "Hidden from Work"
+      }
     },
-    "dibs": {
-      "title": "Dibs!",
-      "description": "Santas call Dibs! on what they're buying, so you don't get the same gift from two groups."
+    "secrets": {
+      "title": "Ask without giving yourself away",
+      "description": "As a Santa, ask your giftee a question or send a Psst! when their wishlist needs more ideas. Anyone can leave a tip for someone's Santa. Nobody sees who you're buying for.",
+      "mock": {
+        "question": "Question from your Santa",
+        "question-text": "Tea or coffee?",
+        "answer": "Coffee, always. Oat milk please.",
+        "psst": "Psst!",
+        "psst-text": "Your Santa would love more detail on your wishes.",
+        "tip": "Tip for Mia's Santa",
+        "tip-text": "She's had her eye on the green scarf at the market."
+      }
     },
-    "tips": {
-      "title": "Tips for Santa",
-      "description": "Leave a tip for someone's Santa, with your name or anonymously."
+    "giftday": {
+      "title": "Gift day on the big screen",
+      "description": "Givto shuffles who unwraps when. Put the presenter view on the TV or share it on a video call, guess on your phones who each gift is from, and end with the big reveal.",
+      "mock": {
+        "now": "Now unwrapping",
+        "guess": "Who's it from?",
+        "votes": "{count, plural, one {# guess} other {# guesses}}"
+      }
+    }
+  },
+  "more": {
+    "title": "And the little things",
+    "apart": {
+      "title": "Keep couples apart",
+      "description": "Couples and housemates never draw each other, and nobody gets last year's person again."
+    },
+    "post": {
+      "title": "Gifts by post",
+      "description": "Far apart? Only your Santa sees your address, and they mark when your gift is on its way."
+    },
+    "link": {
+      "title": "Paste a shop link",
+      "description": "Givto fills in the name, picture and price of a wish."
+    },
+    "reminders": {
+      "title": "Reminders",
+      "description": "Givto nudges anyone with an empty wishlist or an unbought gift, and gift day goes in your calendar."
     },
     "editions": {
       "title": "Same again next year",
-      "description": "Next year, start again with the same group. Givto can make sure nobody gets the same person as last time."
+      "description": "Start again with the same group. Last year's wishlists and draw stay there to look back on."
+    },
+    "phones": {
+      "title": "Made for phones",
+      "description": "English or Dutch, light or dark, and no app to install."
+    }
+  },
+  "why": {
+    "title": "No catch",
+    "lead": "Givto is free and open source. It doesn't make money from your gifts or your data.",
+    "ads": {
+      "title": "No ads",
+      "description": "No sponsored gifts, and no affiliate tags on your shop links."
+    },
+    "passwords": {
+      "title": "No passwords",
+      "description": "Sign in with a code from your email or a passkey."
+    },
+    "secret": {
+      "title": "Secret stays secret",
+      "description": "Not even the organizer can see who drew whom."
+    },
+    "data": {
+      "title": "Only what's needed",
+      "description": "We keep only what your Secret Santa needs and delete it when it's no longer needed. Read the <privacy>privacy page</privacy>."
+    },
+    "open": {
+      "title": "Open source",
+      "description": "Every line of Givto is on <github>GitHub</github>."
+    },
+    "app": {
+      "title": "No app",
+      "description": "It works in any browser, on your phone or your laptop."
     }
   },
   "faq": {
@@ -61,11 +149,19 @@
     },
     "secret": {
       "question": "Who can see who drew whom?",
-      "answer": "Nobody, not even the organizer. You can end gift day with the big reveal if you like."
+      "answer": "Nobody, not even the organizer. If you like, gift day ends with the big reveal."
     },
     "apart": {
       "question": "Can I keep couples apart?",
       "answer": "Yes. Put them in the same Keep apart row and they won't draw each other."
+    },
+    "late": {
+      "question": "Can someone join after the draw?",
+      "answer": "Yes. Anyone who joins after the draw still gets someone to buy for."
+    },
+    "far": {
+      "question": "We don't live close. Does it still work?",
+      "answer": "Yes. Add your address and only your Santa sees it. Gift day works on a video call too."
     },
     "cost": {
       "question": "What does it cost?",
@@ -77,7 +173,8 @@
     }
   },
   "closing": {
-    "title": "Ready to start?",
+    "title": "Ready when you are",
+    "lead": "Start a Secret Santa in a minute and share the link in the group chat.",
     "cta": "Start a Secret Santa"
   }
 }

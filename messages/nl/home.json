@@ -1,56 +1,144 @@
 {
   "hero": {
     "eyebrow": "Secret Santa voor familie en vrienden",
-    "title": "Organiseer een Secret Santa met één link",
-    "lead": "Deel een link met je familie of vrienden, zodat iedereen kan meedoen. Givto loot en bewaart de verlanglijstjes.",
+    "title": "Organiseer een Secret Santa zonder gedoe",
+    "lead": "Nodig je familie of vrienden uit met een link of per e-mail. Givto loot, bewaart de verlanglijstjes en regelt pakjesdag.",
     "cta": "Start een Secret Santa",
     "how-it-works": "Zo werkt het",
-    "note": "Gratis. Geen wachtwoorden en geen app nodig."
+    "claims": "Wat je krijgt",
+    "claim": {
+      "free": "Gratis",
+      "ads": "Geen advertenties",
+      "passwords": "Geen wachtwoorden",
+      "open": "Open source"
+    }
+  },
+  "games": {
+    "title": "Kies je spel",
+    "lead": "De klassieker, of een variant. Givto regelt ze alle drie.",
+    "secretSanta": {
+      "title": "Secret Santa",
+      "description": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Wie jouw Santa is, blijft een verrassing tot pakjesdag."
+    },
+    "whiteElephant": {
+      "title": "White elephant",
+      "description": "Iedereen brengt één ingepakt cadeau mee naar een gedeelde stapel. Om de beurt pak je een nieuw cadeau uit, of steel je er een dat al open is."
+    },
+    "conspiracy": {
+      "title": "Conspiracy Santa",
+      "description": "Iedereen krijgt één cadeau van alle anderen samen, gepland op een bord dat die persoon niet ziet."
+    }
   },
   "steps": {
     "title": "Zo werkt het",
-    "create": {
-      "title": "Start een Secret Santa",
-      "description": "Geef hem een naam. Kies als je wil een pakjesdag en een budget."
-    },
-    "share": {
-      "title": "Deel de link",
-      "description": "Stuur de link naar je familie of vrienden. Je hebt hun e-mailadressen niet nodig."
-    },
-    "join": {
-      "title": "Iedereen doet mee",
-      "description": "Iedereen opent de link, vult naam en e-mailadres in en bevestigt met een code."
+    "start": {
+      "title": "Start en nodig uit",
+      "description": "Geef hem een naam, een pakjesdag en een budget. Deel de link of de QR-code, of nodig mensen uit per e-mail."
     },
     "draw": {
       "title": "Loten",
-      "description": "Is iedereen erbij? Dan loot je. Je ziet alleen voor wie jij koopt."
+      "description": "Loot als iedereen erbij is, of op een datum die je kiest. Je ziet alleen voor wie jij koopt."
     },
     "wishlists": {
       "title": "Vul je verlanglijstje",
-      "description": "Zet een paar wensen op je lijstje, dan weet je Santa wat je wil."
+      "description": "Zet een paar wensen op je lijstje, dan weet je Santa wat je wil. Plak een link naar een winkel en Givto vult de details in."
     },
     "gift-day": {
       "title": "Pakjesdag",
-      "description": "Pak om de beurt uit en sluit af met de grote onthulling als je wil."
+      "description": "Pak om de beurt uit, rond de tafel of in een videogesprek, en raad wie je Santa was."
     }
   },
-  "features": {
-    "title": "Ook in Givto",
+  "spotlights": {
     "wishlist": {
       "title": "Eén verlanglijstje voor al je groepen",
-      "description": "Hou één verlanglijstje bij voor al je groepen. Verberg wensen voor een groep als je wil."
+      "description": "Hou één verlanglijstje bij en kies welke groepen elke wens zien. Santa's claimen wat ze kopen, zodat je uit twee groepen niet hetzelfde cadeau krijgt.",
+      "mock": {
+        "title": "Mijn verlanglijstje",
+        "socks": "Wollen sokken",
+        "game": "Cascadia, het bordspel",
+        "book": "Een goed kookboek",
+        "family": "Familie",
+        "friends": "Boekenclub",
+        "dibs": "Geclaimd!",
+        "hidden": "Verborgen voor Werk"
+      }
     },
-    "dibs": {
-      "title": "Geclaimd!",
-      "description": "Santa's claimen wat ze kopen, zodat je uit twee groepen niet hetzelfde cadeau krijgt."
+    "secrets": {
+      "title": "Vragen zonder jezelf te verraden",
+      "description": "Als Santa stel je je giftee een vraag, of stuur je een Psst! als het verlanglijstje meer ideeën kan gebruiken. Iedereen kan iemands Santa een tip geven. Niemand ziet voor wie jij koopt.",
+      "mock": {
+        "question": "Vraag van je Santa",
+        "question-text": "Thee of koffie?",
+        "answer": "Koffie, altijd. Met havermelk graag.",
+        "psst": "Psst!",
+        "psst-text": "Je Santa wil graag wat meer details over je wensen.",
+        "tip": "Tip voor de Santa van Mia",
+        "tip-text": "Ze heeft haar oog laten vallen op de groene sjaal op de markt."
+      }
     },
-    "tips": {
-      "title": "Tips voor Santa",
-      "description": "Geef iemands Santa een tip, met je naam of anoniem."
+    "giftday": {
+      "title": "Pakjesdag op het grote scherm",
+      "description": "Givto schudt de volgorde van uitpakken. Zet de presentatieweergave op de tv of deel hem in een videogesprek, gok op je telefoon van wie elk cadeau is, en sluit af met de grote onthulling.",
+      "mock": {
+        "now": "Nu aan het uitpakken",
+        "guess": "Van wie is het?",
+        "votes": "{count, plural, one {# gok} other {# gokken}}"
+      }
+    }
+  },
+  "more": {
+    "title": "En de kleine dingen",
+    "apart": {
+      "title": "Koppels uit elkaar",
+      "description": "Koppels en huisgenoten loten elkaar niet, en niemand krijgt de persoon van vorig jaar opnieuw."
+    },
+    "post": {
+      "title": "Cadeaus per post",
+      "description": "Woon je ver uit elkaar? Alleen je Santa ziet je adres, en die laat weten wanneer je cadeau onderweg is."
+    },
+    "link": {
+      "title": "Plak een link",
+      "description": "Givto vult de naam, foto en prijs van een wens in."
+    },
+    "reminders": {
+      "title": "Herinneringen",
+      "description": "Givto herinnert wie nog een leeg verlanglijstje of geen cadeau heeft, en pakjesdag zet je in je agenda."
     },
     "editions": {
       "title": "Volgend jaar weer",
-      "description": "Begin volgend jaar opnieuw met dezelfde groep. Givto kan ervoor zorgen dat niemand dezelfde persoon krijgt als vorige keer."
+      "description": "Begin opnieuw met dezelfde groep. De verlanglijstjes en lootjes van vorig jaar blijven bewaard om terug te kijken."
+    },
+    "phones": {
+      "title": "Gemaakt voor je telefoon",
+      "description": "Nederlands of Engels, licht of donker, en geen app nodig."
+    }
+  },
+  "why": {
+    "title": "Geen addertje",
+    "lead": "Givto is gratis en open source. Het verdient niets aan je cadeaus of je gegevens.",
+    "ads": {
+      "title": "Geen advertenties",
+      "description": "Geen gesponsorde cadeaus en geen affiliatecodes in je winkellinks."
+    },
+    "passwords": {
+      "title": "Geen wachtwoorden",
+      "description": "Log in met een code uit je e-mail of met een passkey."
+    },
+    "secret": {
+      "title": "Geheim blijft geheim",
+      "description": "Zelfs de organisator ziet niet wie wie heeft getrokken."
+    },
+    "data": {
+      "title": "Alleen wat nodig is",
+      "description": "We bewaren alleen wat je Secret Santa nodig heeft en verwijderen het als het niet meer nodig is. Lees de <privacy>privacyverklaring</privacy>."
+    },
+    "open": {
+      "title": "Open source",
+      "description": "Elke regel van Givto staat op <github>GitHub</github>."
+    },
+    "app": {
+      "title": "Geen app",
+      "description": "Het werkt in elke browser, op je telefoon of je laptop."
     }
   },
   "faq": {
@@ -67,6 +155,14 @@
       "question": "Kan ik koppels uit elkaar houden?",
       "answer": "Ja. Zet ze bij Niet samen in dezelfde rij, dan loten ze elkaar niet."
     },
+    "late": {
+      "question": "Kan iemand nog meedoen na het loten?",
+      "answer": "Ja. Wie na het loten meedoet, krijgt ook iemand om voor te kopen."
+    },
+    "far": {
+      "question": "We wonen niet dicht bij elkaar. Werkt het dan ook?",
+      "answer": "Ja. Vul je adres in, dan ziet alleen je Santa het. Pakjesdag werkt ook in een videogesprek."
+    },
     "cost": {
       "question": "Wat kost het?",
       "answer": "Niets. Givto is gratis en open source."
@@ -77,7 +173,8 @@
     }
   },
   "closing": {
-    "title": "Klaar om te beginnen?",
+    "title": "Klaar als jij het bent",
+    "lead": "Start in een minuut een Secret Santa en deel de link in de groepsapp.",
     "cta": "Start een Secret Santa"
   }
 }

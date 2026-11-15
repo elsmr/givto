@@ -21,12 +21,12 @@ const SkipLink = () => {
 
 // Named, because React only runs enter/exit for a ViewTransition with no DOM element above it in
 // the swapped tree; each page has one <main>, so the old and new ones always pair up.
-const Main = ({ children }: { children: ReactNode }) => (
+const Main = ({ wide, children }: { wide: boolean; children: ReactNode }) => (
   <ViewTransition name="page" share="page" default="none">
     <main
       id="main"
       tabIndex={-1}
-      className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 outline-none sm:px-6 sm:py-12"
+      className={cn('w-full flex-1 outline-none', !wide && 'mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12')}
     >
       {children}
     </main>
@@ -36,9 +36,9 @@ const Main = ({ children }: { children: ReactNode }) => (
 /**
  * `app`: a signed-in page, with the app navigation. It doesn't depend on the session, so it
  * renders before the session loads. Otherwise the public header and footer. One tree for both, so
- * a page that switches (signing in on /new) keeps its state.
+ * a page that switches (signing in on /new) keeps its state. `wide`: edge to edge, the page sets its own width.
  */
-export const AppShell = ({ app = false, children }: { app?: boolean; children: ReactNode }) => {
+export const AppShell = ({ app = false, wide = false, children }: { app?: boolean; wide?: boolean; children: ReactNode }) => {
   usePreferredLocale();
 
   return (
@@ -55,7 +55,7 @@ export const AppShell = ({ app = false, children }: { app?: boolean; children: R
       )}
       {app && <AppNav className="order-last md:order-first" />}
       <div className="flex min-w-0 flex-1 flex-col">
-        <Main>{children}</Main>
+        <Main wide={wide}>{children}</Main>
         {!app && <Footer />}
       </div>
     </div>

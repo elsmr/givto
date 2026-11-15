@@ -6,13 +6,15 @@ import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import { celebrateMoves, type Controls, hoverMoves, loadingMoves } from './logo-moves';
 
-type LogoAnimationProps = { variant: 'loading' | 'celebrate' | 'hover'; className?: string };
+type LogoAnimationProps = { variant: 'loading' | 'celebrate' | 'hover' | 'toy'; className?: string };
+type Moves = typeof loadingMoves;
 
 const stop = (controls: Controls[]) => controls.forEach((control) => control.stop());
 
 /**
  * The logo, animated (12). `loading` replaces the generic loader (announced as "Loading…");
- * `celebrate` is decorative; `hover` nudges the logo when a mouse enters the link around it.
+ * `celebrate` is decorative; `hover` nudges the logo when a mouse enters the link around it; `toy`
+ * nudges on hover and hops on a tap or click, for a logo that isn't a link.
  * Reduced motion: the static logo. Motion's WAAPI-only `useAnimate` keeps this small.
  */
 export const LogoAnimation = ({ variant, className }: LogoAnimationProps) => {
@@ -27,19 +29,21 @@ export const LogoAnimation = ({ variant, className }: LogoAnimationProps) => {
       return () => stop(controls);
     }
 
-    let controls: Controls[] | undefined;
+    let active: { moves: Moves; controls: Controls[] } | undefined;
     let stopped = false;
-    // Stopped animations may still settle their promise, hence the flag.
-    const run = (moves: typeof loadingMoves, again: boolean) => {
-      controls = moves(animate);
+    // Stopped or cancelled animations may still settle their promise, hence the flag and the identity check.
+    const run = (moves: Moves, again: boolean) => {
+      const controls = moves(animate);
+      active = { moves, controls };
       Promise.all(controls).then(() => {
-        controls = undefined;
+        if (active?.controls !== controls) return;
+        active = undefined;
         if (again && !stopped) run(moves, again);
       });
     };
     const cleanup = () => {
       stopped = true;
-      if (controls) stop(controls);
+      if (active) stop(active.controls);
     };
 
     if (variant === 'loading') {
@@ -48,13 +52,22 @@ export const LogoAnimation = ({ variant, className }: LogoAnimationProps) => {
     }
 
     // The whole link is the hover target, not just the mark; a nudge always plays to the end.
-    const target = scope.current.closest('a') ?? scope.current;
+    const target = (variant === 'hover' && scope.current.closest('a')) || scope.current;
     const nudge = (event: PointerEvent) => {
-      if (event.pointerType === 'mouse' && !controls) run(hoverMoves, false);
+      if (event.pointerType === 'mouse' && !active) run(hoverMoves, false);
+    };
+    // A hop cuts a nudge short: cancel, not stop, so the box drops back to rest instead of
+    // freezing mid-tilt (stop commits the current transform).
+    const hop = () => {
+      if (active?.moves === celebrateMoves) return;
+      active?.controls.forEach((control) => control.cancel());
+      run(celebrateMoves, false);
     };
     target.addEventListener('pointerenter', nudge);
+    if (variant === 'toy') target.addEventListener('pointerdown', hop);
     return () => {
       target.removeEventListener('pointerenter', nudge);
+      target.removeEventListener('pointerdown', hop);
       cleanup();
     };
   }, [variant, reduced, animate, scope]);
