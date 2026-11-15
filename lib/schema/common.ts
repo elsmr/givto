@@ -15,10 +15,6 @@ export const Email = v.pipe(v.string(), v.trim(), v.toLowerCase(), v.maxLength(2
 
 const CONTROL_CHARS = /[\u0000-\u001f\u007f]/;
 const CONTROL_CHARS_EXCEPT_NEWLINE = /[\u0000-\u0009\u000b\u000c\u000e-\u001f\u007f]/;
-// Mail clients auto-link domains with a known TLD, so "evil.com" counts as a URL too. Only
-// common and two-letter (country) TLDs: "Ann.Smith" is a name, not a link.
-const URL_LIKE =
-  /:\/\/|www\.|[a-z0-9-]\.(?:[a-z]{2}|com|net|org|info|biz|app|dev|xyz|top|site|online|shop|store|link|click|live|life|club|email|page|cloud|tech|world|today)\b/i;
 
 /** One line of plain text: trimmed, no line breaks or control characters. */
 export const SingleLine = (max: number) =>
@@ -40,18 +36,7 @@ export const MultiLine = (max: number) =>
     v.check((text) => !CONTROL_CHARS_EXCEPT_NEWLINE.test(text), 'no_control_chars')
   );
 
-/**
- * Text that ends up in email subjects, sender names or bodies sent to other people
- * (abuse protection, 43): one line, no URLs, no `@`.
- */
-export const EmailSafeText = (max: number) =>
-  v.pipe(
-    SingleLine(max),
-    v.check((text) => !text.includes('@'), 'no_at_sign'),
-    v.check((text) => !URL_LIKE.test(text), 'no_urls')
-  );
-
-export const PersonName = EmailSafeText(50);
+export const PersonName = SingleLine(50);
 
 export const HttpUrl = v.pipe(
   v.string(),

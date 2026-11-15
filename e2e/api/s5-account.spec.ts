@@ -40,7 +40,7 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
 
   await test.step('name and notification preferences saved', async () => {
     expect((await ann.trpc.mutate('account.setName', { name: `Annabel ${tag}` })).status).toBe(200);
-    expect((await ann.trpc.mutate('account.setName', { name: 'see www.evil.test' })).status).toBe(400);
+    expect((await ann.trpc.mutate('account.setName', { name: 'Ann\nSmith' })).status).toBe(400);
     const prefs = { reminders: false, wishlistUpdates: true, santaMessages: false, joins: false };
     expect((await ann.trpc.mutate('account.setNotifications', prefs)).status).toBe(200);
     const me = ok(await ann.trpc.query('account.get'));

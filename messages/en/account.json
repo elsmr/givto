@@ -8,7 +8,7 @@
     "email-label": "Email",
     "save": "Save name",
     "saved": "Name saved",
-    "invalid": "Use 1 to 50 characters, without links or @.",
+    "invalid": "Use 1 to 50 characters, on one line.",
     "color-label": "Avatar colour",
     "color-hint": "Used in all your groups.",
     "color-error": "That didn't save. Try again in a moment.",

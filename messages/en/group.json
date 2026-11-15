@@ -66,6 +66,8 @@
       "ALREADY_MEMBER": "They're already in this Secret Santa.",
       "RATE_LIMITED": "That's a lot of invites for one day. Share the link instead, or try again tomorrow.",
       "GROUP_FULL": "This Secret Santa is full.",
+      "INVITE_LIMIT": "That's 3 invites to this address today. Try again tomorrow.",
+      "EMAIL_SUPPRESSED": "Email to this address bounced or was marked as spam, so Givto doesn't send there anymore.",
       "INVALID_INPUT": "Check the email address and try again.",
       "INTERNAL": "Something went wrong on our side. Try again in a moment."
     }
@@ -110,8 +112,6 @@
   },
   "issues": {
     "required": "Fill this in.",
-    "no_urls": "No web addresses, please.",
-    "no_at_sign": "No @, please.",
     "no_line_breaks": "Keep it on one line.",
     "invalid_price_range": "The second amount should be bigger.",
     "too_long": "That's too long.",

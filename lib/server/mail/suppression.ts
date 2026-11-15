@@ -17,9 +17,9 @@ export const suppressedEmails = async (db: Collections, emails: string[]): Promi
   new Set((await db.emailSuppressions.find({ _id: { $in: emails } }, { projection: { _id: 1 } }).toArray()).map((s) => s._id));
 
 /**
- * Retention (55): drop records for addresses nothing refers to anymore. Emails live only on
- * accounts (`users.email`, stored lowercase by Better Auth) and email invites; members,
- * managed members included, have no email of their own.
+ * Retention (55): drop records for addresses nothing mails anymore: accounts (`users.email`, stored
+ * lowercase by Better Auth) and pending email invites. An invitee who never joined still goes by their
+ * email as a name (110), but without a pending invite nothing mails them, so that name keeps no record.
  */
 export const deleteUnusedSuppressions = async (db: Collections, now: Date): Promise<number> => {
   const emails = (await db.emailSuppressions.find({}, { projection: { _id: 1 } }).toArray()).map((s) => s._id);

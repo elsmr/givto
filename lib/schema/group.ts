@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { EmailSafeText, Id, Locale, SingleLine, TimeZone } from './common';
+import { Id, Locale, SingleLine, TimeZone } from './common';
 import { Member } from './member';
 
 export const MIN_PARTICIPANTS = 3;
@@ -7,7 +7,7 @@ export const MAX_MEMBERS = 100;
 
 export const Slug = v.pipe(v.string(), v.regex(/^[A-Za-z0-9_-]{6,32}$/, 'invalid_slug'));
 
-export const GroupName = EmailSafeText(80);
+export const GroupName = SingleLine(80);
 
 export const ExchangeMode = v.picklist(['inPerson', 'byPost', 'both']);
 export type ExchangeMode = v.InferOutput<typeof ExchangeMode>;

@@ -220,7 +220,7 @@ test('one member per account: re-inviting someone removed or who declined reuses
     const { memberId } = ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: gus }));
     ok(await (await newClient()).trpc.mutate('invite.decline', { groupSlug: slug, token: await inviteTokenFrom(gus) }));
     expect(ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: gus })).memberId).toBe(memberId);
-    const gusRows = (await membersOf(db, slug)).filter((m) => m.id === memberId || m.name.startsWith('e2e gus'));
+    const gusRows = (await membersOf(db, slug)).filter((m) => m.id === memberId || m.name === gus);
     expect(gusRows.map((m) => [m.id, m.status])).toEqual([[memberId, 'invited']]);
     const inviteToken = await inviteTokenFrom(gus);
     const gusClient = await signInEmail(await newClient(), gus, secrets);

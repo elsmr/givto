@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { Id, Locale, PersonName } from './common';
+import { Email, Id, Locale, PersonName } from './common';
 import { AvatarColor } from './user';
 
 /** One owner per group; organizers run it with them, only the owner names organizers or deletes the group. */
@@ -33,8 +33,11 @@ export const Member = v.object({
   userId: v.optional(Id),
   /** Member id of the organizer who manages this member. */
   managedBy: v.optional(Id),
-  /** With a `userId`, copies of the account's, kept in sync by `account.setName` / `setAvatarColor`. */
-  name: PersonName,
+  /**
+   * With a `userId`, copies of the account's, kept in sync by `account.setName` / `setAvatarColor`. An email invitee
+   * goes by their email until they accept (110).
+   */
+  name: v.union([PersonName, Email]),
   avatarColor: v.optional(AvatarColor),
   role: MemberRole,
   status: MemberStatus,
