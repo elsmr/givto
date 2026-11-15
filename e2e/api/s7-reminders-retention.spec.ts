@@ -10,7 +10,7 @@ import { appEnv, BASE_URL } from '../env';
 import { expect, mailsTo, ok, runJob, test, uniqueEmail, type User } from '../fixtures';
 import { circle, DAY, editionDoc, expectMails, groupDoc, mails, member, today } from './s7-seed';
 
-const trio = (olive: User, ann: User, bob: User) => [member(olive, 'Olive', { role: 'organizer' }), member(ann, 'Ann'), member(bob, 'Bob')];
+const trio = (olive: User, ann: User, bob: User) => [member(olive, 'Olive', { role: 'owner' }), member(ann, 'Ann'), member(bob, 'Bob')];
 
 test('reminders at real time: one combined email (wishlist + gift), opt-out, suppression, managed, gift day morning, join; each once', async ({ signIn, db, secrets }) => {
   const [olive, ann, bob, cee] = await Promise.all(['olive', 'ann', 'bob', 'cee'].map((name) => signIn(name)));
@@ -18,7 +18,7 @@ test('reminders at real time: one combined email (wishlist + gift), opt-out, sup
   const mug = ok(await ann.trpc.mutate('wish.create', { title: 'Moomin mug' }));
   const socks = ok(await olive.trpc.mutate('wish.create', { title: 'Green socks' }));
   const shows = (wish: { id: string }) => ({ wishlistView: { shownWishIds: [wish.id] } });
-  const m = { olive: member(olive, 'Olive', { role: 'organizer', ...shows(socks) }), ann: member(ann, 'Ann', shows(mug)), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
+  const m = { olive: member(olive, 'Olive', { role: 'owner', ...shows(socks) }), ann: member(ann, 'Ann', shows(mug)), bob: member(bob, 'Bob'), cee: member(cee, 'Cee') };
   const kid = member(null, 'Kid', { managedBy: m.olive.id });
   const invitee = member(null, 'Ivy', { status: 'invited', invitedAt: new Date(Date.now() - 4 * DAY) });
   const inviteeEmail = uniqueEmail('invitee');
@@ -160,7 +160,7 @@ test('retention without a gift day: counted from done or the next edition; the l
 
 test('retention: bounce records go once no account or pending invite uses the address', async ({ signIn, db, secrets }) => {
   const [olive, dan] = await Promise.all([signIn('olive'), signIn('dan')]);
-  const group = groupDoc(olive, 'Bounces', [member(olive, 'Olive', { role: 'organizer' })]);
+  const group = groupDoc(olive, 'Bounces', [member(olive, 'Olive', { role: 'owner' })]);
   await db.groups.insertOne(group);
   const [gone, declined, invitee] = [uniqueEmail('gone'), uniqueEmail('declined'), uniqueEmail('invitee')];
   secrets.push(gone, declined, invitee);

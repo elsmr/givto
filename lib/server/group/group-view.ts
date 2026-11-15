@@ -35,7 +35,7 @@ export const groupView = async (
   edition: Edition | null,
   editions: EditionListItem[]
 ) => {
-  const isOrganizer = me.role === 'organizer';
+  const isOrganizer = me.role !== 'member';
   const participantIds = edition ? drawParticipantIds(group, edition) : [];
   // A done edition shows everyone who was in it, also those who left the group since (100).
   const wasIn = new Set(edition?.status === 'done' ? participantIds : []);
@@ -51,14 +51,14 @@ export const groupView = async (
     locale: group.locale,
     timeZone: group.timeZone,
     /** `hasBoards`: a conspiracy (90) shows me other people's boards. */
-    me: { memberId: me.id, isOrganizer, hasBoards: Boolean(edition && boardPeople(group, edition, me).length > 0) },
+    me: { memberId: me.id, isOrganizer, isOwner: me.role === 'owner', hasBoards: Boolean(edition && boardPeople(group, edition, me).length > 0) },
     members: visible.map((m) => ({
       id: m.id,
       name: m.name,
       avatarColor: m.avatarColor,
       role: m.role,
       status: m.status,
-      ...(isOrganizer && { email: emails.get(m.id), bounced: bounced.has(emails.get(m.id) ?? '') }),
+      ...(isOrganizer && { email: emails.get(m.id), bounced: bounced.has(emails.get(m.id) ?? ''), hasAccount: Boolean(m.userId) }),
     })),
     joinedCount: group.members.filter((m) => m.status === 'joined').length,
     /** Newest first; the group home lists them once there's history (33). `champions`: names, shared on a tie (86). */

@@ -114,9 +114,15 @@ export const memberProcedure = authedProcedure
     return next({ ctx: { group, member, log: ctx.log.child({ groupId: group._id }) } });
   });
 
-/** Input `{ groupSlug }`. The group's organizer. */
+/** Input `{ groupSlug }`. One of the group's organizers, the owner included. */
 export const organizerProcedure = memberProcedure.use(({ ctx, next }) => {
-  if (ctx.member.role !== 'organizer') throw new AppError('NOT_ORGANIZER');
+  if (ctx.member.role === 'member') throw new AppError('NOT_ORGANIZER');
+  return next();
+});
+
+/** Input `{ groupSlug }`. The group's owner; other members still get NOT_ORGANIZER. */
+export const ownerProcedure = organizerProcedure.use(({ ctx, next }) => {
+  if (ctx.member.role !== 'owner') throw new AppError('NOT_OWNER');
   return next();
 });
 
@@ -129,9 +135,9 @@ export const editionProcedure = memberProcedure
     return next({ ctx: { edition, log: ctx.log.child({ editionId: edition._id }) } });
   });
 
-/** Input `{ groupSlug, editionNumber }`. That edition, for the group's organizer. */
+/** Input `{ groupSlug, editionNumber }`. That edition, for the group's organizers. */
 export const organizerEditionProcedure = editionProcedure.use(({ ctx, next }) => {
-  if (ctx.member.role !== 'organizer') throw new AppError('NOT_ORGANIZER');
+  if (ctx.member.role === 'member') throw new AppError('NOT_ORGANIZER');
   return next();
 });
 

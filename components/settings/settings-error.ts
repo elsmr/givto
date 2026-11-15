@@ -8,7 +8,8 @@ const knownErrors = [
   'ALREADY_DRAWN',
   'EDITION_CLOSED',
   'EDITION_CHANGED',
-  'ORGANIZER_CANNOT_LEAVE',
+  'OWNER_CANNOT_LEAVE',
+  'NOT_OWNER',
 ] as const;
 
 /** Key under `settings.errors`. The schema's date-order check and "not the same as last time" get their own message. */

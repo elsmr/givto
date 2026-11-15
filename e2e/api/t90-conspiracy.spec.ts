@@ -9,7 +9,7 @@ import { newMember, seedEdition, seedGroup } from './seed-groups';
 test('conspiracy: everyone but X reads and writes X’s board; X never sees a thing', async ({ signIn, db }) => {
   const [olive, ann, bob, cee, dan, nina, eve] = await Promise.all(['olive', 'ann', 'bob', 'cee', 'dan', 'nina', 'eve'].map((name) => signIn(name)));
   const m = {
-    olive: newMember(olive, 'Olive', { role: 'organizer' }),
+    olive: newMember(olive, 'Olive', { role: 'owner' }),
     ann: newMember(ann, 'Ann'),
     bob: newMember(bob, 'Bob'),
     cee: newMember(cee, 'Cee'),

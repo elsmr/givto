@@ -168,6 +168,29 @@ test('join link settings: a cap, turn the link off, make a new one', async ({ pa
   });
 });
 
+test('the owner makes Bob an organizer, then the owner; Ann can no longer delete the group', async ({ page, signIn, signInPage }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = await openGroup(people, 'Co-organized');
+  await signInPage(page, people[0]);
+  await page.goto(`/g/${group.slug}/settings`);
+  const row = (name: string) => settingsGroup(page, 'People').getByRole('listitem').filter({ has: page.getByText(name, { exact: true }) });
+  await expect(settingsGroup(page, 'Danger zone')).toHaveCount(1);
+
+  await row('Bob').getByRole('button', { name: 'Make organizer' }).click();
+  await expect(page.getByText('Bob is now an organizer')).toBeVisible();
+  await expect(row('Bob').getByText('Organizer', { exact: true })).toBeVisible();
+  await expect(row('Bob').getByRole('button', { name: 'Remove', exact: true })).toBeVisible();
+
+  await row('Bob').getByRole('button', { name: 'Make owner' }).click();
+  await page.getByRole('dialog', { name: 'Make Bob the owner?' }).getByRole('button', { name: 'Make Bob the owner' }).click();
+  await expect(page.getByText('Bob is now the owner')).toBeVisible();
+  await expect(row('Bob').getByText('Owner', { exact: true })).toBeVisible();
+  await expect(row('Ann').getByText('Organizer', { exact: true })).toBeVisible();
+  await expect(row('Bob').getByRole('button')).toHaveCount(0);
+  await expect(row('Cee').getByRole('button', { name: 'Make organizer' })).toHaveCount(0);
+  await expect(settingsGroup(page, 'Danger zone')).toHaveCount(0);
+});
+
 test('remove someone after the draw: only their Santa gets someone new', async ({ page, newPage, signIn, signInPage, db }) => {
   const people = await Promise.all(['ann', 'bob', 'cee', 'dan', 'eve'].map((name) => signIn(name)));
   const [ann] = people;

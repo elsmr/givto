@@ -97,7 +97,7 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       const [invalidUser] = data.users.filter((u) => u.email === edge.invalidEmail);
       const group = (await c.groups.findOne({ _id: oldGroupWith(invalidUser)[0]._id.toHexString() }))!;
       const managed = group.members.find((m) => !m.userId)!;
-      expect(managed).toMatchObject({ name: 'Ivo Invalid', managedBy: group.members.find((m) => m.role === 'organizer')!.id });
+      expect(managed).toMatchObject({ name: 'Ivo Invalid', managedBy: group.members.find((m) => m.role === 'owner')!.id });
       expect(await c.wishes.countDocuments({ ownerId: managed.id, title: 'Coffee' })).toBe(1);
     });
 
@@ -114,8 +114,8 @@ test('migration 001 on a synthetic old database: valid v2 documents, merges, edg
       for (const group of await c.groups.find().toArray()) {
         const ids = new Set(group.members.map((m) => m.id));
         const edition = (await c.editions.findOne({ groupId: group._id }))!;
-        expect(group.members.filter((m) => m.role === 'organizer')).toHaveLength(1);
-        expect(group.createdBy).toBe(group.members.find((m) => m.role === 'organizer')!.userId);
+        expect(group.members.filter((m) => m.role === 'owner')).toHaveLength(1);
+        expect(group.createdBy).toBe(group.members.find((m) => m.role === 'owner')!.userId);
         for (const [santa, giftee] of Object.entries(edition.draw?.assignments ?? {})) expect(ids.has(santa) && ids.has(giftee)).toBe(true);
         expect(group.createdAt.getTime()).toBeLessThanOrEqual(Date.now());
         expect(edition.year).toBe(Number(new Intl.DateTimeFormat('en', { timeZone: 'Europe/Brussels', year: 'numeric' }).format(group.createdAt)));

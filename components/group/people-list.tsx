@@ -28,7 +28,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <span className="font-semibold break-all">{person.name}</span>
-                  {person.role === 'organizer' && <Badge variant="yellow">{t('organizer')}</Badge>}
+                  {person.role !== 'member' && <Badge variant="yellow">{t(person.role)}</Badge>}
                   {person.id === group.me.memberId && <Badge>{t('you')}</Badge>}
                   {person.status !== 'joined' && <Badge variant="coral">{t(`status.${person.status}`)}</Badge>}
                   {person.bounced && <Badge variant="coral">{t('bounced')}</Badge>}

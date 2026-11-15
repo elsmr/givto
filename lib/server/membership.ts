@@ -14,8 +14,7 @@ export const hashToken = (token: string): string => createHash('sha256').update(
 
 export const firstName = (name: string): string => name.split(/\s+/)[0];
 
-export const organizerOf = (group: Group): Member | undefined =>
-  group.members.find((m) => m.role === 'organizer');
+export const ownerOf = (group: Group): Member | undefined => group.members.find((m) => m.role === 'owner');
 
 /** Statuses that hold a place in the group (member cap, 45). */
 export const placeHolding: Member['status'][] = ['joined', 'requested'];

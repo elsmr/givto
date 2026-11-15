@@ -47,6 +47,15 @@
     "remove-after": "{name} verlaat de groep. Er is al geloot: de Santa van {name} krijgt iemand anders, voor de rest verandert er niets.",
     "remove-confirm": "{name} verwijderen",
     "removed": "{name} verwijderd",
+    "make-organizer": "Maak organisator",
+    "made-organizer": "{name} is nu organisator",
+    "unmake-organizer": "Geen organisator meer",
+    "unmade-organizer": "{name} is geen organisator meer",
+    "make-owner": "Maak eigenaar",
+    "make-owner-title": "{name} eigenaar maken?",
+    "make-owner-description": "{name} kiest dan de organisatoren en kan de groep verwijderen. Jij blijft organisator.",
+    "make-owner-confirm": "{name} eigenaar maken",
+    "made-owner": "{name} is nu de eigenaar",
     "cancel": "Laten staan",
     "drawn": "Er is al geloot, dus wie meedoet kan hier niet meer veranderen. Wie nu meedoet, schuift er tussen.",
     "locked": "Het ligt vast, dus wie meedoet kan hier niet meer veranderen. Wie nu nog meedoet, is er ook bij."
@@ -69,7 +78,8 @@
     "AVOID_PREVIOUS": "Met 'niet dezelfde persoon als vorige keer' lukt het loten niet voor deze mensen.",
     "EDITION_CLOSED": "Deze editie is voorbij en kan niet meer veranderen.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
-    "ORGANIZER_CANNOT_LEAVE": "De organisator kan niet verwijderd worden.",
+    "OWNER_CANNOT_LEAVE": "De eigenaar kan niet verwijderd worden.",
+    "NOT_OWNER": "Alleen de eigenaar kan dit.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   }
 }

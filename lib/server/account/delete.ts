@@ -18,9 +18,9 @@ const anonymized = (member: Member, group: Group, now: Date): Member => ({
 });
 
 /**
- * The group without this person: their member anonymized and removed, the organizer role
- * (and the members they manage) passed to the longest-joined member with an account.
- * Null when nobody else with an account has joined: then the group goes.
+ * The group without this person: their member anonymized and removed. An owner's role passes to the
+ * longest-joined organizer, else the longest-joined member with an account; the members they manage
+ * go to the (new) owner. Null when nobody else with an account has joined: then the group goes.
  */
 export const groupWithout = (group: Group, userId: string, now: Date): Group | null => {
   const me = group.members.find((member) => member.userId === userId)!;
@@ -28,18 +28,18 @@ export const groupWithout = (group: Group, userId: string, now: Date): Group | n
     .filter((member) => member.userId && member.userId !== userId && member.status === 'joined')
     .toSorted((a, b) => (a.joinedAt?.getTime() ?? Infinity) - (b.joinedAt?.getTime() ?? Infinity));
   if (others.length === 0) return null;
-  const successor = me.role === 'organizer' ? others[0] : undefined;
+  const successor = me.role === 'owner' ? (others.find((member) => member.role === 'organizer') ?? others[0]) : undefined;
+  const owner = successor ?? group.members.find((member) => member.role === 'owner' && member.id !== me.id);
   const members = group.members.map((member): Member => {
     if (member.id === me.id) return anonymized(member, group, now);
-    if (member.id === successor?.id) return { ...member, role: 'organizer' };
-    if (successor && member.managedBy === me.id) return { ...member, managedBy: successor.id };
-    return member;
+    const managedBy = owner && member.managedBy === me.id ? { managedBy: owner.id } : {};
+    if (member.id === successor?.id) return { ...member, ...managedBy, role: 'owner' };
+    return { ...member, ...managedBy };
   });
-  const organizer = members.find((member) => member.role === 'organizer' && member.userId);
   return {
     ...group,
     members,
-    createdBy: group.createdBy === userId && organizer?.userId ? organizer.userId : group.createdBy,
+    createdBy: successor?.userId ?? group.createdBy,
     ...(successor && { organizerHandover: { toMemberId: successor.id, at: now } }),
     updatedAt: now,
   };

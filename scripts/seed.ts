@@ -74,7 +74,7 @@ const createGroup = async ({ name, organizer, members, requested = [], household
     id: newId(),
     userId: userIds[key],
     name: nameOf(key),
-    role: key === organizer ? 'organizer' : 'member',
+    role: key === organizer ? 'owner' : 'member',
     status,
     ...(status === 'joined' && { joinedAt }),
     // Demo groups show each person's whole list, as if they had picked every wish there.
@@ -188,7 +188,7 @@ const rows: [string, Group, string][] = [
 ];
 console.log(`\nSeeded ${raw.databaseName}:`);
 for (const [phase, group, path] of rows) {
-  const role = group.createdBy === userIds.you ? 'organizer' : 'member';
+  const role = group.createdBy === userIds.you ? 'owner' : 'member';
   console.log(`  ${phase.padEnd(8)} ${group.name.padEnd(15)} ${role.padEnd(10)} ${base}/g/${group.slug}${path}`);
 }
 console.log(`\nSign in with ${seedEmail}, code arrives at ${process.env.MAILGUN_API_BASE || 'http://localhost:3091'}`);

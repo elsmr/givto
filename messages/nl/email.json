@@ -91,10 +91,10 @@
     "button": "Bekijk wie ik nu heb"
   },
   "organizer-handover": {
-    "subject": "Jij bent nu de organisator van {group}",
-    "preheader": "De vorige organisator heeft het account verwijderd.",
-    "title": "Jij bent nu de organisator",
-    "body": "De organisator van “{group}” heeft het Givto-account verwijderd, dus de groep gaat naar jou: jij bent er het langst bij. Je kunt nu mensen uitnodigen, de datums aanpassen en loten.",
+    "subject": "Jij bent nu de eigenaar van {group}",
+    "preheader": "De vorige eigenaar heeft het account verwijderd.",
+    "title": "Jij bent nu de eigenaar",
+    "body": "De eigenaar van “{group}” heeft het Givto-account verwijderd, dus de groep gaat naar jou. Je kunt nu mensen uitnodigen, de datums aanpassen, loten en kiezen wie de groep mee organiseert.",
     "button": "Open de groep"
   },
   "psst": {

@@ -15,6 +15,7 @@
   "people": {
     "title": "People",
     "organizer": "Organizer",
+    "owner": "Owner",
     "you": "You",
     "status": {
       "invited": "Invited",

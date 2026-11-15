@@ -7,7 +7,7 @@ import type { Collections } from '../db';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { groupUrl } from '../mail/urls';
-import { organizerOf } from '../membership';
+import { ownerOf } from '../membership';
 import { isoDate, monthsBefore } from './dates';
 import { runEach } from './run-each';
 
@@ -41,7 +41,7 @@ export const cleanUpInactiveGroups = async (db: Collections, now: Date) => {
       await deleteGroup(db, group);
       return 'deleted';
     }
-    const organizer = organizerOf(group);
+    const organizer = ownerOf(group);
     const to = organizer && (await memberRecipient(db, group, organizer));
     const result = to
       ? await sendNotice(db, {

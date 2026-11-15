@@ -5,7 +5,7 @@ import { memberRecipient } from '../mail/recipients';
 import { groupUrl } from '../mail/urls';
 import { runEach } from './run-each';
 
-/** The organizer deleted their account (S5 sets `group.organizerHandover`): tell the new organizer. */
+/** The owner deleted their account (S5 sets `group.organizerHandover`): tell the new owner. */
 export const sendHandoverNotices = async (db: Collections, now: Date) => {
   const groups = await db.groups
     .find({ organizerHandover: { $exists: true }, 'organizerHandover.notifiedAt': { $exists: false }, deletedAt: { $exists: false } })

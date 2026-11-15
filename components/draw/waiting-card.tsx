@@ -35,7 +35,7 @@ export const WaitingCard = ({ group, edition, showTab }: { group: GroupData; edi
   const hasAddress = !posted || Boolean(address.data);
   const ready = wishesDone && hasAddress;
   const people = group.members.filter((m) => edition.participantIds.includes(m.id));
-  const organizer = group.members.find((m) => m.role === 'organizer')?.name.split(' ')[0] ?? tGroup('people.organizer');
+  const organizer = group.members.find((m) => m.role === 'owner')?.name.split(' ')[0] ?? tGroup('people.organizer');
   const waiting = !draws
     ? edition.kind === 'conspiracy'
       ? t('lock-in.wait-conspiracy', { organizer })

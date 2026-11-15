@@ -76,7 +76,7 @@ test('leave before the draw; organizer can’t leave; leaving after the draw wor
   const annId = (await memberByEmail(ann, slug, ann.email))!.id;
   const bobId = (await memberByEmail(ann, slug, bob.email))!.id;
   ok(await ann.trpc.mutate('group.setKeepApart', { groupSlug: slug, households: [[annId, bobId]] }));
-  expect(codeOf(await ann.trpc.mutate('membership.leave', { groupSlug: slug }))).toBe('ORGANIZER_CANNOT_LEAVE');
+  expect(codeOf(await ann.trpc.mutate('membership.leave', { groupSlug: slug }))).toBe('OWNER_CANNOT_LEAVE');
   expect((await bob.trpc.mutate('membership.leave', { groupSlug: slug })).status).toBe(200);
   expect(codeOf(await bob.trpc.query('group.get', { groupSlug: slug }))).toBe('GROUP_NOT_FOUND');
   const data = ok(await ann.trpc.query('group.get', { groupSlug: slug }));

@@ -23,17 +23,17 @@ export const seedAccountData = async (db: TestDb, { ann, bob, cee }: Record<'ann
   });
   await db.groups.insertMany([
     group(g.family, `fam${tag}`, 'Family', [
-      member(m.ann, `Annabel ${tag}`, { userId: ann.id, role: 'organizer', joinedAt: new Date(+now - 3e6), addressId }),
+      member(m.ann, `Annabel ${tag}`, { userId: ann.id, role: 'owner', joinedAt: new Date(+now - 3e6), addressId }),
       member(m.bob, `Bob ${tag}`, { userId: bob.id, joinedAt: new Date(+now - 2e6) }),
       member(m.cee, `Cee ${tag}`, { userId: cee.id, joinedAt: new Date(+now - 1e6) }),
       member(m.kid, 'Kiddo', { managedBy: m.ann }),
     ]),
     group(g.solo, `solo${tag}`, 'Solo', [
-      member(m.solo, `Annabel ${tag}`, { userId: ann.id, role: 'organizer' }),
+      member(m.solo, `Annabel ${tag}`, { userId: ann.id, role: 'owner' }),
       member(m.inv, 'Invitee', { status: 'invited' }),
     ]),
     group(g.other, `oth${tag}`, 'Other', [
-      member(m.ob, `Bob ${tag}`, { userId: bob.id, role: 'organizer' }),
+      member(m.ob, `Bob ${tag}`, { userId: bob.id, role: 'owner' }),
       member(m.oc, `Cee ${tag}`, { userId: cee.id }),
     ]),
   ]);

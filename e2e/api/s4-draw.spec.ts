@@ -128,7 +128,7 @@ test('Family: settings, draw, changes after the draw, .ics, next edition', async
     delete id.cee;
     expectValidDraw((await editionOf(db, slug, 1)).draw?.assignments, Object.values(id), await rules());
     expect(codeOf(await cee.trpc.query('group.get', { groupSlug: slug }))).toBe('GROUP_NOT_FOUND');
-    expect(codeOf(await ann.trpc.mutate('settings.removePerson', { groupSlug: slug, memberId: id.ann }))).toBe('ORGANIZER_CANNOT_LEAVE');
+    expect(codeOf(await ann.trpc.mutate('settings.removePerson', { groupSlug: slug, memberId: id.ann }))).toBe('OWNER_CANNOT_LEAVE');
     ok(await ann.trpc.mutate('settings.removePerson', { groupSlug: slug, memberId: id.dan }));
     delete id.dan;
     expectValidDraw((await editionOf(db, slug, 1)).draw?.assignments, Object.values(id), await rules());

@@ -17,10 +17,10 @@ test('group views and Dibs!: shown wishes, claims, who sees what', async ({ sign
 
   // Group A: Sam → Olive → Cee → Sam in edition 1; Cee → Olive in edition 2; Nina sits out (not in a draw).
   // Group B: Ben → Olive → Dee (no account) → Ben.
-  const aOlive = newMember(olive, 'Olive', { role: 'organizer' });
+  const aOlive = newMember(olive, 'Olive', { role: 'owner' });
   const [aSam, aCee, aNina] = [newMember(sam, 'Sam'), newMember(cee, 'Cee'), newMember(nina, 'Nina')];
   const a = await seedGroup(db, 'grpa', olive, [aOlive, aSam, aCee, aNina]);
-  const [bBen, bOlive, bDee] = [newMember(ben, 'Ben', { role: 'organizer' }), newMember(olive, 'Olive'), newMember(null, 'Dee')];
+  const [bBen, bOlive, bDee] = [newMember(ben, 'Ben', { role: 'owner' }), newMember(olive, 'Olive'), newMember(null, 'Dee')];
   const b = await seedGroup(db, 'grpb', olive, [bBen, bOlive, bDee]);
   const budget = { currency: 'EUR', amount: 2000, maxAmount: 3000 } as const;
   await seedEdition(db, a, 1, 'drawn', { budget, draw: assignments([[aSam, aOlive], [aOlive, aCee], [aCee, aSam]]) });

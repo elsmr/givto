@@ -47,6 +47,15 @@
     "remove-after": "{name} leaves the group. The names are drawn already: their Santa gets someone else, everyone else keeps their giftee.",
     "remove-confirm": "Remove {name}",
     "removed": "{name} removed",
+    "make-organizer": "Make organizer",
+    "made-organizer": "{name} is now an organizer",
+    "unmake-organizer": "Remove as organizer",
+    "unmade-organizer": "{name} is no longer an organizer",
+    "make-owner": "Make owner",
+    "make-owner-title": "Make {name} the owner?",
+    "make-owner-description": "{name} gets to choose the organizers and can delete the group. You stay on as an organizer.",
+    "make-owner-confirm": "Make {name} the owner",
+    "made-owner": "{name} is now the owner",
     "cancel": "Keep",
     "drawn": "Names are drawn, so who's in can't change here anymore. People who join now are slotted in.",
     "locked": "It's locked in, so who's in can't change here anymore. People who join now are in too."
@@ -69,7 +78,8 @@
     "AVOID_PREVIOUS": "With \"not the same as last time\" a draw would be impossible for these people.",
     "EDITION_CLOSED": "This edition is over, so it can't be changed anymore.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
-    "ORGANIZER_CANNOT_LEAVE": "The organizer can't be removed.",
+    "OWNER_CANNOT_LEAVE": "The owner can't be removed.",
+    "NOT_OWNER": "Only the owner can do this.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   }
 }
