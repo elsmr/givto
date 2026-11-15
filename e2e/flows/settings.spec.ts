@@ -47,7 +47,7 @@ test('rename the group, change the dates, the call link and the budget', async (
     await editionSettings.getByLabel("When's gift day?").fill('2099-12-20');
     await editionSettings.getByRole('button', { name: 'Time' }).click();
     await editionSettings.getByLabel('Time').fill('18:00');
-    await editionSettings.getByRole('button', { name: 'Celebrating online?' }).click();
+    await editionSettings.getByRole('radio', { name: 'Online' }).check();
     await expect(editionSettings.getByRole('radio', { name: 'Online' })).toBeChecked();
     await editionSettings.getByLabel('Video call link').fill(CALL);
     await editionSettings.getByLabel('Wishlists ready by').fill('2099-12-01');

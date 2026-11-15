@@ -56,31 +56,14 @@ export const GiftDayFields = ({ draft, today, onChange }: FieldsProps & { today:
 const exchangeIcons = { inPerson: Users, online: Video };
 
 /**
- * In person unless said otherwise, so the choice only shows once asked for; asking picks online.
- * Online is any posted mode: addresses and a video call link. 'both' is no longer offered but kept when already set.
+ * In person or online. Online is any posted mode: addresses and a video call link. 'both' is no longer offered but
+ * kept when already set.
  */
 export const ExchangeField = ({ draft, onChange }: FieldsProps) => {
   const t = useTranslations('create.details.exchange');
-  const [asked, setAsked] = useState(false);
   const online = isPosted(draft);
   const choose = (next: 'inPerson' | 'online') => onChange({ exchangeMode: next === 'inPerson' ? 'inPerson' : online ? draft.exchangeMode : 'byPost' });
 
-  if (!asked && !online) {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        className="w-fit"
-        onClick={() => {
-          setAsked(true);
-          choose('online');
-        }}
-      >
-        {t('ask')}
-      </Button>
-    );
-  }
   return (
     <FieldSet className="gap-2">
       <FieldLegend variant="label">{t('label')}</FieldLegend>
@@ -98,7 +81,6 @@ export const ExchangeField = ({ draft, onChange }: FieldsProps) => {
                 name="exchange-mode"
                 value={option}
                 checked={checked}
-                autoFocus={asked && checked}
                 onChange={() => choose(option)}
                 className="absolute inset-0 cursor-pointer appearance-none opacity-0"
               />
