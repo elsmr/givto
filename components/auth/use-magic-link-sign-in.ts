@@ -27,10 +27,12 @@ export const useMagicLinkSignIn = () => {
       setFailed(true);
       return;
     }
-    void authClient.$fetch('/magic-link/verify-token', { method: 'POST', body: { token } }).then(({ error }) => {
+    void authClient.$fetch('/magic-link/verify-token', { method: 'POST', body: { token } }).then(async ({ error }) => {
+      // A used link clicked again while signed in (a double click in the mail app) goes on as if it worked.
+      const signedIn = !error || Boolean((await authClient.getSession()).data);
       // A full load: the language redirect on this page may still be in flight.
-      if (error) setFailed(true);
-      else location.replace(target);
+      if (signedIn) location.replace(target);
+      else setFailed(true);
     });
   }, []);
 

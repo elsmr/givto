@@ -11,10 +11,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
+import { HttpUrl } from '@/lib/schema/common';
 import { drawsNames, EditionTitle, isBeforeDraw } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
+import * as v from 'valibot';
 import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-draft';
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
@@ -27,6 +29,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
   const refresh = useRefreshEdition(groupSlug);
   const [draft, setDraft] = useState(() => draftFromEdition(edition));
   const [titleIssue, setTitleIssue] = useState<FieldIssue | null>(null);
+  const [callUrlInvalid, setCallUrlInvalid] = useState(false);
   const [confirmingHideBoards, setConfirmingHideBoards] = useState(false);
   const save = useMutation(
     trpc.settings.updateEdition.mutationOptions({
@@ -45,7 +48,11 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
     event.preventDefault();
     const issue = fieldIssue(EditionTitle, draft.title);
     setTitleIssue(issue);
-    if (issue) return;
+    // Only checked when it's sent: the form hides it, and leaves it out, unless gift day is by post.
+    const callUrl = toEditionInput(draft, groupSlug, edition.number).giftDay?.callUrl;
+    const callUrlBad = callUrl !== undefined && !v.is(HttpUrl, callUrl);
+    setCallUrlInvalid(callUrlBad);
+    if (issue || callUrlBad) return;
     if (hidesBoards) setConfirmingHideBoards(true);
     else saveDraft();
   };
@@ -74,7 +81,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
         {drawsNames(draft) && <ExchangeField draft={draft} onChange={update} />}
         {drawsNames(draft) && draft.exchangeMode !== 'inPerson' && draft.giftDate && (
-          <Field>
+          <Field data-invalid={callUrlInvalid ? 'true' : undefined}>
             <FieldLabel htmlFor="edition-call-url" optional hint={t('edition.call-url-help')}>{t('edition.call-url')}</FieldLabel>
             <Input
               id="edition-call-url"
@@ -83,8 +90,11 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
               placeholder="https://"
               maxLength={2000}
               value={draft.callUrl}
+              aria-invalid={callUrlInvalid ? 'true' : undefined}
+              aria-describedby={callUrlInvalid ? 'edition-call-url-error' : undefined}
               onChange={(event) => update({ callUrl: event.target.value })}
             />
+            {callUrlInvalid && <FieldError id="edition-call-url-error">{t('edition.call-url-invalid')}</FieldError>}
           </Field>
         )}
         {drawsNames(draft) && (

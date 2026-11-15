@@ -3,6 +3,7 @@ import { JoinFlow } from '@/components/join/join-flow';
 import { JoinMeta } from '@/components/join/join-meta';
 import { JoinUnavailable } from '@/components/join/join-unavailable';
 import { AppShell } from '@/components/shell/app-shell';
+import { getAuth } from '@/lib/server/auth';
 import { getDb } from '@/lib/server/db';
 import { requireEnv } from '@/lib/server/env';
 import { preferredLocale } from '@/lib/server/locale';
@@ -15,6 +16,7 @@ import {
   type JoinPreview,
 } from '@/lib/server/join-preview';
 import { loadMessages } from '@/messages/load';
+import { fromNodeHeaders } from 'better-auth/node';
 import type { GetServerSideProps } from 'next';
 
 type JoinPageProps = {
@@ -48,7 +50,13 @@ export const getServerSideProps: GetServerSideProps<JoinPageProps> = async ({ pa
   const slug = asString(params?.slug) ?? '';
   const invite = asString(query.invite);
   const token = invite ?? asString(query.token);
-  const db = await getDb();
+  const [db, session] = await Promise.all([getDb(), getAuth().api.getSession({ headers: fromNodeHeaders(req.headers) })]);
+  // Members come back through used invites and the join link: straight to the group.
+  const isMember = async (userId: string) =>
+    (await db.groups.countDocuments({ slug, deletedAt: { $exists: false }, members: { $elemMatch: { userId, status: 'joined' } } }, { limit: 1 })) > 0;
+  if (session && (await isMember(session.user.id))) {
+    return { redirect: { destination: `/g/${slug}`, permanent: false } };
+  }
   const found = invite ? await findPendingInvite(db, slug, invite) : null;
   const group = !invite && token ? await findGroupByJoinLink(db, slug, token) : null;
   const preview = found ? invitePreview(found) : group ? joinLinkPreview(group) : null;

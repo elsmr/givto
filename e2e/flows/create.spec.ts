@@ -11,18 +11,19 @@ const enterCode = async (page: Page, email: string, secrets: string[]) => {
   await page.getByLabel('6-digit code').fill(code);
 };
 
-/** Signed out on /new → share screen; returns the join link it shows. */
+/** Signed out on /new, three steps (details, name and email, code) → share screen; returns the join link it shows. */
 const createSecretSanta = async (page: Page, name: string, email: string, secrets: string[]) => {
   secrets.push(email);
   await page.goto('/new');
+  await expect(page.getByText('Step 1 of 3')).toBeVisible();
   await page.getByLabel("What's your Secret Santa called?").fill(name);
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByLabel('Your name')).toHaveCount(0);
+  await expect(page.getByText('Step 2 of 3')).toBeVisible();
+  await page.getByLabel('Your name').fill('Ann');
   await page.getByLabel('Your email').fill(email);
   await page.getByRole('button', { name: 'Send me a code' }).click();
+  await expect(page.getByText('Step 3 of 3')).toBeVisible();
   await enterCode(page, email, secrets);
-  await page.getByRole('button', { name: 'Create Secret Santa' }).click();
-  await page.getByLabel('Your name').fill('Ann');
   await page.getByRole('button', { name: 'Create Secret Santa' }).click();
   await expect(page.getByRole('heading', { level: 1, name: `${name} is ready!` })).toBeVisible();
   const link = await page.getByLabel('Join link').inputValue();
@@ -184,6 +185,20 @@ test('joining under a name someone in the group already has: the joiner picks on
   await expect(page).toHaveURL(`/g/${group.slug}`);
   expect(ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).members.map((m) => m.name)).toEqual(['Ann', 'Ann B']);
   expect(ok(await other.trpc.query('account.get')).name).toBe('Ann');
+});
+
+test('a member opening the join link or their used email invite goes straight to the group', async ({ page, signIn, signInPage }) => {
+  const [ann, dee] = await Promise.all([signIn('ann'), signIn('dee')]);
+  const group = ok(await ann.trpc.mutate('group.create', { name: 'Again', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, email: dee.email }));
+  const invite = await inviteTokenFrom(dee.email);
+  ok(await dee.trpc.mutate('invite.accept', { groupSlug: group.slug, token: invite, name: 'Dee' }));
+  await signInPage(page, dee);
+  await page.goto(`/g/${group.slug}/join?invite=${invite}`);
+  await expect(page).toHaveURL(`/g/${group.slug}`);
+  await page.goto(`/g/${group.slug}/join?token=${group.joinToken}`);
+  await expect(page).toHaveURL(`/g/${group.slug}`);
+  await expect(page.getByRole('heading', { level: 1, name: 'Again' })).toBeVisible();
 });
 
 test('joining with a typed name someone in the group already has: what was typed stays to add an initial to', async ({ page, signIn, signInPage }) => {

@@ -49,6 +49,9 @@ test('rename the group, change the dates, the call link and the budget', async (
     await editionSettings.getByLabel('Time').fill('18:00');
     await editionSettings.getByRole('radio', { name: 'Online' }).check();
     await expect(editionSettings.getByRole('radio', { name: 'Online' })).toBeChecked();
+    await editionSettings.getByLabel('Video call link').fill('javascript:alert(1)');
+    await editionSettings.getByRole('button', { name: 'Save' }).click();
+    await expect(editionSettings.getByLabel('Video call link')).toHaveAccessibleDescription('Enter a link starting with https://.');
     await editionSettings.getByLabel('Video call link').fill(CALL);
     await editionSettings.getByLabel('Wishlists ready by').fill('2099-12-01');
     await editionSettings.getByRole('button', { name: 'Budget' }).click();
@@ -140,6 +143,7 @@ test('keep apart: a stuck row names invited people too', async ({ page, signIn, 
   const standIns = ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).members.filter((m) => m.status === 'invited').map((m) => m.name);
   await signInPage(page, ann);
   await page.goto(`/g/${group.slug}/settings`);
+  await expect(settingsGroup(page, 'People').getByRole('button', { name: `Send invite again to ${standIns[0]}`, exact: true })).toBeVisible();
   const keepApart = settingsGroup(page, 'The draw').getByRole('group', { name: 'Keep apart' });
   const row1 = keepApart.getByRole('group', { name: 'Row 1' });
   await keepApart.getByRole('button', { name: 'Add a row' }).click();
@@ -226,7 +230,7 @@ test('the owner makes Bob an organizer, then the owner; Ann can no longer delete
   await row('Bob').getByRole('button', { name: 'Make organizer' }).click();
   await expect(page.getByText('Bob is now an organizer')).toBeVisible();
   await expect(row('Bob').getByText('Organizer', { exact: true })).toBeVisible();
-  await expect(row('Bob').getByRole('button', { name: 'Remove', exact: true })).toBeVisible();
+  await expect(row('Bob').getByRole('button', { name: 'Remove Bob', exact: true })).toBeVisible();
 
   await row('Bob').getByRole('button', { name: 'Make owner' }).click();
   await page.getByRole('dialog', { name: 'Make Bob the owner?' }).getByRole('button', { name: 'Make Bob the owner' }).click();
