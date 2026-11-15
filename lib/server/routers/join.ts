@@ -5,7 +5,7 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findGroupByJoinLink, joinLinkPreview } from '../join-preview';
-import { addToCurrentEdition, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, isInvitedAs, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
 import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
@@ -31,7 +31,7 @@ export const joinRouter = router({
 
   /**
    * Join with the link after verifying the email (the session). Same account = same member;
-   * a pending email invite for the same address becomes this member (45).
+   * a pending email invite for the same address becomes this member (45), also once the invite ran out and is gone (110).
    */
   accept: authedProcedure
     .input(v.object({ ...LinkInput.entries, name: v.optional(PersonName) }))
@@ -45,14 +45,11 @@ export const joinRouter = router({
       if (existing && placeHolding.includes(existing.status)) {
         return { slug: group.slug, status: existing.status };
       }
-      const invite = existing
-        ? null
-        : await ctx.db.invites.findOne(
-            { groupId: group._id, email: ctx.user.email.toLowerCase() },
-            { sort: { createdAt: -1 } }
-          );
+      const email = ctx.user.email.toLowerCase();
+      const invite = existing ? null : await ctx.db.invites.findOne({ groupId: group._id, email }, { sort: { createdAt: -1 } });
+      const invitedEarlier = group.members.find((m) => isInvitedAs(email)(m) && m.status === 'invited');
       // Someone rejoining keeps what they showed here before; anyone new, invitees included, starts with nothing shown.
-      const reusedId = existing?.id ?? invite?.memberId;
+      const reusedId = existing?.id ?? invite?.memberId ?? invitedEarlier?.id;
       const reused = group.members.find((m) => m.id === reusedId);
       if (reused && refusedByLink(reused)) throw new AppError('JOIN_LINK_INVALID');
       const profile = await memberProfile(ctx.db, ctx.user.id, input.name, (name) => nameTaken(group, name, reusedId));

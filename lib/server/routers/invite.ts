@@ -8,7 +8,17 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findPendingInvite, invitePreview } from '../join-preview';
-import { addToCurrentEdition, currentEdition, hashToken, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
+import {
+  addToCurrentEdition,
+  currentEdition,
+  hashToken,
+  invitedAs,
+  isInvitedAs,
+  memberProfile,
+  nameTaken,
+  placeHolding,
+  randomToken,
+} from '../membership';
 import { sendMail } from '../mail';
 import { isSuppressed } from '../mail/suppression';
 import { inviteUrl } from '../mail/urls';
@@ -22,10 +32,6 @@ const INVITES_PER_GROUP_PER_DAY = { window: 24 * 60 * 60, max: 50 };
 const INVITES_PER_ADDRESS_PER_DAY = { window: 24 * 60 * 60, max: 3 };
 
 const TokenInput = v.object({ groupSlug: Slug, token: v.string() });
-
-/** An email invitee who hasn't joined: no account, not managed, and their email for a name (110). */
-const invitedAs = (email: string) => ({ name: email, userId: { $exists: false }, managedBy: { $exists: false } });
-const isInvitedAs = (email: string) => (m: Member) => m.name === email && !m.userId && !m.managedBy;
 
 export const inviteRouter = router({
   /**
@@ -57,8 +63,9 @@ export const inviteRouter = router({
       if (reused) {
         await ctx.db.invites.deleteMany({ memberId, usedAt: { $exists: false } });
         // The draw reads how long the invite runs from here (draw/rules.ts).
-        await ctx.db.groups.updateOne(
-          { _id: ctx.group._id, 'members.id': memberId },
+        // Not once they joined since `ctx.group` was read: that would make them invited again under their email.
+        const reinvited = await ctx.db.groups.updateOne(
+          { _id: ctx.group._id, members: { $elemMatch: { id: memberId, status: { $nin: placeHolding } } } },
           {
             // `removedAt` / `leftAt` stay until they accept: if they decline, the join link still sees them as removed or left (105).
             $set: {
@@ -70,6 +77,7 @@ export const inviteRouter = router({
             },
           }
         );
+        if (reinvited.matchedCount === 0) throw new AppError('ALREADY_MEMBER');
       } else {
         const member: Member = {
           id: memberId,

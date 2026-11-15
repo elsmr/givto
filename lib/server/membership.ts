@@ -19,6 +19,10 @@ export const ownerOf = (group: Group): Member | undefined => group.members.find(
 /** Statuses that hold a place in the group (member cap, 45). */
 export const placeHolding: Member['status'][] = ['joined', 'requested'];
 
+/** An email invitee who hasn't joined: no account, not managed, and their email for a name (110). */
+export const invitedAs = (email: string) => ({ name: email, userId: { $exists: false }, managedBy: { $exists: false } });
+export const isInvitedAs = (email: string) => (m: Member) => m.name === email && !m.userId && !m.managedBy;
+
 /** The newest edition: the one the group home shows. */
 export const currentEdition = (db: Collections, groupId: string) =>
   db.editions.findOne({ groupId }, { sort: { number: -1 } });

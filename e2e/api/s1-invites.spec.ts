@@ -49,6 +49,20 @@ test('invited email joining via the link = the same person', async ({ signIn }) 
   expect(members.find((m) => m.name === 'Hal')?.status).toBe('joined');
 });
 
+test('an invitee whose invite ran out joining by link = the same person', async ({ signIn, db }) => {
+  const [ann, hal] = await Promise.all([signIn('ann'), signIn('hal')]);
+  const { slug, joinToken: token } = await createFamily(ann);
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: hal.email }));
+  const { _id: groupId } = (await db.groups.findOne({ slug }))!;
+  // The TTL index removes an invite once it runs out.
+  await db.invites.deleteMany({ groupId });
+  expect(ok(await hal.trpc.mutate('join.accept', { groupSlug: slug, token, name: 'Hal' })).status).toBe('joined');
+  const { members } = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
+  expect(members.filter((m) => m.email === hal.email || m.name === hal.email)).toEqual([
+    expect.objectContaining({ status: 'joined', name: 'Hal' }),
+  ]);
+});
+
 test('keep apart: rows saved, overlapping too; impossible or repeated refused', async ({ signIn }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const group = await createFamily(ann);
@@ -122,6 +136,29 @@ test('two invites to the same new address at once make one person', async ({ sig
   await Promise.all([1, 2, 3].map(() => ann.trpc.mutate('invite.send', { groupSlug: slug, email: jo })));
   const { members } = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
   expect(members.filter((m) => m.email === jo)).toHaveLength(1);
+  expect(await mailsTo(jo), 'the sends that found them added return without a mail').toHaveLength(1);
+});
+
+test('a re-invite racing the invitee joining by link leaves them joined under their name', async ({ signIn }) => {
+  const ann = await signIn('ann');
+  const group = await createFamily(ann);
+  const { slug, joinToken: token } = group;
+  const invitees = await Promise.all(['kim', 'lou', 'max', 'ned', 'oli', 'pia'].map((name) => signIn(name)));
+  for (const invitee of invitees) ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: invitee.email }));
+  const resends = await Promise.all(
+    invitees.map(async (invitee, i) => {
+      const [resent] = await Promise.all([
+        ann.trpc.mutate('invite.send', { groupSlug: slug, email: invitee.email }),
+        invitee.trpc.mutate('join.accept', { groupSlug: slug, token, name: `Invitee ${i}` }),
+      ]);
+      return codeOf(resent) ?? 'ok';
+    })
+  );
+  expect(resends.every((code) => code === 'ok' || code === 'ALREADY_MEMBER'), resends.join(',')).toBe(true);
+  const { members } = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
+  for (const [i, invitee] of invitees.entries()) {
+    expect(members.filter((m) => m.email === invitee.email)).toEqual([expect.objectContaining({ status: 'joined', name: `Invitee ${i}` })]);
+  }
 });
 
 test('invites rate limited per organizer', async ({ signIn, secrets }) => {
