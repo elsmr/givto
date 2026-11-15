@@ -1,126 +1,76 @@
-import { cn } from '@/lib/utils';
-import { Gamepad2, Gift, Headphones, type LucideIcon, Smile } from 'lucide-react';
-import { useReducedMotion } from 'motion/react';
-import { useAnimate } from 'motion/react-mini';
-import { useEffect } from 'react';
+import { Coffee, Gamepad2, Headphones, type LucideIcon } from 'lucide-react';
+import { Card, fade, Gift, ground, head, hidden, hop, move, Person, type Pose, pop, Stage, type Track, useLoop } from './parts';
 
-type Track = [seconds: number, value: string | number][];
-type Part = { transform?: Track; opacity?: Track };
-
-const LOOP = 8.6;
-const at = (x: number, y: number) => `translate(${x}px, ${y}px)`;
-const held = { a: at(25, 48), c: at(117, 48), b: at(209, 48) };
-const pile = { left: at(104, 22), right: at(130, 22), top: at(117, 2) };
-
-const bump = (x: number, ...starts: number[]): Part => ({
-  transform: starts.flatMap((start): Track => [
-    [start, at(x, 76)],
-    [start + 0.15, at(x, 70)],
-    [start + 0.3, at(x, 76)],
-  ]),
-});
-const unwrap = (start: number): Part => ({
-  transform: [[start, 'translateY(0) rotate(0deg)'], [start + 0.3, 'translateY(-12px) rotate(-25deg)']],
-  opacity: [[start, 1], [start + 0.3, 0]],
-});
-const reveal = (start: number): Part => ({ transform: [[start, 'scale(0.4)'], [start + 0.3, 'scale(1)']] });
-
-const scene: Record<string, Part> = {
-  personA: bump(22, 0.5, 2.5, 5.4),
-  personB: bump(206, 1.0, 4.2),
-  personC: bump(114, 1.5),
-  gift1: { transform: [[0.5, held.a], [1.0, pile.left]] },
-  gift3: { transform: [[1.0, held.b], [1.5, pile.right], [5.5, pile.right], [6.0, held.a]] },
-  gift2: {
-    transform: [[1.5, held.c], [2.0, pile.top], [2.6, pile.top], [3.1, held.a], [4.3, held.a], [5.0, held.b]],
-  },
-  wrap2: unwrap(3.3),
-  item2: reveal(3.3),
-  wrap3: unwrap(6.2),
-  item3: reveal(6.2),
-};
-
+const LOOP = 9.4;
+const [a, b, c] = [40, 128, 216];
 const people = [
-  { part: 'personA', fill: 'bg-coral' },
-  { part: 'personB', fill: 'bg-mint' },
-  { part: 'personC', fill: 'bg-yellow' },
+  { x: a, fill: 'fill-primary' },
+  { x: b, fill: 'fill-yellow' },
+  { x: c, fill: 'fill-mint' },
 ];
-const gifts: { id: number; fill: string; Item: LucideIcon }[] = [
-  { id: 1, fill: 'bg-coral', Item: Gamepad2 },
-  { id: 3, fill: 'bg-mint', Item: Headphones },
-  { id: 2, fill: 'bg-yellow', Item: Gamepad2 },
+const pile = { left: { x: 116, y: 34 }, top: { x: 128, y: 13 }, right: { x: 140, y: 34 } };
+const origin: Pose = { x: 0, y: 0 };
+
+const toss = (start: number, from: Pose, to: Pose): Track => move(start, 0.5, from, to, { lift: 14 });
+const unwrap = (start: number): Record<'wrap' | 'item', Track> => ({
+  wrap: [[start, origin], ...move(start, 0.3, origin, { x: 0, y: -10, opacity: 0, scale: 1.3, rotate: -20 })],
+  item: [[start, hidden(origin)], ...pop(start + 0.1, origin)],
+});
+
+// Each gift is a person's, brought to the pile, then taken (and stolen) on turns that run left, middle, left, right.
+const gifts: { id: string; Item: LucideIcon; opens: number; track: Track }[] = [
+  {
+    id: 'gamepad',
+    Item: Gamepad2,
+    opens: 2.9,
+    track: [...pop(0.3, head(b)), ...toss(1.2, head(b), pile.top), ...toss(2.1, pile.top, head(a)), ...toss(3.8, head(a), head(b))],
+  },
+  { id: 'headphones', Item: Headphones, opens: 5.9, track: [...pop(0.3, head(a)), ...toss(0.6, head(a), pile.left), ...toss(5.1, pile.left, head(a))] },
+  { id: 'coffee', Item: Coffee, opens: 7.4, track: [...pop(0.3, head(c)), ...toss(0.9, head(c), pile.right), ...toss(6.6, pile.right, head(c))] },
 ];
 
-const endFrame = (part: string) => {
-  const { transform, opacity } = scene[part] ?? {};
-  return { transform: transform?.at(-1)?.[1] as string | undefined, opacity: opacity?.at(-1)?.[1] };
+const tracks: Record<string, Track> = {
+  'person-0': [...hop(0.6, ground(a)), ...hop(2.0, ground(a)), ...hop(5.0, ground(a))],
+  'person-1': [...hop(1.2, ground(b)), ...hop(3.7, ground(b))],
+  'person-2': [...hop(0.9, ground(c)), ...hop(6.5, ground(c))],
+  ...Object.fromEntries(
+    gifts.flatMap(({ id, opens, track }): [string, Track][] => {
+      const { wrap, item } = unwrap(opens);
+      return [
+        [`gift-${id}`, [...track, ...fade(8.7, track.at(-1)![1])]],
+        [`wrap-${id}`, wrap],
+        [`item-${id}`, item],
+      ];
+    }),
+  ),
 };
 
 /**
- * Wordless loop of a white elephant: three people drop wrapped gifts on a shared pile, the first
- * opens one, the second steals it, the first unwraps another. Reduced motion: the final frame.
+ * Wordless loop of a white elephant, above the explanation in the kind's (?) popover. Everyone puts
+ * a wrapped gift on the pile; the first unwraps one, the second steals it, so the first goes again;
+ * the last takes what's left. Reduced motion: everyone holding one opened gift.
  */
 export const WhiteElephantAnimation = () => {
-  const reduced = useReducedMotion();
-  const [scope, animate] = useAnimate<HTMLDivElement>();
-
-  useEffect(() => {
-    if (reduced || !scope.current) return;
-    const options = { duration: LOOP, ease: 'easeInOut', repeat: Infinity } as const;
-    const controls = Object.entries(scene).flatMap(([part, tracks]) =>
-      Object.entries(tracks).map(([property, keys]) => {
-        const all: Track = [[0, keys[0][1]], ...keys, [LOOP, keys.at(-1)![1]]];
-        return animate(
-          `[data-part=${part}]`,
-          { [property]: all.map(([, value]) => value) },
-          { ...options, times: all.map(([time]) => time / LOOP) },
-        );
-      }),
-    );
-    controls.push(
-      animate('[data-part=gifts]', { opacity: [0, 1, 1, 0] }, { ...options, times: [0, 0.3 / LOOP, 8 / LOOP, 8.4 / LOOP] }),
-    );
-    return () => controls.forEach((control) => control.stop());
-  }, [reduced, animate, scope]);
-
+  const scope = useLoop(tracks, LOOP, 8.2);
   return (
-    <div aria-hidden="true" className="flex h-28 w-full justify-center overflow-hidden border-2 border-outline bg-page">
-      <div ref={scope} className="relative h-full w-64 shrink-0">
-        {people.map(({ part, fill }) => (
-          <span
-            key={part}
-            data-part={part}
-            style={endFrame(part)}
-            className={cn(
-              'absolute top-0 left-0 flex size-7 items-center justify-center rounded-full border-2 border-outline shadow-sm',
-              fill,
-            )}
-          >
-            <Smile className="size-4.5" strokeWidth={2.25} />
-          </span>
-        ))}
-        <div data-part="gifts" className="absolute inset-0">
-          {gifts.map(({ id, fill, Item }) => (
-            <span
-              key={id}
-              data-part={`gift${id}`}
-              style={endFrame(`gift${id}`)}
-              className="absolute top-0 left-0 size-5.5 border-2 border-outline bg-surface shadow-sm"
-            >
-              <span data-part={`item${id}`} style={endFrame(`item${id}`)} className="flex size-full items-center justify-center">
-                <Item className="size-3.5" strokeWidth={2.25} />
-              </span>
-              <span
-                data-part={`wrap${id}`}
-                style={endFrame(`wrap${id}`)}
-                className={cn('absolute -inset-0.5 flex items-center justify-center border-2 border-outline', fill)}
-              >
-                <Gift className="size-3.5" strokeWidth={2.25} />
-              </span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
+    <Stage ref={scope}>
+      {people.map(({ fill }, i) => (
+        <g key={i} data-part={`person-${i}`}>
+          <Person fill={fill} />
+        </g>
+      ))}
+      {gifts.map(({ id, Item }) => (
+        <g key={id} data-part={`gift-${id}`}>
+          <g data-part={`item-${id}`}>
+            <Card width={18} height={18}>
+              <Item x={-6} y={-6} size={12} strokeWidth={2.25} className="text-outline" />
+            </Card>
+          </g>
+          <g data-part={`wrap-${id}`}>
+            <Gift />
+          </g>
+        </g>
+      ))}
+    </Stage>
   );
 };
