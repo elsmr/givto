@@ -33,7 +33,7 @@ export const PhaseStepper = ({ phase, kind, className }: { phase: Phase; kind?: 
           <li
             key={step}
             aria-current={index === current ? 'step' : undefined}
-            className={cn('flex min-w-0 flex-col gap-1.5 text-xs leading-tight font-bold sm:text-sm', index > current && 'font-semibold text-muted')}
+            className={cn('flex min-w-0 flex-col gap-1.5 text-xs leading-tight font-bold sm:text-sm', index !== current && 'text-muted', index > current && 'font-semibold')}
           >
             <span aria-hidden="true" className={stepSegmentClass(index, current)} />
             <span className="flex min-w-0 items-center gap-1">
