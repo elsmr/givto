@@ -2,7 +2,7 @@
 // on /live (95) until the Santa is shown; the presenter shows the Santa, the guess and everyone's tally; the group page
 // follows; the organizer can switch it off.
 import { expect, ok, test } from '../fixtures';
-import { drawnGroup } from '../api/s6-helpers';
+import { drawnGroup, presenterSaw } from '../api/s6-helpers';
 
 test('guess and change it; phones guess at the turn; the presenter shows "From … · You guessed …" and the tally', async ({ page, browser, signIn, signInPage, db }) => {
   // Walks the presenter step by step: too slow for the default timeout on a busy machine.
@@ -149,9 +149,9 @@ test('done without the big reveal: the group page lists only the Santas shown at
   const group = await drawnGroup(people, 'Kept secret');
   const at = { groupSlug: group.slug, editionNumber: 1 };
   ok(await ann.trpc.mutate('manage.startGiftDay', at));
-  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }));
-  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'spin', turnsTaken: 0 }));
-  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'santa', turnsTaken: 0 }));
+  for (const action of ['start', 'spin', 'santa'] as const) {
+    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!) }));
+  }
   ok(await ann.trpc.mutate('manage.finishGiftDay', at));
 
   await signInPage(page, bob);

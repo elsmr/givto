@@ -1,11 +1,11 @@
 import { expect, ok, test, type User } from '../fixtures';
-import { code, drawnGroup, memberIdOf } from './s6-helpers';
+import { code, drawnGroup, memberIdOf, presenterSaw } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
 
 const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' | 'back') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
-  return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
+  return ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(view.unwrapOrder!) });
 };
 
 const showFirstSanta = async (ann: User, at: Input) => {

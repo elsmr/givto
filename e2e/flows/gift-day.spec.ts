@@ -4,7 +4,7 @@
 import type { Locator, Page } from '@playwright/test';
 import type { UnwrapMode } from '@/lib/schema/edition';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
-import { drawnGroup } from '../api/s6-helpers';
+import { drawnGroup, presenterSaw } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
 
 /**
@@ -376,13 +376,178 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
     await expect(page.getByText('Final steal', { exact: true })).toBeVisible();
     // Their name on the stage, and again on the table with the gift they hold.
     await expect(shownName(page, p0)).toHaveCount(2);
+    for (const key of ['ArrowRight', ' ', 'PageDown']) await page.keyboard.press(key);
+    await expect(page.getByText('Final steal', { exact: true }), 'no key or clicker makes the final choice').toBeVisible();
     await button(page, 'Keep their gift').click();
     await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
-    await expect(table.getByRole('listitem')).toHaveText([
-      `Gift 1Red scarf${p1}Stolen once`,
-      `Gift 2${p3}Stolen once`,
-      `Gift 3${p2}Not stolen yet`,
-      `Gift 4${p0}Not stolen yet`,
-    ]);
+    await expect(table.getByRole('listitem')).toHaveText(finalTable(p0, p1, p2, p3));
   });
+
+  await test.step('who has which gift: on the group page after the swap, once done, and on the past edition', async () => {
+    const [p0, p1, p2, p3] = ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.people.map((p) => p.name);
+    const table = page.getByRole('list', { name: 'Who has which gift' }).getByRole('listitem');
+    await page.goto(`/g/${slug}`);
+    await expect(page.getByRole('heading', { level: 2, name: 'Who has which gift' })).toBeVisible();
+    await expect(table).toHaveText(finalTable(p0, p1, p2, p3));
+    ok(await ann.trpc.mutate('manage.finishGiftDay', at));
+    await page.reload();
+    await expect(table).toHaveText(finalTable(p0, p1, p2, p3));
+    ok(await ann.trpc.mutate('edition.startNext', { groupSlug: slug }));
+    await page.goto(`/g/${slug}/1`);
+    await expect(page.getByText(/an earlier edition/)).toBeVisible();
+    await expect(table).toHaveText(finalTable(p0, p1, p2, p3));
+  });
+});
+
+const finalTable = (p0: string, p1: string, p2: string, p3: string) => [
+  `Gift 1Red scarf${p1}Stolen once`,
+  `Gift 2${p3}Stolen once`,
+  `Gift 3${p2}Not stolen yet`,
+  `Gift 4${p0}Not stolen yet`,
+];
+
+test('two presenter screens and a phone: each follows every step, Previous included', async ({ page, newPage, signIn, signInPage, db }) => {
+  test.slow();
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const giftDay = await giftDayGroup(db, people, 'Two screens', { mode: 'allAtOnce', counts: [null, null, null], reveal: false });
+  const [first] = giftDay.names;
+  await signInPage(page, ann);
+  const second = await newPage();
+  await signInPage(second, ann);
+  const phone = await newPage();
+  await signInPage(phone, bob);
+  await openPresenter(page, giftDay.slug);
+  await openPresenter(second, giftDay.slug);
+  await phone.goto(`/g/${giftDay.slug}/live`);
+  await skipSpin(page);
+
+  await button(page, 'Next').click();
+  await expect(second.getByRole('heading', { name: "Who's next?" })).toBeVisible();
+  await button(page, 'Spin').click();
+  await expect(shownName(second, first)).toBeVisible();
+  await expect(phone.getByText(`Now unwrapping: ${first}`)).toBeVisible();
+
+  await button(page, 'Next').click();
+  await expect(second.getByRole('heading', { name: "Who's next?" })).toBeVisible();
+  await expect(phone.getByText("Who's next? The reel is spinning…")).toBeVisible();
+  await button(page, 'Previous').click();
+  await expect(shownName(second, first)).toBeVisible();
+  await expect(phone.getByText(`Now unwrapping: ${first}`)).toBeVisible();
+
+  await button(second, 'Next').click();
+  await expect(page.getByRole('heading', { name: "Who's next?" })).toBeVisible();
+  await expect(second.getByText(/Reload the page/)).toHaveCount(0);
+});
+
+test('White Elephant down to 2 people on gift day: the presenter says it needs 3 and offers to finish gift day', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', {
+      name: 'Too few',
+      organizerName: 'Ann',
+      timeZone: 'Europe/Brussels',
+      giftDay: { date: '2099-12-24' },
+      exchangeMode: 'inPerson',
+      kind: 'whiteElephant',
+    })
+  );
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('draw.lockIn', at));
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await bob.trpc.mutate('membership.leave', { groupSlug: group.slug }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}/present`);
+
+  await expect(page.getByText('A White Elephant needs at least 3 people. There are too few to play today.')).toBeVisible();
+  await expect(button(page, 'Next')).toHaveCount(0);
+  await button(page, 'Finish gift day').click();
+  await page.getByRole('dialog', { name: 'Finish gift day now?' }).getByRole('button', { name: 'Finish gift day' }).click();
+  await expect(page.getByText('Gift day is over')).toBeVisible();
+  await expect(button(page, 'Finish gift day')).toHaveCount(0);
+});
+
+/** `last` ends above the controls, so nothing of it is behind them. */
+const expectAboveControls = (page: Page, last: Locator) =>
+  expect(async () => {
+    const [slide, controls] = await Promise.all([last.boundingBox(), button(page, 'Previous').locator('..').boundingBox()]);
+    expect(slide!.y + slide!.height).toBeLessThanOrEqual(controls!.y);
+  }).toPass();
+
+test('the presenter fits the screen: the controls stay in view with a long name and a full table', async ({ page, signIn, signInPage, isMobile }) => {
+  if (!isMobile) await page.setViewportSize({ width: 1280, height: 800 });
+  const people = await Promise.all(['ann', 'bob', 'cee', 'dan', 'eve', 'fay'].map((name) => signIn(name)));
+  const [ann] = people;
+  const longName = 'Maximiliana Rosalind Featherstonehaugh 🎄🎁';
+  const group = ok(
+    await ann.trpc.mutate('group.create', {
+      name: 'Fits',
+      organizerName: 'Ann',
+      timeZone: 'Europe/Brussels',
+      giftDay: { date: '2099-12-24' },
+      exchangeMode: 'inPerson',
+      kind: 'whiteElephant',
+    })
+  );
+  for (const [i, user] of people.slice(1).entries()) {
+    ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name: ['Bob', 'Cee', 'Dan', 'Eve', longName][i] }));
+  }
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('draw.lockIn', at));
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  const send = async (action: 'start' | 'spin' | 'open', label?: string) => {
+    const order = ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!;
+    return ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(order), ...(label && { label }) }));
+  };
+  // The long name goes last, after five gifts with long labels are on the table.
+  while (ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.people.at(-1)!.name !== longName) {
+    ok(await ann.trpc.mutate('giftday.shuffle', at));
+  }
+  await send('start');
+  for (let i = 0; i < 5; i++) {
+    if (!ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.currentShown) await send('spin');
+    await send('open', 'A very long description of what was in this wrapped gift box');
+  }
+  await signInPage(page, ann);
+  await page.goto(`/g/${at.groupSlug}/present`);
+  await expect(shownName(page, longName)).toBeVisible();
+  await expect(button(page, 'Previous')).toBeInViewport({ ratio: 1 });
+  await expect(button(page, 'Opened a new gift')).toBeInViewport({ ratio: 1 });
+  if (!isMobile) await expectAboveControls(page, page.getByText('1 gift still wrapped'));
+  else {
+    // A phone keeps the table in sight: Previous and Opened a new gift share a row, two gifts and what's in them above.
+    const [previous, open] = await Promise.all([button(page, 'Previous').boundingBox(), button(page, 'Opened a new gift').boundingBox()]);
+    expect(previous!.y).toBe(open!.y);
+    await expectAboveControls(page, page.getByRole('list', { name: 'Who has which gift' }).getByRole('listitem').nth(1).getByText(/^A very long description/));
+  }
+});
+
+test("the presenter fits the screen: the controls stay in view with someone's Santa, the tally and the leaderboard", async ({ page, signIn, signInPage, isMobile, db }) => {
+  if (!isMobile) await page.setViewportSize({ width: 1280, height: 800 });
+  const people = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
+  const [ann] = people;
+  const group = await drawnGroup(people, 'Santa fits');
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  const send = async (action: 'start' | 'spin' | 'santa') =>
+    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!) }));
+  await send('start');
+  const up = (await send('spin')).unwrapOrder!.current!.memberId;
+  const draw = await drawOf(db, group.slug, people);
+  const ids = people.map((user) => draw.memberIdOf(user));
+  for (const [i, user] of people.entries()) {
+    const pick = ids.find((id) => id !== up && id !== ids[i])!;
+    await user.trpc.mutate('guess.set', { ...at, rows: [{ gifteeMemberId: up, santaMemberId: pick }] });
+  }
+  await send('santa');
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}/present`);
+  await expect(page.getByText(/^From /)).toBeVisible();
+  await expect(page.getByRole('list', { name: "Everyone's guesses" })).toBeVisible();
+  await expect(button(page, 'Previous')).toBeInViewport({ ratio: 1 });
+  await expect(button(page, 'Next')).toBeInViewport({ ratio: 1 });
+  if (!isMobile) await expectAboveControls(page, page.getByRole('list', { name: 'Leaderboard' }));
 });

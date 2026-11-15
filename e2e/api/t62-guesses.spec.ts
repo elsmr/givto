@@ -4,7 +4,7 @@
 // Late joiners, removals, re-draws, export and account deletion.
 import { newId } from '@/lib/server/db';
 import { expect, mailsTo, ok, test, type TestDb, type User } from '../fixtures';
-import { code, drawnGroup, editionOf } from './s6-helpers';
+import { code, drawnGroup, editionOf, presenterSaw } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
 
@@ -31,7 +31,7 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
 
 const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' | 'more' | 'last' | 'back') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
-  return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
+  return ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(view.unwrapOrder!) });
 };
 
 test('a guess per giftee, changeable until that Santa is shown; nobody sees it before; scoreboard at the big reveal', async ({ signIn, db }) => {

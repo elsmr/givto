@@ -26,8 +26,9 @@ const Name = ({ name, small }: { name?: string; small?: boolean }) => (
     animate={{ scale: 1, opacity: 1 }}
     transition={{ type: 'spring', stiffness: 300, damping: 15 }}
     className={cn(
-      'max-w-full bg-yellow px-8 py-6 font-heading leading-none font-extrabold break-words text-ink bordered shadow-brand',
-      small ? 'text-[clamp(2.5rem,7vw,7rem)]' : 'text-[clamp(3rem,11vw,11rem)]'
+      'max-w-full bg-yellow font-heading leading-none font-extrabold wrap-anywhere text-ink bordered shadow-brand',
+      // Bounded by the height too, so a long name still leaves room for the rest of the slide on a laptop screen.
+      small ? 'px-6 py-3 text-[clamp(2.5rem,min(7vw,8dvh),7rem)]' : 'px-8 py-6 text-[clamp(3rem,min(11vw,16dvh),11rem)]'
     )}
   >
     {name}
@@ -57,7 +58,7 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, swap, onS
           {swap.final ? tSwap('final') : swap.robbed ? tSwap('robbed') : lastOne ? t('last-one') : tSwap('up')}
         </p>
         <Name name={order.current?.name} small />
-        <p className="text-xl text-muted sm:text-2xl">{tSwap(swap.final ? 'hint-final' : swap.stealable.length > 0 ? 'hint' : 'hint-open')}</p>
+        <p className="text-xl text-muted sm:text-2xl">{tSwap(swap.final ? (swap.stealable.length > 0 ? 'hint-final' : 'hint-final-none') : swap.stealable.length > 0 ? 'hint' : 'hint-open')}</p>
         <SwapTable swap={swap} stealable={swap.stealable} onSteal={onSteal} busy={busy} large />
       </>
     );
@@ -65,10 +66,11 @@ export const PresenterTurnSlide = ({ order, oneByOne, santa, guessing, swap, onS
   return (
     <>
       <Confetti />
-      <LogoAnimation variant="celebrate" className="size-24 sm:size-32" />
+      {/* Their Santa needs the room. */}
+      {!santa && <LogoAnimation variant="celebrate" className="size-24 sm:size-32" />}
       {lastOne && oneByOne && <p className="text-2xl font-semibold sm:text-4xl">{t('last-one')}</p>}
       <p className="text-2xl font-semibold sm:text-4xl">{oneByOne ? t('round', { round: order.round }) : t(lastOne ? 'last-one' : 'next-up')}</p>
-      <Name name={order.current?.name} />
+      <Name name={order.current?.name} small={Boolean(santa)} />
       {fromAll && <p className="text-3xl font-bold sm:text-5xl">{t('from-all')}</p>}
       {oneByOne && gifts !== null && <p className="text-2xl font-semibold sm:text-4xl">{t('gift-of', { current: order.currentGift, total: gifts })}</p>}
       {!oneByOne && (

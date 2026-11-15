@@ -63,6 +63,18 @@ assert.deepEqual(swapped.doneIds, order);
 assert.equal(swapState(order, true, play([...freeze, ['open'], ['keep']])).finished, true);
 assert.equal(canMove(swapped, 'keep'), false);
 
+// The first player's own gift is frozen: it stays put, so the final steal can only keep it.
+const frozenFirst = swapState(
+  order,
+  true,
+  play([['open'], ['steal', 1], ['open'], ['steal', 1], ['steal', 2], ['steal', 1], ['open'], ['open']])
+);
+assert.equal(frozenFirst.final, true);
+assert.deepEqual(frozenFirst.gifts[0], { no: 1, label: null, holderId: 'ann', steals: 3, frozen: true });
+assert.deepEqual(frozenFirst.stealable, []);
+assert.equal(canMove(frozenFirst, 'steal', 2), false);
+assert.equal(canMove(frozenFirst, 'keep'), true);
+
 // Everyone ends up with one gift.
 assert.equal(new Set(Object.values(holders(swapped))).size, order.length);
 assert.equal(swapped.gifts.length, order.length);

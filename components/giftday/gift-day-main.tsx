@@ -7,9 +7,14 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { BigRevealCard } from './big-reveal-card';
 import { GiftDayHero } from './gift-day-hero';
+import { SwapTableCard } from './swap-table';
 import { useGiftDay, useGiftDayStream } from './use-gift-day';
 
-/** Gift day on the overview (61): once the presenter started, for members the way to follow it on their phone (95), the call to join by post (87), the presenter for the organizer, the big reveal once it's out, one line about my giftee. */
+/**
+ * Gift day on the overview (61): once the presenter started, for members the way to follow it on their phone (95), the
+ * call to join by post (87), the presenter for the organizer, the big reveal once it's out, one line about my giftee;
+ * a White Elephant's table once the swap is over.
+ */
 export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string; edition: GroupEdition; manage: boolean }) => {
   const t = useTranslations('giftday.hero');
   const input = { groupSlug, editionNumber: edition.number };
@@ -35,6 +40,7 @@ export const GiftDayMain = ({ groupSlug, edition, manage }: { groupSlug: string;
         <GiftsToOpen {...input} />
         <GifteeLine {...input} />
       </GiftDayHero>
+      {giftDay.data?.swap && giftDay.data.unwrapOrder?.finished && <SwapTableCard swap={giftDay.data.swap} />}
       {giftDay.data && <BigRevealCard reveal={giftDay.data.reveal} guessing={giftDay.data.guessing} />}
     </>
   );

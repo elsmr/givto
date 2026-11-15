@@ -1,7 +1,7 @@
 // The organizer's escape hatches (64): start gift day now, finish it, back to shopping, reopen.
 import { addDays, todayIn } from '@/lib/local-date';
 import { expect, ok, runJob, test, type User } from '../fixtures';
-import { code, drawnGroup, editionOf, memberIdOf } from './s6-helpers';
+import { code, drawnGroup, editionOf, memberIdOf, presenterSaw } from './s6-helpers';
 
 const TZ = 'Europe/Brussels';
 type Hatch = 'manage.startGiftDay' | 'manage.finishGiftDay' | 'manage.reopenGiftDay';
@@ -113,14 +113,14 @@ test('back to shopping: organizer only, new date, not once anything is unwrapped
   expect(code(await back(ann, today)), 'today would start it again').toBe('DATE_IN_PAST');
 
   await test.step('refused once a Santa was shown (62), someone unwrapped, or the big reveal is out', async () => {
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'start', turnsTaken: 0 }));
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'spin', turnsTaken: 0 }));
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'santa', turnsTaken: 0 }));
+    const advance = async (action: 'start' | 'spin' | 'santa' | 'last' | 'back') =>
+      ok(await ann.trpc.mutate('giftday.advance', { ...edition, action, ...presenterSaw(ok(await ann.trpc.query('giftday.presenter', edition)).unwrapOrder!) }));
+    for (const action of ['start', 'spin', 'santa'] as const) await advance(action);
     expect(code(await back(ann))).toBe('GIFT_DAY_UNDERWAY');
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'last', turnsTaken: 0 }));
+    await advance('last');
     expect(code(await back(ann))).toBe('GIFT_DAY_UNDERWAY');
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'back', turnsTaken: 1 }));
-    ok(await ann.trpc.mutate('giftday.advance', { ...edition, action: 'back', turnsTaken: 0 }));
+    await advance('back');
+    await advance('back');
 
     ok(await ann.trpc.mutate('giftday.setReveal', { ...edition, enabled: true }));
     ok(await ann.trpc.mutate('giftday.reveal', edition));

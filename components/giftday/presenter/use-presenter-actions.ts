@@ -21,13 +21,13 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const [spin, setSpin] = useState<{ turn: number; status: SpinStatus }>({ turn: 0, status: 'idle' });
   const phase = presenterPhase(order, view, showEnd);
   const spinStatus: SpinStatus = spin.turn === order.turn ? spin.status : 'idle';
-  const step = (action: Parameters<typeof advance>[0]) => advance(action, order.turnsTaken);
+  const step = (action: Parameters<typeof advance>[0]) => advance(action, order);
   // White elephant (89): what the presenter typed for the gift opened now; kept per turn, like the reel, so it survives a
   // failed open and doesn't carry over to the next person.
   const [typed, setTyped] = useState({ turn: 0, text: '' });
   const label = typed.turn === order.turn ? typed.text : '';
   const setLabel = (text: string) => setTyped({ turn: order.turn, text });
-  const onLanded = () => advance('spin', order.turnsTaken);
+  const onLanded = () => advance('spin', order);
   const oneByOne = view.unwrapMode === 'oneByOne';
   // A known gift count (63) decides when they're done: no "that was the last one".
   const counted = currentGiftCount(order) !== null;
@@ -35,10 +35,11 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   const next = () => {
     if (phase === 'intro') step('start');
     else if (phase === 'spin') setSpin({ turn: order.turn, status: spinStatus === 'idle' && !skipSpin ? 'spinning' : 'skipped' });
-    else if (phase === 'turn' && view.swap?.final) step('keep');
+    // The final steal is the first player's own choice: only its buttons end the game, not a key or a clicker.
+    else if (phase === 'turn' && view.swap?.final) return;
     else if (phase === 'turn' && view.swap) {
       if (isPending) return;
-      advance('open', order.turnsTaken, label.trim() ? { label: label.trim() } : undefined);
+      advance('open', order, label.trim() ? { label: label.trim() } : undefined);
     } else if (phase === 'turn' && order.santaToShow) step('santa');
     else if (phase === 'turn') step(oneByOne ? 'more' : 'last');
     else if (phase === 'reveal' && !view.reveal.revealed) reveal.mutate({ groupSlug, editionNumber });
@@ -51,9 +52,10 @@ export const usePresenterActions = ({ groupSlug, editionNumber, view, order, ski
   // Guess your Santa (62): their Santa comes out before the turn can end.
   const santaToShow = phase === 'turn' && order.santaToShow;
   const last = oneByOne && phase === 'turn' && !counted && !santaToShow ? () => step('last') : undefined;
-  const steal = (giftNo: number) => advance('steal', order.turnsTaken, { giftNo });
+  const steal = (giftNo: number) => advance('steal', order, { giftNo });
+  const keep = () => step('keep');
   return {
     phase, spinStatus, onLanded, next, previous, last, counted, santaToShow, revealed: view.reveal.revealed, busy: isPending || reveal.isPending,
-    swap: view.swap, steal, label, setLabel,
+    swap: view.swap, steal, keep, label, setLabel,
   };
 };

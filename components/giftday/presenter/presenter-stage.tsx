@@ -32,7 +32,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
 
   return (
     <div className="flex flex-1 flex-col">
-      <div aria-live="polite" className="flex flex-1 items-center justify-center overflow-hidden px-6 py-10">
+      <div aria-live="polite" className="flex flex-1 items-center justify-center overflow-hidden px-6 py-2">
         {/* No initial={false}: it would stop every animation inside the first slide for as long as it's shown. */}
         <AnimatePresence mode="wait">
           <m.div
@@ -41,7 +41,7 @@ export const PresenterStage = ({ groupSlug, editionNumber, view, order, skipSpin
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -48 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="flex w-full max-w-7xl flex-col items-center gap-8 text-center"
+            className="flex w-full max-w-7xl flex-col items-center gap-4 text-center"
           >
             {phase === 'intro' && (
               <div className="flex flex-col items-center gap-8 lg:flex-row lg:gap-20">

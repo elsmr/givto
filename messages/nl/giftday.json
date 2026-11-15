@@ -80,7 +80,8 @@
     "last": "Dat was de laatste",
     "gift-of": "Cadeau {current} van {total}",
     "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
-    "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
+    "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}",
+    "changed": "Iemand heeft dit net aangepast. Zo staat het er nu voor."
   },
   "live": {
     "page-title": "Pakjesdag live",
@@ -100,6 +101,7 @@
     "hint": "Pak een nieuw cadeau uit of steel er een dat al open is.",
     "hint-open": "Pak een nieuw cadeau uit.",
     "hint-final": "Ruil met een cadeau dat niet bevroren is, of hou het jouwe.",
+    "hint-final-none": "Bevroren cadeaus blijven waar ze zijn: er valt niets te ruilen.",
     "label": "Wat zit erin? (optioneel)",
     "open": "Nieuw cadeau uitgepakt",
     "steal": "Stelen",
@@ -108,7 +110,8 @@
     "swap-label": "Ruilen voor cadeau {no} van {name}",
     "keep": "Eigen cadeau houden",
     "now-robbed": "Bestolen, dus nog een keer aan de beurt",
-    "now-final": "Laatste keer stelen: ruilen of houden"
+    "now-final": "Laatste keer stelen: ruilen of houden",
+    "too-few": "Een White Elephant heeft minstens {min} mensen nodig. Er zijn er vandaag te weinig om te spelen."
   },
   "errors": {
     "NOT_DRAWN": "Er is nog niet geloot.",

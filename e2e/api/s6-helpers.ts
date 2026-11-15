@@ -10,6 +10,12 @@ export const editionOf = async (db: TestDb, slug: string) => {
 export const memberIdOf = async (db: TestDb, slug: string, user: User) =>
   (await db.groups.findOne({ slug }))!.members.find((m) => m.userId === user.id)!.id;
 
+/** What a presenter step sends about the view it was made on (`giftday.advance`): its turns and who it showed as up. */
+export const presenterSaw = (order: { turnsTaken: number; current: { memberId: string } | null }) => ({
+  turnsTaken: order.turnsTaken,
+  currentMemberId: order.current?.memberId ?? null,
+});
+
 /** Ann organizes; the others join; names drawn. */
 export const drawnGroup = async (
   [ann, ...others]: User[],

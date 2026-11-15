@@ -1,6 +1,7 @@
 // The unwrap order stays a surprise (32): on gift day members only learn
 // who's unwrapping now and who already went; the organizer's presenter view keeps the full order.
 import { expect, ok, test, type User } from '../fixtures';
+import { presenterSaw } from './s6-helpers';
 
 test('the unwrap order stays a surprise for members', async ({ signIn, db }) => {
   const [ann, bob, cee, dan] = await Promise.all(['z2ann', 'z2bob', 'z2cee', 'z2dan'].map((name) => signIn(name)));
@@ -26,7 +27,7 @@ test('the unwrap order stays a surprise for members', async ({ signIn, db }) => 
 
   const presenter = async () => ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!;
   const advance = async (action: 'start' | 'spin' | 'more') =>
-    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: (await presenter()).turnsTaken }));
+    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(await presenter()) }));
   const giftdayView = async (person: User) => ok(await person.trpc.query('giftday.get', at));
   const order = (await presenter()).people.map((p) => p.memberId);
 

@@ -2,7 +2,7 @@
 // gift day's unwrap order from everyone in.
 import enEmail from '@/messages/en/email.json' with { type: 'json' };
 import { expect, mailsTo, ok, runJob, test, type User } from '../fixtures';
-import { code, editionOf, memberIdOf } from './s6-helpers';
+import { code, editionOf, memberIdOf, presenterSaw } from './s6-helpers';
 
 const create = async (ann: User, name: string, kind?: 'whiteElephant') =>
   ok(
@@ -68,7 +68,7 @@ test('white elephant: locks in without a draw, refuses Secret Santa features, un
     expect(view.unwrapOrder!.people.map((p) => p.memberId).toSorted()).toEqual(ids.toSorted());
     expect(view.guessing).toBeNull();
     const advance = async (action: 'start' | 'spin' | 'open' | 'keep') =>
-      (view = ok(await ann.trpc.mutate('giftday.advance', { ...edition, action, turnsTaken: view.unwrapOrder!.turnsTaken })));
+      (view = ok(await ann.trpc.mutate('giftday.advance', { ...edition, action, ...presenterSaw(view.unwrapOrder!) })));
     await advance('start');
     const went: string[] = [];
     while (!view.swap!.final) {

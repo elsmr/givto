@@ -12,8 +12,9 @@ export const useGiftDay = (input: EditionInput, status: EditionStatus) => {
 };
 
 /**
- * The server pushes the gift day view after every change, so phones follow the presenter (97). One per page: the other
- * `useGiftDay` callers read the same cache. EventSource reconnects by itself and gets the current view first.
+ * The server pushes the gift day view after every change, so phones follow the presenter (97), and a second presenter
+ * screen its own view. One per page: the other `useGiftDay` callers read the same cache. EventSource reconnects by
+ * itself and gets the current view first.
  */
 export const useGiftDayStream = ({ groupSlug, editionNumber }: EditionInput, enabled: boolean) => {
   const trpc = useTRPC();
@@ -22,7 +23,10 @@ export const useGiftDayStream = ({ groupSlug, editionNumber }: EditionInput, ena
     if (!enabled) return;
     const queryKey = trpc.giftday.get.queryKey({ groupSlug, editionNumber });
     const source = new EventSource(`/api/giftday/${encodeURIComponent(groupSlug)}/${editionNumber}`);
-    source.onmessage = (event) => queryClient.setQueryData(queryKey, superjson.parse(event.data));
+    source.onmessage = (event) => {
+      queryClient.setQueryData(queryKey, superjson.parse(event.data));
+      void queryClient.invalidateQueries(trpc.giftday.presenter.queryFilter({ groupSlug, editionNumber }));
+    };
     return () => source.close();
   }, [trpc, queryClient, groupSlug, editionNumber, enabled]);
 };

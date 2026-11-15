@@ -71,6 +71,7 @@
     "EDITION_CLOSED": "Only the latest edition can be reopened.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
     "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn yet.",
+    "TOO_FEW_PEOPLE": "A White Elephant needs at least {min} people. Invite more first.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   }
 }

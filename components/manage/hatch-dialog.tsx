@@ -14,6 +14,7 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { addDays, formatLocalDate, todayIn } from '@/lib/local-date';
 import { drawsNames } from '@/lib/schema/edition';
+import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { hatchErrors, hatchPoints, type Hatch } from './hatches';
@@ -44,7 +45,9 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
   const points = hatchPoints[hatch].filter(
     (point) => !(shuffled && point === 'startGiftDay.points.order') && !(santaPoint(point) && !drawsNames(edition))
   );
-  const error = run.error && knownAppError(run.error, hatchErrors);
+  // A White Elephant needs as many players as locking in did, also when people left since.
+  const tooFew = hatch === 'startGiftDay' && edition.kind === 'whiteElephant' && edition.participantIds.length < MIN_PARTICIPANTS;
+  const error = tooFew ? 'TOO_FEW_PEOPLE' : run.error && knownAppError(run.error, hatchErrors);
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -71,11 +74,11 @@ export const HatchDialog = ({ hatch, groupSlug, edition, shuffled, onClose }: Ha
             />
           </Field>
         )}
-        {error && <FieldError>{t(`errors.${error}`)}</FieldError>}
+        {error && <FieldError>{t(`errors.${error}`, { min: MIN_PARTICIPANTS })}</FieldError>}
         <DialogFooter>
           <DialogClose render={<Button variant="neutral" />}>{t('cancel')}</DialogClose>
           <Button
-            disabled={run.isPending || (hatch === 'backToShopping' && !giftDayDate)}
+            disabled={run.isPending || tooFew || (hatch === 'backToShopping' && !giftDayDate)}
             onClick={() => run.mutate({ editionNumber: edition.number, giftDayDate })}
           >
             {t(`${hatch}.confirm`)}

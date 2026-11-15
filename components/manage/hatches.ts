@@ -26,4 +26,5 @@ export const hatchErrors = [
   'DATE_IN_PAST',
   'EDITION_CLOSED',
   'EDITION_CHANGED',
+  'TOO_FEW_PEOPLE',
 ] as const;
