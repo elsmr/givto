@@ -22,6 +22,11 @@
       "secretSanta": "Secret Santa",
       "whiteElephant": "White elephant",
       "conspiracy": "Conspiracy Santa",
+      "subtitle": {
+        "secretSanta": "Iedereen trekt in het geheim een naam",
+        "whiteElephant": "Breng een cadeau, steel een cadeau",
+        "conspiracy": "Plan elk cadeau samen"
+      },
       "about": "Hoe werkt {name}?",
       "explain": {
         "secretSanta": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Niemand trekt zichzelf, en wie jouw Santa is, blijft een verrassing tot pakjesdag.",
@@ -46,11 +51,12 @@
       "time": "Tijd"
     },
     "exchange": {
-      "label": "Hoe geven jullie de cadeaus?",
-      "inPerson": "Persoonlijk",
-      "byPost": "Per post",
-      "both": "Persoonlijk of per post",
-      "ask": "Cadeaus per post?"
+      "label": "Hoe vieren jullie?",
+      "inPerson": "In het echt",
+      "online": "Online",
+      "inPerson-help": "Iedereen geeft zijn cadeau af op pakjesdag.",
+      "online-help": "Cadeaus gaan per post: iedereen vult een adres in. Pak samen uit via een videogesprek.",
+      "ask": "Online vieren?"
     },
     "budget": {
       "legend": "Budget",

@@ -68,7 +68,7 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
         <ul className="flex flex-col gap-3 border-t-2 border-dashed border-outline pt-5">
           {draw && <Fact icon={Shuffle}>{draw}</Fact>}
           {edition.wishlistBy && <Fact icon={ListChecks}>{t('wishlist-by', { date: localDate(edition.wishlistBy) })}</Fact>}
-          <Fact icon={Gift}>{t(`exchange-modes.${edition.exchangeMode}`)}</Fact>
+          {posted && <Fact icon={Gift}>{t('online')}</Fact>}
           {posted && edition.postBy && <Fact icon={Mailbox}>{t('post-by', { date: localDate(edition.postBy) })}</Fact>}
           <Fact icon={Wallet}>{budget ? t('budget', { budget: formatBudget(budget, locale) }) : t('no-budget')}</Fact>
           {edition.notes && (
