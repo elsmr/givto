@@ -4,7 +4,7 @@ import { Id, TimeZone } from '../../schema/common';
 import { GroupName, MAX_MEMBERS } from '../../schema/group';
 import { isBeforeDraw, type Participant } from '../../schema/edition';
 import { AppError } from '../errors';
-import { removalRedraws } from '../draw/patch';
+import { removalEffect } from '../draw/patch';
 import { currentEdition } from '../membership';
 import { removeMember } from '../remove-member';
 import { organizerEditionProcedure, organizerProcedure, ownerProcedure, router } from '../trpc';
@@ -76,10 +76,10 @@ export const settingsRouter = router({
       return { ok: true };
     }),
 
-  /** Removing them re-draws everyone's names (105): the remove dialog says so first. */
-  removalRedraws: organizerProcedure.input(v.object({ memberId: Id })).query(async ({ ctx, input }) => {
+  /** What removing them does to the draw (105): the remove dialog says so first. */
+  removalEffect: organizerProcedure.input(v.object({ memberId: Id })).query(async ({ ctx, input }) => {
     const edition = await currentEdition(ctx.db, ctx.group._id);
-    return edition ? removalRedraws(ctx.db, ctx.group, edition, input.memberId) : false;
+    return edition ? removalEffect(ctx.db, ctx.group, edition, input.memberId) : 'none';
   }),
 
   /**

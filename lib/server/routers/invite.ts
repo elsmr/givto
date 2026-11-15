@@ -51,8 +51,8 @@ export const inviteRouter = router({
         await ctx.db.groups.updateOne(
           { _id: ctx.group._id, 'members.id': memberId },
           {
+            // `removedAt` / `leftAt` stay until they accept: if they decline, the join link still sees them as removed or left (105).
             $set: { 'members.$.status': 'invited', 'members.$.invitedAt': now, 'members.$.invitedBy': ctx.member.id, updatedAt: now },
-            $unset: { 'members.$.removedAt': true, 'members.$.leftAt': true },
           }
         );
       } else {
@@ -111,6 +111,10 @@ export const inviteRouter = router({
     if (found.invite.email !== ctx.user.email.toLowerCase()) throw new AppError('INVITE_EMAIL_MISMATCH');
     // Before the invite is used up: without a name, or with one that's taken, the person comes back to give one.
     const profile = await memberProfile(ctx.db, ctx.user.id, input.name, (name) => nameTaken(found.group, name, found.invite.memberId));
+    const mine = found.group.members.filter((m) => m.userId === ctx.user.id);
+    const alreadyHere = mine.some((m) => placeHolding.includes(m.status));
+    // One member per account (105): the account is another member here, declined or removed; a new invite reuses that one.
+    if (!alreadyHere && mine.some((m) => m.id !== found.invite.memberId)) throw new AppError('ALREADY_MEMBER');
     const now = new Date();
     const used = await ctx.db.invites.updateOne(
       { _id: found.invite._id, usedAt: { $exists: false } },
@@ -119,7 +123,7 @@ export const inviteRouter = router({
     if (used.modifiedCount === 0) throw new AppError('INVITE_INVALID');
 
     const { group, invite } = found;
-    if (!group.members.some((m) => m.userId === ctx.user.id && placeHolding.includes(m.status))) {
+    if (!alreadyHere) {
       const joined = await ctx.db.groups.updateOne(
         {
           _id: group._id,
@@ -136,9 +140,11 @@ export const inviteRouter = router({
             'members.$.joinedAt': now,
             updatedAt: now,
           },
+          $unset: { 'members.$.removedAt': true, 'members.$.leftAt': true },
         }
       );
-      if (joined.modifiedCount > 0) await addToCurrentEdition(ctx.db, group._id, invite.memberId);
+      if (joined.matchedCount === 0) throw new AppError('ALREADY_MEMBER');
+      await addToCurrentEdition(ctx.db, group._id, invite.memberId);
     }
     return { slug: group.slug };
   }),

@@ -54,6 +54,7 @@
     "INVITE_INVALID": "Deze uitnodiging is al gebruikt of verlopen.",
     "INVITE_EMAIL_MISMATCH": "Deze uitnodiging is voor een ander e-mailadres.",
     "NAME_TAKEN": "Er is hier al een {name}. Voeg een initiaal toe?",
+    "ALREADY_MEMBER": "Je account hoort al bij iemand anders in deze Secret Santa. Vraag de organisator om een nieuwe uitnodiging.",
     "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
   },
   "invite": {

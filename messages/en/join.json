@@ -54,6 +54,7 @@
     "INVITE_INVALID": "This invite was already used or has expired.",
     "INVITE_EMAIL_MISMATCH": "This invite is for another email address.",
     "NAME_TAKEN": "There's already someone called {name} here. Add an initial?",
+    "ALREADY_MEMBER": "Your account already belongs to someone else in this Secret Santa. Ask the organizer for a new invite.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   },
   "invite": {

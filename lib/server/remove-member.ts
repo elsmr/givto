@@ -7,8 +7,11 @@ import { currentEdition, ownerOf } from './membership';
 /**
  * Out of the group's current edition, unless it's over. Before gift day the draw is patched so everyone left keeps
  * a giftee (`refuse`: the organizer's Remove fails instead when no draw works without them). Someone who `left` after
- * the draw stays listed as declined, so coming back doesn't put them in this draw again (105). From gift day on the
- * draw is history: nobody gets a new giftee and what was bought and guessed stays; they only drop out of the unwrapping.
+ * the draw stays listed as declined, so coming back doesn't put them in this draw again (105); that entry outlives a
+ * later re-invite they decline. From gift day on the draw is history: nobody gets a new giftee and what was bought
+ * and guessed stays; they only drop out of the unwrapping.
+ * Out of the participants before the draw is patched: a re-draw for someone leaving at the same time would draw
+ * them back in otherwise.
  */
 export const leaveEdition = async (
   db: Collections,
@@ -18,7 +21,6 @@ export const leaveEdition = async (
   { left = false, refuse = false } = {}
 ) => {
   if (edition.status === 'done') return;
-  await takeOutOfDraw(db, groupId, edition._id, memberId, { refuse });
   const updatedAt = new Date();
   if (left && !isBeforeDraw(edition)) {
     await db.editions.updateOne(
@@ -26,7 +28,23 @@ export const leaveEdition = async (
       { $set: { 'participants.$.status': 'declined', 'participants.$.participates': false, updatedAt } }
     );
   } else {
-    await db.editions.updateOne({ _id: edition._id }, { $pull: { participants: { memberId } }, $set: { updatedAt } });
+    await db.editions.updateOne(
+      { _id: edition._id },
+      { $pull: { participants: { memberId: { $eq: memberId }, status: { $ne: 'declined' } } }, $set: { updatedAt } }
+    );
+  }
+  try {
+    await takeOutOfDraw(db, groupId, edition._id, memberId, { refuse });
+  } catch (error) {
+    // The organizer's Remove was refused: they stay in.
+    const participant = edition.participants.find((p) => p.memberId === memberId);
+    if (participant) {
+      await db.editions.updateOne(
+        { _id: edition._id, 'participants.memberId': { $ne: memberId } },
+        { $push: { participants: participant }, $set: { updatedAt: new Date() } }
+      );
+    }
+    throw error;
   }
   if (isFromGiftDay(edition)) return;
   await db.claims.deleteMany({ editionId: edition._id, santaMemberId: memberId });

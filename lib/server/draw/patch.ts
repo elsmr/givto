@@ -58,7 +58,7 @@ export const slotInLateJoiner = (db: Collections, groupId: string, editionId: st
 
 /**
  * Someone leaves or is removed after the draw (48): A→leaver→B becomes A→B, else one swap, else a re-draw of
- * everyone left (105: the remove dialog warns, `removalRedraws`). When no draw works without them, `refuse` throws
+ * everyone left (105: the remove dialog warns, `removalEffect`). When no draw works without them, `refuse` throws
  * the draw's error (the organizer's Remove); otherwise they stay in the draw and the organizer sees it.
  */
 export const takeOutOfDraw = (db: Collections, groupId: string, editionId: string, memberId: string, { refuse = false } = {}) =>
@@ -73,10 +73,10 @@ export const takeOutOfDraw = (db: Collections, groupId: string, editionId: strin
     return stuck ? 'skip' : { next: drawAssignments(rest, allRules(rules), randomInt), redraw: true };
   });
 
-/** Taking this member out of the draw would re-draw everyone's names. */
-export const removalRedraws = async (db: Collections, group: Group, edition: Edition, memberId: string) => {
+/** What taking this member out does to the names drawn: nothing (not in the draw), a patch, or a re-draw for everyone. */
+export const removalEffect = async (db: Collections, group: Group, edition: Edition, memberId: string) => {
   const assignments = edition.draw?.assignments;
-  if (edition.status !== 'drawn' || !assignments || !(memberId in assignments)) return false;
+  if (edition.status !== 'drawn' || !assignments || !(memberId in assignments)) return 'none';
   const rules = allRules(await drawRules(db, group, edition));
-  return takeOut(assignments, memberId, rules, () => 0) === null;
+  return takeOut(assignments, memberId, rules, () => 0) === null ? 'redraw' : 'patch';
 };

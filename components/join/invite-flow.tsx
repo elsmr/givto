@@ -20,7 +20,7 @@ import { EmailCodeForm } from './email-code-form';
 import { JoinIntro } from './join-intro';
 import { useEmailCode } from './use-email-code';
 
-const knownErrors = ['INVITE_INVALID', 'INVITE_EMAIL_MISMATCH', 'RATE_LIMITED', 'NAME_TAKEN'] as const;
+const knownErrors = ['INVITE_INVALID', 'INVITE_EMAIL_MISMATCH', 'RATE_LIMITED', 'NAME_TAKEN', 'ALREADY_MEMBER'] as const;
 
 type InviteFlowProps = { slug: string; token: string; preview: JoinPreview & { invite: { email: string } } };
 
@@ -48,10 +48,11 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
       // Just verified: make sure the form sees the signed-in account it now asks the name for.
       onError: (error) => {
         if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
-        // Someone here goes by the account's name: ask for one for this group, starting from it.
-        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName) {
+        // Someone here goes by the account's name: ask for one for this group, starting from it. A typed name stays.
+        const accountName = session.data?.user.name;
+        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName && accountName) {
           setOwnName(true);
-          setName(session.data?.user.name ?? '');
+          setName(accountName);
         }
       },
     })

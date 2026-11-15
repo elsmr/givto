@@ -42,10 +42,11 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
       // Just verified: make sure the form sees the signed-in account it now asks the name for.
       onError: (error) => {
         if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
-        // Someone here goes by the account's name: ask for one for this group, starting from it.
-        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName) {
+        // Someone here goes by the account's name: ask for one for this group, starting from it. A typed name stays.
+        const accountName = session.data?.user.name;
+        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName && accountName) {
           setOwnName(true);
-          setName(session.data?.user.name ?? '');
+          setName(accountName);
         }
       },
     })

@@ -34,7 +34,7 @@ export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }
   const refresh = useRefreshEdition(groupSlug);
   const [open, setOpen] = useState(false);
   const drawn = editionStatus === 'drawn';
-  const redraws = useQuery(trpc.settings.removalRedraws.queryOptions({ groupSlug, memberId: person.id }, { enabled: open && drawn }));
+  const effect = useQuery(trpc.settings.removalEffect.queryOptions({ groupSlug, memberId: person.id }, { enabled: open && drawn }));
   const remove = useMutation(
     trpc.settings.removePerson.mutationOptions({
       onSuccess: () => {
@@ -44,7 +44,13 @@ export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }
     })
   );
   const description =
-    editionStatus === 'giftday' ? 'remove-giftday' : !drawn ? 'remove-before' : redraws.data ? 'remove-redraw' : 'remove-after';
+    editionStatus === 'giftday'
+      ? 'remove-giftday'
+      : !drawn || effect.data === 'none'
+        ? 'remove-before'
+        : effect.data === 'redraw'
+          ? 'remove-redraw'
+          : 'remove-after';
   const drawRefused = remove.error && ['DRAW_IMPOSSIBLE', 'TOO_FEW_PEOPLE'].includes(appErrorCode(remove.error));
 
   return (
@@ -67,7 +73,7 @@ export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }
           <DialogClose render={<Button variant="neutral" />}>{t('people.cancel')}</DialogClose>
           <Button
             variant="danger"
-            disabled={remove.isPending || (drawn && redraws.isPending)}
+            disabled={remove.isPending || (drawn && effect.isPending)}
             onClick={() => remove.mutate({ groupSlug, memberId: person.id })}
           >
             {t('people.remove-confirm', { name: person.name })}
