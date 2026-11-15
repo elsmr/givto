@@ -4,14 +4,17 @@ import { randomBytes, randomInt } from 'node:crypto';
 import { BASE_URL } from '../env';
 import { latestMail, mailsTo, readSignInMail, type SignInMail } from './mail';
 
-/** Rate limits are per IP (x-forwarded-for): a fresh one per call keeps tests independent. */
+/** The client IP header Better Auth trusts (lib/server/auth.ts). */
+export const IP_HEADER = 'x-vercel-forwarded-for';
+
+/** Rate limits are per IP: a fresh one per call keeps tests independent. */
 export const randomIp = () => `10.${randomInt(256)}.${randomInt(256)}.${randomInt(1, 255)}`;
 
 /** Unique per call, so parallel tests never share an account. */
 export const uniqueEmail = (name: string) => `e2e-${name}-${randomBytes(4).toString('hex')}@example.test`;
 
 export interface AuthOptions {
-  /** x-forwarded-for; random by default. */
+  /** The client IP (IP_HEADER); random by default. */
   ip?: string;
   headers?: Record<string, string>;
 }
@@ -19,7 +22,7 @@ export interface AuthOptions {
 /** POST /api/auth<path>. Cookies it sets land in `request`'s cookie jar. */
 export const authPost = (request: APIRequestContext, path: string, body: object, { ip = randomIp(), headers }: AuthOptions = {}) =>
   request.post(`/api/auth${path}`, {
-    headers: { origin: BASE_URL, 'x-forwarded-for': ip, ...headers },
+    headers: { origin: BASE_URL, [IP_HEADER]: ip, ...headers },
     data: body,
   });
 

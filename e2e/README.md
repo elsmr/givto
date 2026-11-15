@@ -57,7 +57,7 @@ Import `test`, `expect` and helpers from `../fixtures`, never from `@playwright/
 | `readServerLog()`, `expectNotLogged(secrets)` | The app's log; no secret in it. |
 | `secrets` | Array per test; checked against the server log after the test. `signIn` and `signInWithUi` add their emails, codes and tokens; add your own. |
 
-Every test also gets a random `x-forwarded-for` for `page` and `request` (rate limits are per IP).
+Every test also gets a random client IP (`x-vercel-forwarded-for`, the header Better Auth trusts) for `page` and `request` (rate limits are per IP).
 
 Test runs: with `E2E_TEST_HOOKS=1` (set by `env.ts`, refused when `VERCEL_ENV=production`,
 see `lib/server/test-hooks.ts`) `runJob('draws' | 'giftday' | 'reminders', { now, editionIds, groupIds })` runs a

@@ -109,6 +109,7 @@ test('imported images: attach own images only, served by us with safe headers, d
   expect(res.status()).toBe(200);
   expect(res.headers()['content-type']).toBe('image/png');
   expect(res.headers()['x-content-type-options']).toBe('nosniff');
+  expect(res.headers()['content-security-policy']).toBe("default-src 'none'; sandbox");
   expect((await res.body()).toString('base64')).toBe(png);
   expect((await request.get(`/api/wish-images/${newId()}`)).status()).toBe(404);
   expect((await request.get('/api/wish-images/..%2F..%2Fetc')).status()).toBe(404);

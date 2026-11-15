@@ -66,7 +66,7 @@ const timedRange = (event: CalendarEvent & { time: string }) => {
 };
 
 const escapeText = (text: string) =>
-  text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n?|\n/g, '\\n');
 
 // RFC 5545: lines of at most 75 octets, continued with CRLF + space.
 const fold = (line: string): string => {

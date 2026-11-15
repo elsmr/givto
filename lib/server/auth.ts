@@ -70,6 +70,12 @@ export const deletePendingSignIns = async (email: string): Promise<void> => {
   ]);
 };
 
+const withoutToken = ({ token: _token, ...session }: { token?: unknown }) => session;
+const isSessionResponse = (value: unknown): value is { session: { token?: unknown } } =>
+  typeof value === 'object' && value !== null && 'session' in value && typeof value.session === 'object' && value.session !== null;
+const isTokenResponse = (value: unknown): value is { token: unknown; user: unknown } =>
+  typeof value === 'object' && value !== null && 'token' in value && 'user' in value;
+
 const accountLocale = async (email: string): Promise<Locale | undefined> => {
   const { users } = await getDb();
   const user = await users.findOne({ email }, { projection: { locale: 1 } });
@@ -108,6 +114,12 @@ const createAuth = () => {
       enabled: true,
       customStorage: { consume: (key, rule) => consumeRateLimit(`auth:${key}`, rule) },
     },
+    advanced: {
+      // Per-IP limits trust this header only. Assumes Vercel, whose edge sets it; on another host a client
+      // can send any value (as with x-forwarded-for), so use that proxy's header instead. Without the
+      // header, `next start` puts every client in one bucket per path (`next dev` uses 127.0.0.1).
+      ipAddress: { ipAddressHeaders: ['x-vercel-forwarded-for'] },
+    },
     databaseHooks: {
       user: {
         create: {
@@ -144,6 +156,15 @@ const createAuth = () => {
       after: createAuthMiddleware(async (ctx) => {
         const email = ctx.context.newSession?.user.email;
         if (email && SIGN_IN_PATHS.has(ctx.path)) await deletePendingSignIns(email);
+        // The browser never needs a session token (the cookie is HttpOnly), so no HTTP response carries one
+        // (magic-link/verify-token answers `{ status }` only): an XSS can't collect them.
+        if (!ctx.request) return;
+        const returned = ctx.context.returned;
+        if ((ctx.path === '/get-session' || ctx.path === '/passkey/verify-authentication') && isSessionResponse(returned)) {
+          return ctx.json({ ...returned, session: withoutToken(returned.session) });
+        }
+        if (ctx.path === '/sign-in/email-otp' && isTokenResponse(returned)) return ctx.json(withoutToken(returned));
+        if (ctx.path === '/list-sessions' && Array.isArray(returned)) return ctx.json(returned.map(withoutToken));
       }),
     },
     logger: {

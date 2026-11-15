@@ -4,7 +4,7 @@ import { test as base, expect, type APIRequestContext, type BrowserContext, type
 import { MongoClient, type Db } from 'mongodb';
 import { collections, type Collections } from '@/lib/server/db';
 import { BASE_URL, MONGODB_DB, MONGODB_URI } from './env';
-import { randomIp, requestSignIn, signInWithCode, uniqueEmail, type AuthOptions } from './support/auth';
+import { IP_HEADER, randomIp, requestSignIn, signInWithCode, uniqueEmail, type AuthOptions } from './support/auth';
 import { latestMail, readSignInMail } from './support/mail';
 import { expectNotLogged } from './support/server';
 import { ok, trpcClient, type Trpc } from './support/trpc';
@@ -52,7 +52,7 @@ interface WorkerFixtures {
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
   // A fresh IP per test for the browser and `request`: rate limits are per IP.
-  extraHTTPHeaders: async ({}, use) => use({ 'x-forwarded-for': randomIp() }),
+  extraHTTPHeaders: async ({}, use) => use({ [IP_HEADER]: randomIp() }),
 
   secrets: async ({}, use) => {
     const secrets: string[] = [];
@@ -66,7 +66,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
       const request = await playwright.request.newContext({
         baseURL: BASE_URL,
         storageState,
-        extraHTTPHeaders: { 'x-forwarded-for': randomIp() },
+        extraHTTPHeaders: { [IP_HEADER]: randomIp() },
       });
       contexts.push(request);
       return { request, trpc: trpcClient(request) };
@@ -92,7 +92,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
     await use(async () => {
       const context = await browser.newContext({
         baseURL, viewport, userAgent, deviceScaleFactor, isMobile, hasTouch, locale,
-        extraHTTPHeaders: { 'x-forwarded-for': randomIp() },
+        extraHTTPHeaders: { [IP_HEADER]: randomIp() },
       });
       contexts.push(context);
       return context.newPage();

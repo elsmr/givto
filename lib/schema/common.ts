@@ -58,7 +58,10 @@ export const HttpUrl = v.pipe(
   v.trim(),
   v.maxLength(2000),
   v.url(),
-  v.check((url) => /^https?:\/\//i.test(url), 'http_url_only')
+  v.check((url) => /^https?:\/\//i.test(url), 'http_url_only'),
+  // `url()` parses with `new URL`, which drops tabs and line breaks; the raw string is what we store
+  // and put in emails and .ics files.
+  v.check((url) => !/[\s\u0000-\u001f\u007f"<>]/.test(url), 'invalid_url')
 );
 
 /** Calendar date without a time zone: YYYY-MM-DD. */
