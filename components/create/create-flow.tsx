@@ -107,7 +107,7 @@ export const CreateFlow = () => {
   return (
     <FlowPage
       eyebrow={accountName ? undefined : <StepTrack step={stepNumber} total={total} />}
-      title={t(`titles.${step}`)}
+      title={t(`titles.${step}`, { kind: draft.kind })}
       headingRef={heading}
     >
       <Card>

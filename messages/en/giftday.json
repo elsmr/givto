@@ -108,7 +108,7 @@
     "steal-label": "Steal gift {no} from {name}",
     "swap": "Swap",
     "swap-label": "Swap for gift {no} from {name}",
-    "keep": "Keep their gift",
+    "keep": "Keep yours",
     "now-robbed": "Stolen from, so they go again",
     "now-final": "Final steal: swap or keep",
     "too-few": "A White Elephant needs at least {min} people. There are too few to play today."

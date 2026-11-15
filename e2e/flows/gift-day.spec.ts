@@ -327,7 +327,7 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
 
   await test.step('lock in: no giftee or wishlist, nothing to shop for', async () => {
     await page.goto(`/g/${slug}`);
-    await expect(page.getByRole('list', { name: 'Where this Secret Santa is' }).getByText('Lock in')).toBeVisible();
+    await expect(page.getByRole('list', { name: 'Where this edition is' }).getByText('Lock in')).toBeVisible();
     await expect(page.getByRole('tab', { name: /wishlist/i })).toHaveCount(0);
     await button(page, 'Lock in').click();
     await expect(page.getByRole('dialog', { name: 'Lock it in now?' })).toBeVisible();
@@ -378,7 +378,7 @@ test('white elephant: create, lock in, and a four-person swap with two steals in
     await expect(shownName(page, p0)).toHaveCount(2);
     for (const key of ['ArrowRight', ' ', 'PageDown']) await page.keyboard.press(key);
     await expect(page.getByText('Final steal', { exact: true }), 'no key or clicker makes the final choice').toBeVisible();
-    await button(page, 'Keep their gift').click();
+    await button(page, 'Keep yours').click();
     await expect(page.getByRole('heading', { name: "That's everyone!" })).toBeVisible();
     await expect(table.getByRole('listitem')).toHaveText(finalTable(p0, p1, p2, p3));
   });

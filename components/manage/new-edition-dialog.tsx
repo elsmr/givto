@@ -59,7 +59,7 @@ export const NewEditionDialog = ({ group, edition, onClose }: NewEditionDialogPr
             <DialogTitle>{t('newEdition.title')}</DialogTitle>
             <DialogDescription>{t('newEdition.description', { title: edition.title })}</DialogDescription>
           </DialogHeader>
-          {edition.status !== 'done' && <p>{t('newEdition.finish', { title: edition.title })}</p>}
+          {edition.status !== 'done' && <p>{t('newEdition.finish', { title: edition.title, kind: edition.kind })}</p>}
           <Field>
             <FieldLabel htmlFor="new-edition-title">{t('newEdition.name')}</FieldLabel>
             <Input id="new-edition-title" required maxLength={80} value={title} onChange={(event) => setTitle(event.target.value)} />

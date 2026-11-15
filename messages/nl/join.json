@@ -25,17 +25,17 @@
   },
   "requested": {
     "title": "Bijna!",
-    "description": "{organizer} moet je nog toelaten. Zodra dat gebeurt, staat de Secret Santa in je lijst.",
+    "description": "{organizer} moet je nog toelaten. Zodra dat gebeurt, staat de groep in je lijst.",
     "my-secret-santas": "Naar mijn groepen"
   },
   "details": {
     "name": "Je naam",
-    "name-help": "Iedereen in de Secret Santa ziet deze naam.",
+    "name-help": "Iedereen in de groep ziet deze naam.",
     "email": "Je e-mailadres",
     "email-help": "We sturen je een code om te checken dat jij het bent.",
     "signed-in": "Je doet mee als {email}.",
     "join": "Doe mee",
-    "send-code": "Stuur me een code"
+    "send-code": "Mail me een code"
   },
   "code": {
     "errors": {
@@ -48,20 +48,20 @@
     }
   },
   "errors": {
-    "GROUP_FULL": "Deze Secret Santa zit vol. Vraag de organisator om plek te maken.",
+    "GROUP_FULL": "Deze groep zit vol. Vraag de organisator om plek te maken.",
     "JOIN_LINK_INVALID": "Deze link werkt niet meer. Vraag de organisator om de nieuwe.",
     "RATE_LIMITED": "Dat zijn veel pogingen. Wacht even en probeer opnieuw.",
     "INVALID_INPUT": "Er klopt iets niet. Check je naam en probeer opnieuw.",
     "INVITE_INVALID": "Deze uitnodiging is al gebruikt of verlopen.",
     "INVITE_EMAIL_MISMATCH": "Deze uitnodiging is voor een ander e-mailadres.",
     "NAME_TAKEN": "Er is hier al een {name}. Voeg een initiaal toe?",
-    "ALREADY_MEMBER": "Je account hoort al bij iemand anders in deze Secret Santa. Vraag de organisator om een nieuwe uitnodiging.",
+    "ALREADY_MEMBER": "Je account hoort al bij iemand anders in deze groep. Vraag de organisator om een nieuwe uitnodiging.",
     "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
   },
   "invite": {
     "for": "Deze uitnodiging is voor {email}.",
     "other-account": "Deze uitnodiging is voor {email}, maar je bent ingelogd als {signedInEmail}. Log uit om verder te gaan.",
-    "send-code": "Stuur me een code",
+    "send-code": "Mail me een code",
     "sign-out": "Uitloggen",
     "decline": "Nee, bedankt",
     "declined-title": "Geen probleem!",

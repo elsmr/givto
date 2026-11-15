@@ -100,7 +100,7 @@
     "INTERNAL": "Er ging iets mis. Probeer het opnieuw.",
     "INVALID_INPUT": "Controleer de tekst en probeer het opnieuw.",
     "RATE_LIMITED": "Dat is de limiet voor nu. Probeer het later opnieuw.",
-    "EDITION_CLOSED": "Deze Secret Santa is daarvoor gesloten.",
+    "EDITION_CLOSED": "Deze editie is daarvoor gesloten.",
     "NOT_FOUND": "Dit is niet meer beschikbaar. Vernieuw de pagina.",
     "WRONG_NUDGE_KIND": "Hun verlanglijstje is net veranderd. Vernieuw en probeer het opnieuw."
   }

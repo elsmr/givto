@@ -45,6 +45,15 @@ export const defaultEditionTitle = (year: number, takenTitles: string[], kind: E
   return Array.from({ length: takenTitles.length + 1 }, (_, i) => numbered(i + 1)).find((title) => !takenTitles.includes(title))!;
 };
 
+/**
+ * The title after switching kind (111): still the old kind's default ('White Elephant 2026', '… (2)'; any case, older
+ * titles say 'White elephant') → the new kind's default for that year. A title someone typed stays.
+ */
+export const titleForKind = (title: string, from: EditionKind, to: EditionKind, takenTitles: string[]): string => {
+  const year = new RegExp(`^${kindTitles[from]} (\\d{4})(?: \\(\\d+\\))?$`, 'i').exec(title)?.[1];
+  return year ? defaultEditionTitle(Number(year), takenTitles, to) : title;
+};
+
 /** Local date + optional time in the group's time zone, not a UTC instant: all-day events must not shift a day (28). */
 export const GiftDay = v.object({
   date: LocalDate,
@@ -86,6 +95,8 @@ export const Draw = v.object({
   drawnAt: v.date(),
   /** Earlier draws replaced by a re-draw (27). Server-only, like `assignments`. */
   history: v.array(v.object({ assignments: Assignments, drawnAt: v.date(), replacedAt: v.date() })),
+  /** Who caused the latest re-draw: the organizer (also by removing someone; absent on older draws) or someone leaving (111). */
+  redrawCause: v.optional(v.picklist(['organizer', 'leave'])),
 });
 export type Draw = v.InferOutput<typeof Draw>;
 

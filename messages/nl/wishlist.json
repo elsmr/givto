@@ -21,7 +21,7 @@
     "kind-wish": "Iets concreets",
     "kind-surpriseMe": "Verras me",
     "kind-donation": "Liever een donatie",
-    "kind-surpriseMe-hint": "Vertel wat je leuk vindt; je Santa kiest iets uit.",
+    "kind-surpriseMe-hint": "Vertel wat je leuk vindt; wie voor jou shopt, kiest iets uit.",
     "kind-donation-hint": "Geen cadeau, maar een gift aan een goed doel. Voeg er een link naar toe.",
     "description": "Toelichting",
     "description-placeholder": "Maat, kleur, of een link naar een winkel",
@@ -74,12 +74,12 @@
     "got": "Gekregen"
   },
   "edition": {
-    "intro": "Ieders verlanglijstje zoals het was toen deze Secret Santa eindigde.",
+    "intro": "Ieders verlanglijstje zoals het was toen deze editie eindigde.",
     "mine": "Mijn verlanglijstje",
     "title": "Verlanglijstje van {name}",
     "empty": "Geen wensen.",
-    "not-saved": "Deze Secret Santa eindigde voor Givto verlanglijstjes bewaarde, dus hier valt niets terug te kijken.",
-    "not-in": "Alleen wie meedeed aan deze Secret Santa ziet de verlanglijstjes ervan."
+    "not-saved": "Deze editie eindigde voor Givto verlanglijstjes bewaarde, dus hier valt niets terug te kijken.",
+    "not-in": "Alleen wie meedeed aan deze editie ziet de verlanglijstjes ervan."
   },
   "group": {
     "title": "Mijn verlanglijstje in deze groep",

@@ -2,6 +2,7 @@ import { JoinedEmail, joinedSubject } from '../../../emails/joined';
 import { JoinRequestEmail, joinRequestSubject } from '../../../emails/join-request';
 import type { Collections } from '../db';
 import { log } from '../log';
+import { currentEdition } from '../membership';
 import { sendNotice } from './notice';
 import { memberRecipient } from './recipients';
 import { groupUrl } from './urls';
@@ -45,6 +46,7 @@ export const notifyJoined = (db: Collections, groupId: string, memberId: string)
     const member = group?.members.find((m) => m.id === memberId && m.status === 'joined');
     const to = group && member && (await memberRecipient(db, group, member));
     if (!group || !member || !to) return;
+    const kind = (await currentEdition(db, group._id))?.kind ?? 'secretSanta';
     await sendNotice(db, {
       key: `joined:${group._id}:${member.id}`,
       kind: 'joined',
@@ -52,7 +54,7 @@ export const notifyJoined = (db: Collections, groupId: string, memberId: string)
       groupId: group._id,
       memberId: member.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, url: groupUrl(group.slug) };
+        const props = { locale: to.locale, group: group.name, kind, url: groupUrl(group.slug) };
         return { subject: joinedSubject(props), body: JoinedEmail(props) };
       },
     });

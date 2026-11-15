@@ -30,7 +30,7 @@ for (const locale of ['en', 'nl']) {
     assert.ok(!/lootje|\b(trek|trekt|trekken|getrokken|trekking)\b/i.test(`${preview.subject} ${text}`), `${label}: says lootje or trekken`);
     if (preview.url) assert.ok(text.includes(preview.url), `${label}: link in plain text`);
     // Account emails end with "Givto · givto.app"; notifications say why they come and how to stop them.
-    const account = ['sign-in', 'delete-account', 'invite', 'join-reminder'].includes(preview.name);
+    const account = ['sign-in', 'delete-account', 'invite', 'join-reminder'].includes(preview.name.replace(/-(white-elephant|conspiracy)$/, ''));
     assert.equal(text.includes('Givto · givto.example'), account, `${label}: site footer line`);
     assert.equal(text.includes(emailTranslator(locale)('layout.why')), !account, `${label}: why footer line`);
     for (const secret of preview.mustNotContain ?? []) {

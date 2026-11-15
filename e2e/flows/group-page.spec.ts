@@ -5,7 +5,7 @@ import { expect, ok, test, type User } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
 
-const stepper = (page: Page) => page.getByRole('list', { name: 'Where this Secret Santa is' });
+const stepper = (page: Page) => page.getByRole('list', { name: 'Where this edition is' });
 
 /** The stepper has exactly one current step, `current`; the ones before it are ticked "finished". */
 const expectPhase = async (page: Page, current: string) => {
@@ -22,7 +22,7 @@ const expectPhase = async (page: Page, current: string) => {
   }
 };
 
-const tab = (page: Page, name: string) => page.getByRole('tablist', { name: 'This Secret Santa' }).getByRole('tab', { name });
+const tab = (page: Page, name: string) => page.getByRole('tablist', { name: 'This group' }).getByRole('tab', { name });
 
 const openGroup = async (ann: User, bob: User, name: string) => {
   const group = ok(
@@ -73,7 +73,7 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
   const group = await openGroup(ann, bob, 'Tabs');
   ok(await cee.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name: 'Cee' }));
   await signInPage(page, bob);
-  const tabs = page.getByRole('tablist', { name: 'This Secret Santa' }).getByRole('tab');
+  const tabs = page.getByRole('tablist', { name: 'This group' }).getByRole('tab');
 
   await test.step('before the draw: no My giftee tab', async () => {
     await page.goto(`/g/${group.slug}#giftee`);
@@ -161,7 +161,7 @@ test('the app nav: a bar at the bottom on phones, a rail on desktop; the tabs fi
     await expect.poll(async () => Math.round((await box()).height)).toBe(viewport.height);
   }
 
-  const tabs = page.getByRole('tablist', { name: 'This Secret Santa' }).getByRole('tab');
+  const tabs = page.getByRole('tablist', { name: 'This group' }).getByRole('tab');
   await expect(tabs).toHaveCount(4);
   const boxes = await Promise.all((await tabs.all()).map(async (t) => (await t.boundingBox())!));
   for (const tabBox of boxes) {

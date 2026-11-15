@@ -87,7 +87,7 @@
     "outlook": "Outlook.com",
     "gift-day": "{group}: gift day",
     "post-by": "{group}: post your gift",
-    "description": "Your Secret Santa on Givto: {url}"
+    "description": "Your group on Givto: {url}"
   },
   "gaps": {
     "not-in": "Not in the draw: {names}. They joined after the draw and couldn't be fitted in without breaking the rules or changing a giftee someone already started on. Re-draw names to include them, or leave it and they sit this one out.",

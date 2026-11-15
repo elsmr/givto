@@ -2,7 +2,7 @@
   "layout": {
     "logo-alt": "Givto",
     "for": "For {name}",
-    "why": "You're getting this email because you take part in a Secret Santa on Givto.",
+    "why": "You're getting this email because you're in a group on Givto.",
     "manage": "Email settings",
     "unsubscribe": "Stop {category}",
     "category": {
@@ -33,21 +33,21 @@
   },
   "invite": {
     "subject": "{organizer} invited you to {group} on Givto",
-    "preheader": "Join the Secret Santa: add your wishlist and wait for the draw.",
+    "preheader": "{kind, select, whiteElephant {Join the White Elephant: everyone brings one gift, then picks or steals one on gift day.} conspiracy {Join the Conspiracy Santa: plan one gift for each person together, behind their back.} other {Join the Secret Santa: add your wishlist and wait for the draw.}}",
     "title": "You're invited!",
     "greeting": "Hi!",
-    "body": "{organizer} invited you to the Secret Santa “{group}”.",
-    "button": "Join the Secret Santa",
+    "body": "{organizer} invited you to the {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}} “{group}”.",
+    "button": "Join the {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}}",
     "expiry": "This link is just for you and works once, for 7 days.",
     "ignore": "Not interested? You can decline from the same link, or ignore this email."
   },
   "join-reminder": {
     "subject": "Still joining {group}?",
-    "preheader": "{organizer} is waiting for you in the Secret Santa.",
+    "preheader": "{organizer} is waiting for you in the {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}}.",
     "title": "Still joining?",
     "greeting": "Hi!",
-    "body": "{organizer} invited you to the Secret Santa “{group}”, and you haven't joined yet. Join before the draw to be in it.",
-    "button": "Join the Secret Santa",
+    "body": "{kind, select, whiteElephant {{organizer} invited you to the White Elephant “{group}”, and you haven't joined yet.} conspiracy {{organizer} invited you to the Conspiracy Santa “{group}”, and you haven't joined yet.} other {{organizer} invited you to the Secret Santa “{group}”, and you haven't joined yet. Join before the draw to be in it.}}",
+    "button": "Join the {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}}",
     "expiry": "This link is just for you and works once, until your invite expires.",
     "ignore": "Not interested? You can decline from the same link. We won't remind you again."
   },
@@ -60,9 +60,9 @@
   },
   "joined": {
     "subject": "You're in: {group}",
-    "preheader": "The organizer let you in. Time for your wishlist.",
+    "preheader": "{kind, select, whiteElephant {The organizer let you in. See you on gift day!} other {The organizer let you in. Time for your wishlist.}}",
     "title": "You're in!",
-    "body": "The organizer let you into “{group}”. Add a few wishes so your Santa knows what to get you.",
+    "body": "{kind, select, whiteElephant {The organizer let you into “{group}”. Bring one wrapped gift to gift day.} conspiracy {The organizer let you into “{group}”. Add a few wishes so the others know what to get you.} other {The organizer let you into “{group}”. Add a few wishes so your Santa knows what to get you.}}",
     "button": "Go to the group"
   },
   "join-digest": {
@@ -89,13 +89,14 @@
     "title": "You have a new giftee",
     "body": "Someone joined or left “{group}” after the draw, so you're now buying for someone else. Everybody else keeps their giftee.",
     "body-redrawn": "The organizer drew the names again for “{group}”, so you're now buying for someone else.",
+    "body-left": "Someone left “{group}”, so the names were drawn again and you're now buying for someone else.",
     "button": "Show my new giftee"
   },
   "organizer-handover": {
     "subject": "You're now the owner of {group}",
     "preheader": "The previous owner deleted their account.",
     "title": "You're the owner now",
-    "body": "The owner of “{group}” deleted their Givto account, so the group passed to you. You can now invite people, change the dates, run the draw and choose who organizes it with you.",
+    "body": "The owner of “{group}” deleted their Givto account, so the group passed to you. You can now invite people, change the dates and choose who organizes it with you.",
     "button": "Open the group"
   },
   "psst": {
@@ -194,8 +195,8 @@
     "subject": "{group} will be deleted on {date}",
     "preheader": "Nothing happened in this group for a long time.",
     "title": "We'll delete this group soon",
-    "body": "Nothing happened in “{group}” for {months, number} months. To keep as little data as we can, we'll delete the group and its Secret Santas on {date}.",
-    "keep": "Want to keep it? Start a new Secret Santa in the group before then.",
+    "body": "Nothing happened in “{group}” for {months, number} months. To keep as little data as we can, we'll delete the group and its editions on {date}.",
+    "keep": "Want to keep it? Start a new edition in the group before then.",
     "button": "Open the group"
   }
 }

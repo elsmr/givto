@@ -2,7 +2,7 @@
   "page-title": "Start a Secret Santa",
   "step": "Step {step} of {total}",
   "titles": {
-    "details": "Start a Secret Santa",
+    "details": "{kind, select, whiteElephant {Start a White Elephant} conspiracy {Start a Conspiracy Santa} other {Start a Secret Santa}}",
     "organizer": "And you are?",
     "code": "Check your email"
   },
@@ -10,7 +10,7 @@
   "create-white-elephant": "Create White Elephant",
   "create-conspiracy": "Create Conspiracy Santa",
   "errors": {
-    "RATE_LIMITED": "That's a lot of Secret Santas for one day. Try again tomorrow.",
+    "RATE_LIMITED": "That's a lot of groups for one day. Try again tomorrow.",
     "DATE_IN_PAST": "Gift day can't be in the past.",
     "INVALID_INPUT": "Something in the form doesn't look right. Check the fields and try again.",
     "UNAUTHENTICATED": "Your sign-in expired. Send yourself a new code.",
@@ -68,17 +68,17 @@
   },
   "organizer": {
     "name": "Your name",
-    "name-help": "Everyone in the Secret Santa sees this name.",
+    "name-help": "Everyone in the group sees this name. Already have an account? We'll use its name.",
     "email": "Your email",
     "email-help": "We'll send you a code to check it's you. Nothing gets sent to anyone else.",
     "signed-in": "You're signed in as {email}.",
-    "send-code": "Send me a code",
+    "send-code": "Email me a code",
     "back": "Back"
   },
   "share": {
     "title": "{group} is ready!",
     "description": "Share the link with your family or friends, or invite them by email.",
     "later": "You'll find the link on the group page too.",
-    "go-to-group": "Go to your Secret Santa"
+    "go-to-group": "Go to your group"
   }
 }

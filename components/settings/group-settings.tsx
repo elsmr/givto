@@ -70,7 +70,12 @@ export const GroupSettings = ({ slug }: { slug: string }) => {
             title: edition.title,
             content: (
               <SettingsGroup id="edition" title={t('edition.title', { edition: edition.title })} icon={CalendarDays} tone="mint">
-                <EditionForm key={edition.number} groupSlug={slug} edition={edition} />
+                <EditionForm
+                  key={edition.number}
+                  groupSlug={slug}
+                  edition={edition}
+                  takenTitles={data.editions.filter((e) => e.number !== edition.number).map((e) => e.title)}
+                />
               </SettingsGroup>
             ),
           },

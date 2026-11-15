@@ -10,12 +10,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useTRPC } from '@/lib/client/trpc';
+import type { EditionKind } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 
-/** Members can leave, also after the draw (48: the draw is patched); wishes stay theirs. */
-export const LeaveGroup = ({ slug, groupName }: { slug: string; groupName: string }) => {
+/** Members can leave, also after the draw (48: the draw is patched); wishes stay theirs. `kind`: the current edition's. */
+export const LeaveGroup = ({ slug, groupName, kind }: { slug: string; groupName: string; kind: EditionKind }) => {
   const t = useTranslations('group.leave');
   const trpc = useTRPC();
   const router = useRouter();
@@ -27,7 +28,7 @@ export const LeaveGroup = ({ slug, groupName }: { slug: string; groupName: strin
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('title', { group: groupName })}</DialogTitle>
-          <DialogDescription>{t('description')}</DialogDescription>
+          <DialogDescription>{t('description', { kind })}</DialogDescription>
         </DialogHeader>
         {leave.error && (
           <p role="alert" className="text-danger">

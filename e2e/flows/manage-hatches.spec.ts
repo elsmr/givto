@@ -5,7 +5,7 @@ import { newId } from '@/lib/server/db';
 import { expect, ok, test } from '../fixtures';
 import { editionOf, memberIdOf } from '../api/s4-group';
 
-const currentStep = (page: Page) => page.getByRole('list', { name: 'Where this Secret Santa is' }).locator('[aria-current="step"]');
+const currentStep = (page: Page) => page.getByRole('list', { name: 'Where this edition is' }).locator('[aria-current="step"]');
 
 /** ⋯ → item → the dialog says what happens → confirm. */
 const useHatch = async (page: Page, item: string, dialogTitle: string, confirm: string, fill?: (page: Page) => Promise<void>) => {

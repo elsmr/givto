@@ -1,6 +1,6 @@
 {
-  "page-title": "Secret Santa",
-  "load-failed": "We konden deze Secret Santa niet laden. Check je verbinding en probeer het opnieuw.",
+  "page-title": "Groep",
+  "load-failed": "We konden deze groep niet laden. Check je verbinding en probeer het opnieuw.",
   "summary": {
     "gift-day": "Pakjesdag",
     "no-gift-day": "Nog niet gekozen",
@@ -40,7 +40,7 @@
     "copied": "Link gekopieerd",
     "copy-failed": "Kopiëren lukte niet. Selecteer de link en kopieer hem zelf.",
     "share": "Delen",
-    "share-text": "Doe mee met onze Secret Santa {group} op Givto",
+    "share-text": "Doe mee met {group} op Givto",
     "show-qr": "QR-code tonen",
     "qr-label": "QR-code met de link om mee te doen aan {group}",
     "settings": {
@@ -63,9 +63,9 @@
     "failed": "{email}: {reason}",
     "invalid": "Dat is geen e-mailadres.",
     "errors": {
-      "ALREADY_MEMBER": "Die doet al mee met deze Secret Santa.",
+      "ALREADY_MEMBER": "Doet al mee met deze groep.",
       "RATE_LIMITED": "Dat zijn veel uitnodigingen voor één dag. Deel de link, of probeer het morgen opnieuw.",
-      "GROUP_FULL": "Deze Secret Santa zit vol.",
+      "GROUP_FULL": "Deze groep zit vol.",
       "INVITE_LIMIT": "Dat adres kreeg vandaag al 3 uitnodigingen. Probeer het morgen opnieuw.",
       "EMAIL_SUPPRESSED": "E-mail naar dit adres kwam niet aan of werd als spam gemeld, dus Givto stuurt er niets meer naartoe.",
       "INVALID_INPUT": "Check het e-mailadres en probeer opnieuw.",
@@ -75,7 +75,7 @@
   "leave": {
     "button": "Groep verlaten",
     "title": "Stoppen met {group}?",
-    "description": "Je doet niet meer mee aan de loting en ziet de groep niet meer. Is er al geloot, dan doe je deze keer niet meer mee, ook niet als je terugkomt. Je verlanglijstje blijft van jou.",
+    "description": "{kind, select, whiteElephant {Je ziet de groep niet meer. Is het al vastgelegd, dan doe je deze keer niet meer mee, ook niet als je terugkomt.} conspiracy {Je ziet de groep en de prikborden niet meer, en je eigen prikbord verdwijnt. Is het al vastgelegd, dan doe je deze keer niet meer mee, ook niet als je terugkomt. Je berichten blijven op de prikborden staan en je verlanglijstje blijft van jou.} other {Je doet niet meer mee aan de loting en ziet de groep niet meer. Is er al geloot, dan doe je deze keer niet meer mee, ook niet als je terugkomt. Je verlanglijstje blijft van jou.}}",
     "cancel": "Blijven",
     "confirm": "Stoppen",
     "errors": {
@@ -105,7 +105,7 @@
     }
   },
   "not-found": {
-    "title": "We konden deze Secret Santa niet vinden",
+    "title": "We konden deze groep niet vinden",
     "description": "Hij bestaat niet, of je doet niet mee met dit account. Wil je meedoen? Open de link van je organisator opnieuw.",
     "my-secret-santas": "Naar mijn groepen",
     "switch-account": "Inloggen met een ander e-mailadres"
@@ -129,7 +129,7 @@
   },
   "budget-chip": "Budget {budget}",
   "phase": {
-    "label": "Waar deze Secret Santa staat",
+    "label": "Waar deze editie staat",
     "join": "Meedoen",
     "draw": "Loten",
     "lock-in": "Vastleggen",
@@ -139,7 +139,7 @@
     "done-state": "afgerond"
   },
   "tabs": {
-    "label": "Deze Secret Santa",
+    "label": "Deze groep",
     "overview": "Overzicht",
     "giftee": "Mijn persoon",
     "boards": "Prikborden",

@@ -127,7 +127,7 @@ export const inviteRouter = router({
       await sendMail({
         to: input.email,
         subject: inviteSubject(names),
-        body: InviteEmail({ ...names, url: inviteUrl(ctx.group.slug, token) }),
+        body: InviteEmail({ ...names, kind: edition?.kind ?? 'secretSanta', url: inviteUrl(ctx.group.slug, token) }),
       });
       return { memberId };
     }),

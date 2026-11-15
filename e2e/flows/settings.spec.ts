@@ -337,6 +337,6 @@ test('after gift day: same again next year, then open the new edition', async ({
     await page.getByRole('button', { name: 'Open this edition' }).click();
     await expect(page.getByText('Edition opened')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Get everyone in' })).toBeVisible();
-    await expect(page.getByRole('list', { name: 'Where this Secret Santa is' }).locator('[aria-current="step"]')).toContainText('Draw');
+    await expect(page.getByRole('list', { name: 'Where this edition is' }).locator('[aria-current="step"]')).toContainText('Draw');
   });
 });

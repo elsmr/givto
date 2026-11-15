@@ -13,7 +13,7 @@ export const PeoplePanel = ({ group }: { group: GroupData }) => {
       <PeopleList group={group} />
       <div className="flex min-w-0 flex-col gap-6">
         {edition && drawsNames(edition) && <TipsAboutPeople input={{ groupSlug: group.slug, editionNumber: edition.number }} />}
-        {!group.me.isOwner && <LeaveGroup slug={group.slug} groupName={group.name} />}
+        {!group.me.isOwner && <LeaveGroup slug={group.slug} groupName={group.name} kind={edition?.kind ?? 'secretSanta'} />}
       </div>
     </div>
   );

@@ -7,8 +7,8 @@
     "description": "Gift day starts for everyone right away, without waiting for the date.",
     "points": {
       "date": "The gift day is today, {today}.",
-      "order": "The unwrap order is shuffled, because nobody has yet.",
-      "open": "Dibs!, tips and questions stay open until the end of the day. Then it's done.",
+      "order": "The unwrap order gets shuffled, because nobody has done that yet.",
+      "open": "{kind, select, secretSanta {Dibs!, tips and questions stay open until the end of the day.} conspiracy {The boards stay open until the end of the day.} other {Gift day lasts until the end of the day.}} Then it's done.",
       "secret": "{santas, select, revealed {Everyone sees who was whose Santa: at the end of the presenter view, or when gift day is over.} turns {Who drew whom stays secret, also after gift day, apart from the Santas the presenter shows at each turn.} other {Who drew whom stays secret, also after gift day.}}"
     },
     "confirm": "Start gift day",
@@ -17,9 +17,9 @@
   "finishGiftDay": {
     "item": "Finish gift day",
     "title": "Finish gift day now?",
-    "description": "This Secret Santa is over for everyone, without waiting for tomorrow.",
+    "description": "Gift day is over for everyone, without waiting for tomorrow.",
     "points": {
-      "closed": "Dibs!, tips, questions and the settings close.",
+      "closed": "{kind, select, secretSanta {Dibs!, tips, questions and the settings close.} conspiracy {The boards and the settings close.} other {The settings close.}}",
       "received": "Everyone can tick off what they got.",
       "secret": "{santas, select, revealed {Everyone sees who was whose Santa.} turns {Who drew whom stays secret, apart from the Santas shown at the turns.} other {Who drew whom stays secret.}}",
       "next": "You can start a new edition.",
@@ -32,7 +32,7 @@
     "item": "Back to shopping",
     "underway": "Not once something's unwrapped or revealed",
     "title": "Back to shopping?",
-    "description": "Gift day stops: everyone shops for their giftee again, until the new gift day.",
+    "description": "Gift day stops: everyone shops again, until the new gift day.",
     "points": {
       "date": "Gift day moves to the date you pick below. Reminders follow it.",
       "order": "The unwrap order stays a surprise; the unwrapping starts over.",
@@ -48,7 +48,7 @@
     "title": "Reopen gift day for today?",
     "description": "For corrections: it's gift day again until the end of today, {today}. Then it's over again.",
     "points": {
-      "open": "Dibs!, tips, questions, the unwrap order and the settings open again.",
+      "open": "{kind, select, secretSanta {Dibs!, tips, questions, the unwrap order and the settings open again.} conspiracy {The boards, the unwrap order and the settings open again.} other {The unwrap order and the settings open again.}}",
       "date": "The gift day date becomes today.",
       "secret": "Whether the Santas are revealed stays as it is."
     },
@@ -59,7 +59,7 @@
     "item": "Start a new edition",
     "title": "Start a new edition?",
     "description": "A draft with the same people and budget as {title}, without dates. Nothing is sent until you open it.",
-    "finish": "{title} is finished first, as only one runs at a time: gift day is over and Dibs!, tips, questions and its settings close.",
+    "finish": "{title} is finished first, as only one runs at a time: gift day is over and {kind, select, secretSanta {Dibs!, tips, questions and its settings close.} conspiracy {its boards and settings close.} other {its settings close.}}",
     "name": "Name",
     "confirm": "Start new edition"
   },
@@ -70,7 +70,7 @@
     "DATE_IN_PAST": "Pick a day after today.",
     "EDITION_CLOSED": "Only the latest edition can be reopened.",
     "EDITION_CHANGED": "Someone changed this edition just now. Reload the page and try again.",
-    "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn yet.",
+    "EDITION_IN_PROGRESS": "There's already an edition that hasn't been drawn or locked in yet.",
     "TOO_FEW_PEOPLE": "A White Elephant needs at least {min} people. Invite more first.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   }

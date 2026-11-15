@@ -15,20 +15,20 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
-import type { EditionStatus } from '@/lib/schema/edition';
+import type { EditionKind, EditionStatus } from '@/lib/schema/edition';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { settingsErrorKey } from './settings-error';
 
-type RemovePersonDialogProps = { groupSlug: string; person: GroupMember; editionStatus: EditionStatus; members: GroupMember[] };
+type RemovePersonDialogProps = { groupSlug: string; person: GroupMember; editionStatus: EditionStatus; editionKind: EditionKind; members: GroupMember[] };
 
 /**
  * Organizer removes someone (27). After the draw only their Santa gets someone new (48), unless the names have to be
  * drawn again for everyone (105: said before confirming; refused with the reason when no draw works without them).
  * From gift day on nobody gets someone new.
  */
-export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }: RemovePersonDialogProps) => {
+export const RemovePersonDialog = ({ groupSlug, person, editionStatus, editionKind, members }: RemovePersonDialogProps) => {
   const t = useTranslations('settings');
   const trpc = useTRPC();
   const refresh = useRefreshEdition(groupSlug);
@@ -61,7 +61,7 @@ export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('people.remove-title', { name: person.name })}</DialogTitle>
-          <DialogDescription>{t(`people.${description}`, { name: person.name })}</DialogDescription>
+          <DialogDescription>{t(`people.${description}`, { name: person.name, kind: editionKind })}</DialogDescription>
         </DialogHeader>
         {remove.error &&
           (drawRefused ? (

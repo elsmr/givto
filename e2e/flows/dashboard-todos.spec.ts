@@ -59,14 +59,14 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
   });
 
   await test.step('no wishes → my wishlist in that group', async () => {
-    await followTodo(page, "Your Santa sees an empty wishlist: add a few wishes", 'Waiting');
+    await followTodo(page, 'Whoever shops for you sees an empty wishlist: add a few wishes', 'Waiting');
     await expect(page).toHaveURL(`/g/${waiting.slug}#wishlist`);
     await expect(page.getByRole('tab', { name: 'Wishlist' })).toHaveAttribute('aria-selected', 'true');
     await expect(page.getByRole('tabpanel', { name: 'Wishlist' }).getByText('Or add one from your wishlist')).toBeVisible();
   });
 
   await test.step('draft → open the next edition', async () => {
-    await followTodo(page, "Your next Secret Santa isn't sent yet", 'Next year');
+    await followTodo(page, "Your next edition isn't sent yet", 'Next year');
     await expect(page).toHaveURL(`/g/${nextYear.slug}`);
     await expect(page.getByRole('heading', { name: "Nothing's sent yet" })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Open this edition' })).toBeVisible();
@@ -82,7 +82,7 @@ test('each to-do links to where it gets done', async ({ page, signIn, signInPage
     await followTodo(page, "It's gift day!", 'Party');
     await expect(page).toHaveURL(`/g/${party.slug}`);
     await expect(
-      page.getByRole('list', { name: 'Where this Secret Santa is' }).getByRole('listitem').filter({ hasText: 'Gift day' })
+      page.getByRole('list', { name: 'Where this edition is' }).getByRole('listitem').filter({ hasText: 'Gift day' })
     ).toHaveAttribute('aria-current', 'step');
   });
 });

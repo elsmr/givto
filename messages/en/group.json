@@ -1,6 +1,6 @@
 {
-  "page-title": "Secret Santa",
-  "load-failed": "We couldn't load this Secret Santa. Check your connection and try again.",
+  "page-title": "Group",
+  "load-failed": "We couldn't load this group. Check your connection and try again.",
   "summary": {
     "gift-day": "Gift day",
     "no-gift-day": "Not set yet",
@@ -40,7 +40,7 @@
     "copied": "Link copied",
     "copy-failed": "Couldn't copy. Select the link and copy it yourself.",
     "share": "Share",
-    "share-text": "Join our Secret Santa {group} on Givto",
+    "share-text": "Join {group} on Givto",
     "show-qr": "Show QR code",
     "qr-label": "QR code with the join link for {group}",
     "settings": {
@@ -63,9 +63,9 @@
     "failed": "{email}: {reason}",
     "invalid": "That's not an email address.",
     "errors": {
-      "ALREADY_MEMBER": "They're already in this Secret Santa.",
+      "ALREADY_MEMBER": "Already in this group.",
       "RATE_LIMITED": "That's a lot of invites for one day. Share the link instead, or try again tomorrow.",
-      "GROUP_FULL": "This Secret Santa is full.",
+      "GROUP_FULL": "This group is full.",
       "INVITE_LIMIT": "That's 3 invites to this address today. Try again tomorrow.",
       "EMAIL_SUPPRESSED": "Email to this address bounced or was marked as spam, so Givto doesn't send there anymore.",
       "INVALID_INPUT": "Check the email address and try again.",
@@ -75,7 +75,7 @@
   "leave": {
     "button": "Leave the group",
     "title": "Leave {group}?",
-    "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, you sit this one out, also if you come back. Your wishlist stays yours.",
+    "description": "{kind, select, whiteElephant {You won't see the group anymore. If it's locked in already, you sit this one out, also if you come back.} conspiracy {You won't see the group or the boards anymore, and your own board goes away. If it's locked in already, you sit this one out, also if you come back. Your posts stay on the boards, and your wishlist stays yours.} other {You'll be out of the draw and won't see the group anymore. If names are drawn already, you sit this one out, also if you come back. Your wishlist stays yours.}}",
     "cancel": "Stay",
     "confirm": "Leave",
     "errors": {
@@ -105,7 +105,7 @@
     }
   },
   "not-found": {
-    "title": "We couldn't find this Secret Santa",
+    "title": "We couldn't find this group",
     "description": "It doesn't exist, or you're not in it with this account. Joining? Open the link from your organizer again.",
     "my-secret-santas": "Go to my groups",
     "switch-account": "Sign in with another email"
@@ -129,7 +129,7 @@
   },
   "budget-chip": "Budget {budget}",
   "phase": {
-    "label": "Where this Secret Santa is",
+    "label": "Where this edition is",
     "join": "Join",
     "draw": "Draw",
     "lock-in": "Lock in",
@@ -139,7 +139,7 @@
     "done-state": "finished"
   },
   "tabs": {
-    "label": "This Secret Santa",
+    "label": "This group",
     "overview": "Overview",
     "giftee": "My giftee",
     "boards": "Boards",

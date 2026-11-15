@@ -47,7 +47,7 @@ const visit = async (page: Page, path: string) => {
 const scanGroupTabs = async (page: Page, slug: string) => {
   await page.goto(`/g/${slug}`);
   await settle(page);
-  const tabs = page.getByRole('tablist', { name: 'This Secret Santa' }).getByRole('tab');
+  const tabs = page.getByRole('tablist', { name: 'This group' }).getByRole('tab');
   for (const name of await tabs.allInnerTexts()) {
     await tabs.filter({ hasText: name }).click();
     await scan(page, `/g/${slug} › ${name}`);

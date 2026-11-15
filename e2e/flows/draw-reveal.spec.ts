@@ -6,7 +6,7 @@ import { expect, ok, test } from '../fixtures';
 import { drawnGroup } from '../api/s6-helpers';
 import { drawOf } from './draw-seed';
 
-const stepper = (page: Page) => page.getByRole('list', { name: 'Where this Secret Santa is' });
+const stepper = (page: Page) => page.getByRole('list', { name: 'Where this edition is' });
 const tapToReveal = (page: Page) => page.getByRole('button', { name: "Tap to see who you're buying for" });
 /** The revealed side of the reveal card: "You're buying for" and the name. */
 const revealed = (page: Page) => page.getByText("You're buying for", { exact: true }).locator('..');
