@@ -15,7 +15,6 @@
   },
   "games": {
     "title": "Kies je spel",
-    "lead": "De meeste groepen kiezen de klassieker. Zin in een variant? Givto regelt die ook.",
     "secretSanta": {
       "title": "Secret Santa",
       "description": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Niemand trekt zichzelf, en wie jouw Santa is, blijft een verrassing tot pakjesdag."
@@ -27,8 +26,7 @@
     "conspiracy": {
       "title": "Conspiracy Santa",
       "description": "Iedereen krijgt één cadeau van alle anderen samen, gepland op een bord dat die persoon niet ziet."
-    },
-    "twists": "Of een variant"
+    }
   },
   "steps": {
     "title": "Zo werkt het",

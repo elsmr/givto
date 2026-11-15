@@ -47,7 +47,7 @@ export const HomeGames = () => {
 
   return (
     <HomeSection fill="yellow" aria-labelledby="games-title">
-      <HomeSectionTitle id="games-title" title={t('title')} lead={t('lead')} />
+      <HomeSectionTitle id="games-title" title={t('title')} />
       <div className="flex flex-col gap-6">
         <div {...play} className={cn(card, 'flex-col gap-6 p-4 shadow-lg sm:p-6 md:flex-row md:items-center md:gap-10')}>
           <div className="relative select-none md:w-1/2">
@@ -62,7 +62,6 @@ export const HomeGames = () => {
             <p className="text-lg">{t('secretSanta.description')}</p>
           </div>
         </div>
-        <h3 className="font-heading text-xl font-bold">{t('twists')}</h3>
         <ul className="grid gap-6 md:grid-cols-2">
           {twists.map(({ key, Animation, Icon }) => (
             <Twist key={key} title={t(`${key}.title`)} description={t(`${key}.description`)} Animation={Animation} Icon={Icon} />
@@ -93,10 +92,10 @@ const Twist = ({
         <PlayHint playing={playing} />
       </div>
       <div className="flex flex-col gap-1">
-        <h4 className="flex items-center gap-2 text-lg font-bold">
+        <h3 className="flex items-center gap-2 text-lg font-bold">
           <Icon aria-hidden="true" className="size-5 shrink-0" />
           {title}
-        </h4>
+        </h3>
         <p>{description}</p>
       </div>
     </li>

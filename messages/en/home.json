@@ -15,7 +15,6 @@
   },
   "games": {
     "title": "Pick your game",
-    "lead": "Most groups go for the classic. Fancy a twist? Givto runs those too.",
     "secretSanta": {
       "title": "Secret Santa",
       "description": "Everyone draws one name in secret and gets that person a gift. Nobody draws their own name, and nobody finds out who their Santa is until gift day."
@@ -27,8 +26,7 @@
     "conspiracy": {
       "title": "Conspiracy Santa",
       "description": "Everyone gets one gift from all the others, planned together on a board that person can't see."
-    },
-    "twists": "Or a twist on it"
+    }
   },
   "steps": {
     "title": "How it works",
