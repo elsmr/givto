@@ -73,6 +73,7 @@ const createIndexes = async (db: Db, c: Collections) => {
     c.guesses.createIndex({ editionId: 1, guesserMemberId: 1, gifteeMemberId: 1 }, { unique: true }),
     c.tips.createIndex({ editionId: 1, aboutMemberId: 1 }),
     c.tips.createIndex({ editionId: 1, authorMemberId: 1 }),
+    c.tips.createIndex({ deletedAt: 1 }, { partialFilterExpression: { deletedAt: { $exists: true } } }),
     c.questions.createIndex({ editionId: 1, gifteeMemberId: 1 }),
     c.questions.createIndex({ editionId: 1, askerMemberId: 1 }),
     c.nudges.createIndex({ editionId: 1, santaMemberId: 1, createdAt: -1 }),

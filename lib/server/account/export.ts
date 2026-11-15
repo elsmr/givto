@@ -31,7 +31,7 @@ export const exportAccount = async (db: Collections, userId: string) => {
       db.gifts.find({ santaMemberId: mine }).toArray(),
       db.gifts.find({ gifteeMemberId: mine, arrivedAt: { $exists: true } }, { projection: { editionId: 1, arrivedAt: 1 } }).toArray(),
       db.guesses.find({ guesserMemberId: mine }).toArray(),
-      db.tips.find({ authorMemberId: mine }).toArray(),
+      db.tips.find({ authorMemberId: mine, deletedAt: { $exists: false } }).toArray(),
       db.questions.find({ askerMemberId: mine }).toArray(),
       db.questions.find({ gifteeMemberId: mine }).toArray(),
       db.nudges.find({ santaMemberId: mine }).toArray(),

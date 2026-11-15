@@ -107,6 +107,11 @@ test('retention: messages after 3 months; draws stay; orphan images', async ({ s
       _id: newId(), editionId: edition._id, guesserMemberId: old[1].id, gifteeMemberId: old[1].id, santaMemberId: old[2].id, createdAt: new Date(), updatedAt: new Date(),
     });
   }
+  const deletedAgo = (hours: number) => ({
+    _id: newId(), editionId: recent._id, authorMemberId: old[0].id, aboutMemberId: old[1].id, text: 'Deleted', anonymous: false, createdAt: new Date(), updatedAt: new Date(),
+    deletedAt: new Date(Date.now() - hours * 3600 * 1000),
+  });
+  await db.tips.insertMany([deletedAgo(25), deletedAgo(1)]);
   const wish = ok(await ann.trpc.mutate('wish.create', { title: 'With a picture' }));
   const [orphan, used] = [new ObjectId(), new ObjectId()];
   const images = db.raw.collection('wishImages.files');
@@ -119,11 +124,12 @@ test('retention: messages after 3 months; draws stay; orphan images', async ({ s
   await db.wishes.updateOne({ _id: wish.id }, { $set: { links: [{ url: 'https://shop.test/lamp' }, { url: 'https://shop.test/lamp-2', imageId: used.toHexString() }] } });
   const result = await runJob('retention');
   // Counts cover the whole database (a parallel run may have done ours): the shape here, our documents below.
-  for (const key of ['editionMessages', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
+  for (const key of ['editionMessages', 'deletedTips', 'orphanImages']) expect(typeof result[key], JSON.stringify(result)).toBe('number');
   const after = async (edition: { _id: string }) => (await db.editions.findOne({ _id: edition._id }))!;
   expect((await after(past)).draw, 'kept for the done edition (100)').toBeTruthy();
   expect((await after(recent)).draw).toBeTruthy();
-  expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent tip stays').toBe(1);
+  expect(await db.tips.countDocuments({ editionId: { $in: [past._id, recent._id] }, deletedAt: { $exists: false } }), 'only the recent tip stays').toBe(1);
+  expect(await db.tips.countDocuments({ editionId: recent._id, deletedAt: { $exists: true } }), 'a deleted tip goes a day later').toBe(1);
   expect(await db.guesses.countDocuments({ editionId: { $in: [past._id, recent._id] } }), 'only the recent guess stays').toBe(1);
   expect((await after(past)).results, 'champions and badges (86) outlive the guesses').toEqual(results);
   expect(await images.countDocuments({ _id: { $in: [orphan, used] } })).toBe(1);

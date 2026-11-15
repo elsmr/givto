@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/toast';
-import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
+import { useTRPC, useTRPCClient, type RouterOutputs } from '@/lib/client/trpc';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash2 } from 'lucide-react';
@@ -18,15 +18,19 @@ export const AuthoredTip = ({ input, tip, canEdit }: { input: EditionInput; tip:
   const t = useTranslations('between.tips');
   const errorMessage = useBetweenError();
   const trpc = useTRPC();
+  const client = useTRPCClient();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
   const editButton = useFocusAfterEdit(editing);
   const onSettled = () => queryClient.invalidateQueries({ queryKey: trpc.tip.pathKey() });
   const update = useMutation(trpc.tip.update.mutationOptions({ onSuccess: () => setEditing(false), onSettled }));
+  const onError = (error: unknown) => toast.add({ title: errorMessage(error), type: 'error' });
+  // The tip is gone by the time someone clicks undo, so undo calls the client directly.
+  const undo = () => client.tip.restore.mutate({ ...input, tipId: tip.id }).then(onSettled, onError);
   const remove = useMutation(
     trpc.tip.delete.mutationOptions({
-      onSuccess: () => toast.add({ title: t('deleted'), type: 'success' }),
-      onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
+      onSuccess: () => toast.add({ title: t('deleted'), type: 'success', actionProps: { children: t('undo'), onClick: undo } }),
+      onError,
       onSettled,
     })
   );

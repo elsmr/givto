@@ -28,7 +28,11 @@
     "call-url": "Link naar het videogesprek",
     "call-url-help": "Om op pakjesdag samen uit te pakken via een videogesprek.",
     "notes": "Notities voor iedereen",
-    "notes-help": "Dresscode, thema, huisregels…"
+    "notes-help": "Dresscode, thema, huisregels…",
+    "hide-boards-title": "Geen Conspiracy Santa meer?",
+    "hide-boards-description": "De prikborden en alles wat erop staat zijn verborgen tot je terug naar Conspiracy Santa wisselt.",
+    "hide-boards-cancel": "Annuleren",
+    "hide-boards-confirm": "Wisselen en opslaan"
   },
   "avoid-previous": {
     "label": "Niet dezelfde persoon als vorige keer",

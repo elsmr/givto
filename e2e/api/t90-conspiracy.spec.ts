@@ -45,6 +45,7 @@ test('conspiracy: everyone but X reads and writes X’s board; X never sees a th
     expect(code(await post(nina, m.ann, 'x')), 'not in it').toBe('NOT_FOUND');
     expect(code(await post(bob, m.nina, 'x')), 'nobody’s board').toBe('NOT_FOUND');
     expect(code(await bob.trpc.mutate('tip.create', { ...E, aboutMemberId: m.ann.id, text: 'x' }))).toBe('EDITION_CLOSED');
+    expect(code(await bob.trpc.mutate('tip.delete', { ...E, tipId: bobTip }))).toBe('EDITION_CLOSED');
     return { bobPost, ceePost };
   });
 
@@ -59,13 +60,29 @@ test('conspiracy: everyone but X reads and writes X’s board; X never sees a th
     expect((await board(olive, 'Kid')).posts.map((p) => p.text)).toEqual(['Dinosaur lego']);
   });
 
-  await test.step('only the author edits or deletes a post; tip procedures never reach one', async () => {
+  await test.step('only the author edits or deletes a post; board procedures never reach a tip', async () => {
     ok(await cee.trpc.mutate('board.update', { ...E, postId: ceePost.id, text: 'I’m in, and film too!' }));
     expect((await board(dan, 'Ann')).posts[1]).toMatchObject({ text: 'I’m in, and film too!', author: null });
     expect(code(await bob.trpc.mutate('board.update', { ...E, postId: ceePost.id, text: 'mine now' }))).toBe('NOT_FOUND');
     expect(code(await bob.trpc.mutate('board.delete', { ...E, postId: ceePost.id }))).toBe('NOT_FOUND');
-    expect(code(await bob.trpc.mutate('tip.delete', { ...E, tipId: bobPost.id }))).toBe('NOT_FOUND');
     expect(code(await bob.trpc.mutate('board.update', { ...E, postId: bobTip, text: 'x' }))).toBe('NOT_FOUND');
+  });
+
+  const deletedPost = await test.step('a deleted post is gone from every read until its author restores it', async () => {
+    const voucher = ok(await post(dan, m.bob, 'Dinner voucher?'));
+    ok(await dan.trpc.mutate('board.delete', { ...E, postId: voucher.id }));
+    const reads = async () =>
+      [ok(await cee.trpc.query('board.list', E)), ok(await dan.trpc.query('board.list', E)), ok(await dan.trpc.query('account.export'))].map((r) => JSON.stringify(r));
+    for (const json of await reads()) expect(json).not.toContain('Dinner voucher?');
+    expect(code(await dan.trpc.mutate('board.update', { ...E, postId: voucher.id, text: 'x' }))).toBe('NOT_FOUND');
+    expect(code(await dan.trpc.mutate('board.delete', { ...E, postId: voucher.id }))).toBe('NOT_FOUND');
+    expect(code(await cee.trpc.mutate('board.restore', { ...E, postId: voucher.id })), 'only the author').toBe('NOT_FOUND');
+    expect(code(await bob.trpc.mutate('board.restore', { ...E, postId: voucher.id })), 'not its subject').toBe('NOT_FOUND');
+    ok(await dan.trpc.mutate('board.restore', { ...E, postId: voucher.id }));
+    for (const json of await reads()) expect(json).toContain('Dinner voucher?');
+    expect(code(await dan.trpc.mutate('board.restore', { ...E, postId: voucher.id })), 'not deleted').toBe('NOT_FOUND');
+    ok(await dan.trpc.mutate('board.delete', { ...E, postId: voucher.id }));
+    return voucher;
   });
 
   await test.step('switched to Secret Santa, neither boards nor tips show the posts', async () => {
@@ -74,6 +91,7 @@ test('conspiracy: everyone but X reads and writes X’s board; X never sees a th
     expect(ok(await bob.trpc.query('board.list', E))).toBeNull();
     expect(ok(await bob.trpc.query('tip.authored', E)).tips.map((t) => t.text)).toEqual(['An old tip']);
     expect(code(await bob.trpc.mutate('tip.update', { ...E, tipId: bobPost.id, text: 'x' }))).toBe('NOT_FOUND');
+    expect(code(await bob.trpc.mutate('tip.delete', { ...E, tipId: bobPost.id }))).toBe('NOT_FOUND');
     ok(await olive.trpc.mutate('settings.updateEdition', { ...settings, kind: 'conspiracy' }));
     expect((await db.editions.findOne({ _id: edition._id }))!.exchangeMode, 'in person only').toBe('inPerson');
     expect((await board(dan, 'Ann')).posts).toHaveLength(2);
@@ -127,6 +145,7 @@ test('conspiracy: everyone but X reads and writes X’s board; X never sees a th
     const view = ok(await bob.trpc.query('board.list', E))!;
     expect(view.canWrite).toBe(false);
     expect(code(await post(bob, kid, 'Too late'))).toBe('EDITION_CLOSED');
+    expect(code(await dan.trpc.mutate('board.restore', { ...E, postId: deletedPost.id }))).toBe('EDITION_CLOSED');
   });
 });
 

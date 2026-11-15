@@ -6,12 +6,15 @@ import type { Member } from '../../schema/member';
 import { BoardPostFields, TipFields, type Tip } from '../../schema/tip';
 import { boardPeople } from '../between/boards';
 import { newId } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { enforceRateLimit } from '../rate-limit';
 import { editionProcedure, router } from '../trpc';
 import { toWishView, visibleWishes } from '../wishlist/wish-view';
 
 const PostInput = v.object({ postId: Id });
+
+const notDeleted = { deletedAt: { $exists: false } };
 
 const writable = (edition: Edition) => ['open', 'drawn', 'giftday'].includes(edition.status);
 
@@ -42,13 +45,19 @@ export const boardRouter = router({
     const people = boardPeople(ctx.group, ctx.edition, ctx.member);
     if (people.length === 0) return null;
     const posts = await ctx.db.tips
-      .find({ editionId: ctx.edition._id, board: true, aboutMemberId: { $in: people.map((m) => m.id) } })
+      .find({ editionId: ctx.edition._id, board: true, aboutMemberId: { $in: people.map((m) => m.id) }, ...notDeleted })
       .sort({ createdAt: 1 })
       .toArray();
+    // Only joined people with an account write (not managed members or pending invitees). With two writers on a
+    // board, each knows the other wrote any anonymous post, so anonymous is offered from three.
+    const writerIds = drawParticipantIds(ctx.group, ctx.edition).filter((id) =>
+      ctx.group.members.some((m) => m.id === id && m.userId !== undefined && m.status === 'joined')
+    );
     const boards = await Promise.all(
       people.map(async (person) => ({
         memberId: person.id,
         name: person.name,
+        canBeAnonymous: writerIds.filter((id) => id !== person.id).length > 2,
         posts: posts.filter((post) => post.aboutMemberId === person.id).map((post) => toPost(post, ctx.group, ctx.member)),
         wishes: (await visibleWishes(ctx.db, person)).map(toWishView),
       }))
@@ -81,7 +90,7 @@ export const boardRouter = router({
     .input(v.object({ ...PostInput.entries, text: TipFields.entries.text, anonymous: v.optional(v.boolean()) }))
     .mutation(async ({ ctx, input }) => {
       if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
-      const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true });
+      const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, ...notDeleted });
       if (!post) throw new AppError('NOT_FOUND');
       boardOf(ctx.group, ctx.edition, ctx.member, post.aboutMemberId);
       await writeLimit(ctx.member.id);
@@ -92,8 +101,21 @@ export const boardRouter = router({
 
   delete: editionProcedure.input(PostInput).mutation(async ({ ctx, input }) => {
     if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
-    const { deletedCount } = await ctx.db.tips.deleteOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true });
-    if (deletedCount === 0) throw new AppError('NOT_FOUND');
+    const { matchedCount } = await ctx.db.tips.updateOne(
+      { _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, ...notDeleted },
+      { $set: { deletedAt: new Date() } }
+    );
+    if (matchedCount === 0) throw new AppError('NOT_FOUND');
     return { postId: input.postId };
+  }),
+
+  /** Undo of `delete`, by the author while the board is still theirs to write on. */
+  restore: editionProcedure.input(PostInput).mutation(async ({ ctx, input }) => {
+    if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
+    const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, deletedAt: { $exists: true } });
+    if (!post) throw new AppError('NOT_FOUND');
+    boardOf(ctx.group, ctx.edition, ctx.member, post.aboutMemberId);
+    await ctx.db.tips.updateOne({ _id: post._id }, { $unset: { deletedAt: '' } });
+    return { postId: post._id };
   }),
 });

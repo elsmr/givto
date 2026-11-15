@@ -217,11 +217,11 @@ test('notices show only when there is something: join requests, Psst! and questi
 });
 
 test('conspiracy: two people post on Ann’s board, Ann sees nothing of it', async ({ page, newPage, signIn, signInPage }) => {
-  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const group = ok(
     await ann.trpc.mutate('group.create', { name: 'Plot', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson', kind: 'conspiracy' })
   );
-  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee'], [dan, 'Dan']] as const) {
     ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   }
   ok(await ann.trpc.mutate('wish.create', { title: 'Polaroid camera', groupSlugs: [group.slug] }));
@@ -234,19 +234,19 @@ test('conspiracy: two people post on Ann’s board, Ann sees nothing of it', asy
     const board = page.getByRole('tabpanel').locator('[data-slot=card]').filter({ has: page.getByRole('heading', { name: "Ann's board" }) });
     await expect(board.getByText('Polaroid camera')).toBeVisible();
     await expect(page.getByRole('heading', { name: "Bob's board" })).toHaveCount(0);
-    await board.getByLabel('Your post', { exact: true }).fill('Shall we get her the Polaroid?');
-    await board.getByRole('button', { name: 'Post', exact: true }).click();
+    await board.getByRole('textbox', { name: "Your post on Ann's board" }).fill('Shall we get her the Polaroid?');
+    await board.getByRole('button', { name: "Post on Ann's board" }).click();
     await expect(board.getByText('Shall we get her the Polaroid?')).toBeVisible();
-    await expect(board.getByLabel('Your post', { exact: true })).toHaveValue('');
+    await expect(board.getByRole('textbox', { name: "Your post on Ann's board" })).toHaveValue('');
 
     const ceePage = await newPage();
     await signInPage(ceePage, cee);
     await ceePage.goto(`/g/${group.slug}#boards`);
     const ceeBoard = ceePage.getByRole('tabpanel').locator('[data-slot=card]').filter({ has: ceePage.getByRole('heading', { name: "Ann's board" }) });
     await expect(ceeBoard.getByText('From Bob')).toBeVisible();
-    await ceeBoard.getByLabel('Your post', { exact: true }).fill('I’m in');
-    await ceeBoard.getByRole('switch', { name: 'Post anonymously' }).click();
-    await ceeBoard.getByRole('button', { name: 'Post', exact: true }).click();
+    await ceeBoard.getByRole('textbox', { name: "Your post on Ann's board" }).fill('I’m in');
+    await ceeBoard.getByRole('switch', { name: "Post anonymously on Ann's board" }).click();
+    await ceeBoard.getByRole('button', { name: "Post on Ann's board" }).click();
     await expect(ceeBoard.getByText('I’m in')).toBeVisible();
 
     await page.reload();
@@ -254,7 +254,7 @@ test('conspiracy: two people post on Ann’s board, Ann sees nothing of it', asy
     await expect(board.getByText('Anonymous', { exact: true })).toBeVisible();
   });
 
-  await test.step('Ann: boards for Bob and Cee only, and no trace of the posts', async () => {
+  await test.step('Ann: the others’ boards only, and no trace of the posts', async () => {
     const annPage = await newPage();
     await signInPage(annPage, ann);
     await annPage.goto(`/g/${group.slug}#boards`);

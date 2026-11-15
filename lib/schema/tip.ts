@@ -16,6 +16,8 @@ export const BoardPostFields = v.object({ text: TipFields.entries.text, anonymou
  * the subject's current Santa and the author; never by the subject or the organizer.
  * `board` (90): a post on the subject's board in a conspiracy, read by everyone in that edition but the subject.
  * Tips and board posts never show up as each other, so switching the kind never widens who reads one.
+ * `deletedAt`: deleted by the author, hidden from every read and kept only for their undo (`restore`) until retention
+ * purges it a day later.
  */
 export const Tip = v.object({
   _id: Id,
@@ -25,6 +27,7 @@ export const Tip = v.object({
   ...TipFields.entries,
   usedAt: v.optional(v.date()),
   board: v.optional(v.literal(true)),
+  deletedAt: v.optional(v.date()),
   createdAt: v.date(),
   updatedAt: v.date(),
 });
