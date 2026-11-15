@@ -24,9 +24,16 @@
       "conspiracy": "Conspiracy Santa",
       "about": "Hoe werkt {name}?",
       "explain": {
-        "secretSanta": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Wie jouw Santa is, blijft een verrassing tot pakjesdag.",
-        "whiteElephant": "Iedereen brengt één ingepakt cadeau mee naar een gedeelde stapel. Om de beurt pak je een nieuw cadeau uit, of steel je er een dat al open is.",
-        "conspiracy": "Iedereen krijgt één cadeau van alle anderen samen. Jullie plannen elk cadeau samen, op een bord dat die persoon niet ziet."
+        "secretSanta": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Niemand trekt zichzelf, en wie jouw Santa is, blijft een verrassing tot pakjesdag.",
+        "whiteElephant": "Iedereen brengt één ingepakt cadeau mee naar een gedeelde stapel. Op pakjesdag kies je om de beurt: pak een nieuw cadeau uit, of steel er een dat al open is. Wie een cadeau kwijt is, is als volgende aan de beurt. Zo gaat iedereen met één cadeau naar huis.",
+        "conspiracy": "Iedereen krijgt één cadeau, samen bedacht door alle anderen. Elke persoon heeft een bord waarop de anderen ideeën delen en het cadeau kiezen. Je ziet je eigen bord nooit, dus elk cadeau is een verrassing."
+      },
+      "wiki": {
+        "label": "Meer op Wikipedia",
+        "new-tab": "(opent in een nieuw tabblad)",
+        "secretSanta": "https://nl.wikipedia.org/wiki/Lootjes_trekken",
+        "whiteElephant": "https://en.wikipedia.org/wiki/White_elephant_gift_exchange",
+        "conspiracy": "https://en.wikipedia.org/wiki/Secret_Santa#Conspiracy_Santa"
       }
     },
     "name": "Hoe heet je Secret Santa?",

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { EditionKind } from '@/lib/schema/edition';
 import { ExchangeMode } from '@/lib/schema/group';
-import { Plus } from 'lucide-react';
+import { ExternalLink, Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { ConspiracyAnimation } from './explainers/conspiracy';
@@ -114,6 +114,11 @@ export const KindField = ({ kind, onChange }: { kind: EditionKind; onChange: (ki
                 <div className="flex flex-col gap-3">
                   <Animation />
                   <p>{t(`explain.${option}`)}</p>
+                  <a href={t(`wiki.${option}`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 self-start">
+                    {t('wiki.label')}
+                    <ExternalLink aria-hidden="true" className="size-3.5" />
+                    <span className="sr-only">{t('wiki.new-tab')}</span>
+                  </a>
                 </div>
               </FieldHint>
             </div>
