@@ -95,6 +95,19 @@ test('tips: before and after the draw, who sees what', async ({ signIn, db }) =>
     expect(ok(await dan.trpc.query('tip.forGiftee', E1))!.tips).toHaveLength(1);
   });
 
+  await test.step('a deleted tip is gone from every read until its author restores it', async () => {
+    const reads = async () =>
+      [ok(await dan.trpc.query('tip.forGiftee', E1)), ok(await bob.trpc.query('tip.authored', E1)), ok(await bob.trpc.query('account.export'))].map((r) => JSON.stringify(r));
+    for (const json of await reads()) expect(json).not.toContain('Size M');
+    expect(codeOf(await dan.trpc.mutate('tip.setUsed', { ...E1, tipId: bobTip.id, used: true }))).toBe('NOT_FOUND');
+    expect(codeOf(await bob.trpc.mutate('tip.update', { ...E1, tipId: bobTip.id, text: 'x' }))).toBe('NOT_FOUND');
+    expect(codeOf(await bob.trpc.mutate('tip.delete', { ...E1, tipId: bobTip.id }))).toBe('NOT_FOUND');
+    expect(codeOf(await cee.trpc.mutate('tip.restore', { ...E1, tipId: bobTip.id })), 'only the author').toBe('NOT_FOUND');
+    ok(await bob.trpc.mutate('tip.restore', { ...E1, tipId: bobTip.id }));
+    for (const json of await reads()) expect(json).toContain('Size M');
+    expect(codeOf(await bob.trpc.mutate('tip.restore', { ...E1, tipId: bobTip.id })), 'not deleted').toBe('NOT_FOUND');
+  });
+
   // Covers Ann's tip responses; s3-questions.spec.ts checks her Q&A and Psst! responses.
   await test.step('Ann’s responses never name her Santa', async () => {
     // tip.authored lists everyone Ann can leave a tip about, Dan included, so it's not checked here.

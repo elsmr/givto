@@ -14,6 +14,7 @@ const TipInput = v.object({ tipId: Id });
 
 /** Not a board post (90). */
 const notBoard = { board: { $exists: false } };
+const notDeleted = { deletedAt: { $exists: false } };
 
 /** Tips can be written from the moment people join until gift day is over (before the draw too), for a Santa (88). */
 const tipsOpen = (edition: Edition) => drawsNames(edition) && ['open', 'drawn', 'giftday'].includes(edition.status);
@@ -37,7 +38,7 @@ const toAuthoredTip = (tip: Tip, group: Group) => ({
 });
 
 const findOwnTip = async (db: Collections, edition: Edition, author: Member, tipId: string) => {
-  const tip = await db.tips.findOne({ _id: tipId, editionId: edition._id, authorMemberId: author.id, ...notBoard });
+  const tip = await db.tips.findOne({ _id: tipId, editionId: edition._id, authorMemberId: author.id, ...notBoard, ...notDeleted });
   if (!tip) throw new AppError('NOT_FOUND');
   return tip;
 };
@@ -52,7 +53,7 @@ const writeLimit = (memberId: string) => enforceRateLimit(`tip:write:${memberId}
 export const tipRouter = router({
   authored: editionProcedure.query(async ({ ctx }) => {
     const tips = await ctx.db.tips
-      .find({ editionId: ctx.edition._id, authorMemberId: ctx.member.id, ...notBoard })
+      .find({ editionId: ctx.edition._id, authorMemberId: ctx.member.id, ...notBoard, ...notDeleted })
       .sort({ createdAt: 1 })
       .toArray();
     return {
@@ -96,8 +97,19 @@ export const tipRouter = router({
 
   delete: editionProcedure.input(TipInput).mutation(async ({ ctx, input }) => {
     const tip = await findOwnTip(ctx.db, ctx.edition, ctx.member, input.tipId);
-    await ctx.db.tips.deleteOne({ _id: tip._id });
+    await ctx.db.tips.updateOne({ _id: tip._id }, { $set: { deletedAt: new Date() } });
     return { tipId: tip._id };
+  }),
+
+  /** Undo of `delete`, by the author while tips are open. */
+  restore: editionProcedure.input(TipInput).mutation(async ({ ctx, input }) => {
+    if (!tipsOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
+    const { matchedCount } = await ctx.db.tips.updateOne(
+      { _id: input.tipId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, deletedAt: { $exists: true }, ...notBoard },
+      { $unset: { deletedAt: '' } }
+    );
+    if (matchedCount === 0) throw new AppError('NOT_FOUND');
+    return { tipId: input.tipId };
   }),
 
   /** Tips about the caller's giftee, whenever they were written (before the draw too). Null when not a Santa here. */
@@ -105,7 +117,7 @@ export const tipRouter = router({
     if (!ctx.santaRole) return null;
     const { giftee } = ctx.santaRole;
     const tips = await ctx.db.tips
-      .find({ editionId: ctx.edition._id, aboutMemberId: giftee.id, ...notBoard })
+      .find({ editionId: ctx.edition._id, aboutMemberId: giftee.id, ...notBoard, ...notDeleted })
       .sort({ createdAt: 1 })
       .toArray();
     const authorName = (tip: Tip) => ctx.group.members.find((m) => m.id === tip.authorMemberId)?.name ?? '';
@@ -124,7 +136,7 @@ export const tipRouter = router({
 
   setUsed: santaActionProcedure.input(v.object({ ...TipInput.entries, used: v.boolean() })).mutation(async ({ ctx, input }) => {
     if (!tipsOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
-    const filter = { _id: input.tipId, editionId: ctx.edition._id, aboutMemberId: ctx.giftee.id, ...notBoard };
+    const filter = { _id: input.tipId, editionId: ctx.edition._id, aboutMemberId: ctx.giftee.id, ...notBoard, ...notDeleted };
     const result = input.used
       ? await ctx.db.tips.updateOne(filter, { $set: { usedAt: new Date() } })
       : await ctx.db.tips.updateOne(filter, { $unset: { usedAt: '' } });

@@ -24,10 +24,14 @@ interface TipFormProps {
   onCancel?: () => void;
   /** Labels for a tip, or for a post on a conspiracy board (90). */
   copy?: 'tips' | 'boards';
+  /** False hides "post anonymously" when it can't hide who wrote it; an anonymous post keeps it to turn it off. */
+  canBeAnonymous?: boolean;
+  /** Names for screen readers when several forms share a page (one per board). */
+  ariaLabels?: { text: string; anonymous: string; submit: string };
 }
 
 /** Write or edit a tip or board post: who it's about, the text, and "post anonymously". */
-export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, onCancel, copy = 'tips' }: TipFormProps) => {
+export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, onCancel, copy = 'tips', canBeAnonymous = true, ariaLabels }: TipFormProps) => {
   const t = useTranslations('between');
   const id = useId();
   const [draft, setDraft] = useState(initial);
@@ -64,6 +68,7 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
         <FieldLabel htmlFor={`${id}-text`}>{t(`${copy}.text`)}</FieldLabel>
         <Textarea
           id={`${id}-text`}
+          aria-label={ariaLabels?.text}
           required
           maxLength={1000}
           placeholder={t(`${copy}.text-placeholder`)}
@@ -71,13 +76,21 @@ export const TipForm = ({ initial, people, submitLabel, busy, error, onSubmit, o
           onChange={(event) => update({ text: event.target.value })}
         />
       </Field>
-      <Field orientation="horizontal" className="w-fit">
-        <Switch id={`${id}-anonymous`} size="sm" checked={draft.anonymous} onCheckedChange={(anonymous) => update({ anonymous })} />
-        <FieldLabel htmlFor={`${id}-anonymous`}>{t(`${copy}.anonymous`)}</FieldLabel>
-      </Field>
+      {(canBeAnonymous || initial.anonymous) && (
+        <Field orientation="horizontal" className="w-fit">
+          <Switch
+            id={`${id}-anonymous`}
+            size="sm"
+            aria-label={ariaLabels?.anonymous}
+            checked={draft.anonymous}
+            onCheckedChange={(anonymous) => update({ anonymous })}
+          />
+          <FieldLabel htmlFor={`${id}-anonymous`}>{t(`${copy}.anonymous`)}</FieldLabel>
+        </Field>
+      )}
       {error && <Alert variant="danger">{error}</Alert>}
       <div className="flex flex-wrap gap-3">
-        <Button type="submit" variant="neutral" disabled={busy}>
+        <Button type="submit" variant="neutral" disabled={busy} aria-label={ariaLabels?.submit}>
           {submitLabel}
         </Button>
         {onCancel && (

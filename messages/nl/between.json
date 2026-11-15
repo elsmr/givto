@@ -21,7 +21,8 @@
     "cancel": "Annuleren",
     "closed": "Tips zijn gesloten voor deze Secret Santa.",
     "nobody": "Nog niemand om een tip over te geven.",
-    "nudge": "Weet je wat iemand leuk vindt? <link>Geef hun Santa een tip</link>."
+    "nudge": "Weet je wat iemand leuk vindt? <link>Geef hun Santa een tip</link>.",
+    "undo": "Ongedaan maken"
   },
   "boards": {
     "intro": "Iedereen heeft een prikbord waarop de anderen samen één cadeau voor die persoon bedenken. Je eigen prikbord zie je nooit.",
@@ -45,7 +46,11 @@
     "cancel": "Annuleren",
     "closed": "Dit prikbord is gesloten.",
     "wishes-title": "Verlanglijstje van {name}",
-    "wishes-empty": "{name} heeft hier nog geen wensen."
+    "wishes-empty": "{name} heeft hier nog geen wensen.",
+    "text-label": "Je bericht op het prikbord van {name}",
+    "anonymous-label": "Anoniem plaatsen op het prikbord van {name}",
+    "add-label": "Plaatsen op het prikbord van {name}",
+    "undo": "Ongedaan maken"
   },
   "santa": {
     "tips-title": "Tips van anderen",

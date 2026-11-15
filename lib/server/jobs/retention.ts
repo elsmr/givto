@@ -10,6 +10,8 @@ import { cleanUpInactiveGroups } from './inactive-groups';
 const HOUR = 60 * 60 * 1000;
 /** Imported images that never made it onto a wish (29 Findings). */
 const ORPHAN_IMAGE_HOURS = 24;
+/** Deleted tips and board posts: kept only for the author's undo. */
+const DELETED_TIP_HOURS = 24;
 
 
 /**
@@ -81,6 +83,7 @@ const deleteOrphanImages = async (now: Date) => {
 /** Retention (55), with the periods from lib/privacy.ts that /privacy shows. Daily. */
 export const runRetention = async (db: Collections, now: Date) => ({
   editionMessages: await deleteEditionMessages(db, now),
+  deletedTips: (await db.tips.deleteMany({ deletedAt: { $lt: new Date(now.getTime() - DELETED_TIP_HOURS * HOUR) } })).deletedCount,
   orphanImages: await deleteOrphanImages(now),
   suppressions: await deleteUnusedSuppressions(db, now),
   ...(await cleanUpInactiveGroups(db, now)),

@@ -4,6 +4,7 @@ import { fieldIssue, type FieldIssue } from '@/components/group/field-issue';
 import type { GroupEdition } from '@/components/group/group-data';
 import { useRefreshEdition } from '@/components/draw/use-refresh-edition';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -26,6 +27,7 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
   const refresh = useRefreshEdition(groupSlug);
   const [draft, setDraft] = useState(() => draftFromEdition(edition));
   const [titleIssue, setTitleIssue] = useState<FieldIssue | null>(null);
+  const [confirmingHideBoards, setConfirmingHideBoards] = useState(false);
   const save = useMutation(
     trpc.settings.updateEdition.mutationOptions({
       onSuccess: () => {
@@ -35,12 +37,17 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
     })
   );
   const update = (patch: Partial<EditionDraft>) => setDraft((current) => ({ ...current, ...patch }));
+  const saveDraft = () => save.mutate(toEditionInput(draft, groupSlug, edition.number));
+  // Posts on the boards (90) are kept, but nobody sees them until the kind is Conspiracy Santa again.
+  const hidesBoards = edition.kind === 'conspiracy' && edition.status !== 'draft' && draft.kind !== 'conspiracy';
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const issue = fieldIssue(EditionTitle, draft.title);
     setTitleIssue(issue);
-    if (!issue) save.mutate(toEditionInput(draft, groupSlug, edition.number));
+    if (issue) return;
+    if (hidesBoards) setConfirmingHideBoards(true);
+    else saveDraft();
   };
 
   return edition.status === 'done' ? (
@@ -93,6 +100,25 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
       <Button type="submit" size="lg" className="self-start" disabled={save.isPending}>
         {t('save')}
       </Button>
+      <Dialog open={confirmingHideBoards} onOpenChange={setConfirmingHideBoards}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('edition.hide-boards-title')}</DialogTitle>
+            <DialogDescription>{t('edition.hide-boards-description')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="neutral" />}>{t('edition.hide-boards-cancel')}</DialogClose>
+            <Button
+              onClick={() => {
+                setConfirmingHideBoards(false);
+                saveDraft();
+              }}
+            >
+              {t('edition.hide-boards-confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </form>
   );
 };

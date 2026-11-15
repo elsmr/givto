@@ -28,7 +28,11 @@
     "call-url": "Video call link",
     "call-url-help": "To unwrap together on a call on gift day.",
     "notes": "Notes for everyone",
-    "notes-help": "Dress code, theme, house rules…"
+    "notes-help": "Dress code, theme, house rules…",
+    "hide-boards-title": "Switch away from Conspiracy Santa?",
+    "hide-boards-description": "The boards and everything posted on them are hidden until you switch back to Conspiracy Santa.",
+    "hide-boards-cancel": "Cancel",
+    "hide-boards-confirm": "Switch and save"
   },
   "avoid-previous": {
     "label": "Not the same as last time",

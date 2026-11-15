@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from '@/components/ui/toast';
 import { isInBudget } from '@/components/wishlist/format-price';
 import { WishCard } from '@/components/wishlist/wish-card';
-import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
+import { useTRPC, useTRPCClient, type RouterOutputs } from '@/lib/client/trpc';
 import { useFocusAfterEdit } from '@/lib/client/use-focus-after-edit';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Pencil, StickyNote, Trash2 } from 'lucide-react';
@@ -27,18 +27,24 @@ const useInvalidateBoards = () => {
   return () => queryClient.invalidateQueries({ queryKey: trpc.board.pathKey() });
 };
 
-const Post = ({ input, post, name, canEdit }: { input: EditionInput; post: PostView; name: string; canEdit: boolean }) => {
+type PostProps = { input: EditionInput; post: PostView; name: string; canEdit: boolean; canBeAnonymous: boolean };
+
+const Post = ({ input, post, name, canEdit, canBeAnonymous }: PostProps) => {
   const t = useTranslations('between.boards');
   const errorMessage = useBetweenError();
   const trpc = useTRPC();
+  const client = useTRPCClient();
   const onSettled = useInvalidateBoards();
   const [editing, setEditing] = useState(false);
   const editButton = useFocusAfterEdit(editing);
   const update = useMutation(trpc.board.update.mutationOptions({ onSuccess: () => setEditing(false), onSettled }));
+  const onError = (error: unknown) => toast.add({ title: errorMessage(error), type: 'error' });
+  // The post is gone by the time someone clicks undo, so undo calls the client directly.
+  const undo = () => client.board.restore.mutate({ ...input, postId: post.id }).then(onSettled, onError);
   const remove = useMutation(
     trpc.board.delete.mutationOptions({
-      onSuccess: () => toast.add({ title: t('deleted'), type: 'success' }),
-      onError: (error) => toast.add({ title: errorMessage(error), type: 'error' }),
+      onSuccess: () => toast.add({ title: t('deleted'), type: 'success', actionProps: { children: t('undo'), onClick: undo } }),
+      onError,
       onSettled,
     })
   );
@@ -50,6 +56,7 @@ const Post = ({ input, post, name, canEdit }: { input: EditionInput; post: PostV
         <TipForm
           copy="boards"
           initial={{ aboutMemberId: '', text: post.text, anonymous: post.anonymous }}
+          canBeAnonymous={canBeAnonymous}
           submitLabel={t('save')}
           busy={update.isPending}
           error={update.error ? errorMessage(update.error) : undefined}
@@ -58,7 +65,7 @@ const Post = ({ input, post, name, canEdit }: { input: EditionInput; post: PostV
         />
       ) : (
         <>
-          <p className="break-words whitespace-pre-line">{post.text}</p>
+          <p className="whitespace-pre-line wrap-anywhere">{post.text}</p>
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm text-muted">{author}</span>
             {post.mine && post.anonymous && <Badge>{t('anonymous-badge')}</Badge>}
@@ -95,6 +102,8 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
   // A fresh form after each post.
   const [formKey, setFormKey] = useState(0);
   const create = useMutation(trpc.board.create.mutationOptions({ onSuccess: () => setFormKey((key) => key + 1), onSettled }));
+  // A board has as many writers as I have boards; with two, the other one knows who posted.
+  const canBeAnonymous = view.boards.length > 2;
 
   return (
     <Card>
@@ -110,7 +119,7 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
         ) : (
           <ul className="flex flex-col gap-3">
             {board.posts.map((post) => (
-              <Post key={post.id} input={input} post={post} name={board.name} canEdit={view.canWrite} />
+              <Post key={post.id} input={input} post={post} name={board.name} canEdit={view.canWrite} canBeAnonymous={canBeAnonymous} />
             ))}
           </ul>
         )}
@@ -119,7 +128,13 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
             key={formKey}
             copy="boards"
             initial={{ aboutMemberId: board.memberId, text: '', anonymous: false }}
+            canBeAnonymous={canBeAnonymous}
             submitLabel={t('add')}
+            ariaLabels={{
+              text: t('text-label', { name: board.name }),
+              anonymous: t('anonymous-label', { name: board.name }),
+              submit: t('add-label', { name: board.name }),
+            }}
             busy={create.isPending}
             error={create.error ? errorMessage(create.error) : undefined}
             onSubmit={({ text, anonymous }) => create.mutate({ ...input, aboutMemberId: board.memberId, text, anonymous })}

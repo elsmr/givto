@@ -13,6 +13,8 @@ import { toWishView, visibleWishes } from '../wishlist/wish-view';
 
 const PostInput = v.object({ postId: Id });
 
+const notDeleted = { deletedAt: { $exists: false } };
+
 const writable = (edition: Edition) => ['open', 'drawn', 'giftday'].includes(edition.status);
 
 const boardOf = (group: Group, edition: Edition, caller: Member, aboutMemberId: string) => {
@@ -42,7 +44,7 @@ export const boardRouter = router({
     const people = boardPeople(ctx.group, ctx.edition, ctx.member);
     if (people.length === 0) return null;
     const posts = await ctx.db.tips
-      .find({ editionId: ctx.edition._id, board: true, aboutMemberId: { $in: people.map((m) => m.id) } })
+      .find({ editionId: ctx.edition._id, board: true, aboutMemberId: { $in: people.map((m) => m.id) }, ...notDeleted })
       .sort({ createdAt: 1 })
       .toArray();
     const boards = await Promise.all(
@@ -81,7 +83,7 @@ export const boardRouter = router({
     .input(v.object({ ...PostInput.entries, text: TipFields.entries.text, anonymous: v.optional(v.boolean()) }))
     .mutation(async ({ ctx, input }) => {
       if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
-      const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true });
+      const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, ...notDeleted });
       if (!post) throw new AppError('NOT_FOUND');
       boardOf(ctx.group, ctx.edition, ctx.member, post.aboutMemberId);
       await writeLimit(ctx.member.id);
@@ -92,8 +94,21 @@ export const boardRouter = router({
 
   delete: editionProcedure.input(PostInput).mutation(async ({ ctx, input }) => {
     if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
-    const { deletedCount } = await ctx.db.tips.deleteOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true });
-    if (deletedCount === 0) throw new AppError('NOT_FOUND');
+    const { matchedCount } = await ctx.db.tips.updateOne(
+      { _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, ...notDeleted },
+      { $set: { deletedAt: new Date() } }
+    );
+    if (matchedCount === 0) throw new AppError('NOT_FOUND');
     return { postId: input.postId };
+  }),
+
+  /** Undo of `delete`, by the author while the board is still theirs to write on. */
+  restore: editionProcedure.input(PostInput).mutation(async ({ ctx, input }) => {
+    if (!writable(ctx.edition)) throw new AppError('EDITION_CLOSED');
+    const post = await ctx.db.tips.findOne({ _id: input.postId, editionId: ctx.edition._id, authorMemberId: ctx.member.id, board: true, deletedAt: { $exists: true } });
+    if (!post) throw new AppError('NOT_FOUND');
+    boardOf(ctx.group, ctx.edition, ctx.member, post.aboutMemberId);
+    await ctx.db.tips.updateOne({ _id: post._id }, { $unset: { deletedAt: '' } });
+    return { postId: post._id };
   }),
 });
