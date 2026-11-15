@@ -58,6 +58,11 @@ const Post = ({ input, post, name, canEdit, canBeAnonymous }: PostProps) => {
           initial={{ aboutMemberId: '', text: post.text, anonymous: post.anonymous }}
           canBeAnonymous={canBeAnonymous}
           submitLabel={t('save')}
+          ariaLabels={{
+            text: t('edit-text-label', { name }),
+            anonymous: t('anonymous-label', { name }),
+            submit: t('save-label', { name }),
+          }}
           busy={update.isPending}
           error={update.error ? errorMessage(update.error) : undefined}
           onSubmit={({ text, anonymous }) => update.mutate({ ...input, postId: post.id, text, anonymous })}
@@ -102,8 +107,6 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
   // A fresh form after each post.
   const [formKey, setFormKey] = useState(0);
   const create = useMutation(trpc.board.create.mutationOptions({ onSuccess: () => setFormKey((key) => key + 1), onSettled }));
-  // A board has as many writers as I have boards; with two, the other one knows who posted.
-  const canBeAnonymous = view.boards.length > 2;
 
   return (
     <Card>
@@ -119,7 +122,7 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
         ) : (
           <ul className="flex flex-col gap-3">
             {board.posts.map((post) => (
-              <Post key={post.id} input={input} post={post} name={board.name} canEdit={view.canWrite} canBeAnonymous={canBeAnonymous} />
+              <Post key={post.id} input={input} post={post} name={board.name} canEdit={view.canWrite} canBeAnonymous={board.canBeAnonymous} />
             ))}
           </ul>
         )}
@@ -128,7 +131,7 @@ const Board = ({ input, board, view }: { input: EditionInput; board: BoardView; 
             key={formKey}
             copy="boards"
             initial={{ aboutMemberId: board.memberId, text: '', anonymous: false }}
-            canBeAnonymous={canBeAnonymous}
+            canBeAnonymous={board.canBeAnonymous}
             submitLabel={t('add')}
             ariaLabels={{
               text: t('text-label', { name: board.name }),

@@ -6,6 +6,7 @@ import type { Member } from '../../schema/member';
 import { BoardPostFields, TipFields, type Tip } from '../../schema/tip';
 import { boardPeople } from '../between/boards';
 import { newId } from '../db';
+import { drawParticipantIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { enforceRateLimit } from '../rate-limit';
 import { editionProcedure, router } from '../trpc';
@@ -47,10 +48,16 @@ export const boardRouter = router({
       .find({ editionId: ctx.edition._id, board: true, aboutMemberId: { $in: people.map((m) => m.id) }, ...notDeleted })
       .sort({ createdAt: 1 })
       .toArray();
+    // Only joined people with an account write (not managed members or pending invitees). With two writers on a
+    // board, each knows the other wrote any anonymous post, so anonymous is offered from three.
+    const writerIds = drawParticipantIds(ctx.group, ctx.edition).filter((id) =>
+      ctx.group.members.some((m) => m.id === id && m.userId !== undefined && m.status === 'joined')
+    );
     const boards = await Promise.all(
       people.map(async (person) => ({
         memberId: person.id,
         name: person.name,
+        canBeAnonymous: writerIds.filter((id) => id !== person.id).length > 2,
         posts: posts.filter((post) => post.aboutMemberId === person.id).map((post) => toPost(post, ctx.group, ctx.member)),
         wishes: (await visibleWishes(ctx.db, person)).map(toWishView),
       }))

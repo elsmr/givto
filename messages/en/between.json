@@ -50,6 +50,8 @@
     "text-label": "Your post on {name}'s board",
     "anonymous-label": "Post anonymously on {name}'s board",
     "add-label": "Post on {name}'s board",
+    "edit-text-label": "Edit your post on {name}'s board",
+    "save-label": "Save your post on {name}'s board",
     "undo": "Undo"
   },
   "santa": {

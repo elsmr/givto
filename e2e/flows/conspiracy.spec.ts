@@ -1,5 +1,6 @@
 // Conspiracy Santa boards (90) in the browser: long links wrap, composers named per board, anonymous only when it hides
 // something, delete with undo, and the organizer is warned before a kind switch hides the boards.
+import { newMember, seedEdition, seedGroup } from '../api/seed-groups';
 import { expect, ok, test, type User } from '../fixtures';
 
 const LONG_URL =
@@ -57,6 +58,30 @@ test('each composer names its board; "Post anonymously" only once a board has mo
   await expect(page.getByRole('textbox', { name: "Your post on Bob's board" }), 'a fresh form once posted').toHaveValue('');
   const forCee = ok(await cee.trpc.query('board.list', { groupSlug: group.slug, editionNumber: 1 }))!;
   expect(forCee.boards.find((board) => board.name === 'Bob')!.posts.map((post) => [post.text, post.author])).toEqual([['A record player?', null]]);
+
+  await page.getByRole('button', { name: "Edit your post on Bob's board" }).click();
+  await page.getByRole('textbox', { name: "Edit your post on Bob's board" }).fill('A record player, vinyl too?');
+  await page.getByRole('button', { name: "Save your post on Bob's board" }).click();
+  await expect(page.getByText('A record player, vinyl too?')).toBeVisible();
+});
+
+test('"Post anonymously" counts only joined people with an account as writers, not a managed kid or an invitee', async ({ page, signIn, signInPage, db }) => {
+  const [olive, ann, bob] = await Promise.all(['olive', 'ann', 'bob'].map((name) => signIn(name)));
+  const m = { olive: newMember(olive, 'Olive', { role: 'owner' }), ann: newMember(ann, 'Ann'), bob: newMember(bob, 'Bob') };
+  const kid = newMember(null, 'Kid', { managedBy: m.olive.id });
+  const ivy = newMember(null, 'Ivy', { status: 'invited', invitedAt: new Date() });
+  const group = await seedGroup(db, 'anon', olive, [m.olive, m.ann, m.bob, kid, ivy]);
+  const edition = await seedEdition(db, group, 1, 'open');
+  await db.editions.updateOne({ _id: edition._id }, { $set: { kind: 'conspiracy', giftDay: { date: '2099-12-24' } } });
+
+  await signInPage(page, bob);
+  await page.goto(`/g/${group.slug}#boards`);
+  await expect(page.getByRole('switch', { name: "Post anonymously on Kid's board" }), 'Olive, Ann and Bob write here').toBeVisible();
+  await expect(page.getByRole('switch', { name: "Post anonymously on Ivy's board" })).toBeVisible();
+  for (const name of ['Ann', 'Olive']) {
+    await expect(page.getByRole('textbox', { name: `Your post on ${name}'s board` })).toBeVisible();
+    await expect(page.getByRole('switch', { name: `Post anonymously on ${name}'s board` }), 'only two writers').toHaveCount(0);
+  }
 });
 
 test('a deleted board post or tip comes back with Undo', async ({ page, signIn, signInPage, db }) => {

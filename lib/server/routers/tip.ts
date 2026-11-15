@@ -96,6 +96,7 @@ export const tipRouter = router({
   }),
 
   delete: editionProcedure.input(TipInput).mutation(async ({ ctx, input }) => {
+    if (!tipsOpen(ctx.edition)) throw new AppError('EDITION_CLOSED');
     const tip = await findOwnTip(ctx.db, ctx.edition, ctx.member, input.tipId);
     await ctx.db.tips.updateOne({ _id: tip._id }, { $set: { deletedAt: new Date() } });
     return { tipId: tip._id };

@@ -50,6 +50,8 @@
     "text-label": "Je bericht op het prikbord van {name}",
     "anonymous-label": "Anoniem plaatsen op het prikbord van {name}",
     "add-label": "Plaatsen op het prikbord van {name}",
+    "edit-text-label": "Je bericht op het prikbord van {name} bewerken",
+    "save-label": "Je bericht op het prikbord van {name} opslaan",
     "undo": "Ongedaan maken"
   },
   "santa": {

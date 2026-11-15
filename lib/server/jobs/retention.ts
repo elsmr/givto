@@ -13,7 +13,6 @@ const ORPHAN_IMAGE_HOURS = 24;
 /** Deleted tips and board posts: kept only for the author's undo. */
 const DELETED_TIP_HOURS = 24;
 
-
 /**
  * Editions without a gift day (58: migrated; or never set) that ended before `before`: marked done, or
  * the group's next edition started. The group's latest edition doesn't end this way: it goes with the
