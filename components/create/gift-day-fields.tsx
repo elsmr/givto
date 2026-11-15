@@ -128,7 +128,7 @@ export const KindField = ({ kind, onChange }: { kind: EditionKind; onChange: (ki
             <div
               key={option}
               className={cn(
-                'group/kind relative bg-page bordered not-has-checked:border-dashed not-has-checked:border-muted not-has-checked:text-muted not-has-checked:hover:border-solid not-has-checked:hover:border-outline not-has-checked:hover:bg-surface not-has-checked:hover:text-ink has-checked:-translate-x-0.5 has-checked:-translate-y-0.5 has-checked:bg-yellow has-checked:text-outline has-checked:shadow-md has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid',
+                'group/kind relative bg-page bordered not-has-checked:hover:bg-surface has-checked:-translate-x-0.5 has-checked:-translate-y-0.5 has-checked:bg-yellow has-checked:text-outline has-checked:shadow-md has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-offset-3 has-[:focus-visible]:outline-focus has-[:focus-visible]:outline-solid',
                 main && 'col-span-2',
               )}
             >
