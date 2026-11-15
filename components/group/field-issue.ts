@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-const schemaIssues = ['required', 'no_urls', 'no_at_sign', 'no_line_breaks', 'invalid_price_range'] as const;
+const schemaIssues = ['required', 'no_line_breaks', 'invalid_price_range'] as const;
 
 /** Message keys under `group.issues`. */
 export type FieldIssue = (typeof schemaIssues)[number] | 'too_long' | 'invalid' | 'invalid_email';

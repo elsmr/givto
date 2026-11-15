@@ -33,7 +33,7 @@ export const PeopleList = ({ group }: { group: GroupData }) => {
                   {person.status !== 'joined' && <Badge variant="coral">{t(`status.${person.status}`)}</Badge>}
                   {person.bounced && <Badge variant="coral">{t('bounced')}</Badge>}
                 </div>
-                {person.email && <span className="text-sm text-muted break-all">{person.email}</span>}
+                {person.email && person.email !== person.name && <span className="text-sm text-muted break-all">{person.email}</span>}
               </div>
             </li>
           ))}

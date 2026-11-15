@@ -1,4 +1,6 @@
+import { knownAppError } from '@/components/group/app-error-code';
 import type { GroupMember } from '@/components/group/group-data';
+import { inviteErrors } from '@/components/group/invite-form';
 import { PersonAvatar } from '@/components/group/person-avatar';
 import { useInvalidateGroup } from '@/components/group/use-invalidate-group';
 import { Badge } from '@/components/ui/badge';
@@ -42,11 +44,12 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, tick
   const t = useTranslations('settings.people');
   const tErrors = useTranslations('settings.errors');
   const tGroup = useTranslations('group.people');
+  const tInvite = useTranslations('group.invite');
   const trpc = useTRPC();
   const resend = useMutation(
     trpc.invite.send.mutationOptions({
       onSuccess: () => toast.add({ title: t('resent', { email: person.email ?? '' }), type: 'success' }),
-      onError: () => toast.add({ title: tErrors('INTERNAL'), type: 'error' }),
+      onError: (error) => toast.add({ title: tInvite(`errors.${knownAppError(error, inviteErrors)}`), type: 'error' }),
     })
   );
   const invalidateGroup = useInvalidateGroup(groupSlug);
@@ -72,7 +75,7 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, tick
           {isMe && <Badge>{tGroup('you')}</Badge>}
           {person.status !== 'joined' && <Badge variant="coral">{tGroup(`status.${person.status}`)}</Badge>}
         </div>
-        {person.email && <span className="text-sm text-muted break-all">{person.email}</span>}
+        {person.email && person.email !== person.name && <span className="text-sm text-muted break-all">{person.email}</span>}
         {ticked && (
           <Field orientation="horizontal" className="w-auto">
             <Checkbox

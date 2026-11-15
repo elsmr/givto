@@ -13,8 +13,8 @@ import * as v from 'valibot';
 import { knownAppError } from './app-error-code';
 import { useInvalidateGroup } from './use-invalidate-group';
 
-const knownErrors = ['ALREADY_MEMBER', 'RATE_LIMITED', 'GROUP_FULL', 'INVALID_INPUT'] as const;
-type ErrorCode = (typeof knownErrors)[number] | 'INTERNAL';
+export const inviteErrors = ['ALREADY_MEMBER', 'RATE_LIMITED', 'GROUP_FULL', 'INVALID_INPUT', 'INVITE_LIMIT', 'EMAIL_SUPPRESSED'] as const;
+type ErrorCode = (typeof inviteErrors)[number] | 'INTERNAL';
 const SEPARATORS = /[\s,;]+/;
 
 /** Splits typed or pasted text into valid addresses (normalized) and whatever isn't one. */
@@ -73,7 +73,7 @@ export const InviteForm = ({ slug }: { slug: string }) => {
       results.push(
         await send.mutateAsync({ groupSlug: slug, email }).then(
           () => ({ email, error: null }),
-          (error: unknown) => ({ email, error: (knownAppError(error, knownErrors) ?? 'INTERNAL') as ErrorCode })
+          (error: unknown) => ({ email, error: (knownAppError(error, inviteErrors) ?? 'INTERNAL') as ErrorCode })
         )
       );
     }

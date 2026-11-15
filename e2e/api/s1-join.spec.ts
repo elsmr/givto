@@ -15,9 +15,8 @@ test('create without a session → UNAUTHENTICATED, no mail sent', async ({ newC
   expect(await mailsTo(victim)).toHaveLength(0);
 });
 
-test('create after verifying the email (dotted name ok, URL name and past gift day rejected)', async ({ signIn }) => {
+test('create after verifying the email (past gift day rejected)', async ({ signIn }) => {
   const ann = await signIn('ann');
-  expect(codeOf(await ann.trpc.mutate('group.create', { ...createInput, name: 'win at evil.com' }))).toBe('INVALID_INPUT');
   expect(codeOf(await ann.trpc.mutate('group.create', { ...createInput, giftDay: { date: '2001-01-01' } }))).toBe('DATE_IN_PAST');
   const { slug, joinToken } = await createFamily(ann);
   const data = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
@@ -39,7 +38,6 @@ test('join via link: preview without member list, join after verifying, members 
   expect(preview.data).toEqual({ groupName: 'Family', organizerFirstName: 'Ann.Smith', requiresApproval: false });
   expect((await anonymous.trpc.query('join.preview', { groupSlug: slug, token: 'x'.repeat(24) })).data).toBeNull();
   expect(codeOf(await anonymous.trpc.mutate('join.accept', { groupSlug: slug, token, name: 'Bob' }))).toBe('UNAUTHENTICATED');
-  expect(codeOf(await bob.trpc.mutate('join.accept', { groupSlug: slug, token, name: 'bob.com' }))).toBe('INVALID_INPUT');
   const joined = await bob.trpc.mutate('join.accept', { groupSlug: slug, token, name: 'Bob' });
   expect(joined.data).toEqual({ slug, status: 'joined' });
   const data = ok(await bob.trpc.query('group.get', { groupSlug: slug }));

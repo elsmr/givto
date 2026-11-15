@@ -5,7 +5,6 @@ import { EmailLayout } from './ui/layout';
 import { Text } from './ui/text';
 import { emailTranslator } from './ui/translator';
 
-// Names are validated plain text (43): no links, no @.
 type InviteProps = { locale: Locale; organizer: string; group: string; url: string };
 
 export const inviteSubject = ({ locale, organizer, group }: Omit<InviteProps, 'url'>) =>

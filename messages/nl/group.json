@@ -66,6 +66,8 @@
       "ALREADY_MEMBER": "Die doet al mee met deze Secret Santa.",
       "RATE_LIMITED": "Dat zijn veel uitnodigingen voor één dag. Deel de link, of probeer het morgen opnieuw.",
       "GROUP_FULL": "Deze Secret Santa zit vol.",
+      "INVITE_LIMIT": "Dat adres kreeg vandaag al 3 uitnodigingen. Probeer het morgen opnieuw.",
+      "EMAIL_SUPPRESSED": "E-mail naar dit adres kwam niet aan of werd als spam gemeld, dus Givto stuurt er niets meer naartoe.",
       "INVALID_INPUT": "Check het e-mailadres en probeer opnieuw.",
       "INTERNAL": "Er ging iets mis bij ons. Probeer het zo opnieuw."
     }
@@ -110,8 +112,6 @@
   },
   "issues": {
     "required": "Vul dit in.",
-    "no_urls": "Geen webadressen, alsjeblieft.",
-    "no_at_sign": "Geen @, alsjeblieft.",
     "no_line_breaks": "Houd het op één regel.",
     "invalid_price_range": "Het tweede bedrag moet groter zijn.",
     "too_long": "Dat is te lang.",

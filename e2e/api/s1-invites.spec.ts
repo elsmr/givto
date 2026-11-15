@@ -12,13 +12,12 @@ test('email invite: bound to the email, single-use, lands on the group', async (
   secrets.push(fay);
   ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: fay }));
   expect((await latestMail(fay)).subject).toBe('Ann.Smith invited you to Family on Givto');
-  expect((await memberByEmail(ann, slug, fay))?.name, 'a stand-in until Fay says her name').toMatch(/^e2e fay [0-9a-f]{8}$/);
+  expect((await memberByEmail(ann, slug, fay))?.name, 'her email until Fay says her name').toBe(fay);
   const token = await inviteTokenFrom(fay);
   const anonymous = await newClient();
   expect((await anonymous.trpc.query('invite.preview', { groupSlug: slug, token })).data?.invite?.email).toBe(fay);
   expect(codeOf(await bob.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' }))).toBe('INVITE_EMAIL_MISMATCH');
   const fayClient = await signInEmail(await newClient(), fay, secrets);
-  expect(codeOf(await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'fay@example.test' }))).toBe('INVALID_INPUT');
   expect((await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' })).data).toEqual({ slug });
   expect(codeOf(await fayClient.trpc.mutate('invite.accept', { groupSlug: slug, token, name: 'Fay' }))).toBe('INVITE_INVALID');
   expect((await anonymous.trpc.query('invite.preview', { groupSlug: slug, token })).data).toBeNull();
@@ -85,6 +84,44 @@ test('leave before the draw; organizer can’t leave; leaving after the draw wor
   const { _id: groupId } = (await db.groups.findOne({ slug }))!;
   await db.editions.updateOne({ groupId }, { $set: { status: 'drawn' } });
   expect((await cee.trpc.mutate('membership.leave', { groupSlug: slug })).status).toBe(200);
+});
+
+test('an invitee goes by their email until they join, never by their account name', async ({ signIn }) => {
+  const [ann, bob, dan] = await Promise.all(['ann', 'bob', 'dan'].map((name) => signIn(name)));
+  ok(await dan.trpc.mutate('account.setName', { name: 'Danielle Secretname' }));
+  const group = await createFamily(ann);
+  await joinAll(group, [[bob, 'Bob']]);
+  ok(await ann.trpc.mutate('invite.send', { groupSlug: group.slug, email: dan.email }));
+  for (const viewer of [ann, bob]) {
+    const { members } = ok(await viewer.trpc.query('group.get', { groupSlug: group.slug }));
+    expect(JSON.stringify(members)).not.toContain('Danielle');
+    expect(members.find((m) => m.status === 'invited')?.name).toBe(dan.email);
+  }
+});
+
+test('invites per address: 3 a day per group, never to a suppressed address', async ({ signIn, secrets, db }) => {
+  const ann = await signIn('ann');
+  const { slug } = await createFamily(ann);
+  const [ida, sam] = [uniqueEmail('ida'), uniqueEmail('sam')];
+  secrets.push(ida, sam);
+  const codes = [];
+  for (let i = 0; i < 4; i++) codes.push(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: ida })) ?? 'ok');
+  expect(codes).toEqual(['ok', 'ok', 'ok', 'INVITE_LIMIT']);
+  expect(await mailsTo(ida)).toHaveLength(3);
+  await db.emailSuppressions.insertOne({ _id: sam, reason: 'complaint', at: new Date() });
+  expect(codeOf(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: sam }))).toBe('EMAIL_SUPPRESSED');
+  expect(await mailsTo(sam)).toHaveLength(0);
+  expect(await memberByEmail(ann, slug, sam)).toBeUndefined();
+});
+
+test('two invites to the same new address at once make one person', async ({ signIn, secrets }) => {
+  const ann = await signIn('ann');
+  const { slug } = await createFamily(ann);
+  const jo = uniqueEmail('jo');
+  secrets.push(jo);
+  await Promise.all([1, 2, 3].map(() => ann.trpc.mutate('invite.send', { groupSlug: slug, email: jo })));
+  const { members } = ok(await ann.trpc.query('group.get', { groupSlug: slug }));
+  expect(members.filter((m) => m.email === jo)).toHaveLength(1);
 });
 
 test('invites rate limited per organizer', async ({ signIn, secrets }) => {
