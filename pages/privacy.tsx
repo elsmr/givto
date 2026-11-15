@@ -5,11 +5,20 @@ import { PrivacyStored } from '@/components/privacy/privacy-stored';
 import { AppShell } from '@/components/shell/app-shell';
 import { PageHeader } from '@/components/ui/page-header';
 import { privacyUpdatedOn } from '@/lib/privacy';
+import { requireEnv } from '@/lib/server/env';
 import { loadMessages } from '@/messages/load';
 import type { GetStaticProps } from 'next';
 import { useFormatter, useTranslations } from 'next-intl';
 
-export default function PrivacyPage() {
+export interface OwnerContact {
+  name: string;
+  email: string;
+}
+
+/** Whoever runs this instance is the controller. Read at build time: a missing value fails the build. */
+export const ownerContact = (): OwnerContact => ({ name: requireEnv('OWNER_NAME'), email: requireEnv('OWNER_EMAIL') });
+
+export default function PrivacyPage({ owner }: { owner: OwnerContact }) {
   const t = useTranslations('privacy');
   const format = useFormatter();
 
@@ -24,7 +33,7 @@ export default function PrivacyPage() {
         <PrivacyStored />
         <PrivacyRetention />
         <PrivacyProcessors />
-        <PrivacyRights />
+        <PrivacyRights owner={owner} />
       </article>
     </AppShell>
   );
@@ -32,5 +41,5 @@ export default function PrivacyPage() {
 
 // The Dutch twin is pages/nl/: only indexable pages have the language in the URL (81).
 export const getStaticProps: GetStaticProps = async () => ({
-  props: { locale: 'en', messages: await loadMessages('en', ['privacy', 'seo']) },
+  props: { locale: 'en', messages: await loadMessages('en', ['privacy', 'seo']), owner: ownerContact() },
 });

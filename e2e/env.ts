@@ -35,6 +35,8 @@ export const appEnv: Record<string, string> = {
   GOOGLE_CLIENT_ID: 'test-google-client-id',
   GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
   CRON_SECRET,
+  OWNER_NAME: 'Test Owner',
+  OWNER_EMAIL: 'owner@example.test',
   MAILGUN_WEBHOOK_SIGNING_KEY: 'test-webhook-signing-key',
   LOG_LEVEL: 'debug',
   NEXT_PUBLIC_SENTRY_DSN: '',

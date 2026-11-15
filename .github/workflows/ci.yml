@@ -22,6 +22,9 @@ jobs:
         run: pnpm test
       - name: Build
         run: pnpm build
+        env:
+          OWNER_NAME: Test Owner
+          OWNER_EMAIL: owner@example.test
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
       # The global setup runs Mongo in Docker as a single-node replica set (Better Auth uses

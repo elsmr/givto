@@ -41,3 +41,7 @@ http://localhost:3091.
 Local settings live in `.env.development` (committed, dev-only values). `next dev` loads it over `.env`
 and it sets every variable the app reads, so a `.env` file is not used for local development.
 Production secrets live in Vercel only.
+
+`OWNER_NAME` and `OWNER_EMAIL` are required at build time (the `/privacy` contact), so a local
+`pnpm build` needs them in the shell or a `.env`. `OWNER_EMAIL` also gets a daily email listing new
+groups (name and organizer email) when there are any.

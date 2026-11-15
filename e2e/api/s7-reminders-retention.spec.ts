@@ -193,3 +193,32 @@ test('retention: an inactive group gets one warning, then goes 30 days later', a
   expect((await db.groups.countDocuments({ _id: sleepy._id })) + (await db.editions.countDocuments({ groupId: sleepy._id }))).toBe(0);
 });
 
+
+test('owner digest: new groups with organizer emails, once a day, only when there are new ones', async ({ signIn, db }) => {
+  const olive = await signIn('olive');
+  const owner = { email: appEnv.OWNER_EMAIL };
+  // Far ahead of every other test's data, so the windows hold only our groups.
+  const base = new Date(Math.floor(Date.now() / DAY) * DAY + 500 * DAY + 12 * 3600_000);
+  const at = (days: number) => ({ now: new Date(base.getTime() + days * DAY).toISOString() });
+  const first = groupDoc(olive, `Digest ${randomBytes(4).toString('hex')}`, [member(olive, 'Olive', { role: 'organizer' })], { createdAt: new Date(base.getTime() - 3600_000) });
+  const orphan = groupDoc(olive, `Digest ${randomBytes(4).toString('hex')}`, [], { createdBy: newId(), createdAt: new Date(base.getTime() + DAY) });
+  await db.groups.insertOne(first);
+
+  expect((await runJob('ownerDigest', at(0))).groupsCreated).toBeGreaterThanOrEqual(1);
+  expect(await runJob('ownerDigest', at(0))).toEqual({ groupsCreated: 0 });
+  const [digest] = await mails(owner, 'ownerDigest', first.name);
+  expect(digest.subject).toMatch(/^Givto: \d+ new groups?$/);
+  expect(digest.text).toContain(`${first.name} — ${olive.email}`);
+
+  await db.groups.insertOne(orphan);
+  expect(await runJob('ownerDigest', at(2))).toEqual({ groupsCreated: 1 });
+  const [next] = await mails(owner, 'ownerDigest', orphan.name);
+  expect(next.subject).toBe('Givto: 1 new group');
+  expect(next.text).toContain(`${orphan.name} — (account deleted)`);
+  expect(next.text).not.toContain(first.name);
+  expect(await runJob('ownerDigest', at(3))).toEqual({ groupsCreated: 0 });
+  await expectMails(owner, 'ownerDigest', 1, first.name);
+
+  await db.groups.deleteMany({ _id: { $in: [first._id, orphan._id] } });
+  await db.sentNotifications.deleteMany({ kind: 'ownerDigest', sentAt: { $gte: base } });
+});

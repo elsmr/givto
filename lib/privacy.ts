@@ -1,9 +1,4 @@
 // The retention job (55) uses these values, so /privacy matches what we do.
-export const privacyContact = {
-  controller: 'Elias Meire',
-  email: 'elias@meire.dev',
-};
-
 export const retention = {
   /** Same as SIGN_IN_EXPIRES_IN in lib/server/auth.ts. */
   signInCodeMinutes: 10,

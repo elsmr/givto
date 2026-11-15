@@ -3,6 +3,7 @@ import { log } from '../log';
 import { runDeliveries } from './deliveries';
 import { runDueDraws } from './draws';
 import { runGiftDayTransitions } from './giftday';
+import { sendOwnerDigest } from './owner-digest';
 import { runRetention } from './retention';
 import { sendReminders, type JobScope } from './reminders';
 import { sendWishlistDigests } from './wishlist-digests';
@@ -32,8 +33,19 @@ const tick: Job = async (db, now, scope) => {
   return results;
 };
 
+// The digest rides along with the daily retention run: one schedule fewer to set up.
+const daily: Job = async (db, now) => {
+  const result = await runRetention(db, now);
+  try {
+    return { ...result, ownerDigest: await sendOwnerDigest(db, now) };
+  } catch (error) {
+    log.error({ err: error, job: 'ownerDigest' }, 'daily job failed');
+    return { ...result, ownerDigest: { failed: true } };
+  }
+};
+
 /**
  * Scheduled jobs (29), run by pages/api/cron/[job].ts. Each is idempotent and safe to run
  * every few minutes. Schedulers call `tick` (frequent jobs) and `retention` (daily).
  */
-export const jobs: Record<string, Job> = { ...frequent, tick, retention: runRetention };
+export const jobs: Record<string, Job> = { ...frequent, tick, retention: daily, ownerDigest: sendOwnerDigest };
