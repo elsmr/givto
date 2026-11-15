@@ -35,9 +35,10 @@
   "reveal": {
     "title": "Wie was wiens Santa?",
     "switch": "Na de cadeaus onthullen wie wiens Santa was",
-    "description": "Op het einde van de presentatieweergave ziet iedereen wie wiens Santa was. Gebruik je de presentatieweergave niet? Dan wordt het onthuld als pakjesdag voorbij is.",
+    "description": "Op het einde van de presentatieweergave ziet iedereen wie wiens Santa was. Gebruik je de presentatieweergave niet? Dan wordt het onthuld als pakjesdag voorbij is. Uit: het blijft geheim, ook na pakjesdag.",
     "button": "Onthul wie wiens Santa was",
     "revealed": "Dit is wie wiens Santa was.",
+    "shown": "De Santa's die op pakjesdag getoond werden. De rest blijft geheim.",
     "pairs-label": "Wie wiens Santa was",
     "pair": "<name>{giftee}</name> kreeg een cadeau van <name>{santa}</name>"
   },

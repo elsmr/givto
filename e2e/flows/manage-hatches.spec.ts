@@ -33,7 +33,11 @@ test('organizer: start gift day now, back to shopping, finish, reopen', async ({
   await page.goto(`/g/${group.slug}`);
   await expect(currentStep(page)).toContainText('Shop');
 
-  await useHatch(page, 'Start gift day now', 'Start gift day now?', 'Start gift day');
+  await useHatch(page, 'Start gift day now', 'Start gift day now?', 'Start gift day', (p) =>
+    expect(p.getByRole('dialog', { name: 'Start gift day now?' })).toContainText(
+      'Who drew whom stays secret, also after gift day, apart from the Santas the presenter shows at each turn.'
+    )
+  );
   await expect(currentStep(page)).toContainText('Gift day');
 
   const newDate = addDays(todayIn('Europe/Brussels'), 7);
@@ -41,7 +45,9 @@ test('organizer: start gift day now, back to shopping, finish, reopen', async ({
   await expect(currentStep(page)).toContainText('Shop');
 
   await useHatch(page, 'Start gift day now', 'Start gift day now?', 'Start gift day');
-  await useHatch(page, 'Finish gift day', 'Finish gift day now?', 'Finish gift day');
+  await useHatch(page, 'Finish gift day', 'Finish gift day now?', 'Finish gift day', (p) =>
+    expect(p.getByRole('dialog', { name: 'Finish gift day now?' })).toContainText('Who drew whom stays secret, apart from the Santas shown at the turns.')
+  );
   await expect(currentStep(page)).toContainText('Done');
 
   await useHatch(page, 'Reopen gift day', 'Reopen gift day for today?', 'Reopen gift day');

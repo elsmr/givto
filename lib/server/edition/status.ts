@@ -8,7 +8,7 @@ import type { Collections } from '../db';
 import { playerIds } from '../draw/rules';
 import { AppError } from '../errors';
 import { isRevealed } from '../giftday/giftday-view';
-import { guessesOf, santaStepOn } from '../guess/guesses';
+import { guessesOf, santaShownIds, santaStepOn } from '../guess/guesses';
 import { saveWishlists } from '../wishlist/wish-view';
 
 /** Unwrap order (32): a random order of everyone in the draw, independent of who drew whom. */
@@ -26,7 +26,7 @@ export const saveResults = async (db: Collections, edition: Edition, now: Date) 
   if ((await db.guesses.countDocuments({ editionId: edition._id }, { limit: 1 })) === 0) return;
   const done = { ...edition, status: 'done' as const };
   const assignments = edition.draw?.assignments ?? {};
-  const shown = santaStepOn(done) ? (edition.unwrapOrder?.progress?.santaShownIds ?? []) : [];
+  const shown = santaStepOn(done) ? santaShownIds(edition) : [];
   const results = editionResults(isRevealed(done) ? Object.keys(assignments) : shown, assignments, await guessesOf(db, done));
   await db.editions.updateOne(
     { _id: edition._id },
@@ -61,7 +61,7 @@ const datesToday = (edition: Edition, today: string) => {
 /**
  * drawn → giftday (start now) or done → giftday (reopen until the end of today): gift day becomes
  * today, so the scheduled job keeps it there today and finishes it tomorrow. The unwrap order is
- * shuffled if nobody has.
+ * shuffled if nobody has. A done edition that showed the big reveal keeps it out, as if the presenter had revealed it.
  */
 export const toGiftDayToday = async (db: Collections, group: Group, edition: Edition, from: EditionStatus) => {
   if (edition.status !== from) throw wrongStatus(edition);
@@ -75,6 +75,7 @@ export const toGiftDayToday = async (db: Collections, group: Group, edition: Edi
         'statusChangedAt.giftday': now,
         ...datesToday(edition, todayIn(group.timeZone, now)),
         ...(!edition.unwrapOrder && { unwrapOrder: newUnwrapOrder(playerIds(group, edition), now) }),
+        ...(isRevealed(edition) && !edition.reveal.revealedAt && { 'reveal.revealedAt': now }),
         updatedAt: now,
       },
       $unset: { 'statusChangedAt.done': true },

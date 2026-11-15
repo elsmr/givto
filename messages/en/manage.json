@@ -9,7 +9,7 @@
       "date": "The gift day is today, {today}.",
       "order": "The unwrap order is shuffled, because nobody has yet.",
       "open": "Dibs!, tips and questions stay open until the end of the day. Then it's done.",
-      "secret": "Who drew whom stays secret, unless you reveal the Santas."
+      "secret": "{santas, select, revealed {Everyone sees who was whose Santa: at the end of the presenter view, or when gift day is over.} turns {Who drew whom stays secret, also after gift day, apart from the Santas the presenter shows at each turn.} other {Who drew whom stays secret, also after gift day.}}"
     },
     "confirm": "Start gift day",
     "done": "Gift day has started"
@@ -21,6 +21,7 @@
     "points": {
       "closed": "Dibs!, tips, questions and the settings close.",
       "received": "Everyone can tick off what they got.",
+      "secret": "{santas, select, revealed {Everyone sees who was whose Santa.} turns {Who drew whom stays secret, apart from the Santas shown at the turns.} other {Who drew whom stays secret.}}",
       "next": "You can start a new edition.",
       "undo": "Changed your mind? Reopen gift day from this menu."
     },

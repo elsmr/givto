@@ -14,7 +14,7 @@ export const hatchesFor = (status: EditionStatus): Hatch[] => {
 /** What happens, as the confirm dialog lists it (keys in the `manage` messages). */
 export const hatchPoints = {
   startGiftDay: ['startGiftDay.points.date', 'startGiftDay.points.order', 'startGiftDay.points.open', 'startGiftDay.points.secret'],
-  finishGiftDay: ['finishGiftDay.points.closed', 'finishGiftDay.points.received', 'finishGiftDay.points.next', 'finishGiftDay.points.undo'],
+  finishGiftDay: ['finishGiftDay.points.closed', 'finishGiftDay.points.received', 'finishGiftDay.points.secret', 'finishGiftDay.points.next', 'finishGiftDay.points.undo'],
   backToShopping: ['backToShopping.points.date', 'backToShopping.points.order', 'backToShopping.points.secret'],
   reopenGiftDay: ['reopenGiftDay.points.open', 'reopenGiftDay.points.date', 'reopenGiftDay.points.secret'],
 } as const satisfies Record<Hatch, readonly string[]>;

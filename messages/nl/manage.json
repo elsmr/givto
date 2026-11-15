@@ -9,7 +9,7 @@
       "date": "Pakjesdag is vandaag, {today}.",
       "order": "De uitpakvolgorde wordt geschud, want dat heeft nog niemand gedaan.",
       "open": "Geclaimd!, tips en vragen blijven open tot het eind van de dag. Daarna is het voorbij.",
-      "secret": "Voor wie iedereen kocht, blijft geheim, tenzij je de Santa's onthult."
+      "secret": "{santas, select, revealed {Iedereen ziet wie wiens Santa was: op het einde van de presentatieweergave, of als pakjesdag voorbij is.} turns {Voor wie iedereen kocht, blijft geheim, ook na pakjesdag, behalve de Santa's die de presentatie tijdens de beurten toont.} other {Voor wie iedereen kocht, blijft geheim, ook na pakjesdag.}}"
     },
     "confirm": "Pakjesdag starten",
     "done": "Pakjesdag is begonnen"
@@ -21,6 +21,7 @@
     "points": {
       "closed": "Geclaimd!, tips, vragen en de instellingen gaan dicht.",
       "received": "Iedereen kan de gekregen wensen afvinken.",
+      "secret": "{santas, select, revealed {Iedereen ziet wie wiens Santa was.} turns {Voor wie iedereen kocht, blijft geheim, behalve de Santa's die tijdens de beurten getoond zijn.} other {Voor wie iedereen kocht, blijft geheim.}}",
       "next": "Je kunt een nieuwe editie starten.",
       "undo": "Toch niet? Heropen pakjesdag via dit menu."
     },

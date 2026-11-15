@@ -142,3 +142,20 @@ test('the organizer switches Guess your Santa off in settings: the card goes', a
   await expect(page.getByRole('tab', { name: 'Overview' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Guess your Santa' })).toHaveCount(0);
 });
+
+test('done without the big reveal: the group page lists only the Santas shown at the turns, once', async ({ page, signIn, signInPage }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const group = await drawnGroup(people, 'Kept secret');
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }));
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'spin', turnsTaken: 0 }));
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'santa', turnsTaken: 0 }));
+  ok(await ann.trpc.mutate('manage.finishGiftDay', at));
+
+  await signInPage(page, bob);
+  await page.goto(`/g/${group.slug}`);
+  await expect(page.getByRole('list', { name: 'Who was whose Santa' }).getByRole('listitem')).toHaveCount(1);
+  await expect(page.getByText('The Santas shown on gift day. The rest stays secret.')).toBeVisible();
+});
