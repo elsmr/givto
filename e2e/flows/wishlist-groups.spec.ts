@@ -2,6 +2,7 @@
 // "Taken" to Santas in other groups and never to the wishlist's owner. Archived (76): only the Santa
 // with Dibs! still sees it, as no longer on the list.
 import type { Locator, Page } from '@playwright/test';
+import superjson from 'superjson';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 
 /** A drawn group of the organizer and two others; returns its slug and who drew `giftee`. */
@@ -156,4 +157,38 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     expect(await shownIn(family.slug)).toEqual(['Puzzle', 'Kite']);
     expect(await shownIn(friends.slug)).toEqual(['Yarn', 'Puzzle', 'Wool socks']);
   });
+
+  await test.step('Friends ends while /wishlist is open: the next wish is not added to it', async () => {
+    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
+    await db.editions.updateOne({ groupId: (await db.groups.findOne({ slug: friends.slug }))!._id, number: 1 }, { $set: { status: 'done' } });
+    await page.getByRole('button', { name: 'Groups that see “Yarn”' }).click();
+    await page.getByRole('dialog', { name: 'Show in' }).getByRole('checkbox', { name: 'Family' }).click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: 'Groups', exact: true })).toBeVisible();
+    await page.getByLabel('Wish', { exact: true }).fill('Clay');
+    await page.getByRole('button', { name: 'Add wish' }).click();
+    await expect(page.getByRole('heading', { name: 'Clay' })).toBeVisible();
+    expect(await shownIn(friends.slug)).toEqual(['Yarn', 'Puzzle', 'Wool socks']);
+    expect(await shownIn(family.slug)).not.toContain('Clay');
+  });
+});
+
+test('on /wishlist, no wish is added while its groups failed to load', async ({ page, signIn, signInPage }) => {
+  const olive = await signIn('olive');
+  ok(await olive.trpc.mutate('group.create', {
+    name: 'Family', organizerName: 'Olive', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson',
+  }));
+  await signInPage(page, olive);
+  await page.route(/\/api\/trpc\/[^?]*account\.groups/, async (route) => {
+    const procedures = new URL(route.request().url()).pathname.split('/').pop()!.split(',');
+    const response = await route.fetch();
+    const results = await response.json();
+    const error = { message: 'INTERNAL_SERVER_ERROR', code: -32603, data: { code: 'INTERNAL_SERVER_ERROR', httpStatus: 500 } };
+    results[procedures.indexOf('account.groups')] = { error: superjson.serialize(error) };
+    await route.fulfill({ response, json: results });
+  });
+  await page.goto('/wishlist');
+  await page.getByLabel('Wish', { exact: true }).fill('Puzzle');
+  await expect(page.getByText('Something went wrong. Try again.')).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('button', { name: 'Add wish' })).toBeDisabled();
 });

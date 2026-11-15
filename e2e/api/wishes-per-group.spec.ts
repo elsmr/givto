@@ -1,6 +1,4 @@
-// Wishes per group: wish.create shows a new wish in the groups passed only (the /wishlist form passes all my
-// active groups unless unticked); groupView's `alsoIn` names my other active groups (not archived, latest edition
-// not done and with wishes) that show it too. A new membership starts with nothing shown; each group has its own order.
+// Wishes per group (38): a new wish shows in the groups passed only; alsoIn names my other active groups that show it.
 import { expect, ok, test, type User } from '../fixtures';
 import { inviteTokenFrom } from './s1-group';
 import { codeOf, createGroup, groupOf, join } from './s4-group';

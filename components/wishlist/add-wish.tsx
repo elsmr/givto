@@ -25,7 +25,9 @@ export const AddWish = ({ groupSlug, empty = false }: { groupSlug?: string; empt
   const [formKey, setFormKey] = useState(0);
   // Undefined until the first tick: all active groups.
   const [picked, setPicked] = useState<string[]>();
-  const shownIn = picked ?? (groups.data ?? []).filter(isActiveGroup).map(({ slug }) => slug);
+  const activeSlugs = (groups.data ?? []).filter(isActiveGroup).map(({ slug }) => slug);
+  // A group ticked earlier may have ended since (done, white elephant, archived).
+  const shownIn = picked ? picked.filter((slug) => activeSlugs.includes(slug)) : activeSlugs;
   const groupSlugs = groupSlug ? [groupSlug] : shownIn;
   const toggle = (slug: string, checked: boolean) =>
     setPicked(checked ? [...shownIn, slug] : shownIn.filter((other) => other !== slug));
@@ -51,9 +53,9 @@ export const AddWish = ({ groupSlug, empty = false }: { groupSlug?: string; empt
           // After a save, continue in the title field.
           autoFocus={formKey > 0}
           submitLabel={t('form.add')}
-          // On /wishlist, waits for account.groups: it holds the default groups.
-          busy={create.isPending || (!groupSlug && groups.isPending)}
-          error={create.error ? errorMessage(create.error) : undefined}
+          // On /wishlist, needs account.groups: it holds the default groups.
+          busy={create.isPending || (!groupSlug && !groups.isSuccess)}
+          error={create.error ? errorMessage(create.error) : groups.error ? errorMessage(groups.error) : undefined}
           onSubmit={(input) => create.mutate({ ...input, groupSlugs }, { onSuccess: () => setFormKey((key) => key + 1) })}
         >
           {!groupSlug && <WishGroupsPicker shownIn={shownIn} onChange={toggle} />}

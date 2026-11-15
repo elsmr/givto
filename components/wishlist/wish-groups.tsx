@@ -17,11 +17,11 @@ type AccountGroup = RouterOutputs['account']['groups'][number];
 export const isActiveGroup = (group: AccountGroup) =>
   !group.archived && (!group.edition || (group.edition.status !== 'done' && wishesOn(group.edition)));
 
-/** For a wish more than one active group shows, as two Santas might buy it: "Also in Family" (also-in) or "Shown in Family and Work." (shown-in). */
+/** For a wish more than one active group shows: "Also in Family" (also-in) or "Shown in Family and Work." (shown-in). */
 export const AlsoInNote = ({ groups, kind = 'also-in' }: { groups: string[]; kind?: 'also-in' | 'shown-in' }) => {
   const t = useTranslations('wishlist.form');
   const format = useFormatter();
-  return <p className="w-full text-sm">{t.rich(kind, { groups: format.list(groups), b: (chunks) => <b>{chunks}</b> })}</p>;
+  return <p className="w-full text-sm">{t(kind, { groups: format.list(groups) })}</p>;
 };
 
 /** Groups a wish can be shown in: only active ones, as nobody buys from a past edition's list. */
