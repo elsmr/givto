@@ -8,9 +8,17 @@ export const authClient = createAuthClient({
   plugins: [magicLinkClient(), emailOTPClient(), passkeyClient(), inferAdditionalFields<Auth>()],
 });
 
-/** Only same-origin paths ("/g/abc"), never "//evil.test" or "https://…": no open redirects. */
-export const safeRedirect = (target: unknown, fallback = '/'): string =>
-  typeof target === 'string' && /^\/(?![/\\])/.test(target) ? target : fallback;
+const PLACEHOLDER_ORIGIN = 'https://givto.invalid';
+
+/**
+ * Only same-origin paths ("/g/abc"), never "//evil.test" or "https://…": no open redirects.
+ * URL parsers drop tabs and line breaks and read `\` as `/`, so "/\t/evil.test" would leave the site.
+ */
+export const safeRedirect = (target: unknown, fallback = '/'): string => {
+  if (typeof target !== 'string' || !target.startsWith('/') || /[\u0000-\u001f\u007f\\]/.test(target)) return fallback;
+  const url = new URL(target, PLACEHOLDER_ORIGIN);
+  return url.origin === PLACEHOLDER_ORIGIN ? `${url.pathname}${url.search}${url.hash}` : fallback;
+};
 
 /** Better Auth resolves with `{ error }` instead of rejecting: this rejects with it, so useMutation sees the failure. */
 export const throwAuthError = async <T extends { error?: unknown } | null | undefined>(pending: Promise<T>) => {

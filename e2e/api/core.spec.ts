@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import {
   authPost,
   expect,
+  IP_HEADER,
   latestMail,
   mailsTo,
   ok,
@@ -154,6 +155,52 @@ test('sign-in emails rate limited per IP', async ({ request, secrets }) => {
   expect(statuses).toEqual([200, 200, 200, 200, 200, 429]);
 });
 
+test('per-IP limit ignores the client-supplied x-forwarded-for', async ({ request, secrets }) => {
+  const ip = randomIp();
+  const statuses = [];
+  for (let i = 0; i < 6; i++) {
+    const email = uniqueEmail(`xff${i}`);
+    secrets.push(email);
+    statuses.push((await authPost(request, '/sign-in/magic-link', { email }, { ip, headers: { 'x-forwarded-for': randomIp() } })).status());
+  }
+  expect(statuses).toEqual([200, 200, 200, 200, 200, 429]);
+});
+
+test('session tokens never reach the browser', async ({ signIn }) => {
+  const ann = await signIn('ann');
+  const session = await (await ann.request.get('/api/auth/get-session')).json();
+  expect(session.user.email).toBe(ann.email);
+  expect(session.session).not.toHaveProperty('token');
+  const sessions = await (await ann.request.get('/api/auth/list-sessions')).json();
+  expect(sessions).toHaveLength(1);
+  expect(sessions[0]).not.toHaveProperty('token');
+  expect(ok(await ann.trpc.query('account.get')).email).toBe(ann.email);
+});
+
+test('tRPC transport errors are client errors, not INTERNAL', async ({ request }) => {
+  const wrongMethod = await request.get('/api/trpc/account.setLocale?input={}');
+  const wrongType = await request.post('/api/trpc/account.setLocale', { headers: { 'content-type': 'text/plain' }, data: '{}' });
+  for (const [res, status] of [[wrongMethod, 405], [wrongType, 415]] as const) {
+    expect(res.status()).toBe(status);
+    expect((await res.json()).error.json.data.appCode).toBe('INVALID_INPUT');
+    const lines = readServerLog().split('\n').filter((line) => line.includes(res.headers()['x-request-id']));
+    expect(lines.join('\n')).toMatch(/request rejected/);
+    expect(lines.join('\n')).not.toMatch(/request failed/);
+  }
+});
+
+test('security headers on pages and API routes', async ({ request }) => {
+  for (const path of ['/', '/auth/sign-in', '/api/trpc/health']) {
+    const headers = (await request.get(path)).headers();
+    expect(headers['content-security-policy'], path).toContain("frame-ancestors 'none'");
+    expect(headers['x-frame-options'], path).toBe('DENY');
+    expect(headers['x-content-type-options'], path).toBe('nosniff');
+    expect(headers['referrer-policy'], path).toBe('strict-origin-when-cross-origin');
+    expect(headers['strict-transport-security'], path).toMatch(/^max-age=\d+/);
+    expect(headers, path).not.toHaveProperty('x-powered-by');
+  }
+});
+
 test('callbackURL on another origin rejected', async ({ request, secrets }) => {
   const eve = uniqueEmail('eve');
   secrets.push(eve);
@@ -166,7 +213,7 @@ test('callbackURL on another origin rejected', async ({ request, secrets }) => {
   secrets.push(fay, code, token);
   const verify = await request.get(`/api/auth/magic-link/verify?token=${token}&callbackURL=/`, {
     maxRedirects: 0,
-    headers: { 'x-forwarded-for': randomIp() },
+    headers: { [IP_HEADER]: randomIp() },
   });
   expect(verify.status()).toBe(404);
   expect(setCookies(verify)).toBe('');
