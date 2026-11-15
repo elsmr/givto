@@ -25,10 +25,7 @@ export const useGiftDayStream = ({ groupSlug, editionNumber }: EditionInput, ena
     const source = new EventSource(`/api/giftday/${encodeURIComponent(groupSlug)}/${editionNumber}`);
     source.onmessage = (event) => {
       queryClient.setQueryData(queryKey, superjson.parse(event.data));
-      // A step of this presenter's own, still on its way, brings the view back itself.
-      if (queryClient.isMutating({ mutationKey: trpc.giftday.advance.mutationKey() }) === 0) {
-        void queryClient.invalidateQueries(trpc.giftday.presenter.queryFilter({ groupSlug, editionNumber }));
-      }
+      void queryClient.invalidateQueries(trpc.giftday.presenter.queryFilter({ groupSlug, editionNumber }));
     };
     return () => source.close();
   }, [trpc, queryClient, groupSlug, editionNumber, enabled]);

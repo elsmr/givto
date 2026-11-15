@@ -36,31 +36,32 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
               : t('present.next');
 
   return (
-    // Pinned to the bottom of the screen, also when a slide is taller than it.
-    <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-4 bg-page px-6 pt-2 pb-4">
-      <Button variant="neutral" size="lg" disabled={phase === 'intro' || busy} onClick={actions.previous}>
+    // Pinned to the bottom of the screen, also when a slide is taller than it. On a phone the gift label takes its own row
+    // and Previous is just its arrow, so Previous and the action share one row and the table keeps the room.
+    <form
+      className="sticky bottom-0 flex flex-wrap items-end justify-between gap-x-4 gap-y-2 bg-page px-6 pt-2 pb-4"
+      onSubmit={(event) => {
+        event.preventDefault();
+        actions.next();
+      }}
+    >
+      <Button type="button" variant="neutral" size="lg" disabled={phase === 'intro' || busy} onClick={actions.previous}>
         <ArrowLeft aria-hidden="true" />
-        {t('present.previous')}
+        <span className="max-sm:sr-only">{t('present.previous')}</span>
       </Button>
-      <form
-        className="flex flex-wrap items-end gap-3"
-        onSubmit={(event) => {
-          event.preventDefault();
-          actions.next();
-        }}
-      >
-        {swapTurn && !finalSteal && (
-          <Field className="w-56">
-            <FieldLabel htmlFor={labelId}>{tSwap('label')}</FieldLabel>
-            <Input
-              id={labelId}
-              type="text"
-              maxLength={60}
-              value={actions.label}
-              onChange={(event) => actions.setLabel(event.target.value)}
-            />
-          </Field>
-        )}
+      {swapTurn && !finalSteal && (
+        <Field className="order-first basis-full sm:order-none sm:ml-auto sm:basis-56">
+          <FieldLabel htmlFor={labelId}>{tSwap('label')}</FieldLabel>
+          <Input
+            id={labelId}
+            type="text"
+            maxLength={60}
+            value={actions.label}
+            onChange={(event) => actions.setLabel(event.target.value)}
+          />
+        </Field>
+      )}
+      <div className="flex flex-wrap items-end gap-3">
         {actions.last && (
           <Button type="button" variant="neutral" size="lg" disabled={busy} onClick={actions.last}>
             <Check aria-hidden="true" />
@@ -83,7 +84,7 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
             {!toSpin && !toReveal && !santaToShow && !swapTurn && <ArrowRight aria-hidden="true" />}
           </Button>
         )}
-      </form>
-    </div>
+      </div>
+    </form>
   );
 };

@@ -110,7 +110,8 @@
     "swap-label": "Swap for gift {no} from {name}",
     "keep": "Keep their gift",
     "now-robbed": "Stolen from, so they go again",
-    "now-final": "Final steal: swap or keep"
+    "now-final": "Final steal: swap or keep",
+    "too-few": "A White Elephant needs at least {min} people. There are too few to play today."
   },
   "errors": {
     "NOT_DRAWN": "Names aren't drawn yet.",

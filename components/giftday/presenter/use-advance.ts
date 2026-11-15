@@ -30,9 +30,9 @@ export const useAdvance = (groupSlug: string, editionNumber: number) => {
         queryClient.setQueryData(presenterKey, view);
         void queryClient.invalidateQueries(trpc.giftday.get.pathFilter());
       },
-      // The view refetches by itself, so a step that came too late needs no reload.
+      // The view refetches by itself, so a step that came too late (or after someone left) needs no reload.
       onError: (error) => {
-        if (appErrorCode(error) === 'EDITION_CHANGED') toast.add({ title: t('changed'), type: 'error' });
+        if (['EDITION_CHANGED', 'TOO_FEW_PEOPLE'].includes(appErrorCode(error))) toast.add({ title: t('changed'), type: 'error' });
         else onError(error);
         void queryClient.invalidateQueries({ queryKey: presenterKey });
       },

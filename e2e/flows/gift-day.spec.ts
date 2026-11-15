@@ -440,7 +440,37 @@ test('two presenter screens and a phone: each follows every step, Previous inclu
   await expect(second.getByText(/Reload the page/)).toHaveCount(0);
 });
 
-/** On a laptop screen the whole slide fits: its last part ends above the controls, so nothing is behind them. */
+test('White Elephant down to 2 people on gift day: the presenter says it needs 3 and offers to finish gift day', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', {
+      name: 'Too few',
+      organizerName: 'Ann',
+      timeZone: 'Europe/Brussels',
+      giftDay: { date: '2099-12-24' },
+      exchangeMode: 'inPerson',
+      kind: 'whiteElephant',
+    })
+  );
+  for (const [user, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await user.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('draw.lockIn', at));
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await bob.trpc.mutate('membership.leave', { groupSlug: group.slug }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}/present`);
+
+  await expect(page.getByText('A White Elephant needs at least 3 people. There are too few to play today.')).toBeVisible();
+  await expect(button(page, 'Next')).toHaveCount(0);
+  await button(page, 'Finish gift day').click();
+  await page.getByRole('dialog', { name: 'Finish gift day now?' }).getByRole('button', { name: 'Finish gift day' }).click();
+  await expect(page.getByText('Gift day is over')).toBeVisible();
+  await expect(button(page, 'Finish gift day')).toHaveCount(0);
+});
+
+/** `last` ends above the controls, so nothing of it is behind them. */
 const expectAboveControls = (page: Page, last: Locator) =>
   expect(async () => {
     const [slide, controls] = await Promise.all([last.boundingBox(), button(page, 'Previous').locator('..').boundingBox()]);
@@ -487,6 +517,12 @@ test('the presenter fits the screen: the controls stay in view with a long name 
   await expect(button(page, 'Previous')).toBeInViewport({ ratio: 1 });
   await expect(button(page, 'Opened a new gift')).toBeInViewport({ ratio: 1 });
   if (!isMobile) await expectAboveControls(page, page.getByText('1 gift still wrapped'));
+  else {
+    // A phone keeps the table in sight: Previous and Opened a new gift share a row, two gifts and what's in them above.
+    const [previous, open] = await Promise.all([button(page, 'Previous').boundingBox(), button(page, 'Opened a new gift').boundingBox()]);
+    expect(previous!.y).toBe(open!.y);
+    await expectAboveControls(page, page.getByRole('list', { name: 'Who has which gift' }).getByRole('listitem').nth(1).getByText(/^A very long description/));
+  }
 });
 
 test("the presenter fits the screen: the controls stay in view with someone's Santa, the tally and the leaderboard", async ({ page, signIn, signInPage, isMobile, db }) => {

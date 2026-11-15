@@ -32,7 +32,7 @@ export const SwapTable = ({ swap, stealable = [], onSteal, busy, large, classNam
             return (
               <li
                 key={gift.no}
-                className={cn('flex flex-col gap-1 bg-surface p-3 text-left text-ink bordered', large && 'w-56')}
+                className={cn('flex flex-col gap-1 bg-surface p-3 text-left text-ink bordered', large && 'w-[calc(50%-0.375rem)] sm:w-56')}
               >
                 <p className={cn('flex items-center justify-between gap-2 font-semibold', large && 'text-xl')}>
                   {t('gift', { no: gift.no })}

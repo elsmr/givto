@@ -110,7 +110,8 @@
     "swap-label": "Ruilen voor cadeau {no} van {name}",
     "keep": "Eigen cadeau houden",
     "now-robbed": "Bestolen, dus nog een keer aan de beurt",
-    "now-final": "Laatste keer stelen: ruilen of houden"
+    "now-final": "Laatste keer stelen: ruilen of houden",
+    "too-few": "Een White Elephant heeft minstens {min} mensen nodig. Er zijn er vandaag te weinig om te spelen."
   },
   "errors": {
     "NOT_DRAWN": "Er is nog niet geloot.",

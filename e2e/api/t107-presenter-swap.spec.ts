@@ -1,5 +1,6 @@
 // 107: a presenter step is for the person the presenter showed, so someone leaving mid-turn can't hand their move to
-// the next person; a White Elephant needs 3 people to start gift day.
+// the next person; a White Elephant needs 3 people to start gift day and its swap; a done swap's table stays with the
+// people who were in it.
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 import { code, drawnGroup, memberIdOf, presenterSaw } from './s6-helpers';
 
@@ -78,4 +79,46 @@ test('White Elephant: gift day needs 3 people to start', async ({ signIn }) => {
   const refused = await ann.trpc.mutate('manage.startGiftDay', at);
   expect(code(refused)).toBe('TOO_FEW_PEOPLE');
   expect(refused.error!.data.details).toEqual({ min: 3 });
+});
+
+test("White Elephant: once down to 2 people on gift day, the presenter can't start the swap", async ({ signIn }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const at = await whiteElephant(people, 'Two left on the day');
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await bob.trpc.mutate('membership.leave', { groupSlug: at.groupSlug }));
+  const refused = await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', ...presenterSaw(await presenterOrder(ann, at)) });
+  expect(code(refused)).toBe('TOO_FEW_PEOPLE');
+  expect(refused.error!.data.details).toEqual({ min: 3 });
+  expect((await presenterOrder(ann, at)).started).toBe(false);
+});
+
+test('a presenter step without who it showed (a tab from before) is refused as changed, so the tab says to reload', async ({ signIn }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann] = people;
+  const at = await whiteElephant(people, 'Stale tab');
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }))).toBe('EDITION_CHANGED');
+  expect((await presenterOrder(ann, at)).started).toBe(false);
+});
+
+test('White Elephant done: who has which gift only for people who were in it', async ({ signIn, db }) => {
+  const people = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const [ann, bob] = people;
+  const eve = await signIn('eve');
+  const at = await whiteElephant(people, 'Swap kept in');
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', ...presenterSaw(await presenterOrder(ann, at)) }));
+  if (!(await presenterOrder(ann, at)).currentShown) {
+    ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'spin', ...presenterSaw(await presenterOrder(ann, at)) }));
+  }
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'open', ...presenterSaw(await presenterOrder(ann, at)) }));
+  ok(await ann.trpc.mutate('manage.finishGiftDay', at));
+  const { joinLink } = (await db.groups.findOne({ slug: at.groupSlug }))!;
+  ok(await eve.trpc.mutate('join.accept', { groupSlug: at.groupSlug, token: joinLink!.token, name: 'Eve' }));
+  ok(await ann.trpc.mutate('settings.setOrganizer', { groupSlug: at.groupSlug, memberId: await memberIdOf(db, at.groupSlug, eve), organizer: true }));
+
+  expect(ok(await bob.trpc.query('giftday.get', at)).swap!.gifts).toHaveLength(1);
+  expect(ok(await eve.trpc.query('giftday.get', at)).swap, 'Eve joined after').toBeNull();
+  expect(ok(await eve.trpc.query('giftday.presenter', at)).swap, 'Eve organizes but joined after').toBeNull();
 });

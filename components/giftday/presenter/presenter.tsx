@@ -14,6 +14,8 @@ import { useState, type ReactNode } from 'react';
 import { appErrorCode } from '../../group/app-error-code';
 import { GroupNotFound } from '../../group/group-not-found';
 import { useRequireSession } from '@/components/auth/use-require-session';
+import { HatchDialog } from '@/components/manage/hatch-dialog';
+import { MIN_PARTICIPANTS } from '@/lib/schema/group';
 import { ShuffleButton } from '../shuffle-button';
 import { useGiftDayStream } from '../use-gift-day';
 import { PresenterFrame } from './presenter-frame';
@@ -32,6 +34,7 @@ export const notice = (text: string, variant?: 'danger') => (
 /** /g/[slug]/present: the current edition's unwrap order on a big screen. Organizer only (PLAN-v2). */
 export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
   const t = useTranslations('giftday');
+  const tManage = useTranslations('manage');
   const trpc = useTRPC();
   const user = useRequireSession();
   const group = useQuery({ ...trpc.group.get.queryOptions({ groupSlug }), enabled: !!user });
@@ -41,9 +44,10 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
     ...trpc.giftday.presenter.queryOptions({ groupSlug, editionNumber }),
     enabled: isOrganizer && editionNumber > 0,
   });
-  useGiftDayStream({ groupSlug, editionNumber }, isOrganizer && editionNumber > 0);
-  const [skipSpin, setSkipSpin] = useState(false);
   const edition = group.data?.edition;
+  useGiftDayStream({ groupSlug, editionNumber }, isOrganizer && edition?.status === 'giftday');
+  const [skipSpin, setSkipSpin] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const order = view.data?.unwrapOrder;
   // The intro's QR again, for whoever joins late or drops off.
   const settings = edition && view.data && (
@@ -96,6 +100,16 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
         {isDrawn(view.data) && (
           <ShuffleButton groupSlug={groupSlug} editionNumber={editionNumber} again={false} />
         )}
+      </div>
+    );
+  }
+  // Gift day started by date (or people left since) with too few to swap (owner): finish it instead.
+  if (edition && view.data?.kind === 'whiteElephant' && order && !order.started && order.people.length < MIN_PARTICIPANTS) {
+    return frame(
+      <div className="flex flex-col items-center gap-6 px-6 py-16 text-center">
+        <p className="text-2xl font-semibold">{t('swap.too-few', { min: MIN_PARTICIPANTS })}</p>
+        {edition.status === 'giftday' && <Button onClick={() => setFinishing(true)}>{tManage('finishGiftDay.item')}</Button>}
+        {finishing && <HatchDialog hatch="finishGiftDay" groupSlug={groupSlug} edition={edition} shuffled onClose={() => setFinishing(false)} />}
       </div>
     );
   }
