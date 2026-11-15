@@ -40,6 +40,7 @@
     "revealed": "Here's who was whose Santa.",
     "shown": "The Santas shown on gift day. The rest stays secret.",
     "pairs-label": "Who was whose Santa",
+    "left": "{name} (left)",
     "pair": "<name>{giftee}</name> got a gift from <name>{santa}</name>"
   },
   "after": {

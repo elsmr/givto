@@ -88,6 +88,7 @@
     "preheader": "Something changed in the draw, and it affects you.",
     "title": "You have a new giftee",
     "body": "Someone joined or left “{group}” after the draw, so you're now buying for someone else. Everybody else keeps their giftee.",
+    "body-redrawn": "The organizer drew the names again for “{group}”, so you're now buying for someone else.",
     "button": "Show my new giftee"
   },
   "organizer-handover": {

@@ -2,6 +2,7 @@ import { ForYouSection } from '@/components/between/for-you-section';
 import { LeaveTipLink } from '@/components/between/new-tip-dialog';
 import { AddToCalendar } from '@/components/calendar/add-to-calendar';
 import { NextEditionCard } from '@/components/draw/next-edition-card';
+import { DrawGapsNote } from '@/components/settings/redraw-section';
 import { GiftArrivalCard } from '@/components/gift/gift-arrival-card';
 import { EmptyWishlistsRow, StillShoppingRows } from '@/components/gift/still-shopping-stat';
 import { Card, CardContent } from '@/components/ui/card';
@@ -39,6 +40,7 @@ export const OverviewPanel = ({ group, showTab }: { group: GroupData; showTab: (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">
       <div className="flex min-w-0 flex-col gap-6">
         {manage && <PendingRequests group={group} />}
+        {manage && edition?.status === 'drawn' && <DrawGapsNote group={group} edition={edition} />}
         {input && <ForYouSection input={input} />}
         {edition && <PhaseMainCard group={group} edition={edition} manage={manage} showTab={showTab} />}
         {addresses && participates && <AddressCard groupSlug={slug} />}

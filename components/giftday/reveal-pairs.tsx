@@ -4,8 +4,8 @@ import * as m from 'motion/react-m';
 import { useTranslations } from 'next-intl';
 import type { ReactNode } from 'react';
 
-/** With Guess your Santa (62) on, each pair also says what the giftee guessed: the scoreboard. */
-type Pair = { giftee: string; santa: string; guess?: string | null; right?: boolean };
+/** With Guess your Santa (62) on, each pair also says what the giftee guessed: the scoreboard. `…Left`: they left on gift day (105). */
+type Pair = { giftee: string; santa: string; gifteeLeft?: boolean; santaLeft?: boolean; guess?: string | null; right?: boolean };
 
 /** Who was whose Santa, one by one. `large` for the presenter view. */
 export const RevealPairs = ({ pairs, large = false }: { pairs: Pair[]; large?: boolean }) => {
@@ -25,7 +25,13 @@ export const RevealPairs = ({ pairs, large = false }: { pairs: Pair[]; large?: b
             transition={{ delay }}
             className={cn('flex flex-col gap-2 bg-surface p-3 text-ink bordered shadow-sm', large && 'p-5 text-2xl xl:text-3xl dark:border-control dark:shadow-md dark:shadow-primary')}
           >
-            <span>{t.rich('pair', { giftee: pair.giftee, santa: pair.santa, name })}</span>
+            <span>
+              {t.rich('pair', {
+                giftee: pair.gifteeLeft ? t('left', { name: pair.giftee }) : pair.giftee,
+                santa: pair.santaLeft ? t('left', { name: pair.santa }) : pair.santa,
+                name,
+              })}
+            </span>
             {pair.right !== undefined && (
               <span className={cn('flex flex-wrap items-center gap-2 text-sm', large && 'text-xl xl:text-2xl')}>
                 {pair.guess ? (

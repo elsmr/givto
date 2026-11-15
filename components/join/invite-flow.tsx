@@ -20,11 +20,14 @@ import { EmailCodeForm } from './email-code-form';
 import { JoinIntro } from './join-intro';
 import { useEmailCode } from './use-email-code';
 
-const knownErrors = ['INVITE_INVALID', 'INVITE_EMAIL_MISMATCH', 'RATE_LIMITED'] as const;
+const knownErrors = ['INVITE_INVALID', 'INVITE_EMAIL_MISMATCH', 'RATE_LIMITED', 'NAME_TAKEN', 'ALREADY_MEMBER'] as const;
 
 type InviteFlowProps = { slug: string; token: string; preview: JoinPreview & { invite: { email: string } } };
 
-/** Email invite (45, secondary): bound to one address, single-use; accept to land on the group (saying your name if the account has none), or decline (48). */
+/**
+ * Email invite (45, secondary): bound to one address, single-use; accept to land on the group (saying your name if the
+ * account has none, or when someone in the group already has it, 105), or decline (48).
+ */
 export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   const t = useTranslations('join');
   const tIssues = useTranslations('group.issues');
@@ -32,6 +35,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   const router = useRouter();
   const session = authClient.useSession();
   const [name, setName] = useState('');
+  const [ownName, setOwnName] = useState(false);
   const [nameIssue, setNameIssue] = useState<FieldIssue | null>(null);
   const [codeSent, setCodeSent] = useState(false);
   const emailCode = useEmailCode(router.asPath);
@@ -44,6 +48,12 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
       // Just verified: make sure the form sees the signed-in account it now asks the name for.
       onError: (error) => {
         if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
+        // Someone here goes by the account's name: ask for one for this group, starting from it. A typed name stays.
+        const accountName = session.data?.user.name;
+        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName && accountName) {
+          setOwnName(true);
+          setName(accountName);
+        }
       },
     })
   );
@@ -68,7 +78,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
   }
 
   const signedInEmail = session.data?.user.email ?? null;
-  const askName = signedInEmail === email && !session.data?.user.name;
+  const askName = signedInEmail === email && (!session.data?.user.name || ownName);
   const acceptInvite = () => accept.mutate({ groupSlug: slug, token, ...(askName && { name }) });
   /** Runs `next` once the name, when asked, is valid. */
   const withName = (next: () => void) => {
@@ -90,7 +100,7 @@ export const InviteFlow = ({ slug, token, preview }: InviteFlowProps) => {
     <JoinIntro preview={preview}>
       {errorCode && (
         <Alert variant="danger">
-          <AlertDescription>{t(`errors.${errorCode}`)}</AlertDescription>
+          <AlertDescription>{t(`errors.${errorCode}`, { name: accept.variables?.name ?? session.data?.user.name ?? '' })}</AlertDescription>
         </Alert>
       )}
       {codeSent && !signedInEmail ? (

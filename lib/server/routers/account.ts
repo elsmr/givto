@@ -11,6 +11,7 @@ import { getAuth } from '../auth';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { sendMail } from '../mail';
+import { nameTaken } from '../membership';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, router } from '../trpc';
 
@@ -43,14 +44,21 @@ export const accountRouter = router({
 
   groups: authedProcedure.query(({ ctx }) => accountGroups(ctx.db, ctx.user.id)),
 
-  /** Every group shows the new name too: members carry a copy of the account's. */
+  /**
+   * Every group shows the new name too: members carry a copy of the account's. Except where they go by a name of
+   * their own (105), or where someone else already has the new one: there they keep the name they have.
+   */
   setName: authedProcedure.input(v.object({ name: PersonName })).mutation(async ({ ctx, input }) => {
     const now = new Date();
+    const previous = await ctx.db.users.findOne({ _id: new ObjectId(ctx.user.id) }, { projection: { name: 1 } });
     await ctx.db.users.updateOne({ _id: new ObjectId(ctx.user.id) }, { $set: { name: input.name, updatedAt: now } });
-    await ctx.db.groups.updateMany(
-      { 'members.userId': ctx.user.id },
-      { $set: { 'members.$[me].name': input.name, updatedAt: now } },
-      { arrayFilters: [{ 'me.userId': ctx.user.id }] }
+    const groups = await ctx.db.groups.find({ 'members.userId': ctx.user.id }).toArray();
+    await Promise.all(
+      groups.flatMap((group) => {
+        const me = group.members.find((m) => m.userId === ctx.user.id);
+        if (!me || me.name !== previous?.name || nameTaken(group, input.name, me.id)) return [];
+        return [ctx.db.groups.updateOne({ _id: group._id, 'members.id': me.id }, { $set: { 'members.$.name': input.name, updatedAt: now } })];
+      })
     );
     return { name: input.name };
   }),

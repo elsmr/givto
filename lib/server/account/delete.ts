@@ -4,8 +4,10 @@ import type { Member } from '../../schema/member';
 import { deletePendingSignIns } from '../auth';
 import { getMongoDb, type Collections } from '../db';
 import { deleteWishImagesOf } from '../import/wish-images';
+import { currentEdition } from '../membership';
+import { leaveEdition } from '../remove-member';
 
-// Shown to the others in place of the person's name; draws keep pointing at the member.
+// Shown to the others in place of the person's name: past draws keep pointing at the member.
 const removedName = { en: 'Deleted account', nl: 'Verwijderd account' } as const;
 
 const anonymized = (member: Member, group: Group, now: Date): Member => ({
@@ -110,8 +112,17 @@ export const deleteAccount = async (db: Collections, user: { id: string; email: 
 
   for (const group of groups) {
     const next = groupWithout(group, user.id, now);
-    if (next) await db.groups.replaceOne({ _id: group._id }, next);
-    else await deleteGroup(db, group);
+    if (!next) {
+      await deleteGroup(db, group);
+      continue;
+    }
+    await db.groups.replaceOne({ _id: group._id }, next);
+    // Out of the current edition like someone removed (105), once the members they managed have a new manager: a
+    // changed giftee's notice goes to them. Deletion is never refused, so with no draw left without them they stay in it.
+    const edition = await currentEdition(db, group._id);
+    if (edition) {
+      for (const member of group.members.filter((member) => member.userId === user.id)) await leaveEdition(db, group._id, edition, member.id);
+    }
   }
 
   const raw = getMongoDb();

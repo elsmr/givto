@@ -120,8 +120,9 @@ test('account: passkeys, preferences, dashboard, export, deletion', async ({ sig
     expect(family.createdBy).toBe(bob.id);
     expect(family.organizerHandover!.toMemberId).toBe(ids.m.bob);
     const edition = (await db.editions.findOne({ _id: ids.e.family }))!;
-    expect(edition.draw!.assignments).toEqual({ [ids.m.ann]: ids.m.bob, [ids.m.bob]: ids.m.cee, [ids.m.cee]: ids.m.kid, [ids.m.kid]: ids.m.ann });
-    expect(edition.participants).toHaveLength(4);
+    // Taken out like a removal (105): Ann's Santa gives to Ann's giftee.
+    expect(edition.draw!.assignments).toEqual({ [ids.m.bob]: ids.m.cee, [ids.m.cee]: ids.m.kid, [ids.m.kid]: ids.m.bob });
+    expect(edition.participants).toHaveLength(3);
     const solo = { groupId: ids.g.solo };
     const soloLeft = (await db.groups.countDocuments({ _id: ids.g.solo })) + (await db.editions.countDocuments(solo)) + (await db.invites.countDocuments(solo));
     expect(soloLeft).toBe(0);

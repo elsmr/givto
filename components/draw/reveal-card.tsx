@@ -37,7 +37,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
   if (mine.isPending) return <Skeleton className="h-48" />;
   if (mine.isError) return <LoadFailed message={t('load-failed')} onRetry={() => void mine.refetch()} />;
   if (!mine.data) return null;
-  const { inEdition, giftee, changedAt } = mine.data;
+  const { inEdition, giftee, changedAt, redrawn } = mine.data;
   if (!giftee) {
     return (
       <Card>
@@ -57,7 +57,7 @@ export const RevealCard = ({ groupSlug, editionNumber, timeZone, children }: Rev
       <CardContent className="flex flex-col gap-4">
         {changedAt && (
           <Alert>
-            <AlertDescription>{t('changed', { date: format.dateTime(changedAt, { dateStyle: 'long', timeZone }) })}</AlertDescription>
+            <AlertDescription>{t(redrawn ? 'changed-redrawn' : 'changed', { date: format.dateTime(changedAt, { dateStyle: 'long', timeZone }) })}</AlertDescription>
           </Alert>
         )}
         {/* Both states in one cell, so revealing doesn't change the card's height. The name is only in the page once shown. */}

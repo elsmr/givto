@@ -48,8 +48,13 @@ const giftDayState = (group: Group, edition: Edition, counts: GiftCounts, boards
   const progress = edition.unwrapOrder?.progress;
   const swap = edition.kind === 'whiteElephant' && order ? swapState(order, Boolean(progress), progress?.moves ?? []) : null;
   const state = swap ?? (order && unwrapState(order, mode, Boolean(progress), progress?.turns ?? [], counts));
+  // Someone who left but stays in the draw (gift day had started) keeps their pairs, marked as left (105).
+  const left = (memberId: string) => memberId in assignments && !inDraw.includes(memberId);
   const pairs = isRevealed(edition)
-    ? (order ?? inDraw).map((giftee) => ({ giftee: nameOf(giftee), santa: nameOf(santaOf.get(giftee) ?? '') }))
+    ? [...(order ?? inDraw), ...Object.values(assignments).filter(left)].map((giftee) => {
+        const santa = santaOf.get(giftee) ?? '';
+        return { giftee: nameOf(giftee), santa: nameOf(santa), ...(left(giftee) && { gifteeLeft: true }), ...(left(santa) && { santaLeft: true }) };
+      })
     : null;
   const revealedIds = isRevealed(edition) ? (order ?? inDraw) : santaStepOn(edition) ? santaShownIds(edition) : [];
   const guesses = Object.fromEntries(Object.entries(boards).map(([guesser, board]) => [guesser, board[guesser]]));

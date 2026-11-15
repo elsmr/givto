@@ -49,6 +49,8 @@
     "remove-title": "Remove {name}?",
     "remove-before": "{name} leaves the group and won't be in the draw. Their wishlist stays theirs.",
     "remove-after": "{name} leaves the group. The names are drawn already: their Santa gets someone else, everyone else keeps their giftee.",
+    "remove-redraw": "{name} leaves the group. Without {name} the names can't stay as they are, so they're drawn again for everyone. Only people whose giftee changes get an email.",
+    "remove-giftday": "{name} leaves the group. Gift day has started, so nobody gets a new giftee: {name} just drops out of the unwrapping.",
     "remove-confirm": "Remove {name}",
     "removed": "{name} removed",
     "make-organizer": "Make organizer",

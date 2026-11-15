@@ -73,7 +73,7 @@
   "leave": {
     "button": "Groep verlaten",
     "title": "Stoppen met {group}?",
-    "description": "Je doet niet meer mee aan de loting en ziet de groep niet meer. Is er al geloot, dan krijgt je Santa iemand anders. Je verlanglijstje blijft van jou.",
+    "description": "Je doet niet meer mee aan de loting en ziet de groep niet meer. Is er al geloot, dan doe je deze keer niet meer mee, ook niet als je terugkomt. Je verlanglijstje blijft van jou.",
     "cancel": "Blijven",
     "confirm": "Stoppen",
     "errors": {

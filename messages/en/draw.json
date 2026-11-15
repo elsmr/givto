@@ -60,8 +60,9 @@
     "buying-for": "You're buying for",
     "hide": "Hide",
     "changed": "Your giftee changed on {date}: someone joined or left.",
+    "changed-redrawn": "Your giftee changed on {date}: the organizer drew the names again.",
     "not-in": "You're not in this draw.",
-    "not-fitted": "You joined after the draw and we couldn't fit you in without breaking the rules. The organizer can re-draw to include you.",
+    "not-fitted": "You joined after the draw, and we couldn't fit you in without breaking the rules or changing a giftee someone already started shopping for. The organizer can re-draw to include you.",
     "show": "Show",
     "load-failed": "We couldn't load your giftee."
   },
@@ -87,6 +88,10 @@
     "gift-day": "{group}: gift day",
     "post-by": "{group}: post your gift",
     "description": "Your Secret Santa on Givto: {url}"
+  },
+  "gaps": {
+    "not-in": "Not in the draw: {names}. They joined after the draw and couldn't be fitted in without breaking the rules or changing a giftee someone already started on. Re-draw names to include them, or leave it and they sit this one out.",
+    "left": "Left, but still in the draw: {names}. The names couldn't be re-drawn without them under the current rules. Change the rules and re-draw names, or leave it."
   },
   "redraw": {
     "title": "Re-draw",

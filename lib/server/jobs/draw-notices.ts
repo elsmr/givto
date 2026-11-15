@@ -4,6 +4,7 @@ import { formatBudget } from '../../format-budget';
 import { formatLocalDate } from '../../local-date';
 import type { Edition } from '../../schema/edition';
 import { userIdsWithAddress } from '../account/addresses';
+import { gifteeRedrawn } from '../draw/save';
 import { newId, type Collections } from '../db';
 import { log } from '../log';
 import { sendNotice } from '../mail/notice';
@@ -15,7 +16,7 @@ import { startWishlistSnapshot } from '../wishlist/wishlist-changes';
 
 /**
  * "Names are drawn" to every Santa once, and "you have a new giftee" when a Santa's giftee
- * changes later (late joiner slotted in, someone left). The log key carries the giftee, so
+ * changes later (late joiner slotted in, someone left, a re-draw). The log key carries the giftee, so
  * a changed assignment is a new key; nothing else needs to know what changed.
  */
 export const sendDrawNotices = async (db: Collections, edition: Edition) => {
@@ -58,7 +59,7 @@ export const sendDrawNotices = async (db: Collections, edition: Edition) => {
       render: () => {
         const url = token ? inviteUrl(group.slug, token) : groupUrl(group.slug);
         const props = { locale: to.locale, group: group.name, url, forName: to.forName };
-        if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail(props) };
+        if (changed) return { subject: gifteeChangedSubject(props), body: GifteeChangedEmail({ ...props, redrawn: gifteeRedrawn(edition, santa.id) }) };
         const giftDay = edition.giftDay && formatLocalDate(edition.giftDay.date, to.locale);
         const budget = edition.budget && formatBudget(edition.budget, to.locale);
         const addAddress = posted && !to.forName && !(santa.userId && withAddress.has(santa.userId));

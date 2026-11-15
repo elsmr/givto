@@ -15,17 +15,21 @@ import { JoinRequested } from './join-requested';
 import { NameEmailForm } from './name-email-form';
 import { useEmailCode } from './use-email-code';
 
-const knownErrors = ['GROUP_FULL', 'JOIN_LINK_INVALID', 'RATE_LIMITED', 'INVALID_INPUT'] as const;
+const knownErrors = ['GROUP_FULL', 'JOIN_LINK_INVALID', 'RATE_LIMITED', 'INVALID_INPUT', 'NAME_TAKEN'] as const;
 
 type JoinFlowProps = { slug: string; token: string; preview: JoinPreview };
 
-/** Join via the group link (45): email → emailed code → member (or waiting for approval); the name only for an account without one. */
+/**
+ * Join via the group link (45): email → emailed code → member (or waiting for approval); the name only for an account
+ * without one, or when someone in the group already has the account's name (105).
+ */
 export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
   const t = useTranslations('join');
   const trpc = useTRPC();
   const router = useRouter();
   const session = authClient.useSession();
   const [name, setName] = useState('');
+  const [ownName, setOwnName] = useState(false);
   const [email, setEmail] = useState('');
   const [step, setStep] = useState<'details' | 'code'>('details');
   const emailCode = useEmailCode(router.asPath);
@@ -38,6 +42,12 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
       // Just verified: make sure the form sees the signed-in account it now asks the name for.
       onError: (error) => {
         if (appErrorCode(error) === 'NAME_REQUIRED') void session.refetch();
+        // Someone here goes by the account's name: ask for one for this group, starting from it. A typed name stays.
+        const accountName = session.data?.user.name;
+        if (appErrorCode(error) === 'NAME_TAKEN' && !ownName && accountName) {
+          setOwnName(true);
+          setName(accountName);
+        }
       },
     })
   );
@@ -46,7 +56,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
   if (accept.data?.status === 'requested') return <JoinRequested organizer={preview.organizerFirstName} />;
 
   const signedInEmail = session.data?.user.email ?? null;
-  const askName = signedInEmail !== null && !session.data?.user.name;
+  const askName = signedInEmail !== null && (!session.data?.user.name || ownName);
   const join = () => accept.mutate({ groupSlug: slug, token, ...(askName && { name }) });
   const sendCode = async () => {
     if (await emailCode.send(email)) setStep('code');
@@ -62,7 +72,7 @@ export const JoinFlow = ({ slug, token, preview }: JoinFlowProps) => {
     <JoinIntro preview={preview}>
       {errorCode && (
         <Alert variant="danger">
-          <AlertDescription>{t(`errors.${errorCode}`)}</AlertDescription>
+          <AlertDescription>{t(`errors.${errorCode}`, { name: accept.variables?.name ?? session.data?.user.name ?? '' })}</AlertDescription>
         </Alert>
       )}
       {step === 'details' ? (

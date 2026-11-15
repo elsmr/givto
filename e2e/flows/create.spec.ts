@@ -168,3 +168,31 @@ test('with approval on, a joiner waits until the organizer lets them in', async 
     await expect(bobPage.getByRole('heading', { level: 1, name: 'Office' })).toBeVisible();
   });
 });
+
+test('joining under a name someone in the group already has: the joiner picks one for this group', async ({ page, signIn, signInPage }) => {
+  const [ann, other] = await Promise.all([signIn('ann'), signIn('other')]);
+  const group = ok(await ann.trpc.mutate('group.create', { name: 'Twins', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
+  ok(await other.trpc.mutate('group.create', { name: 'Elsewhere', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
+  await signInPage(page, other);
+  await page.goto(`/g/${group.slug}/join?token=${group.joinToken}`);
+  await expect(page.getByLabel('Your name')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Join' }).click();
+  await expect(page.getByText("There's already someone called Ann here. Add an initial?")).toBeVisible();
+  await expect(page.getByLabel('Your name')).toHaveValue('Ann');
+  await page.getByLabel('Your name').fill('Ann B');
+  await page.getByRole('button', { name: 'Join' }).click();
+  await expect(page).toHaveURL(`/g/${group.slug}`);
+  expect(ok(await ann.trpc.query('group.get', { groupSlug: group.slug })).members.map((m) => m.name)).toEqual(['Ann', 'Ann B']);
+  expect(ok(await other.trpc.query('account.get')).name).toBe('Ann');
+});
+
+test('joining with a typed name someone in the group already has: what was typed stays to add an initial to', async ({ page, signIn, signInPage }) => {
+  const [ann, bob] = await Promise.all([signIn('ann'), signIn('bob')]);
+  const group = ok(await ann.trpc.mutate('group.create', { name: 'Typed twins', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));
+  await signInPage(page, bob);
+  await page.goto(`/g/${group.slug}/join?token=${group.joinToken}`);
+  await page.getByLabel('Your name').fill('Ann');
+  await page.getByRole('button', { name: 'Join' }).click();
+  await expect(page.getByText("There's already someone called Ann here. Add an initial?")).toBeVisible();
+  await expect(page.getByLabel('Your name')).toHaveValue('Ann');
+});

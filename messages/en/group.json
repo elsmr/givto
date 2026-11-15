@@ -73,7 +73,7 @@
   "leave": {
     "button": "Leave the group",
     "title": "Leave {group}?",
-    "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, your Santa gets someone else. Your wishlist stays yours.",
+    "description": "You'll be out of the draw and won't see the group anymore. If names are drawn already, you sit this one out, also if you come back. Your wishlist stays yours.",
     "cancel": "Stay",
     "confirm": "Leave",
     "errors": {

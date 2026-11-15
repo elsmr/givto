@@ -5,7 +5,7 @@ import type { Member } from '../../schema/member';
 import { newId } from '../db';
 import { AppError } from '../errors';
 import { findGroupByJoinLink, joinLinkPreview } from '../join-preview';
-import { addToCurrentEdition, memberProfile, placeHolding, randomToken } from '../membership';
+import { addToCurrentEdition, memberProfile, nameTaken, placeHolding, randomToken } from '../membership';
 import { notifyJoinRequest } from '../mail/join-notices';
 import { enforceRateLimit } from '../rate-limit';
 import { authedProcedure, organizerProcedure, publicProcedure, router } from '../trpc';
@@ -14,6 +14,13 @@ const JOINS_PER_USER = { window: 60 * 60, max: 20 };
 const JOINS_PER_GROUP = { window: 60 * 60, max: 100 };
 
 const LinkInput = v.object({ groupSlug: Slug, token: v.string() });
+
+/**
+ * Removed by an organizer or turned away, also after a re-invite they declined or let expire: only a new invite brings
+ * them back (105). Someone who left (`leftAt`) may use the link.
+ */
+const refusedByLink = (m: Member) => m.status !== 'invited' && Boolean(m.removedAt) && !m.leftAt;
+const notRefusedByLink = { $nor: [{ status: { $ne: 'invited' }, removedAt: { $exists: true }, leftAt: { $exists: false } }] };
 
 export const joinRouter = router({
   /** What the link shows before joining; null for unknown, revoked or expired links. */
@@ -38,9 +45,6 @@ export const joinRouter = router({
       if (existing && placeHolding.includes(existing.status)) {
         return { slug: group.slug, status: existing.status };
       }
-      const profile = await memberProfile(ctx.db, ctx.user.id, input.name);
-      const status = group.joinLink.requiresApproval ? 'requested' : 'joined';
-      const now = new Date();
       const invite = existing
         ? null
         : await ctx.db.invites.findOne(
@@ -49,6 +53,11 @@ export const joinRouter = router({
           );
       // Someone rejoining keeps what they showed here before; anyone new, invitees included, starts with nothing shown.
       const reusedId = existing?.id ?? invite?.memberId;
+      const reused = group.members.find((m) => m.id === reusedId);
+      if (reused && refusedByLink(reused)) throw new AppError('JOIN_LINK_INVALID');
+      const profile = await memberProfile(ctx.db, ctx.user.id, input.name, (name) => nameTaken(group, name, reusedId));
+      const status = group.joinLink.requiresApproval ? 'requested' : 'joined';
+      const now = new Date();
       const cap = Math.min(group.joinLink.maxMembers ?? MAX_MEMBERS, MAX_MEMBERS);
       const hasRoom = {
         $expr: {
@@ -64,8 +73,15 @@ export const joinRouter = router({
             {
               _id: group._id,
               members: {
-                $elemMatch: { id: reusedId, status: { $nin: placeHolding }, userId: { $in: [undefined, ctx.user.id] } },
+                $elemMatch: {
+                  id: reusedId,
+                  status: { $nin: placeHolding },
+                  userId: { $in: [undefined, ctx.user.id] },
+                  ...notRefusedByLink,
+                },
               },
+              // One member per account (105).
+              $nor: [{ members: { $elemMatch: { userId: ctx.user.id, id: { $ne: reusedId } } } }],
               ...hasRoom,
             },
             {
@@ -77,6 +93,7 @@ export const joinRouter = router({
                 'members.$.joinedAt': now,
                 updatedAt: now,
               },
+              $unset: { 'members.$.removedAt': true, 'members.$.leftAt': true },
             }
           )
         : await ctx.db.groups.updateOne(

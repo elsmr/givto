@@ -26,6 +26,20 @@ const memberEmails = async (db: Collections, group: Group): Promise<Map<string, 
   );
 };
 
+/**
+ * Organizer only (105), while the names are drawn: `notInDraw`, people in who joined after the draw and couldn't be
+ * slotted in; `leftInDraw`, people who left but stay in the draw because no draw works without them. Re-draw or leave it.
+ */
+const drawGaps = (edition: Edition | null, participantIds: string[], nameOf: (memberId: string) => string) => {
+  const assignments = edition?.status === 'drawn' && edition.draw?.assignments;
+  if (!edition || !assignments) return { notInDraw: [] as string[], leftInDraw: [] as string[] };
+  const stillIn = (memberId: string) => edition.participants.some((p) => p.memberId === memberId && p.participates && p.status !== 'declined');
+  return {
+    notInDraw: participantIds.filter((id) => !(id in assignments)).map(nameOf),
+    leftInDraw: Object.keys(assignments).filter((id) => !stillIn(id)).map(nameOf),
+  };
+};
+
 type EditionListItem = Pick<Edition, 'number' | 'title' | 'kind' | 'status' | 'results'>;
 
 export const groupView = async (
@@ -102,6 +116,7 @@ export const groupView = async (
             maxMembers: group.joinLink.maxMembers,
           },
           households: group.households.map((h) => h.memberIds),
+          ...drawGaps(edition, participantIds, nameOf),
         }
       : undefined,
   };

@@ -3,6 +3,7 @@
 // file and the next edition. One group whose steps build on each other.
 import { editionCalendarEvents, toIcs } from '@/lib/calendar';
 import { expect, ok, test, type MutationPath } from '../fixtures';
+import { inviteTokenFrom } from './s1-group';
 import { codeOf, createGroup, editionOf, expectValidDraw, groupOf, join, memberIdOf, rulesOf } from './s4-group';
 
 test('Family: settings, draw, changes after the draw, .ics, next edition', async ({ signIn, db }) => {
@@ -175,8 +176,9 @@ test('Family: settings, draw, changes after the draw, .ics, next edition', async
     expect(draft.status).toBe('draft');
     expect(draft.avoidPreviousGiftees).toBe(true);
     expect(draft.participants.filter((p) => p.participates).map((p) => p.memberId).toSorted()).toEqual(Object.values(id).toSorted());
-    // Re-join Dan so there's someone to untick, then untick him.
-    await join(dan, family, 'Dan');
+    // Bring Dan back so there's someone to untick, then untick him. He was removed: only a new invite does that (105).
+    ok(await ann.trpc.mutate('invite.send', { groupSlug: slug, email: dan.email }));
+    ok(await dan.trpc.mutate('invite.accept', { groupSlug: slug, token: await inviteTokenFrom(dan.email) }));
     id.dan = await memberIdOf(db, slug, dan);
     const everyone = Object.values(id);
     const edition2 = { groupSlug: slug, editionNumber: 2 };

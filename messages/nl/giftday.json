@@ -40,6 +40,7 @@
     "revealed": "Dit is wie wiens Santa was.",
     "shown": "De Santa's die op pakjesdag getoond werden. De rest blijft geheim.",
     "pairs-label": "Wie wiens Santa was",
+    "left": "{name} (vertrokken)",
     "pair": "<name>{giftee}</name> kreeg een cadeau van <name>{santa}</name>"
   },
   "after": {
