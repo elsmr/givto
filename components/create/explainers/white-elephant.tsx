@@ -50,10 +50,10 @@ const tracks: Record<string, Track> = {
  * a wrapped gift on the pile; the first unwraps one, the second steals it, so the first goes again;
  * the last takes what's left. Reduced motion: everyone holding one opened gift.
  */
-export const WhiteElephantAnimation = () => {
-  const scope = useLoop(tracks, LOOP, 8.2);
+export const WhiteElephantAnimation = ({ playing, className }: { playing?: boolean; className?: string }) => {
+  const scope = useLoop(tracks, LOOP, 8.2, playing);
   return (
-    <Stage ref={scope}>
+    <Stage ref={scope} className={className}>
       {people.map(({ fill }, i) => (
         <g key={i} data-part={`person-${i}`}>
           <Person fill={fill} />

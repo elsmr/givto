@@ -15,10 +15,10 @@
   },
   "games": {
     "title": "Pick your game",
-    "lead": "The classic, or a twist on it. Givto runs all three.",
+    "lead": "Most groups go for the classic. Fancy a twist? Givto runs those too.",
     "secretSanta": {
       "title": "Secret Santa",
-      "description": "Everyone secretly draws one name and gets that person a gift. Nobody knows who their Santa is until gift day."
+      "description": "Everyone draws one name in secret and gets that person a gift. Nobody draws their own name, and nobody finds out who their Santa is until gift day."
     },
     "whiteElephant": {
       "title": "White elephant",
@@ -27,7 +27,8 @@
     "conspiracy": {
       "title": "Conspiracy Santa",
       "description": "Everyone gets one gift from all the others, planned together on a board that person can't see."
-    }
+    },
+    "twists": "Or a twist on it"
   },
   "steps": {
     "title": "How it works",
@@ -80,12 +81,12 @@
     },
     "giftday": {
       "title": "Gift day on the big screen",
-      "description": "Givto shuffles who unwraps when. Put the presenter view on the TV or share it on a video call, guess on your phones who each gift is from, and end with the big reveal.",
+      "description": "Givto shuffles who unwraps when. Put the presenter view on the TV or share it on a video call, guess on your phones who each gift is from, and see who was whose Santa at the end.",
       "mock": {
         "now": "Now unwrapping",
         "guess": "Who's it from?",
         "votes": "{count, plural, one {# guess} other {# guesses}}",
-        "sticker": "Big reveal!"
+        "sticker": "Who was it?"
       }
     }
   },
@@ -152,7 +153,7 @@
     },
     "secret": {
       "question": "Who can see who drew whom?",
-      "answer": "Nobody, not even the organizer. If you like, gift day ends with the big reveal."
+      "answer": "Nobody, not even the organizer. If you like, everyone finds out who was whose Santa at the end of gift day."
     },
     "apart": {
       "question": "Can I keep couples apart?",

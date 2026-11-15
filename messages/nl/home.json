@@ -15,10 +15,10 @@
   },
   "games": {
     "title": "Kies je spel",
-    "lead": "De klassieker, of een variant. Givto regelt ze alle drie.",
+    "lead": "De meeste groepen kiezen de klassieker. Zin in een variant? Givto regelt die ook.",
     "secretSanta": {
       "title": "Secret Santa",
-      "description": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Wie jouw Santa is, blijft een verrassing tot pakjesdag."
+      "description": "Iedereen trekt in het geheim één naam en koopt een cadeau voor die persoon. Niemand trekt zichzelf, en wie jouw Santa is, blijft een verrassing tot pakjesdag."
     },
     "whiteElephant": {
       "title": "White elephant",
@@ -27,7 +27,8 @@
     "conspiracy": {
       "title": "Conspiracy Santa",
       "description": "Iedereen krijgt één cadeau van alle anderen samen, gepland op een bord dat die persoon niet ziet."
-    }
+    },
+    "twists": "Of een variant"
   },
   "steps": {
     "title": "Zo werkt het",
@@ -80,12 +81,12 @@
     },
     "giftday": {
       "title": "Pakjesdag op het grote scherm",
-      "description": "Givto schudt de volgorde van uitpakken. Zet de presentatieweergave op de tv of deel hem in een videogesprek, gok op je telefoon van wie elk cadeau is, en sluit af met de grote onthulling.",
+      "description": "Givto schudt de volgorde van uitpakken. Zet de presentatieweergave op de tv of deel hem in een videogesprek, gok op je telefoon van wie elk cadeau is, en zie op het einde wie wiens Santa was.",
       "mock": {
         "now": "Nu aan het uitpakken",
         "guess": "Van wie is het?",
         "votes": "{count, plural, one {# gok} other {# gokken}}",
-        "sticker": "Grote onthulling!"
+        "sticker": "Wie was het?"
       }
     }
   },
@@ -152,7 +153,7 @@
     },
     "secret": {
       "question": "Wie ziet wie voor wie koopt?",
-      "answer": "Niemand, ook de organisator niet. Als je wil, sluit je pakjesdag af met de grote onthulling."
+      "answer": "Niemand, ook de organisator niet. Als je wil, ziet iedereen op het einde van pakjesdag wie wiens Santa was."
     },
     "apart": {
       "question": "Kan ik koppels uit elkaar houden?",

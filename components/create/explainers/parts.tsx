@@ -1,6 +1,7 @@
 import { useReducedMotion } from 'motion/react';
 import { useAnimate } from 'motion/react-mini';
-import { type ReactNode, type Ref, useLayoutEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { type ReactNode, type Ref, useEffect, useLayoutEffect, useRef } from 'react';
 
 /** Where a part sits at one moment, in viewBox units; parts are drawn centred on their origin. */
 export type Pose = { x: number; y: number; opacity?: number; scale?: number; rotate?: number };
@@ -50,45 +51,66 @@ export const fade = (start: number, at: Pose): Track => move(start, 0.25, at, hi
 const transform = ({ x, y, scale = 1, rotate = 0 }: Pose) =>
   `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(${scale})`;
 
+type Controls = ReturnType<ReturnType<typeof useAnimate>[1]>;
+
 /**
  * Loops each `data-part`'s track. Before its first key a part holds that pose, after its last it
- * holds the last. Reduced motion: the frame at `still`, so the stills can't drift from the loop.
- * A layout effect, so the first paint is already posed.
+ * holds the last. Stopped (`playing` false, or reduced motion): the frame at `still`, so the stills
+ * can't drift from the loop; a loop that stops first plays on to that frame. A layout effect, so the
+ * first paint is already posed.
  */
-export const useLoop = (tracks: Record<string, Track>, loop: number, still: number) => {
+export const useLoop = (tracks: Record<string, Track>, loop: number, still: number, playing = true) => {
   const reduced = useReducedMotion();
   const [scope, animate] = useAnimate<SVGSVGElement>();
+  const controls = useRef<Controls[]>([]);
+  const run = playing && !reduced;
+  const startsRunning = useRef(run);
 
   useLayoutEffect(() => {
-    const controls = Object.entries(tracks).map(([part, track]) => {
+    controls.current = Object.entries(tracks).map(([part, track]) => {
       const keys = track.toSorted(([a], [b]) => a - b);
       const all: Track = [[0, keys[0][1]], ...keys, [loop, keys.at(-1)![1]]];
-      return animate(
+      const control = animate(
         `[data-part="${part}"]`,
         { transform: all.map(([, pose]) => transform(pose)), opacity: all.map(([, pose]) => pose.opacity ?? 1) },
         { duration: loop, times: all.map(([seconds]) => seconds / loop), ease: 'linear', repeat: Infinity },
       );
+      if (!startsRunning.current) {
+        control.pause();
+        control.time = still;
+      }
+      return control;
     });
-    if (reduced) {
-      controls.forEach((control) => {
+    return () => controls.current.forEach((control) => control.stop());
+  }, [tracks, loop, still, animate]);
+
+  useEffect(() => {
+    const all = controls.current;
+    if (run) {
+      all.forEach((control) => control.play());
+      return;
+    }
+    const left = reduced ? 0 : (still - ((all[0]?.time ?? still) % loop) + loop) % loop;
+    const timer = setTimeout(() => {
+      all.forEach((control) => {
         control.pause();
         control.time = still;
       });
-    }
-    return () => controls.forEach((control) => control.stop());
-  }, [tracks, loop, still, reduced, animate]);
+    }, left * 1000);
+    return () => clearTimeout(timer);
+  }, [run, reduced, loop, still]);
 
   return scope;
 };
 
-export const Stage = ({ ref, children }: { ref: Ref<SVGSVGElement>; children: ReactNode }) => (
+export const Stage = ({ ref, className, children }: { ref: Ref<SVGSVGElement>; className?: string; children: ReactNode }) => (
   <svg
     ref={ref}
     aria-hidden="true"
     viewBox="0 0 256 112"
     strokeWidth={2}
     strokeLinejoin="round"
-    className="block h-28 w-full border-2 border-outline bg-page stroke-outline"
+    className={cn('block h-28 w-full border-2 border-outline bg-page stroke-outline', className)}
   >
     {children}
   </svg>

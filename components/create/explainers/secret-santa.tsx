@@ -58,10 +58,10 @@ const tracks: Record<string, Track> = Object.fromEntries<Track>([
  * draw a slip from the hat naming someone else (the slip shows their colour), the slips become gifts
  * that land with their person, and each wonders who sent theirs. Reduced motion: that end frame.
  */
-export const SecretSantaAnimation = () => {
-  const scope = useLoop(tracks, LOOP, 6.6);
+export const SecretSantaAnimation = ({ playing, className }: { playing?: boolean; className?: string }) => {
+  const scope = useLoop(tracks, LOOP, 6.6, playing);
   return (
-    <Stage ref={scope}>
+    <Stage ref={scope} className={className}>
       <g data-part="hat">
         <rect x={-11} y={-22} width={22} height={18} className="fill-outline" />
         <rect x={-11} y={-9} width={22} height={4} className="fill-coral" />

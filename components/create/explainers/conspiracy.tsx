@@ -48,10 +48,10 @@ const tracks: Record<string, Track> = {
  * people pin ideas on a board behind a wall, turn them into one gift and send it over to the
  * blindfolded fourth, who never saw the board. Reduced motion: the gift handed over.
  */
-export const ConspiracyAnimation = () => {
-  const scope = useLoop(tracks, LOOP, 5.5);
+export const ConspiracyAnimation = ({ playing, className }: { playing?: boolean; className?: string }) => {
+  const scope = useLoop(tracks, LOOP, 5.5, playing);
   return (
-    <Stage ref={scope}>
+    <Stage ref={scope} className={className}>
       <g transform={`translate(${board.x} ${board.y})`}>
         <Card width={104} height={36} />
       </g>
