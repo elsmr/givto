@@ -59,9 +59,9 @@ export const DetailsStep = ({ draft, timeZone, onChange, submitLabel, busy, onNe
           />
           {nameIssue && <FieldError id="group-name-error">{tIssues(nameIssue)}</FieldError>}
         </Field>
+        {drawsNames(draft) && <ExchangeField draft={draft} onChange={onChange} />}
         <GiftDayFields draft={draft} today={todayIn(timeZone)} onChange={onChange} />
         <BudgetFields draft={draft} onChange={onChange} />
-        {drawsNames(draft) && <ExchangeField draft={draft} onChange={onChange} />}
       </FieldGroup>
       <Button type="submit" size="lg" className="xs:self-start" disabled={busy}>
         {submitLabel}
