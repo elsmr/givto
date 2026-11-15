@@ -166,8 +166,15 @@ test('per-IP limit ignores the client-supplied x-forwarded-for', async ({ reques
   expect(statuses).toEqual([200, 200, 200, 200, 200, 429]);
 });
 
-test('session tokens never reach the browser', async ({ signIn }) => {
-  const ann = await signIn('ann');
+test('session tokens never reach the browser', async ({ newClient, secrets }) => {
+  const ann = { ...(await newClient()), email: uniqueEmail('ann') };
+  const { code, token } = await requestSignIn(ann.request, ann.email);
+  secrets.push(ann.email, code, token);
+  const signedIn = await signInWithCode(ann.request, ann.email, code);
+  expect(signedIn.status()).toBe(200);
+  const body = await signedIn.json();
+  expect(body.user.email).toBe(ann.email);
+  expect(body).not.toHaveProperty('token');
   const session = await (await ann.request.get('/api/auth/get-session')).json();
   expect(session.user.email).toBe(ann.email);
   expect(session.session).not.toHaveProperty('token');
@@ -192,7 +199,11 @@ test('tRPC transport errors are client errors, not INTERNAL', async ({ request }
 test('security headers on pages and API routes', async ({ request }) => {
   for (const path of ['/', '/auth/sign-in', '/api/trpc/health']) {
     const headers = (await request.get(path)).headers();
-    expect(headers['content-security-policy'], path).toContain("frame-ancestors 'none'");
+    const csp = headers['content-security-policy'];
+    for (const directive of ["default-src 'self'", "script-src 'self' 'unsafe-inline'", "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'"]) {
+      expect(csp, path).toContain(directive);
+    }
+    expect(csp, path).not.toContain('unsafe-eval');
     expect(headers['x-frame-options'], path).toBe('DENY');
     expect(headers['x-content-type-options'], path).toBe('nosniff');
     expect(headers['referrer-policy'], path).toBe('strict-origin-when-cross-origin');

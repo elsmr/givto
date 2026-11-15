@@ -13,11 +13,13 @@ const PLACEHOLDER_ORIGIN = 'https://givto.invalid';
 /**
  * Only same-origin paths ("/g/abc"), never "//evil.test" or "https://…": no open redirects.
  * URL parsers drop tabs and line breaks and read `\` as `/`, so "/\t/evil.test" would leave the site.
+ * Dot segments normalise away ("/.//evil.test" → "//evil.test"), so the returned path is checked again.
  */
 export const safeRedirect = (target: unknown, fallback = '/'): string => {
   if (typeof target !== 'string' || !target.startsWith('/') || /[\u0000-\u001f\u007f\\]/.test(target)) return fallback;
   const url = new URL(target, PLACEHOLDER_ORIGIN);
-  return url.origin === PLACEHOLDER_ORIGIN ? `${url.pathname}${url.search}${url.hash}` : fallback;
+  if (url.origin !== PLACEHOLDER_ORIGIN || url.pathname.startsWith('//')) return fallback;
+  return `${url.pathname}${url.search}${url.hash}`;
 };
 
 /** Better Auth resolves with `{ error }` instead of rejecting: this rejects with it, so useMutation sees the failure. */

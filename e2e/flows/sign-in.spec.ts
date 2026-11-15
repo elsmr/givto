@@ -47,8 +47,12 @@ test('passkey: add one on the account page, then sign in with it from the email 
   await expect(page.getByRole('listitem').filter({ hasText: user.email })).toBeVisible();
 
   await page.context().clearCookies();
+  const verified = page.waitForResponse('**/api/auth/passkey/verify-authentication');
   await page.goto('/account');
   // The virtual authenticator answers the conditional (autofill) request without a pick.
   await expect(page).toHaveURL('/account');
+  const session = await (await verified).json();
+  expect(session.user.email).toBe(user.email);
+  expect(session.session).not.toHaveProperty('token');
   await expect(page.getByText('Passkeys', { exact: true })).toBeVisible();
 });
