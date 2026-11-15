@@ -2,6 +2,7 @@
 // "Taken" to Santas in other groups and never to the wishlist's owner. Archived (76): only the Santa
 // with Dibs! still sees it, as no longer on the list.
 import type { Locator, Page } from '@playwright/test';
+import superjson from 'superjson';
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
 
 /** A drawn group of the organizer and two others; returns its slug and who drew `giftee`. */
@@ -39,6 +40,9 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
   const family = await drawnGroup(db, 'Family', [[ann, 'Ann'], [bob, 'Bob'], [olive, 'Olive']], olive);
   const friends = await drawnGroup(db, 'Friends', [[cee, 'Cee'], [dan, 'Dan'], [olive, 'Olive']], olive);
   for (const title of ['Cookbook', 'Wool socks']) ok(await olive.trpc.mutate('wish.create', { title, groupSlugs: [friends.slug] }));
+  ok(await olive.trpc.mutate('group.create', {
+    name: 'Office swap', organizerName: 'Olive', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson', kind: 'whiteElephant',
+  }));
 
   await test.step('Olive shows only the cookbook in Family; it notes that Friends sees it too', async () => {
     await signInPage(page, olive);
@@ -129,21 +133,62 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     expect(await shownIn(friends.slug)).toEqual(['Wool socks']);
   });
 
-  await test.step('on /wishlist, a new wish starts in no group; Olive ticks Friends next to "Add wish"', async () => {
+  await test.step('on /wishlist, a new wish shows in every active group with wishes, unless Olive unticks one', async () => {
+    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
     await page.goto('/wishlist');
     await page.getByLabel('Wish', { exact: true }).fill('Puzzle');
-    await page.getByRole('button', { name: 'Groups', exact: true }).click();
-    const popover = page.getByRole('dialog', { name: 'Show in' });
-    await expect(popover.getByRole('checkbox')).toHaveCount(2);
-    await expect(popover.getByRole('checkbox', { checked: true })).toHaveCount(0);
-    await popover.getByRole('checkbox', { name: 'Friends' }).click();
-    await page.keyboard.press('Escape');
-    await page.getByRole('button', { name: 'Groups (1)' }).click();
-    await page.keyboard.press('Escape');
     await page.getByRole('button', { name: 'Add wish' }).click();
     await expect(page.getByRole('heading', { name: 'Puzzle' })).toBeVisible();
-    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
+    expect(await shownIn(family.slug)).toEqual(['Puzzle', 'Kite']);
     expect(await shownIn(friends.slug)).toEqual(['Puzzle', 'Wool socks']);
-    expect(await shownIn(family.slug)).toEqual(['Kite']);
+
+    await page.getByLabel('Wish', { exact: true }).fill('Yarn');
+    await page.getByRole('button', { name: '2 groups', exact: true }).click();
+    const popover = page.getByRole('dialog', { name: 'Show in' });
+    await expect(popover.getByRole('checkbox')).toHaveCount(2);
+    await expect(popover.getByRole('checkbox', { checked: true })).toHaveCount(2);
+    await expect(popover).not.toContainText('Office swap');
+    await popover.getByRole('checkbox', { name: 'Family' }).click();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: '1 group', exact: true }).click();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Add wish' }).click();
+    await expect(page.getByRole('heading', { name: 'Yarn' })).toBeVisible();
+    expect(await shownIn(family.slug)).toEqual(['Puzzle', 'Kite']);
+    expect(await shownIn(friends.slug)).toEqual(['Yarn', 'Puzzle', 'Wool socks']);
   });
+
+  await test.step('Friends ends while /wishlist is open: the next wish is not added to it', async () => {
+    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
+    await db.editions.updateOne({ groupId: (await db.groups.findOne({ slug: friends.slug }))!._id, number: 1 }, { $set: { status: 'done' } });
+    await page.getByRole('button', { name: 'Groups that see “Yarn”' }).click();
+    await page.getByRole('dialog', { name: 'Show in' }).getByRole('checkbox', { name: 'Family' }).click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: 'Groups', exact: true })).toBeVisible();
+    await page.getByLabel('Wish', { exact: true }).fill('Clay');
+    await page.getByRole('button', { name: 'Add wish' }).click();
+    await expect(page.getByRole('heading', { name: 'Clay' })).toBeVisible();
+    expect(await shownIn(friends.slug)).toEqual(['Yarn', 'Puzzle', 'Wool socks']);
+    expect(await shownIn(family.slug)).not.toContain('Clay');
+  });
+});
+
+test('on /wishlist, no wish is added while its groups failed to load', async ({ page, signIn, signInPage }) => {
+  const olive = await signIn('olive');
+  ok(await olive.trpc.mutate('group.create', {
+    name: 'Family', organizerName: 'Olive', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson',
+  }));
+  await signInPage(page, olive);
+  await page.route(/\/api\/trpc\/[^?]*account\.groups/, async (route) => {
+    const procedures = new URL(route.request().url()).pathname.split('/').pop()!.split(',');
+    const response = await route.fetch();
+    const results = await response.json();
+    const error = { message: 'INTERNAL_SERVER_ERROR', code: -32603, data: { code: 'INTERNAL_SERVER_ERROR', httpStatus: 500 } };
+    results[procedures.indexOf('account.groups')] = { error: superjson.serialize(error) };
+    await route.fulfill({ response, json: results });
+  });
+  await page.goto('/wishlist');
+  await page.getByLabel('Wish', { exact: true }).fill('Puzzle');
+  await expect(page.getByText('Something went wrong. Try again.')).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('button', { name: 'Add wish' })).toBeDisabled();
 });
