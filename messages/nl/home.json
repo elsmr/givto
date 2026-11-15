@@ -14,6 +14,7 @@
     }
   },
   "games": {
+    "about": "Hoe werkt {name}?",
     "title": "Kies je spel",
     "secretSanta": {
       "title": "Secret Santa",

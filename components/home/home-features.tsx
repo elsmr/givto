@@ -16,7 +16,7 @@ export const HomeFeatures = () => {
   const t = useTranslations('home.more');
 
   return (
-    <HomeSection fill="mint" aria-labelledby="more-title">
+    <HomeSection aria-labelledby="more-title">
       <HomeSectionTitle id="more-title" title={t('title')} />
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {features.map(({ key, icon }) => (

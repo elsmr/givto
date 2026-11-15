@@ -1,19 +1,9 @@
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 
-const fills = { surface: 'bg-surface', yellow: 'bg-yellow', mint: 'bg-mint' } as const;
-
-/** A home page band: edge to edge, optionally filled and ruled, with the content at page width. */
-export const HomeSection = ({
-  fill,
-  className,
-  children,
-  ...props
-}: ComponentProps<'section'> & { fill?: keyof typeof fills }) => (
-  <section
-    className={cn('py-16 sm:py-24', fill && ['border-y-(length:--border-width) border-outline', fills[fill]])}
-    {...props}
-  >
+/** A home page band, with the content at page width. */
+export const HomeSection = ({ className, children, ...props }: ComponentProps<'section'>) => (
+  <section className="py-16 sm:py-24" {...props}>
     <div className={cn('mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 sm:gap-10 sm:px-6', className)}>{children}</div>
   </section>
 );

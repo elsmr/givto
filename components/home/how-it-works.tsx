@@ -15,7 +15,7 @@ export const HowItWorks = () => {
   const t = useTranslations('home.steps');
 
   return (
-    <HomeSection fill="surface" id="how-it-works" aria-labelledby="how-it-works-title">
+    <HomeSection id="how-it-works" aria-labelledby="how-it-works-title">
       <HomeSectionTitle id="how-it-works-title" title={t('title')} />
       <ol className="grid gap-x-3 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
         {steps.map(({ key, Icon, fill }, index) => (

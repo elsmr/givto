@@ -14,7 +14,7 @@ export const HomeFaq = () => {
   return (
     <HomeSection aria-labelledby="faq-title">
       <HomeSectionTitle id="faq-title" title={t('title')} />
-      <div className="flex max-w-3xl flex-col gap-4">
+      <div className="flex flex-col gap-4">
         {questions.map((question) => (
           <details key={question} className="group bg-surface bordered shadow-md">
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-semibold hover:bg-page group-open:border-b-2 group-open:border-dashed group-open:border-outline [&::-webkit-details-marker]:hidden">
