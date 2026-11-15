@@ -1,16 +1,11 @@
 import { LogoAnimation } from '@/components/logo-animation/logo-animation';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import { Code, Gift, KeyRound, Megaphone } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-const claims = [
-  { key: 'free', Icon: Gift, variant: 'mint' },
-  { key: 'ads', Icon: Megaphone, variant: 'coral' },
-  { key: 'passwords', Icon: KeyRound, variant: 'yellow' },
-  { key: 'open', Icon: Code, variant: 'primary-muted' },
-] as const;
+const claims = ['free', 'ads', 'passwords', 'open'] as const;
 
 export const HomeHero = () => {
   const t = useTranslations('home.hero');
@@ -36,13 +31,11 @@ export const HomeHero = () => {
             {t('how-it-works')}
           </a>
         </div>
-        <ul aria-label={t('claims')} className="flex flex-wrap gap-2">
-          {claims.map(({ key, Icon, variant }) => (
-            <li key={key}>
-              <Badge variant={variant} className="text-sm [&>svg]:size-4">
-                <Icon aria-hidden="true" />
-                {t(`claim.${key}`)}
-              </Badge>
+        <ul aria-label={t('claims')} className="flex flex-wrap gap-x-5 gap-y-2 font-semibold text-muted">
+          {claims.map((key) => (
+            <li key={key} className="flex items-center gap-1.5">
+              <Check aria-hidden="true" className="size-4" strokeWidth={3} />
+              {t(`claim.${key}`)}
             </li>
           ))}
         </ul>

@@ -60,7 +60,8 @@
         "family": "Familie",
         "friends": "Boekenclub",
         "dibs": "Geclaimd!",
-        "hidden": "Verborgen voor Werk"
+        "hidden": "Verborgen voor Werk",
+        "sticker": "Geen dubbels!"
       }
     },
     "secrets": {
@@ -73,7 +74,8 @@
         "psst": "Psst!",
         "psst-text": "Je Santa wil graag wat meer details over je wensen.",
         "tip": "Tip voor de Santa van Mia",
-        "tip-text": "Ze heeft haar oog laten vallen op de groene sjaal op de markt."
+        "tip-text": "Ze heeft haar oog laten vallen op de groene sjaal op de markt.",
+        "sticker": "Ssst…"
       }
     },
     "giftday": {
@@ -82,7 +84,8 @@
       "mock": {
         "now": "Nu aan het uitpakken",
         "guess": "Van wie is het?",
-        "votes": "{count, plural, one {# gok} other {# gokken}}"
+        "votes": "{count, plural, one {# gok} other {# gokken}}",
+        "sticker": "Grote onthulling!"
       }
     }
   },

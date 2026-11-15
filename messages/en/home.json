@@ -60,7 +60,8 @@
         "family": "Family",
         "friends": "Book club",
         "dibs": "Dibs!",
-        "hidden": "Hidden from Work"
+        "hidden": "Hidden from Work",
+        "sticker": "No doubles!"
       }
     },
     "secrets": {
@@ -73,7 +74,8 @@
         "psst": "Psst!",
         "psst-text": "Your Santa would love more detail on your wishes.",
         "tip": "Tip for Mia's Santa",
-        "tip-text": "She's had her eye on the green scarf at the market."
+        "tip-text": "She's had her eye on the green scarf at the market.",
+        "sticker": "Shh…"
       }
     },
     "giftday": {
@@ -82,7 +84,8 @@
       "mock": {
         "now": "Now unwrapping",
         "guess": "Who's it from?",
-        "votes": "{count, plural, one {# guess} other {# guesses}}"
+        "votes": "{count, plural, one {# guess} other {# guesses}}",
+        "sticker": "Big reveal!"
       }
     }
   },

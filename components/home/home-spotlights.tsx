@@ -139,10 +139,10 @@ const GiftDayMock = () => {
   );
 };
 
-const spotlights: { key: 'wishlist' | 'secrets' | 'giftday'; mock: ReactNode }[] = [
-  { key: 'wishlist', mock: <WishlistMock /> },
-  { key: 'secrets', mock: <SecretsMock /> },
-  { key: 'giftday', mock: <GiftDayMock /> },
+const spotlights: { key: 'wishlist' | 'secrets' | 'giftday'; mock: ReactNode; sticker: string }[] = [
+  { key: 'wishlist', mock: <WishlistMock />, sticker: '-top-5 -right-3 rotate-6 bg-mint' },
+  { key: 'secrets', mock: <SecretsMock />, sticker: '-top-5 -left-3 -rotate-6 bg-yellow' },
+  { key: 'giftday', mock: <GiftDayMock />, sticker: '-bottom-5 -left-3 -rotate-3 bg-coral' },
 ];
 
 /** The differentiators, each next to a mock built from the app's parts with sample data. */
@@ -151,14 +151,19 @@ export const HomeSpotlights = () => {
 
   return (
     <HomeSection className="gap-20 sm:gap-28">
-      {spotlights.map(({ key, mock }, index) => (
+      {spotlights.map(({ key, mock, sticker }, index) => (
         <div key={key} className="grid items-center gap-8 md:grid-cols-2 md:gap-16">
           <div className={cn('flex flex-col gap-4', index % 2 === 1 && 'md:order-last')}>
             <h2 className="text-3xl font-extrabold text-balance sm:text-4xl">{t(`${key}.title`)}</h2>
             <p className="text-lg">{t(`${key}.description`)}</p>
           </div>
           {/* Sample data, not content: the text next to it says what it shows. */}
-          <div aria-hidden="true" className="select-none">
+          <div aria-hidden="true" className="relative select-none">
+            <span
+              className={cn('absolute z-10 px-3 py-1 font-heading text-xl font-extrabold text-ink bordered shadow-md', sticker)}
+            >
+              {t(`${key}.mock.sticker`)}
+            </span>
             {mock}
           </div>
         </div>
