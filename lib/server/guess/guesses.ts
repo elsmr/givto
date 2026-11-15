@@ -5,13 +5,8 @@ import type { Collections } from '../db';
 /** Guess your Santa (62) is on unless the organizer switched it off, or there's no Santa to guess (88). */
 export const guessingOn = (edition: Edition) => edition.guessing !== false && drawsNames(edition);
 
-/**
- * Everyone whose Santa was shown at a turn (62), ever. `progress` only for editions whose turns were shown before
- * `reveal.santaShownIds` existed.
- */
-export const santaShownIds = (edition: Edition) => [
-  ...new Set([...(edition.reveal.santaShownIds ?? []), ...(edition.unwrapOrder?.progress?.santaShownIds ?? [])]),
-];
+/** Everyone whose Santa was shown at a turn (62), ever. */
+export const santaShownIds = (edition: Edition) => edition.reveal.santaShownIds ?? [];
 
 /**
  * A guess for `gifteeMemberId` can change from the draw until their Santa is out (94): shown at their turn, the big
