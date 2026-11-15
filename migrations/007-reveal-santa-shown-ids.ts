@@ -1,6 +1,7 @@
 // Migration 007 (106): the Santas shown at turns (62) are kept on `reveal.santaShownIds`, which a new unwrap mode, a
 // reshuffle or the presenter's Back don't touch. Editions whose turns were shown before only have them on
-// `unwrapOrder.progress.santaShownIds`: copied over, so they stay out.
+// `unwrapOrder.progress.santaShownIds`: copied over, so they stay out. Run right after the deploy: the code reads only
+// `reveal.santaShownIds`, so until this runs, guesses for giftees whose Santa was shown at a turn reopen.
 import type { Db } from 'mongodb';
 import type { MigrationReport } from './001-v1-to-v2';
 
