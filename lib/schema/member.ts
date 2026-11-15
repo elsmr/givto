@@ -14,7 +14,7 @@ export type MemberRole = v.InferOutput<typeof MemberRole>;
 export const MemberStatus = v.picklist(['invited', 'requested', 'joined', 'declined', 'removed']);
 export type MemberStatus = v.InferOutput<typeof MemberStatus>;
 
-/** Which of the member's own wishes this group sees (38): only the ones shown here, in global order. New wishes show nowhere unless picked. */
+/** Which of the member's own wishes this group sees (38): only the ones shown here, in global order. A new wish shows where it was added: the group, or on /wishlist the active groups left ticked. */
 export const WishlistView = v.object({
   shownWishIds: v.array(Id),
 });

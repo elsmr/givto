@@ -37,7 +37,7 @@
     "show-in": "Show in",
     "also-in": "Also in {groups}",
     "shown-in": "<b>Shown in {groups}.</b> It could be bought twice.",
-    "groups": "{count, plural, =0 {Groups} other {Groups (#)}}",
+    "groups": "{count, plural, =0 {Groups} one {# group} other {# groups}}",
     "groups-label": "Groups that see “{title}”",
     "groups-more": "+{count}",
     "remove-link": "Remove the link to {shop}"

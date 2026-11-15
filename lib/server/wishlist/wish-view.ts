@@ -67,7 +67,7 @@ export const visibleWishes = async (db: Collections, member: Member, receivedSin
   return wishes.toSorted((a, b) => shownIds.indexOf(a._id) - shownIds.indexOf(b._id));
 };
 
-/** My groups other than `exceptGroupId` that are active (not archived, latest edition not done), with what each shows of my wishes. */
+/** My groups other than `exceptGroupId` that are active (not archived, latest edition not done and with wishes), with what each shows of my wishes. */
 export const activeGroupsOf = async (db: Collections, userId: string, exceptGroupId?: string) => {
   const groups = await db.groups
     .find({
@@ -77,16 +77,16 @@ export const activeGroupsOf = async (db: Collections, userId: string, exceptGrou
       members: { $elemMatch: { userId, status: 'joined' } },
     })
     .toArray();
-  const done = await db.editions
-    .aggregate<{ _id: string }>([
+  const latest = await db.editions
+    .aggregate<Pick<Edition, 'status' | 'kind'> & { _id: string }>([
       { $match: { groupId: { $in: groups.map((group) => group._id) } } },
       { $sort: { number: -1 } },
-      { $group: { _id: '$groupId', status: { $first: '$status' } } },
-      { $match: { status: 'done' } },
+      { $group: { _id: '$groupId', status: { $first: '$status' }, kind: { $first: '$kind' } } },
     ])
     .toArray();
+  const inactive = latest.filter((edition) => edition.status === 'done' || !wishesOn(edition));
   return groups
-    .filter((group) => !done.some((edition) => edition._id === group._id))
+    .filter((group) => !inactive.some((edition) => edition._id === group._id))
     .map((group) => ({
       name: group.name,
       shownWishIds: group.members.find((m) => m.userId === userId && m.status === 'joined')?.wishlistView?.shownWishIds ?? [],

@@ -37,7 +37,7 @@
     "show-in": "Tonen in",
     "also-in": "Ook in {groups}",
     "shown-in": "<b>Zichtbaar in {groups}.</b> Het kan twee keer gekocht worden.",
-    "groups": "{count, plural, =0 {Groepen} other {Groepen (#)}}",
+    "groups": "{count, plural, =0 {Groepen} one {# groep} other {# groepen}}",
     "groups-label": "Groepen die “{title}” zien",
     "groups-more": "+{count}",
     "remove-link": "Link naar {shop} verwijderen"

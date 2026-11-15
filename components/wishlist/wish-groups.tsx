@@ -5,6 +5,7 @@ import { Field, FieldLabel } from '@/components/ui/field';
 import { Popover, PopoverContent, PopoverHeader, PopoverTitle, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger, withTooltip } from '@/components/ui/tooltip';
 import { useTRPC, type RouterOutputs } from '@/lib/client/trpc';
+import { wishesOn } from '@/lib/schema/edition';
 import { useQuery } from '@tanstack/react-query';
 import { Users } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -12,8 +13,9 @@ import { useId } from 'react';
 
 type AccountGroup = RouterOutputs['account']['groups'][number];
 
-/** Not archived and not done: its Santas may still buy a wish it shows. */
-export const isActiveGroup = (group: AccountGroup) => !group.archived && group.edition?.status !== 'done';
+/** Not archived, not done and with wishes (not a white elephant): its Santas may still buy a wish it shows. */
+export const isActiveGroup = (group: AccountGroup) =>
+  !group.archived && (!group.edition || (group.edition.status !== 'done' && wishesOn(group.edition)));
 
 /** For a wish more than one active group shows, as two Santas might buy it: "Also in Family" (also-in) or "Shown in Family and Work." (shown-in). */
 export const AlsoInNote = ({ groups, kind = 'also-in' }: { groups: string[]; kind?: 'also-in' | 'shown-in' }) => {
