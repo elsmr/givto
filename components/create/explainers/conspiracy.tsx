@@ -1,162 +1,84 @@
-import { cn } from '@/lib/utils';
-import { Gift } from 'lucide-react';
-import { type Easing, useReducedMotion } from 'motion/react';
-import * as m from 'motion/react-m';
-import { useState } from 'react';
+import { Card, fade, Gift, ground, head, hidden, hop, move, Person, type Pose, pop, Stage, type Track, useLoop } from './parts';
 
-type Frame = { transform?: string[]; opacity?: number[] };
-type Still = { transform?: string; opacity?: number };
-
-const CYCLE = 6.5;
-const people = ['bg-coral', 'bg-yellow', 'bg-mint', 'bg-primary'];
+const LOOP = 7.2;
 const helpers = [
-  { left: 40, note: { left: 60, top: 14 } },
-  { left: 81, note: { left: 85, top: 28 } },
-  { left: 122, note: { left: 110, top: 14 } },
+  { x: 36, fill: 'fill-primary', note: { x: 60, y: 22 } },
+  { x: 84, fill: 'fill-yellow', note: { x: 84, y: 31 } },
+  { x: 132, fill: 'fill-mint', note: { x: 108, y: 22 } },
 ];
-const HELPER_TOP = 72;
-const GIFT = { left: 77, top: 12 };
-// Board to the target's hands, over the wall: x linear, y a parabola peaking just above the board.
-const flight: [number, number][] = [
-  [0, 0],
-  [32.5, -8.75],
-  [65, -10],
-  [97.5, -3.75],
-  [130, 10],
-];
-const landed = flight.at(-1)!;
+const target = 216;
+const board: Pose = { x: 84, y: 26 };
+const WALL = { x: 170, top: 36 };
+const origin: Pose = { x: 0, y: 0 };
+const lifted: Pose = { x: 0, y: -24 };
+const pinAt = (i: number) => 0.3 + 0.5 * i;
 
-const move = (x = 0, y = 0, scale = 1) => `translate(${x}px, ${y}px) scale(${scale})`;
-
-const Face = ({ color, className }: { color: string; className?: string }) => (
-  <div className={cn('absolute rounded-full border-2 border-outline shadow-sm', color, className)}>
-    <span className="absolute top-[38%] left-[28%] size-1 rounded-full bg-outline" />
-    <span className="absolute top-[38%] right-[28%] size-1 rounded-full bg-outline" />
-  </div>
-);
+const tracks: Record<string, Track> = {
+  ...Object.fromEntries(
+    helpers.flatMap(({ x, note }, i): [string, Track][] => [
+      [`helper-${i}`, [...hop(pinAt(i), ground(x)), ...hop(2.7, ground(x))]],
+      [
+        `note-${i}`,
+        [
+          [pinAt(i), hidden(head(x))],
+          ...move(pinAt(i), 0.5, hidden(head(x)), note, { lift: 10 }),
+          ...move(2.0, 0.3, note, hidden(board)),
+        ],
+      ],
+    ]),
+  ),
+  gift: [
+    ...pop(2.25, board),
+    ...move(3.1, 0.9, board, head(target), { lift: 34, tilt: 14 }),
+    ...fade(6.0, head(target)),
+  ],
+  target: hop(4.1, ground(target)),
+  // Off as the gift comes over the wall, and fully clear of the face before it fades, so it never shows as a see-through band.
+  blindfold: [
+    ...move(3.4, 0.2, origin, lifted),
+    [3.7, { ...lifted, opacity: 0 }],
+    [6.4, { ...lifted, opacity: 0 }],
+    [6.45, lifted],
+    ...move(6.45, 0.25, lifted, origin),
+  ],
+};
 
 /**
- * Wordless loop showing how a conspiracy plays out; sits above the explanation in the kind's (?) popover.
- * Three people pin ideas to a board behind a wall, turn them into one gift and hand it over the wall to
- * the blindfolded fourth; the next loop blindfolds the next person. Reduced motion: the handed-over gift.
- * Only transform and opacity animate, so every part runs on the same WAAPI clock; a single WAAPI
- * easing would warp the whole cycle, so each segment gets its own.
+ * Wordless loop of a Conspiracy Santa, above the explanation in the kind's (?) popover. Three
+ * people pin ideas on a board behind a wall, turn them into one gift and send it over to the
+ * blindfolded fourth, who never saw the board. Reduced motion: the gift handed over.
  */
 export const ConspiracyAnimation = () => {
-  const reduced = useReducedMotion();
-  const [turn, setTurn] = useState(0);
-
-  const play = (frames: Frame, seconds: number[], still: Still, ease: Easing | Easing[] = 'easeInOut') =>
-    reduced
-      ? { initial: false as const, animate: still }
-      : {
-          initial: { transform: frames.transform?.[0], opacity: frames.opacity?.[0] },
-          animate: frames,
-          transition: {
-            duration: CYCLE,
-            times: seconds.map((s) => s / CYCLE),
-            ease: Array.isArray(ease) ? ease : seconds.slice(1).map(() => ease),
-          },
-        };
-
-  const target = people[turn % people.length];
-  const others = people.filter((color) => color !== target);
-
+  const scope = useLoop(tracks, LOOP, 5.5);
   return (
-    <div aria-hidden="true" className="relative h-28 w-full overflow-hidden border-2 border-outline bg-page">
-      <div key={turn} className="absolute inset-y-0 left-1/2 w-64 -translate-x-1/2">
-        <div className="absolute top-2 left-[50px] h-11 w-[90px] border-2 border-outline bg-surface shadow-sm" />
-
-        {helpers.map(({ left, note }, i) => {
-          const drop = 0.5 + i * 0.7;
-          const fromX = left + 13 - (note.left + 10);
-          const fromY = HELPER_TOP + 13 - (note.top + 8);
-          const mergeX = GIFT.left + 18 - (note.left + 10);
-          const mergeY = GIFT.top + 18 - (note.top + 8);
-          return (
-            <m.div
-              key={`note-${i}`}
-              className={cn('absolute h-4 w-5 border-2 border-outline', others[i])}
-              style={{ left: note.left, top: note.top }}
-              {...play(
-                {
-                  transform: [
-                    move(fromX, fromY, 0.4),
-                    move(fromX, fromY, 0.4),
-                    move(),
-                    move(),
-                    move(mergeX, mergeY, 0),
-                    move(mergeX, mergeY, 0),
-                  ],
-                  opacity: [0, 0, 1, 1, 0, 0],
-                },
-                [0, drop, drop + 0.5, 3.1, 3.5, CYCLE],
-                { transform: move(), opacity: 1 },
-              )}
-            />
-          );
-        })}
-
-        {helpers.map(({ left }, i) => {
-          const drop = 0.5 + i * 0.7;
-          return (
-            <m.div
-              key={`helper-${i}`}
-              className="absolute size-[26px]"
-              style={{ left, top: HELPER_TOP }}
-              {...play(
-                { transform: [0, 0, -6, 0, 0, -4, 0, 0].map((y) => move(0, y)) },
-                [0, drop, drop + 0.15, drop + 0.3, 4.9, 5.05, 5.2, CYCLE],
-                { transform: move() },
-              )}
-            >
-              <Face color={others[i]} className="inset-0" />
-            </m.div>
-          );
-        })}
-
-        <div className="absolute inset-y-0 left-[164px] w-3 border-x-2 border-outline bg-primary-muted bg-[repeating-linear-gradient(to_bottom,var(--color-outline)_0_2px,transparent_2px_12px)]" />
-
-        <m.div
-          className="absolute top-[62px] left-[208px] size-[30px]"
-          {...play({ transform: [0, 0, -8, 0, 0].map((y) => move(0, y)) }, [0, 4.9, 5.1, 5.35, CYCLE], { transform: move() })}
-        >
-          <Face color={target} className="inset-0 shadow-md" />
-          <m.span
-            className="absolute top-[30%] -right-1 -left-1 h-2 bg-outline"
-            {...play(
-              { transform: [0, 0, -10, -10, 0, 0].map((y) => move(0, y)), opacity: [1, 1, 0, 0, 0, 1] },
-              [0, 4.9, 5.1, 6.0, 6.1, CYCLE],
-              { transform: move(0, -10), opacity: 0 },
-            )}
-          />
-        </m.div>
-
-        <m.div
-          className="absolute flex size-9 items-center justify-center border-2 border-outline bg-surface text-ink shadow-sm"
-          style={{ left: GIFT.left, top: GIFT.top }}
-          onAnimationComplete={reduced ? undefined : () => setTurn((current) => current + 1)}
-          {...play(
-            {
-              transform: [
-                move(0, 0, 0),
-                move(0, 0, 0),
-                move(0, 0, 1.2),
-                ...flight.map(([x, y]) => move(x, y)),
-                move(...landed),
-                move(...landed, 0),
-                move(...landed, 0),
-              ],
-              opacity: [0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-            },
-            [0, 3.1, 3.5, 3.9, 4.15, 4.4, 4.65, 4.9, 5.7, 6.0, CYCLE],
-            { transform: move(...landed), opacity: 1 },
-            ['linear', 'easeOut', 'easeInOut', 'linear', 'linear', 'linear', 'linear', 'linear', 'easeIn', 'linear'],
-          )}
-        >
-          <Gift className="size-5" strokeWidth={2.5} />
-        </m.div>
-      </div>
-    </div>
+    <Stage ref={scope}>
+      <g transform={`translate(${board.x} ${board.y})`}>
+        <Card width={104} height={36} />
+      </g>
+      {helpers.map(({ fill }, i) => (
+        <g key={i} data-part={`note-${i}`}>
+          <rect x={-6} y={-4} width={16} height={12} className="fill-outline" />
+          <rect x={-8} y={-6} width={16} height={12} className={fill} />
+        </g>
+      ))}
+      {helpers.map(({ fill }, i) => (
+        <g key={i} data-part={`helper-${i}`}>
+          <Person fill={fill} />
+        </g>
+      ))}
+      <rect x={WALL.x} y={WALL.top} width={10} height={112 - WALL.top + 2} className="fill-primary" />
+      <path
+        d={Array.from({ length: 7 }, (_, row) => `M${WALL.x} ${WALL.top + 10 * (row + 1)}h10`).join('')}
+        strokeWidth={1.5}
+      />
+      <g data-part="target">
+        <Person fill="fill-coral">
+          <rect data-part="blindfold" x={-14} y={-5} width={28} height={6} className="fill-outline" />
+        </Person>
+      </g>
+      <g data-part="gift">
+        <Gift />
+      </g>
+    </Stage>
   );
 };

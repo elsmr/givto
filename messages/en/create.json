@@ -22,11 +22,23 @@
       "secretSanta": "Secret Santa",
       "whiteElephant": "White elephant",
       "conspiracy": "Conspiracy Santa",
+      "subtitle": {
+        "secretSanta": "Everyone draws a name in secret",
+        "whiteElephant": "Bring a gift, steal a gift",
+        "conspiracy": "Plan each gift together"
+      },
       "about": "How does {name} work?",
       "explain": {
-        "secretSanta": "Everyone secretly draws one name and gets that person a gift. Nobody knows who their Santa is until gift day.",
-        "whiteElephant": "Everyone brings one wrapped gift to a shared pile. Take turns: unwrap a new one, or steal a gift someone already opened.",
-        "conspiracy": "Everyone gets one gift from all the others. You plan each person's gift together, on a board that person can't see."
+        "secretSanta": "Everyone draws one name in secret and gets that person a gift. Nobody draws their own name, and nobody finds out who their Santa is until gift day.",
+        "whiteElephant": "Everyone brings one wrapped gift to a shared pile. On gift day you take turns: unwrap a new gift, or steal one that's already open. Whoever loses a gift goes next. In the end, everyone goes home with one gift.",
+        "conspiracy": "Everyone gets one gift, planned by all the others together. Each person has a board where the others share ideas and pick their gift. Nobody ever sees their own board, so every gift is a surprise."
+      },
+      "wiki": {
+        "label": "More on Wikipedia",
+        "new-tab": "(opens in a new tab)",
+        "secretSanta": "https://en.wikipedia.org/wiki/Secret_Santa",
+        "whiteElephant": "https://en.wikipedia.org/wiki/White_elephant_gift_exchange",
+        "conspiracy": "https://en.wikipedia.org/wiki/Secret_Santa#Conspiracy_Santa"
       }
     },
     "name": "What's your Secret Santa called?",
@@ -39,11 +51,12 @@
       "time": "Time"
     },
     "exchange": {
-      "label": "How do gifts change hands?",
+      "label": "How are you celebrating?",
       "inPerson": "In person",
-      "byPost": "By post",
-      "both": "In person or by post",
-      "ask": "Sending gifts by post?"
+      "online": "Online",
+      "inPerson-help": "Everyone hands over their gift on gift day.",
+      "online-help": "Gifts go by post: everyone adds an address. Unwrap together on a video call.",
+      "ask": "Celebrating online?"
     },
     "budget": {
       "legend": "Budget",

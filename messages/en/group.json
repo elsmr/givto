@@ -4,11 +4,7 @@
   "summary": {
     "gift-day": "Gift day",
     "no-gift-day": "Not set yet",
-    "exchange-modes": {
-      "inPerson": "Gifts in person",
-      "byPost": "Gifts by post",
-      "both": "Gifts in person or by post"
-    },
+    "online": "Celebrating online",
     "budget": "{budget} budget",
     "no-budget": "No budget",
     "draw-on": "Names are drawn on {date}",
