@@ -36,9 +36,10 @@ export const EmailCodeForm = ({
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    setResent(false);
     onVerify(otp);
   };
+  // Each new code replaces the one before, which then reads as wrong.
+  const errorKey = error === 'code-wrong' && resent ? 'code-replaced' : error;
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5">
@@ -60,7 +61,7 @@ export const EmailCodeForm = ({
           aria-describedby={error ? 'email-code-error email-code-help' : 'email-code-help'}
           className="mono max-w-48 text-2xl tracking-[0.3em]"
         />
-        {error && <FieldError id="email-code-error">{t(`errors.${error}`)}</FieldError>}
+        {errorKey && <FieldError id="email-code-error">{t(`errors.${errorKey}`)}</FieldError>}
         {/* onResend reports nothing back: busy and error tell whether it went out. */}
         <p role="status" className="text-sm empty:hidden">
           {resent && !busy && !error && tCheck('resent')}

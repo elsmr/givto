@@ -24,6 +24,8 @@ export const CodeForm = ({
 }) => {
   const t = useTranslations('auth');
   const [otp, setOtp] = useState('');
+  // Each new code replaces the one before, which then reads as wrong.
+  const [resent, setResent] = useState(false);
   const cooldown = useCooldown(RESEND_AFTER_SECONDS);
   const verify = useMutation({
     mutationFn: () => throwAuthError(authClient.signIn.emailOtp({ email, otp: otp.trim() })),
@@ -35,10 +37,14 @@ export const CodeForm = ({
       verify.reset();
       cooldown.start();
     },
-    onSuccess: () => setOtp(''),
+    onSuccess: () => {
+      setOtp('');
+      setResent(true);
+    },
   });
   const failed = verify.error ?? resend.error;
-  const error = failed && authErrorKey(failed);
+  const errorKey = failed && authErrorKey(failed);
+  const error = errorKey === 'invalid-code' && resent ? 'replaced-code' : errorKey;
 
   useEffect(() => cooldown.start(), []);
 

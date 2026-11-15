@@ -92,6 +92,7 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, tick
             variant="neutral"
             size="sm"
             disabled={resend.isPending}
+            aria-label={t('resend-label', { name: person.name })}
             onClick={() => resend.mutate({ groupSlug, email: person.email! })}
           >
             {t('resend')}

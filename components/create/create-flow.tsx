@@ -43,8 +43,8 @@ const StepTrack = ({ step, total }: { step: number; total: number }) => {
 };
 
 /**
- * /new, link-first (PLAN-v2 "Create flow"): details → email → emailed code → share; signed in with a name, details → share.
- * An account without a name is asked for one on the organizer step, once signed in.
+ * /new, link-first (PLAN-v2 "Create flow"): details → name and email → emailed code, which creates → share; signed in
+ * with a name, details → share; signed in without one, details → name → share.
  */
 export const CreateFlow = () => {
   const t = useTranslations('create');
@@ -54,6 +54,8 @@ export const CreateFlow = () => {
   const session = authClient.useSession();
   const { draft, restored, update, clear } = useCreateDraft();
   const [step, setStep] = useState<Step>('details');
+  // Verifying the code signs in halfway: the steps counted when it was sent still count.
+  const [codeSent, setCodeSent] = useState(false);
   const heading = useFocusStepHeading(step);
   const emailCode = useEmailCode('/new?resume=1');
   const create = useMutation(
@@ -84,21 +86,22 @@ export const CreateFlow = () => {
   const signedInEmail = session.data?.user.email ?? null;
   // Signed in with a name: there's nothing left to ask, so the details step creates.
   const accountName = signedInEmail ? session.data?.user.name : undefined;
-  const askName = signedInEmail !== null && !accountName;
-  const submitCreate = () =>
-    create.mutate({ ...toCreateInput(draft, timeZone()), ...(askName && { organizerName: draft.organizerName }) });
+  // Signed out, the name comes with the email (an existing account keeps its own).
+  const askName = !accountName;
+  const createInput = () => ({ ...toCreateInput(draft, timeZone()), ...(askName && { organizerName: draft.organizerName }) });
+  const submitCreate = () => create.mutate(createInput());
   const sendCode = async () => {
-    if (await emailCode.send(draft.email)) setStep('code');
+    if (!(await emailCode.send(draft.email))) return;
+    setCodeSent(true);
+    setStep('code');
   };
+  // The code step creates; when that fails, the organizer step (signed in now) can try again.
   const verify = async (otp: string) => {
-    if (!(await emailCode.verify(draft.email, otp))) return;
-    setStep('organizer');
-    submitCreate();
+    if (await emailCode.verify(draft.email, otp)) create.mutate(createInput(), { onError: () => setStep('organizer') });
   };
   const errorCode = create.error && appErrorCode(create.error) !== 'NAME_REQUIRED' && knownAppError(create.error, knownErrors);
-  const total = signedInEmail ? 2 : 3;
-  // After the code, the name is the last step.
-  const stepNumber = step === 'organizer' && askName ? total : { details: 1, organizer: 2, code: 3 }[step];
+  const total = signedInEmail && !codeSent ? 2 : 3;
+  const stepNumber = { details: 1, organizer: 2, code: 3 }[step];
   const createLabel = { secretSanta: t('create'), whiteElephant: t('create-white-elephant'), conspiracy: t('create-conspiracy') }[draft.kind];
 
   return (

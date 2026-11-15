@@ -21,7 +21,10 @@ type NameEmailFormProps = {
   email: string;
   /** Signed in: the session is the verified email, so the email isn't asked. */
   signedInEmail: string | null;
-  /** Only signed in, for an account without a name yet: before that we can't know whether it has one. */
+  /**
+   * Joining asks it only signed in, for an account without a name yet: before that we can't know whether it has one.
+   * Creating asks it signed out too, so the code step can create.
+   */
   askName: boolean;
   busy: boolean;
   onChange: (patch: { name?: string; email?: string }) => void;
@@ -30,7 +33,7 @@ type NameEmailFormProps = {
   children?: ReactNode;
 };
 
-/** The email to verify when signed out; signed in, the name if the account has none: create's organizer step and joining. */
+/** The email to verify when signed out, and the name when asked: create's organizer step and joining. */
 export const NameEmailForm = ({
   texts,
   name,

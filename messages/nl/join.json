@@ -41,6 +41,7 @@
     "errors": {
       "rate-limited": "Dat zijn veel codes. Wacht een paar minuten en probeer opnieuw.",
       "code-wrong": "Die code klopt niet. Check de e-mail en probeer opnieuw.",
+      "code-replaced": "Die code klopt niet. Alleen de code uit de nieuwste e-mail werkt.",
       "code-expired": "Die code is verlopen. Stuur jezelf een nieuwe.",
       "code-attempts": "Te vaak geprobeerd. Stuur jezelf een nieuwe code.",
       "generic": "Er ging iets mis. Probeer het zo opnieuw."

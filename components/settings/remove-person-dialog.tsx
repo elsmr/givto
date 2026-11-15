@@ -55,7 +55,9 @@ export const RemovePersonDialog = ({ groupSlug, person, editionStatus, members }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button variant="neutral" size="sm" />}>{t('people.remove')}</DialogTrigger>
+      <DialogTrigger render={<Button variant="neutral" size="sm" aria-label={t('people.remove-label', { name: person.name })} />}>
+        {t('people.remove')}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('people.remove-title', { name: person.name })}</DialogTitle>

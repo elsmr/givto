@@ -84,6 +84,7 @@ test('tabs switch, keep their hash on reload and back; My giftee only after the 
   ok(await ann.trpc.mutate('draw.run', { groupSlug: group.slug, editionNumber: 1 }));
   await page.goto(`/g/${group.slug}`);
   await expect(tabs).toHaveText(['Overview', 'My giftee', 'Wishlist', 'People 3']);
+  await expect(tab(page, 'People'), 'the count is read once, on phones too').toHaveAccessibleName('People 3');
 
   await test.step('switching keeps the tab in the hash, and a reload keeps it', async () => {
     for (const [name, hash] of [['People', '#people'], ['Wishlist', '#wishlist'], ['My giftee', '#giftee']] as const) {

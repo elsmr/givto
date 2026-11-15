@@ -30,11 +30,14 @@ export const drawRouter = router({
   mine: editionProcedure.query(({ ctx }) => {
     const me = ctx.edition.participants.find((p) => p.memberId === ctx.member.id);
     const { giftee } = santaAndGiftee(ctx.group, ctx.edition, ctx.member);
+    // Invitees are in the draw before they accept (98): a giftee that changed before they joined is just their giftee.
+    const { joinedAt } = ctx.member;
+    const changedAt = me?.gifteeChangedAt && !(joinedAt && me.gifteeChangedAt < joinedAt) ? me.gifteeChangedAt : null;
     return {
       inEdition: Boolean(me?.participates),
       giftee: giftee ? { name: giftee.name } : null,
-      changedAt: me?.gifteeChangedAt ?? null,
-      redrawn: gifteeRedrawn(ctx.edition, ctx.member.id),
+      changedAt,
+      redrawn: changedAt !== null && gifteeRedrawn(ctx.edition, ctx.member.id),
     };
   }),
 
