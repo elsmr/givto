@@ -25,7 +25,7 @@ Needs Node 24, pnpm and Docker (Docker Desktop or [Colima](https://github.com/ab
 ```sh
 pnpm install
 pnpm dev:local   # Mongo and the mail mock in Docker (docker-compose.yml), then next dev on :3000
-pnpm seed        # (second terminal) wipes the local database, adds demo groups, one per phase
+pnpm seed        # (second terminal) wipes the local database (indexes too), adds demo groups, one per phase
 ```
 
 Sign in at http://localhost:3000 with `you@example.test` (or the `SEED_EMAIL` you seeded with).
@@ -36,6 +36,8 @@ http://localhost:3091.
   cleanup, as Vercel Cron does in production.
 - `pnpm test` runs the checks; `pnpm e2e` the Playwright tests: stop `next dev` and run `pnpm build` first
   (both write `.next`); e2e starts its own app, Mongo and mail mock, see [e2e/README.md](e2e/README.md).
+- After pulling, `pnpm seed` again if the app errors on old local data: seeded data is always current, so it
+  counts as migrated (`pnpm migrate` is for databases from the old app).
 - `docker compose down` stops the services; `docker compose down -v` also deletes the database.
 
 Local settings live in `.env.development` (committed, dev-only values). `next dev` loads it over `.env`

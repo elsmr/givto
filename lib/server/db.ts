@@ -45,7 +45,7 @@ export type Collections = ReturnType<typeof collections>;
 
 // createIndex is a no-op when the same index exists, so this runs on every cold start.
 // Better Auth's Mongo adapter doesn't create indexes for its own collections, so we do.
-const createIndexes = async (db: Db, c: Collections) => {
+export const createIndexes = async (db: Db, c: Collections) => {
   await Promise.all([
     c.users.createIndex({ email: 1 }, { unique: true }),
     db.collection('sessions').createIndex({ token: 1 }, { unique: true }),

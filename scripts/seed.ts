@@ -6,10 +6,11 @@ import { addDays, todayIn, zonedInstant } from '../lib/local-date';
 import type { Edition, EditionFields } from '../lib/schema/edition';
 import type { Group } from '../lib/schema/group';
 import type { Member } from '../lib/schema/member';
-import { collections, newId } from '../lib/server/db';
+import { collections, createIndexes, newId } from '../lib/server/db';
 import { drawEdition } from '../lib/server/draw/run';
 import { runGiftDayTransitions } from '../lib/server/jobs/giftday';
 import { randomToken } from '../lib/server/membership';
+import { migrationIds } from '../migrations/runner';
 import { eur, people, wishlists } from './seed-people';
 import { seedBetweenSantas } from './seed-santas';
 
@@ -35,10 +36,14 @@ const client = await new MongoClient(uri).connect();
 const raw = client.db(process.env.MONGODB_DB || 'givto_dev');
 const db = collections(raw);
 
-// Wipe: empty every collection (Better Auth's included), keeping the indexes the app created.
+// Wipe: drop every collection (Better Auth's included), so no index from an older app outlives it, then create
+// today's indexes: a running `next dev` only creates them on a cold start. Seeded data is current, so every
+// migration counts as applied.
 for (const { name } of await raw.listCollections({}, { nameOnly: true }).toArray()) {
-  if (!name.startsWith('system.')) await raw.collection(name).deleteMany({});
+  if (!name.startsWith('system.')) await raw.collection(name).drop();
 }
+await createIndexes(raw, db);
+await raw.collection<{ _id: string; appliedAt: Date }>('migrations').insertMany(migrationIds.map((id) => ({ _id: id, appliedAt: now })));
 
 await db.users.insertMany(
   persons.map((p) => ({

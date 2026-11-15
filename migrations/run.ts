@@ -53,7 +53,7 @@ const print = ({ id, status, report }: MigrationResult) => {
   console.log(`  invalid documents: ${report.invalid.length}`);
   for (const doc of report.invalid.slice(0, 20)) console.log(`    ${json(doc)}`);
   console.log('  samples:');
-  for (const [kind, sample] of Object.entries(report.samples)) console.log(`    ${kind}: ${JSON.stringify(sample, null, 2).replaceAll('\n', '\n    ')}`);
+  for (const [kind, sample] of Object.entries(report.samples)) if (sample !== undefined) console.log(`    ${kind}: ${JSON.stringify(sample, null, 2).replaceAll('\n', '\n    ')}`);
 };
 
 const failed = (result: MigrationResult) =>
