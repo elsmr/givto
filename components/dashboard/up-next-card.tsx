@@ -26,7 +26,7 @@ export const UpNextCard = ({ group }: { group: DashboardGroup }) => {
       </CardHeader>
       {edition && (
         <CardContent className="grid items-end gap-6 sm:grid-cols-[auto_1fr] sm:gap-10">
-          <GiftDayCountdown date={edition.giftDay} timeZone={edition.timeZone} size="lg" />
+          <GiftDayCountdown date={edition.giftDay} time={edition.giftTime} timeZone={edition.timeZone} size="lg" />
           <PhaseStepper phase={phaseOf(edition.status, edition.participantCount)} kind={edition.kind} />
         </CardContent>
       )}

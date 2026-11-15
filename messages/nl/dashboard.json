@@ -12,7 +12,7 @@
   "no-edition": "Nog geen Secret Santa",
   "archived": "Gearchiveerd",
   "gift-day": {
-    "past": "Pakjesdag was op {date}",
+    "past": "Pakjesdag was op <date></date>",
     "none": "Nog geen pakjesdag gekozen"
   },
   "giftee-ready": "Je persoon staat klaar",
@@ -53,8 +53,9 @@
   "open-group": "Groep openen",
   "see-giftee": "Je persoon",
   "countdown": {
-    "left": "{unit, select, day {{count, plural, =1 {dag} other {dagen}}} week {{count, plural, =1 {week} other {weken}}} month {{count, plural, =1 {maand} other {maanden}}} other {{count, plural, =1 {jaar} other {jaar}}}} tot pakjesdag",
+    "left": "{unit, select, hour {{count, plural, =1 {uur} other {uur}}} day {{count, plural, =1 {dag} other {dagen}}} week {{count, plural, =1 {week} other {weken}}} month {{count, plural, =1 {maand} other {maanden}}} other {{count, plural, =1 {jaar} other {jaar}}}} tot pakjesdag",
     "today": "Vandaag!",
-    "today-label": "het is pakjesdag"
+    "today-label": "het is pakjesdag",
+    "live": "tot pakjesdag"
   }
 }

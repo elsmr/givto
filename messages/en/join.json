@@ -21,7 +21,7 @@
     "description-conspiracy": "Join the Conspiracy Santa: plan one gift for each person together, behind their back.",
     "approval": "The organizer lets people in, so you'll be in once they've said yes.",
     "organizer": "Organizer: {name}",
-    "gift-day": "Gift day {date}"
+    "gift-day": "Gift day <date></date>"
   },
   "requested": {
     "title": "Almost there!",

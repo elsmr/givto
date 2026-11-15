@@ -45,7 +45,7 @@ export const MyWishlist = () => {
               <WishListEditor
                 wishes={wishes.data}
                 onMove={(wishId, toIndex) => move.mutate({ wishId, toIndex })}
-                status={(wish) => <WishGroupChips shownIn={shownIn(wish.id)} flagNone />}
+                status={(wish) => <WishGroupChips shownIn={shownIn(wish.id)} />}
                 actions={(wish) => (
                   <WishGroupsPicker
                     wishTitle={wish.title}
@@ -54,7 +54,6 @@ export const MyWishlist = () => {
                   />
                 )}
               />
-              <p className="text-sm text-muted">{t('hide-hint')}</p>
             </section>
           )}
           </div>

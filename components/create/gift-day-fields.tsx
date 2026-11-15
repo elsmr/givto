@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldHint, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { tabsListVariants } from '@/components/ui/tabs';
+import { holidayOn } from '@/lib/local-date';
 import { EditionKind, isPosted } from '@/lib/schema/edition';
 import { cn } from '@/lib/utils';
 import { ArrowLeftRight, ExternalLink, Gift, Plus, Users, VenetianMask, Video } from 'lucide-react';
@@ -20,35 +21,47 @@ type FieldsProps = {
 /** Gift day (28): an optional date; the time only once asked for, or when there is one. */
 export const GiftDayFields = ({ draft, today, onChange }: FieldsProps & { today: string }) => {
   const t = useTranslations('create.details.gift-day');
+  const tHoliday = useTranslations('ui.holidays');
   const [timeAsked, setTimeAsked] = useState(false);
+  const holiday = draft.giftDate ? holidayOn(draft.giftDate) : undefined;
 
   return (
-    <div className="flex items-end gap-3">
-      <Field className="min-w-0 flex-1">
-        <FieldLabel htmlFor="gift-date" optional>
-          {t('legend')}
-        </FieldLabel>
-        <Input id="gift-date" type="date" min={today} value={draft.giftDate} onChange={(event) => onChange({ giftDate: event.target.value })} />
-      </Field>
-      {(timeAsked || draft.giftTime) && (
-        <Field className="w-32 shrink-0">
-          <FieldLabel htmlFor="gift-time">{t('time')}</FieldLabel>
+    <div className="flex flex-col gap-2">
+      <div className="flex items-end gap-3">
+        <Field className="min-w-0 flex-1">
+          <FieldLabel htmlFor="gift-date" optional>
+            {t('legend')}
+          </FieldLabel>
           <Input
-            id="gift-time"
-            type="time"
-            autoFocus={timeAsked && !draft.giftTime}
-            disabled={!draft.giftDate}
-            value={draft.giftTime}
-            onChange={(event) => onChange({ giftTime: event.target.value })}
+            id="gift-date"
+            type="date"
+            min={today}
+            value={draft.giftDate}
+            aria-describedby={holiday ? 'gift-date-holiday' : undefined}
+            onChange={(event) => onChange({ giftDate: event.target.value })}
           />
         </Field>
-      )}
-      {!timeAsked && !draft.giftTime && draft.giftDate && (
-        <Button type="button" variant="ghost" size="sm" className="mb-0.5" onClick={() => setTimeAsked(true)}>
-          <Plus aria-hidden="true" />
-          {t('time')}
-        </Button>
-      )}
+        {(timeAsked || draft.giftTime) && (
+          <Field className="w-32 shrink-0">
+            <FieldLabel htmlFor="gift-time">{t('time')}</FieldLabel>
+            <Input
+              id="gift-time"
+              type="time"
+              autoFocus={timeAsked && !draft.giftTime}
+              disabled={!draft.giftDate}
+              value={draft.giftTime}
+              onChange={(event) => onChange({ giftTime: event.target.value })}
+            />
+          </Field>
+        )}
+        {!timeAsked && !draft.giftTime && draft.giftDate && (
+          <Button type="button" variant="ghost" size="sm" className="mb-0.5" onClick={() => setTimeAsked(true)}>
+            <Plus aria-hidden="true" />
+            {t('time')}
+          </Button>
+        )}
+      </div>
+      {holiday && <FieldDescription id="gift-date-holiday">{tHoliday(holiday)}</FieldDescription>}
     </div>
   );
 };

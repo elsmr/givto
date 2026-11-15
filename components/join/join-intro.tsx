@@ -1,9 +1,9 @@
+import { GiftDate } from '@/components/dashboard/gift-day-label';
 import { FlowPage } from '@/components/shell/flow-page';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardDivider, CardHeader } from '@/components/ui/card';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { formatBudget } from '@/lib/format-budget';
-import { formatLocalDate } from '@/lib/local-date';
 import type { JoinPreview } from '@/lib/server/join-preview';
 import { CalendarDays, Crown, Gift, Wallet } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
@@ -31,7 +31,7 @@ export const JoinIntro = ({ preview, children }: { preview: JoinPreview; childre
             {giftDay && (
               <Badge variant="yellow">
                 <CalendarDays aria-hidden="true" />
-                {t('gift-day', { date: formatLocalDate(giftDay, locale, { dateStyle: 'medium' }) })}
+                {t.rich('gift-day', { date: () => <GiftDate date={giftDay} dateStyle="medium" /> })}
               </Badge>
             )}
             {budget && (

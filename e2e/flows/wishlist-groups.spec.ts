@@ -128,4 +128,22 @@ test('show wishes per group; Dibs! is "Taken" elsewhere and never shown to the o
     expect(await shownIn(family.slug)).toEqual(['Kite']);
     expect(await shownIn(friends.slug)).toEqual(['Wool socks']);
   });
+
+  await test.step('on /wishlist, a new wish starts in no group; Olive ticks Friends next to "Add wish"', async () => {
+    await page.goto('/wishlist');
+    await page.getByLabel('Wish', { exact: true }).fill('Puzzle');
+    await page.getByRole('button', { name: 'Groups', exact: true }).click();
+    const popover = page.getByRole('dialog', { name: 'Show in' });
+    await expect(popover.getByRole('checkbox')).toHaveCount(2);
+    await expect(popover.getByRole('checkbox', { checked: true })).toHaveCount(0);
+    await popover.getByRole('checkbox', { name: 'Friends' }).click();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Groups (1)' }).click();
+    await page.keyboard.press('Escape');
+    await page.getByRole('button', { name: 'Add wish' }).click();
+    await expect(page.getByRole('heading', { name: 'Puzzle' })).toBeVisible();
+    const shownIn = async (groupSlug: string) => ok(await olive.trpc.query('wish.groupView', { groupSlug })).filter((wish) => wish.shown).map((wish) => wish.title);
+    expect(await shownIn(friends.slug)).toEqual(['Puzzle', 'Wool socks']);
+    expect(await shownIn(family.slug)).toEqual(['Kite']);
+  });
 });

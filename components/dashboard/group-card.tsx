@@ -40,7 +40,7 @@ export const GroupCard = ({ group }: { group: DashboardGroup }) => {
       </CardContent>
       <CardDivider className="mt-auto" />
       <CardContent className="flex flex-wrap items-end justify-between gap-3">
-        {edition && <GiftDayCountdown date={edition.giftDay} timeZone={edition.timeZone} />}
+        {edition && <GiftDayCountdown date={edition.giftDay} time={edition.giftTime} timeZone={edition.timeZone} />}
         <div className="flex flex-col items-end gap-1 text-right">
           {edition?.gifteeReady && (
             <Badge variant="mint">

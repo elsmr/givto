@@ -54,3 +54,32 @@ export const countdown = (days: number): { value: number; unit: CountdownUnit } 
     abs < 14 ? [abs, 'day'] : abs < 60 ? [Math.round(abs / 7), 'week'] : abs < 365 ? [Math.round(abs / 30.44), 'month'] : [Math.round(abs / 365), 'year'];
   return { value: days < 0 ? -value : value, unit };
 };
+
+export type TimedCountdownUnit = CountdownUnit | 'hour' | 'second';
+
+/**
+ * Time to gift day as `countdown` says it in days; with a `time`, hours in its last day and every second in its
+ * last hour. Once the time has passed on the day itself, 0 days.
+ */
+export const countdownTo = (date: string, time: string | undefined, timeZone: string, now = new Date()): { value: number; unit: TimedCountdownUnit } => {
+  const ms = time ? zonedInstant(date, time, timeZone).getTime() - now.getTime() : 0;
+  if (ms > 0 && ms < 3_600_000) return { value: Math.ceil(ms / 1000), unit: 'second' };
+  if (ms > 0 && ms < 86_400_000) return { value: Math.floor(ms / 3_600_000), unit: 'hour' };
+  return countdown(daysBetween(todayIn(timeZone, now), date));
+};
+
+/** Seconds as a clock, e.g. 3599 → "59:59". */
+export const clock = (seconds: number): string => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+
+export type Holiday = 'christmasEve' | 'christmasDay' | 'newYearsEve' | 'newYearsDay' | 'thanksgiving';
+
+const fixedHolidays: Record<string, Holiday> = { '12-24': 'christmasEve', '12-25': 'christmasDay', '12-31': 'newYearsEve', '01-01': 'newYearsDay' };
+
+/** The popular gift day a local date (YYYY-MM-DD) falls on. Thanksgiving: the US one (4th Thursday of November) or Canada's (2nd Monday of October). */
+export const holidayOn = (date: string): Holiday | undefined => {
+  const month = Number(date.slice(5, 7));
+  const week = Math.ceil(Number(date.slice(8, 10)) / 7);
+  const weekday = new Date(`${date}T12:00:00Z`).getUTCDay();
+  if ((month === 11 && week === 4 && weekday === 4) || (month === 10 && week === 2 && weekday === 1)) return 'thanksgiving';
+  return fixedHolidays[date.slice(5)];
+};

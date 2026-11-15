@@ -6,5 +6,12 @@
   "field": {
     "optional": "optioneel",
     "more-info": "Meer uitleg"
+  },
+  "holidays": {
+    "christmasEve": "Kerstavond",
+    "christmasDay": "Kerstmis",
+    "newYearsEve": "Oudejaarsavond",
+    "newYearsDay": "Nieuwjaarsdag",
+    "thanksgiving": "Thanksgiving"
   }
 }

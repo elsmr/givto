@@ -21,7 +21,7 @@
     "description-conspiracy": "Doe mee met de Conspiracy Santa: bedenk samen één cadeau voor elke persoon, achter diens rug.",
     "approval": "De organisator laat mensen zelf toe, dus je doet mee zodra die ja zegt.",
     "organizer": "Organisator: {name}",
-    "gift-day": "Pakjesdag {date}"
+    "gift-day": "Pakjesdag <date></date>"
   },
   "requested": {
     "title": "Bijna!",

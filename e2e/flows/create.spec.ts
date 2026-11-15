@@ -82,6 +82,7 @@ test('signed in with a name, the details step creates; invite by email with tags
     await expect(page.getByLabel('Amount')).toHaveCount(0);
     await expect(page.getByRole('radio', { name: 'In person' })).toBeChecked();
     await page.getByLabel("When's gift day?").fill('2099-12-24');
+    await expect(page.getByLabel("When's gift day?")).toHaveAccessibleDescription('Christmas Eve');
     await page.getByRole('button', { name: 'Time' }).click();
     await page.getByLabel('Time').fill('19:00');
     await page.getByRole('button', { name: 'Budget' }).click();
@@ -126,6 +127,11 @@ test('signed in with a name, the details step creates; invite by email with tags
     await deePage.getByRole('button', { name: 'Join' }).click();
     await expect(deePage).toHaveURL(`/g/${groupSlug}`);
     expect(ok(await ann.trpc.query('group.get', { groupSlug })).members.map((m) => m.name)).toEqual(['Ann', 'Dee']);
+  });
+
+  await test.step('on the overview, Christmas Eve names gift day; hovering it shows the date and time', async () => {
+    await deePage.getByRole('button', { name: 'Christmas Eve' }).hover();
+    await expect(deePage.getByRole('dialog')).toHaveText('Thursday, December 24, 2099 · 19:00');
   });
 });
 

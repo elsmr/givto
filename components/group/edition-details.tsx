@@ -1,7 +1,9 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { GiftDate } from '@/components/dashboard/gift-day-label';
 import { IconCardTitle } from '@/components/ui/icon-card-title';
 import { formatBudget } from '@/lib/format-budget';
-import { countdown, daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
+import { useNow } from '@/lib/client/use-now';
+import { clock, countdownTo, daysBetween, formatLocalDate, todayIn } from '@/lib/local-date';
 import { drawsNames, isBeforeDraw } from '@/lib/schema/edition';
 import { CalendarDays, Gift, ListChecks, Mailbox, NotebookText, Shuffle, Video, Wallet, type LucideIcon } from 'lucide-react';
 import { useFormatter, useLocale, useTranslations } from 'next-intl';
@@ -29,7 +31,9 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
     ? t('drawn')
     : edition.drawAt && t('draw-on', { date: format.dateTime(edition.drawAt, { dateStyle: 'full', timeZone }) });
   const posted = edition.exchangeMode !== 'inPerson';
-  const when = giftDay && countdown(daysBetween(todayIn(timeZone), giftDay.date));
+  const days = giftDay && daysBetween(todayIn(timeZone), giftDay.date);
+  const now = useNow(Boolean(giftDay?.time) && (days === 0 || days === 1));
+  const when = giftDay && countdownTo(giftDay.date, giftDay.time, timeZone, now);
 
   return (
     <Card>
@@ -42,10 +46,12 @@ export const EditionDetails = ({ edition, children }: { edition: GroupEdition; c
         {giftDay && when ? (
           <div className="flex flex-col gap-1">
             <p className="font-heading text-3xl leading-tight font-extrabold first-letter:uppercase">
-              {new Intl.RelativeTimeFormat(locale, { numeric: when.unit === 'day' ? 'auto' : 'always' }).format(when.value, when.unit)}
+              {when.unit === 'second'
+                ? clock(when.value)
+                : new Intl.RelativeTimeFormat(locale, { numeric: when.unit === 'day' ? 'auto' : 'always' }).format(when.value, when.unit)}
             </p>
             <p>
-              {localDate(giftDay.date)}
+              <GiftDate date={giftDay.date} time={giftDay.time} />
               {giftDay.time && ` · ${giftDay.time}`}
               {giftDay.place && ` · ${giftDay.place}`}
             </p>

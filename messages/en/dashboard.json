@@ -12,7 +12,7 @@
   "no-edition": "No Secret Santa yet",
   "archived": "Archived",
   "gift-day": {
-    "past": "Gift day was {date}",
+    "past": "Gift day was <date></date>",
     "none": "No gift day set yet"
   },
   "giftee-ready": "Your giftee is ready",
@@ -53,8 +53,9 @@
   "open-group": "Open group",
   "see-giftee": "Your giftee",
   "countdown": {
-    "left": "{unit, select, day {{count, plural, =1 {day} other {days}}} week {{count, plural, =1 {week} other {weeks}}} month {{count, plural, =1 {month} other {months}}} other {{count, plural, =1 {year} other {years}}}} to gift day",
+    "left": "{unit, select, hour {{count, plural, =1 {hour} other {hours}}} day {{count, plural, =1 {day} other {days}}} week {{count, plural, =1 {week} other {weeks}}} month {{count, plural, =1 {month} other {months}}} other {{count, plural, =1 {year} other {years}}}} to gift day",
     "today": "Today!",
-    "today-label": "it's gift day"
+    "today-label": "it's gift day",
+    "live": "to gift day"
   }
 }

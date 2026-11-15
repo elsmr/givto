@@ -22,16 +22,14 @@ export const AlsoInNote = ({ groups, kind = 'also-in' }: { groups: string[]; kin
   return <p className="w-full text-sm">{t.rich(kind, { groups: format.list(groups), b: (chunks) => <b>{chunks}</b> })}</p>;
 };
 
-/** Groups a wish can be shown in: active ones first, archived ones left out. */
+/** Groups a wish can be shown in: only active ones, as nobody buys from a past edition's list. */
 const useGroupChoices = () => {
   const groups = useQuery(useTRPC().account.groups.queryOptions());
-  return (groups.data ?? [])
-    .filter((group) => !group.archived)
-    .toSorted((a, b) => Number(isActiveGroup(b)) - Number(isActiveGroup(a)));
+  return (groups.data ?? []).filter(isActiveGroup);
 };
 
-/** The groups that show a wish as chips: the first two, then "+N" with the rest in a tooltip. `flagNone`: say so when none do. */
-export const WishGroupChips = ({ shownIn, flagNone }: { shownIn: string[]; flagNone?: boolean }) => {
+/** The groups that show a wish as chips: the first two, then "+N" with the rest in a tooltip. */
+export const WishGroupChips = ({ shownIn }: { shownIn: string[] }) => {
   const t = useTranslations('wishlist.form');
   const format = useFormatter();
   const choices = useGroupChoices();
@@ -41,7 +39,6 @@ export const WishGroupChips = ({ shownIn, flagNone }: { shownIn: string[]; flagN
 
   return (
     <>
-      {flagNone && shown.length === 0 && <Badge variant="coral">{t('in-no-group')}</Badge>}
       {shown.slice(0, 2).map((group) => (
         <Badge key={group.slug} className="max-w-48">
           <span className="truncate">{group.name}</span>
@@ -63,7 +60,7 @@ interface WishGroupsPickerProps {
   /** Slugs of the groups that show the wish. */
   shownIn: string[];
   onChange: (groupSlug: string, shown: boolean) => void;
-  /** On a wish: an icon button named after it, beside edit and archive. The add form has no title yet: "Groups". */
+  /** On a wish: named after it, beside edit and archive. The add form has no title yet: "Groups", with a count of the ticked ones. */
   wishTitle?: string;
 }
 
@@ -73,21 +70,19 @@ export const WishGroupsPicker = ({ shownIn, onChange, wishTitle }: WishGroupsPic
   const id = useId();
   const choices = useGroupChoices();
   if (choices.length === 0) return null;
-  const activeShown = choices.filter((group) => isActiveGroup(group) && shownIn.includes(group.slug)).map(({ name }) => name);
+  const shown = choices.filter((group) => shownIn.includes(group.slug)).map(({ name }) => name);
 
   return (
     <Popover>
-      {wishTitle ? (
-        withTooltip(
-          t('groups-label', { title: wishTitle }),
-          <PopoverTrigger render={<Button type="button" variant="neutral" size="icon-sm" />}>
-            <Users aria-hidden="true" />
-          </PopoverTrigger>
-        )
-      ) : (
-        <PopoverTrigger render={<Button type="button" variant="neutral" size="sm" />}>
+      {withTooltip(
+        wishTitle ? t('groups-label', { title: wishTitle }) : t('groups', { count: shown.length }),
+        <PopoverTrigger render={<Button type="button" variant="neutral" size="icon-sm" className="relative" />}>
           <Users aria-hidden="true" />
-          {t('groups')}
+          {!wishTitle && shown.length > 0 && (
+            <Badge variant="yellow" aria-hidden="true" className="absolute -top-2 -right-2 px-1">
+              {shown.length}
+            </Badge>
+          )}
         </PopoverTrigger>
       )}
       <PopoverContent align={wishTitle ? 'end' : 'start'}>
@@ -110,16 +105,9 @@ export const WishGroupsPicker = ({ shownIn, onChange, wishTitle }: WishGroupsPic
             </li>
           ))}
         </ul>
-        {activeShown.length > 1 && <AlsoInNote kind="shown-in" groups={activeShown} />}
+        {shown.length > 1 && <AlsoInNote kind="shown-in" groups={shown} />}
       </PopoverContent>
     </Popover>
   );
 };
 
-/** The add form: chips for the groups that will show the wish, and "Groups" to tick them. */
-export const WishGroups = ({ shownIn, onChange }: Omit<WishGroupsPickerProps, 'wishTitle'>) => (
-  <div className="flex flex-wrap items-center gap-1.5">
-    <WishGroupChips shownIn={shownIn} />
-    <WishGroupsPicker shownIn={shownIn} onChange={onChange} />
-  </div>
-);

@@ -24,7 +24,7 @@ interface WishFormProps {
   autoFocus?: boolean;
   /** The add card: tighter, and no "More details". */
   compact?: boolean;
-  /** Beside the buttons, e.g. the groups that see the wish. */
+  /** Beside the submit button, e.g. the groups that see the wish. */
   children?: ReactNode;
 }
 
@@ -135,18 +135,16 @@ export const WishForm = ({ initial, submitLabel, busy, error, onSubmit, onCancel
         </>
       )}
       {error && <Alert variant="danger">{error}</Alert>}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" disabled={busy || links.reading}>
+          {submitLabel}
+        </Button>
         {children}
-        <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={busy || links.reading}>
-            {submitLabel}
+        {onCancel && (
+          <Button type="button" variant="neutral" onClick={onCancel}>
+            {t('form.cancel')}
           </Button>
-          {onCancel && (
-            <Button type="button" variant="neutral" onClick={onCancel}>
-              {t('form.cancel')}
-            </Button>
-          )}
-        </div>
+        )}
       </div>
     </form>
   );

@@ -100,6 +100,7 @@ export const accountGroups = async (db: Collections, userId: string) => {
         year: edition.year,
         status: edition.status,
         giftDay: edition.giftDay?.date,
+        giftTime: edition.giftDay?.time,
         timeZone: group.timeZone,
         participantCount,
         gifteeReady: isDrawn(edition) && Boolean(edition.draw?.assignments[member.id]),

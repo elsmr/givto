@@ -6,5 +6,12 @@
   "field": {
     "optional": "optional",
     "more-info": "More info"
+  },
+  "holidays": {
+    "christmasEve": "Christmas Eve",
+    "christmasDay": "Christmas Day",
+    "newYearsEve": "New Year's Eve",
+    "newYearsDay": "New Year's Day",
+    "thanksgiving": "Thanksgiving"
   }
 }
