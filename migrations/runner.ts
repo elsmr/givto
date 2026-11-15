@@ -9,6 +9,8 @@ import * as ownerRole from './006-owner-role';
 
 const migrations = [v1ToV2, shownWishIds, guessRows, keepApartRows, v1Wishlists, ownerRole];
 
+export const migrationIds = migrations.map(({ id }) => id);
+
 export type MigrationResult = { id: string; status: 'applied before' | 'dry run' | 'applied'; report?: Awaited<ReturnType<typeof v1ToV2.up>> };
 
 export const runMigrations = async (db: Db, { apply, now }: { apply: boolean; now?: Date }): Promise<MigrationResult[]> => {
