@@ -54,6 +54,26 @@ test('organizer: start gift day now, back to shopping, finish, reopen', async ({
   await expect(currentStep(page)).toContainText('Gift day');
 });
 
+test('organizer: no back to shopping once the big reveal was out, also with the reveal switched off', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', { name: 'Seen', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson' })
+  );
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  const at = { groupSlug: group.slug, editionNumber: 1 };
+  ok(await ann.trpc.mutate('draw.run', at));
+  ok(await ann.trpc.mutate('manage.startGiftDay', at));
+  ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
+  ok(await ann.trpc.mutate('giftday.reveal', at));
+  ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: false }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}`);
+  await page.getByRole('button', { name: 'More' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Back to shopping' })).toBeDisabled();
+});
+
 test('a member has no ⋯ menu', async ({ page, signIn, signInPage }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
   const group = ok(await ann.trpc.mutate('group.create', { name: 'Members', organizerName: 'Ann', timeZone: 'Europe/Brussels', exchangeMode: 'inPerson' }));

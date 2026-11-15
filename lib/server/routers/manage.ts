@@ -3,7 +3,7 @@ import { todayIn } from '../../local-date';
 import { LocalDate } from '../../schema/common';
 import { finishEdition, toGiftDayToday, wrongStatus } from '../edition/status';
 import { AppError } from '../errors';
-import { santaShownIds } from '../guess/guesses';
+import { giftDayUnderway } from '../giftday/giftday-view';
 import { currentEdition } from '../membership';
 import { organizerEditionProcedure, router } from '../trpc';
 
@@ -37,10 +37,7 @@ export const manageRouter = router({
       const { edition } = ctx;
       if (edition.status !== 'giftday') throw wrongStatus(edition);
       if (input.giftDayDate <= todayIn(ctx.group.timeZone)) throw new AppError('DATE_IN_PAST');
-      const progress = edition.unwrapOrder?.progress;
-      if ((progress?.turns.length ?? 0) > 0 || (progress?.moves?.length ?? 0) > 0 || santaShownIds(edition).length > 0 || edition.reveal.revealedAt) {
-        throw new AppError('GIFT_DAY_UNDERWAY');
-      }
+      if (giftDayUnderway(edition)) throw new AppError('GIFT_DAY_UNDERWAY');
       const now = new Date();
       const saved = await ctx.db.editions.updateOne(
         {
@@ -48,7 +45,6 @@ export const manageRouter = router({
           status: 'giftday',
           'unwrapOrder.progress.turns.0': { $exists: false },
           'unwrapOrder.progress.moves.0': { $exists: false },
-          'unwrapOrder.progress.santaShownIds.0': { $exists: false },
           'reveal.santaShownIds.0': { $exists: false },
           'reveal.revealedAt': { $exists: false },
         },

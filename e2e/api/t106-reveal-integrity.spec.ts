@@ -1,6 +1,3 @@
-// Reveal integrity (106): once a pair has been shown it stays shown, whatever the presenter or the organizer's
-// switches do after; with the big reveal off, a done edition shows only the Santas shown at turns; pairs only reach
-// people who were in the edition.
 import { expect, ok, test, type User } from '../fixtures';
 import { code, drawnGroup, memberIdOf } from './s6-helpers';
 
@@ -11,7 +8,6 @@ const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa' 
   return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
 };
 
-/** The first person in the unwrap order unwraps and the presenter shows their Santa; returns who that was. */
 const showFirstSanta = async (ann: User, at: Input) => {
   ok(await advance(ann, at, 'start'));
   ok(await advance(ann, at, 'spin'));
@@ -19,7 +15,6 @@ const showFirstSanta = async (ann: User, at: Input) => {
   return ok(await ann.trpc.query('giftday.presenter', at)).unwrapOrder!.current!.memberId;
 };
 
-/** Everyone's guess rows for `gifteeId` (their own Santa has none): whether each can still change. */
 const rowsOpen = async (people: User[], at: Input, gifteeId: string) =>
   (await Promise.all(people.map(async (p) => ok(await p.trpc.query('guess.get', at))!.rows.find((row) => row.memberId === gifteeId))))
     .filter((row) => row !== undefined)
@@ -77,6 +72,18 @@ test('the big reveal stays out: switched off, or reopened after a done edition s
     expect(await anyOpen(at)).toBe(false);
     expect(code(await back(at))).toBe('GIFT_DAY_UNDERWAY');
   });
+
+  await test.step('done with the reveal on, switched off, then reopened', async () => {
+    const group = await drawnGroup(people, 'Off after done');
+    const at = { groupSlug: group.slug, editionNumber: 1 };
+    ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
+    ok(await ann.trpc.mutate('manage.startGiftDay', at));
+    ok(await ann.trpc.mutate('manage.finishGiftDay', at));
+    ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: false }));
+    ok(await ann.trpc.mutate('manage.reopenGiftDay', at));
+    expect(await anyOpen(at)).toBe(false);
+    expect(code(await back(at))).toBe('GIFT_DAY_UNDERWAY');
+  });
 });
 
 test('done without the big reveal: only the Santas shown at turns, and only for people who were in it', async ({ signIn, db }) => {
@@ -88,8 +95,9 @@ test('done without the big reveal: only the Santas shown at turns, and only for 
     ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
   }
   const at = { groupSlug: group.slug, editionNumber: 1 };
-  const memberIds = await Promise.all([ann, bob, cee, dan].map((person) => memberIdOf(db, group.slug, person)));
-  ok(await ann.trpc.mutate('settings.setParticipants', { ...at, memberIds }));
+  const [annId, bobId, ceeId, danId, eveId] = await Promise.all([ann, bob, cee, dan, eve].map((person) => memberIdOf(db, group.slug, person)));
+  ok(await ann.trpc.mutate('settings.setParticipants', { ...at, memberIds: [annId, bobId, ceeId, danId] }));
+  ok(await ann.trpc.mutate('settings.setOrganizer', { groupSlug: group.slug, memberId: eveId, organizer: true }));
   ok(await ann.trpc.mutate('draw.run', at));
   ok(await ann.trpc.mutate('manage.startGiftDay', at));
   const shown = await showFirstSanta(ann, at);
@@ -101,10 +109,17 @@ test('done without the big reveal: only the Santas shown at turns, and only for 
   const outside = ok(await eve.trpc.query('giftday.get', at));
   expect(outside.reveal.pairs).toBeNull();
   expect(outside.guessing).toBeNull();
+  const presenterOutside = ok(await eve.trpc.query('giftday.presenter', at));
+  expect(presenterOutside.reveal.pairs).toBeNull();
+  expect(presenterOutside.guessing).toBeNull();
 
   ok(await ann.trpc.mutate('giftday.setReveal', { ...at, enabled: true }));
   expect(ok(await bob.trpc.query('giftday.get', at)).reveal.pairs).toHaveLength(4);
   const revealed = ok(await eve.trpc.query('giftday.get', at));
   expect(revealed.reveal.pairs, 'Eve sat this one out').toBeNull();
   expect(revealed.guessing).toBeNull();
+  expect(ok(await ann.trpc.query('giftday.presenter', at)).reveal.pairs).toHaveLength(4);
+  const revealedPresenter = ok(await eve.trpc.query('giftday.presenter', at));
+  expect(revealedPresenter.reveal.pairs, 'Eve organizes but sat this one out').toBeNull();
+  expect(revealedPresenter.guessing).toBeNull();
 });

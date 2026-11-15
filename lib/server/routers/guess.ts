@@ -25,7 +25,7 @@ export const guessRouter = router({
     const person = (memberId: string) => ({ memberId, name: nameOf(memberId) });
     const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name);
     const board = (await guessesOf(db, edition))[member.id] ?? {};
-    const result = giftDayView(group, edition, {}, { [member.id]: board }, member.id).guessing?.results.find((r) => r.memberId === member.id);
+    const result = giftDayView(group, edition, {}, { [member.id]: board })(member.id).guessing?.results.find((r) => r.memberId === member.id);
     const others = inDraw.filter((id) => id !== member.id && id !== assignments[member.id]).map(person).toSorted(byName);
     return {
       myGiftee: person(assignments[member.id]),

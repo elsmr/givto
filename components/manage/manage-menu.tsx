@@ -34,8 +34,7 @@ export const ManageMenu = ({ group }: { group: GroupData }) => {
   const hatches = edition ? hatchesFor(edition.status) : [];
   // Off for members: 'draft' is before the draw, when useGiftDay doesn't fetch.
   const giftDay = useGiftDay({ groupSlug: group.slug, editionNumber: edition?.number ?? 0 }, edition?.status ?? 'draft');
-  // A Santa shown at a turn (62) counts too: what people saw can't be unseen.
-  const underway = Boolean(giftDay.data?.unwrapOrder?.went.length || giftDay.data?.swap?.gifts.length || giftDay.data?.reveal.revealed || giftDay.data?.guessing?.results.length);
+  const underway = Boolean(giftDay.data?.underway);
 
   if (!edition || hatches.length === 0) return null;
   const canRedraw = edition.status === 'drawn' && drawsNames(edition);
