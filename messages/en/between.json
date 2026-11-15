@@ -100,7 +100,7 @@
     "INTERNAL": "Something went wrong. Try again.",
     "INVALID_INPUT": "Check the text and try again.",
     "RATE_LIMITED": "That's the limit for now. Try again later.",
-    "EDITION_CLOSED": "This Secret Santa is closed for that.",
+    "EDITION_CLOSED": "This edition is closed for that.",
     "NOT_FOUND": "This is no longer available. Refresh the page.",
     "WRONG_NUDGE_KIND": "Their wishlist just changed. Refresh and try again."
   }

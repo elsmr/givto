@@ -55,7 +55,7 @@ export const redrawEdition = async (db: Collections, group: Group, edition: Edit
   const rules = await drawRules(db, group, edition);
   assertDrawable(ids, rules);
   const assignments = drawAssignments(ids, allRules(rules), randomInt);
-  const saved = await saveDraw(db, { ...edition, draw: edition.draw }, assignments, now, { redraw: true });
+  const saved = await saveDraw(db, { ...edition, draw: edition.draw }, assignments, now, { redraw: 'organizer' });
   if (!saved) throw new AppError('EDITION_CHANGED');
   await sendDrawNoticesNow(db, edition._id);
 };

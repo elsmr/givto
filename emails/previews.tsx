@@ -45,6 +45,8 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
   const santa = ['Olive', 'olive@example.com'];
   const wishlist = { url: 'https://givto.example/wishlist', by: formatLocalDate('2026-12-04', locale) };
   const gift = { url: `${url}#giftee`, giftDay };
+  // White Elephant and Conspiracy Santa emails (111): no Secret Santa, Santas or draw.
+  const notSecretSanta = ['Secret Santa', 'Santa knows', 'Santa weet', 'draw', 'loting', 'geloot'];
   const reminder = (name: string, parts: ReminderParts, forName?: string): EmailPreview => {
     const props = { ...base, ...parts, forName, unsubscribe: unsubscribe('reminders') };
     return { name, subject: reminderSubject(props), body: <ReminderEmail {...props} />, url: Object.values(parts)[0].url };
@@ -52,14 +54,20 @@ export const emailPreviews = (locale: Locale): EmailPreview[] => {
   return [
     { name: 'sign-in', subject: signInSubject(locale), body: <SignInEmail locale={locale} otp="482913" url="https://givto.example/auth/link#t=abc" />, url: 'https://givto.example/auth/link#t=abc' },
     { name: 'delete-account', subject: deleteAccountSubject(locale), body: <DeleteAccountEmail locale={locale} code="771204" /> },
-    { name: 'invite', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} organizer="Olive" />, url },
-    { name: 'join-reminder', subject: joinReminderSubject({ locale, group }), body: <JoinReminderEmail {...base} organizer="Olive" />, url },
+    { name: 'invite', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} organizer="Olive" kind="secretSanta" />, url },
+    { name: 'invite-white-elephant', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} organizer="Olive" kind="whiteElephant" />, url, mustNotContain: notSecretSanta },
+    { name: 'invite-conspiracy', subject: inviteSubject({ locale, organizer: 'Olive', group }), body: <InviteEmail {...base} organizer="Olive" kind="conspiracy" />, url, mustNotContain: notSecretSanta },
+    { name: 'join-reminder', subject: joinReminderSubject({ locale, group }), body: <JoinReminderEmail {...base} organizer="Olive" kind="secretSanta" />, url },
+    { name: 'join-reminder-white-elephant', subject: joinReminderSubject({ locale, group }), body: <JoinReminderEmail {...base} organizer="Olive" kind="whiteElephant" />, url, mustNotContain: notSecretSanta },
     { name: 'join-request', subject: joinRequestSubject({ locale, name: 'Bob', group }), body: <JoinRequestEmail {...base} name="Bob" />, url },
-    { name: 'joined', subject: joinedSubject(base), body: <JoinedEmail {...base} />, url },
+    { name: 'joined', subject: joinedSubject(base), body: <JoinedEmail {...base} kind="secretSanta" />, url },
+    { name: 'joined-white-elephant', subject: joinedSubject(base), body: <JoinedEmail {...base} kind="whiteElephant" />, url, mustNotContain: notSecretSanta },
+    { name: 'joined-conspiracy', subject: joinedSubject(base), body: <JoinedEmail {...base} kind="conspiracy" />, url, mustNotContain: notSecretSanta },
     { name: 'names-drawn', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} giftDay={giftDay} budget="€25" />, url, mustNotContain: ['Ann'] },
     { name: 'names-drawn-posted', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} giftDay={giftDay} addAddress />, url },
     { name: 'names-drawn-managed', subject: namesDrawnSubject(base), body: <NamesDrawnEmail {...base} forName="Kid" />, url },
     { name: 'giftee-changed', subject: gifteeChangedSubject(base), body: <GifteeChangedEmail {...base} />, url },
+    { name: 'giftee-changed-left', subject: gifteeChangedSubject(base), body: <GifteeChangedEmail {...base} redraw="leave" />, url },
     { name: 'organizer-handover', subject: organizerHandoverSubject(base), body: <OrganizerHandoverEmail {...base} />, url },
     { name: 'psst-empty', subject: psstSubject(base), body: <PsstEmail {...base} kind="emptyWishlist" unsubscribe={unsubscribe('santaMessages')} />, url, mustNotContain: santa },
     { name: 'psst-details', subject: psstSubject(base), body: <PsstEmail {...base} kind="moreDetails" forName="Kid" unsubscribe={unsubscribe('santaMessages')} />, url, mustNotContain: santa },

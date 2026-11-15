@@ -1,7 +1,7 @@
 import { randomInt } from 'node:crypto';
 import { drawAssignments, findStuckGivers } from '../../draw';
 import { slotIn, takeOut } from '../../draw-patch';
-import type { Assignments, Edition } from '../../schema/edition';
+import type { Assignments, Draw, Edition } from '../../schema/edition';
 import { MIN_PARTICIPANTS, type Group } from '../../schema/group';
 import type { Collections } from '../db';
 import { sendDrawNoticesNow } from '../jobs/draw-notices';
@@ -10,7 +10,7 @@ import { saveDraw } from './save';
 
 const ATTEMPTS = 5;
 
-type Change = { next: Assignments; redraw: boolean } | 'skip';
+type Change = { next: Assignments; redraw?: Draw['redrawCause'] } | 'skip';
 type Plan = (group: Group, edition: Edition, assignments: Assignments) => Promise<Change>;
 
 /**
@@ -53,24 +53,25 @@ export const slotInLateJoiner = (db: Collections, groupId: string, editionId: st
     if (memberId in assignments || !drawParticipantIds(group, edition).includes(memberId)) return 'skip';
     const rules = allRules(await drawRules(db, group, edition));
     const next = slotIn(assignments, memberId, rules, randomInt, await startedSantas(db, edition._id));
-    return next ? { next, redraw: false } : 'skip';
+    return next ? { next } : 'skip';
   });
 
 /**
  * Someone leaves or is removed after the draw (48): A→leaver→B becomes A→B, else one swap, else a re-draw of
  * everyone left (105: the remove dialog warns, `removalEffect`). When no draw works without them, `refuse` throws
- * the draw's error (the organizer's Remove); otherwise they stay in the draw and the organizer sees it.
+ * the draw's error (the organizer's Remove); otherwise they stay in the draw and the organizer sees it. A re-draw is
+ * the organizer's with `refuse`, else someone leaving's (left, declined, deleted their account).
  */
 export const takeOutOfDraw = (db: Collections, groupId: string, editionId: string, memberId: string, { refuse = false } = {}) =>
   patchDraw(db, groupId, editionId, async (group, edition, assignments) => {
     if (!(memberId in assignments)) return 'skip';
     const rules = await drawRules(db, group, edition);
     const patched = takeOut(assignments, memberId, allRules(rules), randomInt);
-    if (patched) return { next: patched, redraw: false };
+    if (patched) return { next: patched };
     const rest = drawParticipantIds(group, edition).filter((id) => id !== memberId);
     const stuck = rest.length < MIN_PARTICIPANTS || Boolean(findStuckGivers(rest, allRules(rules)));
     if (stuck && refuse) assertDrawable(rest, rules);
-    return stuck ? 'skip' : { next: drawAssignments(rest, allRules(rules), randomInt), redraw: true };
+    return stuck ? 'skip' : { next: drawAssignments(rest, allRules(rules), randomInt), redraw: refuse ? 'organizer' : 'leave' };
   });
 
 /** What taking this member out does to the names drawn: nothing (not in the draw), a patch, or a re-draw for everyone. */

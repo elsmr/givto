@@ -9,7 +9,7 @@
   },
   "past": "Earlier",
   "organizer": "You organize this",
-  "no-edition": "No Secret Santa yet",
+  "no-edition": "No edition yet",
   "archived": "Archived",
   "gift-day": {
     "past": "Gift day was <date></date>",
@@ -38,10 +38,10 @@
       "text": "Everyone's in: ready to lock in"
     },
     "draft": {
-      "text": "Your next Secret Santa isn't sent yet"
+      "text": "Your next edition isn't sent yet"
     },
     "noWishes": {
-      "text": "Your Santa sees an empty wishlist: add a few wishes"
+      "text": "Whoever shops for you sees an empty wishlist: add a few wishes"
     },
     "markReceived": {
       "text": "Tick off the gifts you got"

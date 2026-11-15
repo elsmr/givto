@@ -5,7 +5,7 @@ import { newId } from '../db';
 import { sendNotice } from '../mail/notice';
 import { memberRecipient } from '../mail/recipients';
 import { inviteUrl } from '../mail/urls';
-import { hashToken, ownerOf, randomToken } from '../membership';
+import { currentEdition, hashToken, ownerOf, randomToken } from '../membership';
 import { removeMember } from '../remove-member';
 import { runEach } from './run-each';
 
@@ -35,6 +35,7 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
     if (!group || !member || !organizer || !to) return 'skipped';
     const key = `reminder:join:${group._id}:${member.id}`;
     if (await db.sentNotifications.countDocuments({ _id: key }, { limit: 1 })) return 'done';
+    const kind = (await currentEdition(db, group._id))?.kind ?? 'secretSanta';
     const token = randomToken();
     const reminderInvite = { ...invite, _id: newId(), tokenHash: hashToken(token), createdAt: now };
     await db.invites.insertOne(reminderInvite);
@@ -45,7 +46,7 @@ export const sendJoinReminders = async (db: Collections, now: Date) => {
       groupId: group._id,
       memberId: member.id,
       render: () => {
-        const props = { locale: to.locale, group: group.name, organizer: organizer.name, url: inviteUrl(group.slug, token) };
+        const props = { locale: to.locale, group: group.name, organizer: organizer.name, kind, url: inviteUrl(group.slug, token) };
         return { subject: joinReminderSubject(props), body: JoinReminderEmail(props) };
       },
     }).catch(async (error: unknown) => {

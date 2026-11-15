@@ -25,17 +25,17 @@
   },
   "requested": {
     "title": "Almost there!",
-    "description": "{organizer} still has to let you in. We'll show the Secret Santa in your list as soon as they do.",
+    "description": "{organizer} still has to let you in. We'll show the group in your list as soon as they do.",
     "my-secret-santas": "Go to my groups"
   },
   "details": {
     "name": "Your name",
-    "name-help": "Everyone in the Secret Santa sees this name.",
+    "name-help": "Everyone in the group sees this name.",
     "email": "Your email",
     "email-help": "We'll send you a code to check it's you.",
     "signed-in": "You're joining as {email}.",
     "join": "Join",
-    "send-code": "Send me a code"
+    "send-code": "Email me a code"
   },
   "code": {
     "errors": {
@@ -48,20 +48,20 @@
     }
   },
   "errors": {
-    "GROUP_FULL": "This Secret Santa is full. Ask the organizer to make room.",
+    "GROUP_FULL": "This group is full. Ask the organizer to make room.",
     "JOIN_LINK_INVALID": "This link doesn't work anymore. Ask the organizer for the new one.",
     "RATE_LIMITED": "That's a lot of tries. Wait a bit and try again.",
     "INVALID_INPUT": "Something doesn't look right. Check your name and try again.",
     "INVITE_INVALID": "This invite was already used or has expired.",
     "INVITE_EMAIL_MISMATCH": "This invite is for another email address.",
     "NAME_TAKEN": "There's already someone called {name} here. Add an initial?",
-    "ALREADY_MEMBER": "Your account already belongs to someone else in this Secret Santa. Ask the organizer for a new invite.",
+    "ALREADY_MEMBER": "Your account already belongs to someone else in this group. Ask the organizer for a new invite.",
     "INTERNAL": "Something went wrong on our side. Try again in a moment."
   },
   "invite": {
     "for": "This invite is for {email}.",
     "other-account": "This invite is for {email}, but you're signed in as {signedInEmail}. Sign out to continue.",
-    "send-code": "Send me a code",
+    "send-code": "Email me a code",
     "sign-out": "Sign out",
     "decline": "No thanks",
     "declined-title": "No problem!",

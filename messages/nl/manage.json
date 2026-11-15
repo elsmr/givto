@@ -8,7 +8,7 @@
     "points": {
       "date": "Pakjesdag is vandaag, {today}.",
       "order": "De uitpakvolgorde wordt geschud, want dat heeft nog niemand gedaan.",
-      "open": "Geclaimd!, tips en vragen blijven open tot het eind van de dag. Daarna is het voorbij.",
+      "open": "{kind, select, secretSanta {Geclaimd!, tips en vragen blijven open tot het eind van de dag.} conspiracy {De prikborden blijven open tot het eind van de dag.} other {Pakjesdag duurt tot het eind van de dag.}} Daarna is het voorbij.",
       "secret": "{santas, select, revealed {Iedereen ziet wie wiens Santa was: op het einde van de presentatieweergave, of als pakjesdag voorbij is.} turns {Voor wie iedereen kocht, blijft geheim, ook na pakjesdag, behalve de Santa's die de presentatie tijdens de beurten toont.} other {Voor wie iedereen kocht, blijft geheim, ook na pakjesdag.}}"
     },
     "confirm": "Pakjesdag starten",
@@ -17,9 +17,9 @@
   "finishGiftDay": {
     "item": "Pakjesdag afsluiten",
     "title": "Pakjesdag nu afsluiten?",
-    "description": "Deze Secret Santa is voor iedereen voorbij, zonder op morgen te wachten.",
+    "description": "Pakjesdag is voor iedereen voorbij, zonder op morgen te wachten.",
     "points": {
-      "closed": "Geclaimd!, tips, vragen en de instellingen gaan dicht.",
+      "closed": "{kind, select, secretSanta {Geclaimd!, tips, vragen en de instellingen gaan dicht.} conspiracy {De prikborden en de instellingen gaan dicht.} other {De instellingen gaan dicht.}}",
       "received": "Iedereen kan de gekregen wensen afvinken.",
       "secret": "{santas, select, revealed {Iedereen ziet wie wiens Santa was.} turns {Voor wie iedereen kocht, blijft geheim, behalve de Santa's die tijdens de beurten getoond zijn.} other {Voor wie iedereen kocht, blijft geheim.}}",
       "next": "Je kunt een nieuwe editie starten.",
@@ -32,7 +32,7 @@
     "item": "Terug naar shoppen",
     "underway": "Niet meer als er iets is uitgepakt of onthuld",
     "title": "Terug naar shoppen?",
-    "description": "Pakjesdag stopt: iedereen gaat weer shoppen voor de eigen persoon, tot de nieuwe pakjesdag.",
+    "description": "Pakjesdag stopt: iedereen gaat weer shoppen, tot de nieuwe pakjesdag.",
     "points": {
       "date": "Pakjesdag verschuift naar de datum die je hieronder kiest. Herinneringen volgen die datum.",
       "order": "De uitpakvolgorde blijft een verrassing; het uitpakken begint opnieuw.",
@@ -48,7 +48,7 @@
     "title": "Pakjesdag heropenen voor vandaag?",
     "description": "Om iets recht te zetten: het is weer pakjesdag tot het eind van vandaag, {today}. Daarna is het weer voorbij.",
     "points": {
-      "open": "Geclaimd!, tips, vragen, de uitpakvolgorde en de instellingen gaan weer open.",
+      "open": "{kind, select, secretSanta {Geclaimd!, tips, vragen, de uitpakvolgorde en de instellingen gaan weer open.} conspiracy {De prikborden, de uitpakvolgorde en de instellingen gaan weer open.} other {De uitpakvolgorde en de instellingen gaan weer open.}}",
       "date": "De datum van pakjesdag wordt vandaag.",
       "secret": "Of de Santa's onthuld worden, blijft zoals het is."
     },
@@ -59,7 +59,7 @@
     "item": "Nieuwe editie starten",
     "title": "Nieuwe editie starten?",
     "description": "Een concept met dezelfde deelnemers en hetzelfde budget als {title}, zonder data. Er wordt niets verstuurd tot je hem opent.",
-    "finish": "{title} wordt eerst afgesloten, want er loopt er maar één tegelijk: pakjesdag is voorbij en Geclaimd!, tips, vragen en de instellingen gaan dicht.",
+    "finish": "{title} wordt eerst afgesloten, want er loopt er maar één tegelijk: pakjesdag is voorbij en {kind, select, secretSanta {Geclaimd!, tips, vragen en de instellingen gaan dicht.} conspiracy {de prikborden en de instellingen gaan dicht.} other {de instellingen gaan dicht.}}",
     "name": "Naam",
     "confirm": "Nieuwe editie starten"
   },
@@ -70,7 +70,7 @@
     "DATE_IN_PAST": "Kies een dag na vandaag.",
     "EDITION_CLOSED": "Alleen de nieuwste editie kan weer open.",
     "EDITION_CHANGED": "Iemand heeft deze editie net aangepast. Herlaad de pagina en probeer het opnieuw.",
-    "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is.",
+    "EDITION_IN_PROGRESS": "Er is al een editie waarvoor nog niet geloot is of die nog niet vastgelegd is.",
     "INTERNAL": "Er ging bij ons iets mis. Probeer het zo nog eens."
   }
 }

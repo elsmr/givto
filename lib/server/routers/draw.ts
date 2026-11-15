@@ -1,5 +1,5 @@
 import { santaAndGiftee } from '../draw/rules';
-import { gifteeRedrawn } from '../draw/save';
+import { gifteeRedraw } from '../draw/save';
 import { drawEdition, lockInEdition, redrawEdition } from '../draw/run';
 import { editionProcedure, organizerEditionProcedure, router } from '../trpc';
 
@@ -25,7 +25,7 @@ export const drawRouter = router({
 
   /**
    * My giftee in this edition (the reveal card), or null before the draw / when I'm not in it. `redrawn`: my giftee
-   * changed with a re-draw, not because someone joined or left.
+   * changed with the organizer's re-draw, not because someone joined or left.
    */
   mine: editionProcedure.query(({ ctx }) => {
     const me = ctx.edition.participants.find((p) => p.memberId === ctx.member.id);
@@ -37,7 +37,7 @@ export const drawRouter = router({
       inEdition: Boolean(me?.participates),
       giftee: giftee ? { name: giftee.name } : null,
       changedAt,
-      redrawn: changedAt !== null && gifteeRedrawn(ctx.edition, ctx.member.id),
+      redrawn: changedAt !== null && gifteeRedraw(ctx.edition, ctx.member.id) === 'organizer',
     };
   }),
 

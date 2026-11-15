@@ -9,7 +9,7 @@
   },
   "past": "Eerder",
   "organizer": "Jij bent de organisator",
-  "no-edition": "Nog geen Secret Santa",
+  "no-edition": "Nog geen editie",
   "archived": "Gearchiveerd",
   "gift-day": {
     "past": "Pakjesdag was op <date></date>",
@@ -38,10 +38,10 @@
       "text": "Iedereen is er: klaar om vast te leggen"
     },
     "draft": {
-      "text": "Je volgende Secret Santa is nog niet verstuurd"
+      "text": "Je volgende editie is nog niet verstuurd"
     },
     "noWishes": {
-      "text": "Je Santa ziet een leeg verlanglijstje: voeg een paar wensen toe"
+      "text": "Wie voor jou shopt, ziet een leeg verlanglijstje: voeg een paar wensen toe"
     },
     "markReceived": {
       "text": "Vink de cadeaus af die je kreeg"

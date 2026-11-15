@@ -2,7 +2,7 @@
   "page-title": "Start een Secret Santa",
   "step": "Stap {step} van {total}",
   "titles": {
-    "details": "Start een Secret Santa",
+    "details": "{kind, select, whiteElephant {Start een White Elephant} conspiracy {Start een Conspiracy Santa} other {Start een Secret Santa}}",
     "organizer": "En wie ben jij?",
     "code": "Check je e-mail"
   },
@@ -10,7 +10,7 @@
   "create-white-elephant": "White Elephant aanmaken",
   "create-conspiracy": "Conspiracy Santa aanmaken",
   "errors": {
-    "RATE_LIMITED": "Dat zijn veel Secret Santa's voor één dag. Probeer het morgen opnieuw.",
+    "RATE_LIMITED": "Dat zijn veel groepen voor één dag. Probeer het morgen opnieuw.",
     "DATE_IN_PAST": "Pakjesdag kan niet in het verleden liggen.",
     "INVALID_INPUT": "Er klopt iets niet in het formulier. Kijk de velden na en probeer opnieuw.",
     "UNAUTHENTICATED": "Je bent niet meer ingelogd. Stuur jezelf een nieuwe code.",
@@ -68,17 +68,17 @@
   },
   "organizer": {
     "name": "Je naam",
-    "name-help": "Iedereen in de Secret Santa ziet deze naam.",
+    "name-help": "Iedereen in de groep ziet deze naam. Heb je al een account? Dan gebruiken we die naam.",
     "email": "Je e-mailadres",
     "email-help": "We sturen je een code om te checken dat jij het bent. Er gaat niets naar iemand anders.",
     "signed-in": "Je bent ingelogd als {email}.",
-    "send-code": "Stuur me een code",
+    "send-code": "Mail me een code",
     "back": "Terug"
   },
   "share": {
     "title": "{group} staat klaar!",
     "description": "Deel de link met je familie of vrienden, of nodig ze uit per e-mail.",
     "later": "Je vindt de link ook op de groepspagina.",
-    "go-to-group": "Naar je Secret Santa"
+    "go-to-group": "Naar je groep"
   }
 }

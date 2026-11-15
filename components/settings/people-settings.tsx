@@ -82,6 +82,7 @@ const PeopleList = ({ group, edition }: { group: GroupData; edition: GroupEditio
             isMe={person.id === group.me.memberId}
             isOwner={group.me.isOwner}
             editionStatus={edition.status}
+            editionKind={edition.kind}
             members={group.members}
             ticked={
               beforeDraw && (person.status === 'joined' || person.status === 'invited')

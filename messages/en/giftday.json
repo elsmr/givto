@@ -106,7 +106,7 @@
     "steal-label": "Steal gift {no} from {name}",
     "swap": "Swap",
     "swap-label": "Swap for gift {no} from {name}",
-    "keep": "Keep their gift",
+    "keep": "Keep yours",
     "now-robbed": "Stolen from, so they go again",
     "now-final": "Final steal: swap or keep"
   },

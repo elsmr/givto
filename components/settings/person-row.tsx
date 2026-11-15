@@ -19,7 +19,7 @@ import {
 import { Field, FieldLabel } from '@/components/ui/field';
 import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
-import type { EditionStatus } from '@/lib/schema/edition';
+import type { EditionKind, EditionStatus } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { RemovePersonDialog } from './remove-person-dialog';
@@ -35,12 +35,13 @@ type PersonRowProps = {
   /** Before the draw: tick in or out of this edition. */
   ticked?: { checked: boolean; busy: boolean; onChange: (checked: boolean) => void };
   editionStatus: EditionStatus;
+  editionKind: EditionKind;
   /** Everyone in the group, to name who'd be stuck when a removal is refused. */
   members: GroupMember[];
 };
 
 /** One person in the settings: status, email, in this edition, resend invite, roles, remove (27). */
-export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, ticked, editionStatus, members }: PersonRowProps) => {
+export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, ticked, editionStatus, editionKind, members }: PersonRowProps) => {
   const t = useTranslations('settings.people');
   const tErrors = useTranslations('settings.errors');
   const tGroup = useTranslations('group.people');
@@ -112,7 +113,7 @@ export const PersonRow = ({ groupSlug, editionTitle, person, isMe, isOwner, tick
           </Button>
         )}
         {canOrganize && person.role === 'organizer' && <MakeOwnerDialog groupSlug={groupSlug} person={person} />}
-        {removable && <RemovePersonDialog groupSlug={groupSlug} person={person} editionStatus={editionStatus} members={members} />}
+        {removable && <RemovePersonDialog groupSlug={groupSlug} person={person} editionStatus={editionStatus} editionKind={editionKind} members={members} />}
       </div>
     </li>
   );

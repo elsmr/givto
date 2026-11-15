@@ -21,7 +21,7 @@ const createSecretSanta = async (page: Page, name: string, email: string, secret
   await expect(page.getByText('Step 2 of 3')).toBeVisible();
   await page.getByLabel('Your name').fill('Ann');
   await page.getByLabel('Your email').fill(email);
-  await page.getByRole('button', { name: 'Send me a code' }).click();
+  await page.getByRole('button', { name: 'Email me a code' }).click();
   await expect(page.getByText('Step 3 of 3')).toBeVisible();
   await enterCode(page, email, secrets);
   await page.getByRole('button', { name: 'Create Secret Santa' }).click();
@@ -37,7 +37,7 @@ const joinWithLink = async (page: Page, link: string, name: string, email: strin
   await page.goto(link);
   await expect(page.getByRole('heading', { level: 1, name: "You're invited!" })).toBeVisible();
   await page.getByLabel('Your email').fill(email);
-  await page.getByRole('button', { name: 'Send me a code' }).click();
+  await page.getByRole('button', { name: 'Email me a code' }).click();
   await enterCode(page, email, secrets);
   await page.getByRole('button', { name: 'Join' }).click();
   await page.getByLabel('Your name').fill(name);
@@ -66,7 +66,7 @@ test('create, copy the link, and a second person joins through it', async ({ pag
   });
 
   await test.step('the organizer sees Bob among the people', async () => {
-    await page.getByRole('link', { name: 'Go to your Secret Santa' }).click();
+    await page.getByRole('link', { name: 'Go to your group' }).click();
     await page.getByRole('tab', { name: 'People' }).click();
     await expect(page.getByRole('tabpanel', { name: 'People' }).getByText('Bob', { exact: true })).toBeVisible();
   });
@@ -138,7 +138,7 @@ test('signed in with a name, the details step creates; invite by email with tags
 
 test('with approval on, a joiner waits until the organizer lets them in', async ({ page, newPage, secrets }) => {
   const link = await createSecretSanta(page, 'Office', uniqueEmail('ann'), secrets);
-  await page.getByRole('link', { name: 'Go to your Secret Santa' }).click();
+  await page.getByRole('link', { name: 'Go to your group' }).click();
   await page.getByRole('link', { name: 'Settings', exact: true }).click();
   await page.getByText('Link settings').click();
   const approval = page.getByRole('switch', { name: 'I let people in myself' });

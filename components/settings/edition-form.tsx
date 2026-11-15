@@ -12,7 +12,7 @@ import { toast } from '@/components/ui/toast';
 import { useTRPC } from '@/lib/client/trpc';
 import { todayIn } from '@/lib/local-date';
 import { HttpUrl } from '@/lib/schema/common';
-import { drawsNames, EditionTitle, isBeforeDraw } from '@/lib/schema/edition';
+import { drawsNames, EditionTitle, isBeforeDraw, titleForKind } from '@/lib/schema/edition';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
@@ -21,8 +21,11 @@ import { draftFromEdition, toEditionInput, type EditionDraft } from './edition-d
 import { EditionDatesFields } from './edition-dates-fields';
 import { settingsErrorKey } from './settings-error';
 
-/** Edition title, kind until the draw (88), gift day, exchange and the call link by post (87), dates, budget, notes (28). A white elephant has no exchange or dates but gift day. */
-export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition: GroupEdition }) => {
+/**
+ * Edition title, kind until the draw (88), gift day, exchange and the call link by post (87), dates, budget, notes (28). A
+ * white elephant has no exchange or dates but gift day. `takenTitles`: the group's other editions, to rename by kind.
+ */
+export const EditionForm = ({ groupSlug, edition, takenTitles }: { groupSlug: string; edition: GroupEdition; takenTitles: string[] }) => {
   const t = useTranslations('settings');
   const tIssues = useTranslations('group.issues');
   const trpc = useTRPC();
@@ -77,7 +80,9 @@ export const EditionForm = ({ groupSlug, edition }: { groupSlug: string; edition
           />
           {titleIssue && <FieldError>{tIssues(titleIssue)}</FieldError>}
         </Field>
-        {isBeforeDraw(edition) && <KindField kind={draft.kind} onChange={(kind) => update({ kind })} />}
+        {isBeforeDraw(edition) && (
+          <KindField kind={draft.kind} onChange={(kind) => update({ kind, title: titleForKind(draft.title, draft.kind, kind, takenTitles) })} />
+        )}
         <GiftDayFields draft={draft} today={todayIn(edition.timeZone)} onChange={update} />
         {drawsNames(draft) && <ExchangeField draft={draft} onChange={update} />}
         {drawsNames(draft) && draft.exchangeMode !== 'inPerson' && draft.giftDate && (

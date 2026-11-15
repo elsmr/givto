@@ -2,7 +2,7 @@
   "layout": {
     "logo-alt": "Givto",
     "for": "Voor {name}",
-    "why": "Je krijgt deze e-mail omdat je meedoet aan een Secret Santa op Givto.",
+    "why": "Je krijgt deze e-mail omdat je in een groep op Givto zit.",
     "manage": "E-mailinstellingen",
     "unsubscribe": "Geen {category} meer",
     "category": {
@@ -33,20 +33,20 @@
   },
   "invite": {
     "subject": "{organizer} nodigt je uit voor {group} op Givto",
-    "preheader": "Doe mee met de Secret Santa: zet je verlanglijstje klaar en wacht op de loting.",
+    "preheader": "{kind, select, whiteElephant {Doe mee met de White Elephant: iedereen brengt één cadeau mee en kiest of steelt er een op pakjesdag.} conspiracy {Doe mee met de Conspiracy Santa: bedenk samen één cadeau voor elke persoon, achter diens rug.} other {Doe mee met de Secret Santa: zet je verlanglijstje klaar en wacht op de loting.}}",
     "title": "Je bent uitgenodigd!",
     "greeting": "Hoi!",
-    "body": "{organizer} nodigt je uit voor de Secret Santa “{group}”.",
+    "body": "{organizer} nodigt je uit voor de {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}} “{group}”.",
     "button": "Doe mee",
     "expiry": "Deze link is alleen voor jou en werkt één keer, 7 dagen lang.",
     "ignore": "Geen zin? Via dezelfde link kun je afzeggen, of je negeert deze e-mail."
   },
   "join-reminder": {
     "subject": "Doe je nog mee met {group}?",
-    "preheader": "{organizer} wacht op je in de Secret Santa.",
+    "preheader": "{organizer} wacht op je in de {kind, select, whiteElephant {White Elephant} conspiracy {Conspiracy Santa} other {Secret Santa}}.",
     "title": "Doe je nog mee?",
     "greeting": "Hoi!",
-    "body": "{organizer} nodigde je uit voor de Secret Santa “{group}”, maar je doet nog niet mee. Doe mee voordat er geloot wordt.",
+    "body": "{kind, select, whiteElephant {{organizer} nodigde je uit voor de White Elephant “{group}”, maar je doet nog niet mee.} conspiracy {{organizer} nodigde je uit voor de Conspiracy Santa “{group}”, maar je doet nog niet mee.} other {{organizer} nodigde je uit voor de Secret Santa “{group}”, maar je doet nog niet mee. Doe mee voordat er geloot wordt.}}",
     "button": "Doe mee",
     "expiry": "Deze link is alleen voor jou en werkt één keer, zolang je uitnodiging geldig is.",
     "ignore": "Geen zin? Via dezelfde link kun je afzeggen. We herinneren je er niet nog eens aan."
@@ -60,9 +60,9 @@
   },
   "joined": {
     "subject": "Je doet mee: {group}",
-    "preheader": "De organisator heeft je toegelaten. Tijd voor je verlanglijstje.",
+    "preheader": "{kind, select, whiteElephant {De organisator heeft je toegelaten. Tot op pakjesdag!} other {De organisator heeft je toegelaten. Tijd voor je verlanglijstje.}}",
     "title": "Je doet mee!",
-    "body": "De organisator heeft je toegelaten tot “{group}”. Zet een paar wensen op je verlanglijstje, dan weet je Santa wat je wilt.",
+    "body": "{kind, select, whiteElephant {De organisator heeft je toegelaten tot “{group}”. Neem één ingepakt cadeau mee naar pakjesdag.} conspiracy {De organisator heeft je toegelaten tot “{group}”. Zet een paar wensen op je verlanglijstje, dan weten de anderen wat je wilt.} other {De organisator heeft je toegelaten tot “{group}”. Zet een paar wensen op je verlanglijstje, dan weet je Santa wat je wilt.}}",
     "button": "Naar de groep"
   },
   "join-digest": {
@@ -89,13 +89,14 @@
     "title": "Je persoon is veranderd",
     "body": "Na de loting kwam er iemand bij of ging er iemand weg in “{group}”, dus je koopt nu voor iemand anders. Voor de rest verandert er niets.",
     "body-redrawn": "De organisator heeft opnieuw geloot in “{group}”, dus je koopt nu voor iemand anders.",
+    "body-left": "Er ging iemand weg uit “{group}”, dus er is opnieuw geloot en je koopt nu voor iemand anders.",
     "button": "Bekijk wie ik nu heb"
   },
   "organizer-handover": {
     "subject": "Jij bent nu de eigenaar van {group}",
     "preheader": "De vorige eigenaar heeft het account verwijderd.",
     "title": "Jij bent nu de eigenaar",
-    "body": "De eigenaar van “{group}” heeft het Givto-account verwijderd, dus de groep gaat naar jou. Je kunt nu mensen uitnodigen, de datums aanpassen, loten en kiezen wie de groep mee organiseert.",
+    "body": "De eigenaar van “{group}” heeft het Givto-account verwijderd, dus de groep gaat naar jou. Je kunt nu mensen uitnodigen, de datums aanpassen en kiezen wie de groep mee organiseert.",
     "button": "Open de groep"
   },
   "psst": {
@@ -194,8 +195,8 @@
     "subject": "{group} wordt op {date} verwijderd",
     "preheader": "Er is lang niets gebeurd in deze groep.",
     "title": "We verwijderen deze groep binnenkort",
-    "body": "Er is al {months, number} maanden niets gebeurd in “{group}”. Om zo weinig mogelijk gegevens te bewaren, verwijderen we de groep en zijn Secret Santa's op {date}.",
-    "keep": "Wil je hem houden? Begin vóór die datum een nieuwe Secret Santa in de groep.",
+    "body": "Er is al {months, number} maanden niets gebeurd in “{group}”. Om zo weinig mogelijk gegevens te bewaren, verwijderen we de groep en zijn edities op {date}.",
+    "keep": "Wil je hem houden? Start vóór die datum een nieuwe editie in de groep.",
     "button": "Open de groep"
   }
 }

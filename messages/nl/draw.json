@@ -87,7 +87,7 @@
     "outlook": "Outlook.com",
     "gift-day": "{group}: pakjesdag",
     "post-by": "{group}: cadeau op de post doen",
-    "description": "Je Secret Santa op Givto: {url}"
+    "description": "Je groep op Givto: {url}"
   },
   "gaps": {
     "not-in": "Niet in de loting: {names}. Ze kwamen erbij na de loting en pasten er niet tussen zonder de regels te breken of iemand een ander persoon te geven die al met een cadeau bezig is. Loot opnieuw om ze mee te laten doen, of laat het zo: dan doen ze deze keer niet mee.",

@@ -21,7 +21,7 @@
     "kind-wish": "A thing",
     "kind-surpriseMe": "Surprise me",
     "kind-donation": "Donate instead",
-    "kind-surpriseMe-hint": "Describe what you like; your Santa picks something.",
+    "kind-surpriseMe-hint": "Describe what you like; whoever shops for you picks something.",
     "kind-donation-hint": "No gift, a donation to a cause. Add a link to it.",
     "description": "Notes",
     "description-placeholder": "Size, colour, or a link to a shop",
@@ -74,12 +74,12 @@
     "got": "Received"
   },
   "edition": {
-    "intro": "Everyone's wishlist as it was when this Secret Santa ended.",
+    "intro": "Everyone's wishlist as it was when this edition ended.",
     "mine": "My wishlist",
     "title": "{name}'s wishlist",
     "empty": "No wishes.",
-    "not-saved": "This Secret Santa ended before Givto kept wishlists, so there's nothing to look back on here.",
-    "not-in": "Only people who were in this Secret Santa see its wishlists."
+    "not-saved": "This edition ended before Givto kept wishlists, so there's nothing to look back on here.",
+    "not-in": "Only people who were in this edition see its wishlists."
   },
   "group": {
     "title": "My wishlist in this group",
