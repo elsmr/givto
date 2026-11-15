@@ -2,8 +2,9 @@ import { ChevronDown } from 'lucide-react';
 import { localePath } from '@/components/shell/public-pages';
 import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { HomeSection, HomeSectionTitle } from './home-section';
 
-const questions = ['account', 'secret', 'apart', 'cost', 'data'] as const;
+const questions = ['account', 'secret', 'apart', 'late', 'far', 'cost', 'data'] as const;
 
 // Native <details>: works before hydration and without JS.
 export const HomeFaq = () => {
@@ -11,11 +12,9 @@ export const HomeFaq = () => {
   const locale = useLocale();
 
   return (
-    <section aria-labelledby="faq-title" className="flex flex-col gap-8">
-      <h2 id="faq-title" className="text-3xl font-extrabold sm:text-4xl">
-        {t('title')}
-      </h2>
-      <div className="flex flex-col gap-4">
+    <HomeSection aria-labelledby="faq-title">
+      <HomeSectionTitle id="faq-title" title={t('title')} />
+      <div className="flex max-w-3xl flex-col gap-4">
         {questions.map((question) => (
           <details key={question} className="group bg-surface bordered shadow-md">
             <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-lg font-semibold hover:bg-page group-open:border-b-2 group-open:border-dashed group-open:border-outline [&::-webkit-details-marker]:hidden">
@@ -33,6 +32,6 @@ export const HomeFaq = () => {
           </details>
         ))}
       </div>
-    </section>
+    </HomeSection>
   );
 };
