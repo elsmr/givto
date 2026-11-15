@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import type { ComponentProps } from 'react';
 
-const fills = { surface: 'bg-surface', yellow: 'bg-yellow', mint: 'bg-mint', 'primary-muted': 'bg-primary-muted' } as const;
+const fills = { surface: 'bg-surface', yellow: 'bg-yellow', mint: 'bg-mint' } as const;
 
 /** A home page band: edge to edge, optionally filled and ruled, with the content at page width. */
 export const HomeSection = ({

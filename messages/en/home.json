@@ -115,34 +115,6 @@
       "description": "English or Dutch, light or dark, and no app to install."
     }
   },
-  "why": {
-    "title": "No catch",
-    "lead": "Givto is free and open source. It doesn't make money from your gifts or your data.",
-    "ads": {
-      "title": "No ads",
-      "description": "No sponsored gifts, and no affiliate tags on your shop links."
-    },
-    "passwords": {
-      "title": "No passwords",
-      "description": "Sign in with a code from your email or a passkey."
-    },
-    "secret": {
-      "title": "Secret stays secret",
-      "description": "Not even the organizer can see who drew whom."
-    },
-    "data": {
-      "title": "Only what's needed",
-      "description": "We keep only what your Secret Santa needs and delete it when it's no longer needed. Read the <privacy>privacy page</privacy>."
-    },
-    "open": {
-      "title": "Open source",
-      "description": "Every line of Givto is on <github>GitHub</github>."
-    },
-    "app": {
-      "title": "No app",
-      "description": "It works in any browser, on your phone or your laptop."
-    }
-  },
   "faq": {
     "title": "Questions",
     "account": {

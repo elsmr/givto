@@ -115,34 +115,6 @@
       "description": "Nederlands of Engels, licht of donker, en geen app nodig."
     }
   },
-  "why": {
-    "title": "Geen addertje",
-    "lead": "Givto is gratis en open source. Het verdient niets aan je cadeaus of je gegevens.",
-    "ads": {
-      "title": "Geen advertenties",
-      "description": "Geen gesponsorde cadeaus en geen affiliatecodes in je winkellinks."
-    },
-    "passwords": {
-      "title": "Geen wachtwoorden",
-      "description": "Log in met een code uit je e-mail of met een passkey."
-    },
-    "secret": {
-      "title": "Geheim blijft geheim",
-      "description": "Zelfs de organisator ziet niet wie wie heeft getrokken."
-    },
-    "data": {
-      "title": "Alleen wat nodig is",
-      "description": "We bewaren alleen wat je Secret Santa nodig heeft en verwijderen het als het niet meer nodig is. Lees de <privacy>privacyverklaring</privacy>."
-    },
-    "open": {
-      "title": "Open source",
-      "description": "Elke regel van Givto staat op <github>GitHub</github>."
-    },
-    "app": {
-      "title": "Geen app",
-      "description": "Het werkt in elke browser, op je telefoon of je laptop."
-    }
-  },
   "faq": {
     "title": "Vragen",
     "account": {
