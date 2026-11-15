@@ -173,3 +173,24 @@ test('organizer: a new edition from the ⋯ menu, while shopping (renamed) and o
     await expect(page.getByRole('heading', { level: 2, name: `Secret Santa ${year}`, exact: true })).toBeVisible();
   });
 });
+
+test('White Elephant: start gift day now says it needs 3 people once someone left after locking in', async ({ page, signIn, signInPage }) => {
+  const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
+  const group = ok(
+    await ann.trpc.mutate('group.create', {
+      name: 'Two left', organizerName: 'Ann', timeZone: 'Europe/Brussels', giftDay: { date: '2099-12-24' }, exchangeMode: 'inPerson', kind: 'whiteElephant',
+    })
+  );
+  for (const [person, name] of [[bob, 'Bob'], [cee, 'Cee']] as const) {
+    ok(await person.trpc.mutate('join.accept', { groupSlug: group.slug, token: group.joinToken, name }));
+  }
+  ok(await ann.trpc.mutate('draw.lockIn', { groupSlug: group.slug, editionNumber: 1 }));
+  ok(await cee.trpc.mutate('membership.leave', { groupSlug: group.slug }));
+  await signInPage(page, ann);
+  await page.goto(`/g/${group.slug}`);
+  await page.getByRole('button', { name: 'More' }).click();
+  await page.getByRole('menuitem', { name: 'Start gift day now' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Start gift day now?' });
+  await expect(dialog.getByText('A White Elephant needs at least 3 people. Invite more first.')).toBeVisible();
+  await expect(dialog.getByRole('button', { name: 'Start gift day' })).toBeDisabled();
+});

@@ -15,13 +15,14 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
   const tSwap = useTranslations('giftday.swap');
   const labelId = useId();
   const { phase, spinStatus, busy, santaToShow } = actions;
-  // White elephant (89): the turn ends with an opened gift (or, at the final steal, keeping theirs); steals are on the table.
+  // White elephant (89): the turn ends with an opened gift; steals (and the final swaps) are on the table.
   const swapTurn = phase === 'turn' && actions.swap;
+  const finalSteal = swapTurn && swapTurn.final;
   const byHand = phase === 'turn' && oneByOne && !actions.counted;
   const toSpin = phase === 'spin' && spinStatus === 'idle';
   const toReveal = phase === 'reveal' && !actions.revealed;
   const nextLabel = swapTurn
-    ? tSwap(swapTurn.final ? 'keep' : 'open')
+    ? tSwap('open')
     : toSpin
       ? t('present.spin')
       : santaToShow
@@ -35,7 +36,8 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
               : t('present.next');
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 px-6 pb-6">
+    // Pinned to the bottom of the screen, also when a slide is taller than it.
+    <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-4 bg-page px-6 pt-2 pb-4">
       <Button variant="neutral" size="lg" disabled={phase === 'intro' || busy} onClick={actions.previous}>
         <ArrowLeft aria-hidden="true" />
         {t('present.previous')}
@@ -47,7 +49,7 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
           actions.next();
         }}
       >
-        {swapTurn && !swapTurn.final && (
+        {swapTurn && !finalSteal && (
           <Field className="w-56">
             <FieldLabel htmlFor={labelId}>{tSwap('label')}</FieldLabel>
             <Input
@@ -65,9 +67,15 @@ export const PresenterControls = ({ actions, oneByOne }: PresenterControlsProps)
             {t('present.last')}
           </Button>
         )}
-        {phase !== 'end' && (
+        {/* Not the form's submit: keeping is a choice, no key press makes it. */}
+        {finalSteal && (
+          <Button type="button" size="lg" disabled={busy} onClick={actions.keep}>
+            {tSwap('keep')}
+          </Button>
+        )}
+        {phase !== 'end' && !finalSteal && (
           <Button type="submit" size="lg" disabled={busy}>
-            {swapTurn && !swapTurn.final && <Gift aria-hidden="true" />}
+            {swapTurn && <Gift aria-hidden="true" />}
             {toSpin && <Dices aria-hidden="true" />}
             {toReveal && <Sparkles aria-hidden="true" />}
             {santaToShow && <VenetianMask aria-hidden="true" />}

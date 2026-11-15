@@ -80,7 +80,8 @@
     "last": "That was the last one",
     "gift-of": "Gift {current} of {total}",
     "gifts": "{count, plural, one {# gift} other {# gifts}}",
-    "champion": "{count, plural, one {Champion} other {Champions}}: {names}"
+    "champion": "{count, plural, one {Champion} other {Champions}}: {names}",
+    "changed": "Someone changed this just now. Here's where it is now."
   },
   "live": {
     "page-title": "Gift day live",
@@ -100,6 +101,7 @@
     "hint": "Open a wrapped gift or steal one that's open.",
     "hint-open": "Open a wrapped gift.",
     "hint-final": "Swap for any gift that isn't frozen, or keep yours.",
+    "hint-final-none": "Frozen gifts stay where they are: nothing to swap.",
     "label": "What's in it? (optional)",
     "open": "Opened a new gift",
     "steal": "Steal",

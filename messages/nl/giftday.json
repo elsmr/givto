@@ -80,7 +80,8 @@
     "last": "Dat was de laatste",
     "gift-of": "Cadeau {current} van {total}",
     "gifts": "{count, plural, one {# cadeau} other {# cadeaus}}",
-    "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}"
+    "champion": "{count, plural, one {Kampioen} other {Kampioenen}}: {names}",
+    "changed": "Iemand heeft dit net aangepast. Zo staat het er nu voor."
   },
   "live": {
     "page-title": "Pakjesdag live",
@@ -100,6 +101,7 @@
     "hint": "Pak een nieuw cadeau uit of steel er een dat al open is.",
     "hint-open": "Pak een nieuw cadeau uit.",
     "hint-final": "Ruil met een cadeau dat niet bevroren is, of hou het jouwe.",
+    "hint-final-none": "Bevroren cadeaus blijven waar ze zijn: er valt niets te ruilen.",
     "label": "Wat zit erin? (optioneel)",
     "open": "Nieuw cadeau uitgepakt",
     "steal": "Stelen",

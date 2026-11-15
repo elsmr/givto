@@ -21,7 +21,7 @@ export interface SwapState extends UnwrapState {
   wrapped: number;
   /** The current person was just stolen from: they go again, without a spin. */
   robbed: boolean;
-  /** The first player's final steal: swap with any gift that isn't frozen, or keep theirs. */
+  /** The first player's final steal: swap with any gift that isn't frozen (unless theirs is), or keep theirs. */
   final: boolean;
   /** Numbers of the gifts the current person may take. */
   stealable: number[];
@@ -53,7 +53,7 @@ const play = ({ gifts }: Table, move: SwapMove): Table => {
  * Classic rules (owner): each turn in `order` opens a wrapped gift or steals an opened one; whoever is stolen from goes
  * next (open or steal, but not straight back the gift just taken from them); a gift's third steal freezes it; the turn
  * moves on with every opened gift. Once all are open, the first player may swap theirs for any gift that isn't frozen
- * or keep it, and the game ends. Assumes the moves were legal (`canMove` at each step).
+ * or keep it, and the game ends; a frozen gift stays put, theirs too. Assumes the moves were legal (`canMove` at each step).
  * Turns go by who has moved, not by counting gifts: people can leave mid-swap (their gift stays on the table).
  */
 export const swapState = (order: string[], started: boolean, moves: SwapMove[]): SwapState => {
@@ -69,7 +69,8 @@ export const swapState = (order: string[], started: boolean, moves: SwapMove[]):
   const final = started && allOpen && !finished;
   const current = !started || finished ? null : final ? order[0] : (robbedId ?? waiting[0] ?? null);
   const justTaken = robbedId ? moves.at(-1)!.giftNo : null;
-  const stealable = current
+  const keepsFrozen = final && gifts.some((gift) => gift.holderId === current && gift.frozen);
+  const stealable = current && !keepsFrozen
     ? gifts.filter((gift) => !gift.frozen && gift.holderId !== current && gift.no !== justTaken).map((gift) => gift.no)
     : [];
   return {

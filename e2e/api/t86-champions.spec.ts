@@ -2,7 +2,7 @@
 // the guesses, go with the person on account deletion and are in the export; champions over three editions.
 import { newId } from '@/lib/server/db';
 import { expect, mailsTo, ok, runJob, test, type TestDb, type User } from '../fixtures';
-import { drawnGroup, editionOf } from './s6-helpers';
+import { drawnGroup, editionOf, presenterSaw } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
 
@@ -25,7 +25,7 @@ const play = async (at: Input, [, bob, cee, dan]: User[], [A, B, C, D]: string[]
 
 const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
-  return ok(await ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken }));
+  return ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(view.unwrapOrder!) }));
 };
 
 test('results at done: only what was out; outlive the guesses; champions; export; account deletion', async ({ signIn, db }) => {

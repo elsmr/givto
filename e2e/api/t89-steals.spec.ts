@@ -1,11 +1,11 @@
 // White elephant steals (89): the presenter's open / steal / final swap, the rules enforced by giftday.advance, the
 // table on phones.
 import { expect, ok, test, type User } from '../fixtures';
-import { code, drawnGroup } from './s6-helpers';
+import { code, drawnGroup, presenterSaw } from './s6-helpers';
 
 type Action = 'start' | 'spin' | 'open' | 'steal' | 'keep' | 'back' | 'more' | 'last';
 
-test('white elephant: open, steal, frozen gifts, no steal-back, final swap; refused when illegal or stale', async ({ signIn }) => {
+test('white elephant: open, steal, frozen gifts (also at the final steal), no steal-back; refused when illegal or stale', async ({ signIn }) => {
   const [ann, bob, cee, dan] = await Promise.all(['ann', 'bob', 'cee', 'dan'].map((name) => signIn(name)));
   const group = ok(
     await ann.trpc.mutate('group.create', {
@@ -26,7 +26,7 @@ test('white elephant: open, steal, frozen gifts, no steal-back, final swap; refu
   let view = ok(await ann.trpc.query('giftday.presenter', at));
   const [p0, p1, p2, p3] = view.unwrapOrder!.people.map((p) => p.memberId);
   const send = (action: Action, extra: { giftNo?: number; label?: string } = {}, by: User = ann) =>
-    by.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken, ...extra });
+    by.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(view.unwrapOrder!), ...extra });
   const advance = async (action: Action, extra?: { giftNo?: number; label?: string }) => (view = ok(await send(action, extra)));
   const up = () => view.unwrapOrder!.current?.memberId;
   const holders = () => Object.fromEntries(view.swap!.gifts.map((gift) => [gift.no, gift.holder.memberId]));
@@ -76,20 +76,21 @@ test('white elephant: open, steal, frozen gifts, no steal-back, final swap; refu
     await advance('open');
   });
 
-  await test.step('the first player gets the final steal; stale steps are refused; back undoes', async () => {
+  await test.step('the first player gets the final steal, but their frozen gift stays put; stale steps are refused; back undoes', async () => {
     expect(up()).toBe(p0);
-    expect(view.swap).toMatchObject({ final: true, wrapped: 0, stealable: [2, 3, 4] });
+    expect(view.swap).toMatchObject({ final: true, wrapped: 0, stealable: [] });
     expect(view.unwrapOrder!.currentShown).toBe(true);
     expect(code(await send('open'))).toBe('FORBIDDEN');
     expect(code(await send('steal', { giftNo: 1 }))).toBe('FORBIDDEN');
-    expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'steal', giftNo: 2, turnsTaken: 3 }))).toBe('EDITION_CHANGED');
+    expect(code(await send('steal', { giftNo: 4 }))).toBe('FORBIDDEN');
+    expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'keep', turnsTaken: 3, currentMemberId: p0 }))).toBe('EDITION_CHANGED');
     await advance('back');
     expect(up()).toBe(p3);
     expect(view.swap!.wrapped).toBe(1);
     await advance('open');
-    await advance('steal', { giftNo: 4 });
+    await advance('keep');
     expect(view.unwrapOrder!.finished).toBe(true);
-    expect(holders()).toEqual({ 1: p3, 2: p1, 3: p2, 4: p0 });
+    expect(holders()).toEqual({ 1: p0, 2: p1, 3: p2, 4: p3 });
     expect(code(await send('keep'))).toBe('FORBIDDEN');
   });
 
@@ -107,9 +108,9 @@ test('white elephant: keep ends the game; no back to shopping once a gift is ope
   const santa = await drawnGroup([ann, bob, cee], 'Santa');
   const at = { groupSlug: santa.slug, editionNumber: 1 };
   ok(await ann.trpc.mutate('manage.startGiftDay', at));
-  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }));
+  const started = ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0, currentMemberId: null }));
   for (const action of ['open', 'steal', 'keep'] as const) {
-    expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action, giftNo: 1, turnsTaken: 0 }))).toBe('FORBIDDEN');
+    expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action, giftNo: 1, ...presenterSaw(started.unwrapOrder!) }))).toBe('FORBIDDEN');
   }
 
   const swap = ok(
@@ -128,16 +129,17 @@ test('white elephant: keep ends the game; no back to shopping once a gift is ope
   }
   ok(await ann.trpc.mutate('draw.lockIn', we));
   ok(await ann.trpc.mutate('manage.startGiftDay', we));
-  let turnsTaken = 0;
+  let order: Parameters<typeof presenterSaw>[0] = { turnsTaken: 0, current: null };
   const step = async (action: 'start' | 'open' | 'keep') => {
-    const view = ok(await ann.trpc.mutate('giftday.advance', { ...we, action, turnsTaken }));
-    turnsTaken = view.unwrapOrder!.turnsTaken;
+    const view = ok(await ann.trpc.mutate('giftday.advance', { ...we, action, ...presenterSaw(order) }));
+    order = view.unwrapOrder!;
     return view;
   };
   await step('start');
   await step('open');
   expect(code(await ann.trpc.mutate('manage.backToShopping', { ...we, giftDayDate: '2099-12-30' }))).toBe('GIFT_DAY_UNDERWAY');
   for (let i = 0; i < 2; i++) await step('open');
+  expect(ok(await ann.trpc.query('giftday.presenter', we)).swap).toMatchObject({ final: true, stealable: [2, 3] });
   const end = await step('keep');
   expect(end.unwrapOrder!.finished).toBe(true);
   expect(end.swap!.gifts.map((gift) => gift.steals)).toEqual([0, 0, 0]);

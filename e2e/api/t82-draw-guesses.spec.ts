@@ -1,7 +1,7 @@
 // Guess the whole draw (82): a point per right pair. Nobody sees a board or a score before its pairs are out; points
 // count only the pairs that are out; the leaderboard at the big reveal matches a hand-computed fixture.
 import { expect, ok, test, type TestDb, type User } from '../fixtures';
-import { drawnGroup, editionOf } from './s6-helpers';
+import { drawnGroup, editionOf, presenterSaw } from './s6-helpers';
 
 type Input = { groupSlug: string; editionNumber: number };
 
@@ -24,7 +24,7 @@ const everything = async (user: User, at: Input, organizer: boolean) =>
 
 const advance = async (ann: User, at: Input, action: 'start' | 'spin' | 'santa') => {
   const view = ok(await ann.trpc.query('giftday.presenter', at));
-  return ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: view.unwrapOrder!.turnsTaken });
+  return ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(view.unwrapOrder!) });
 };
 
 test('boards stay hidden until their pairs are out; the leaderboard counts only what is out', async ({ signIn, db }) => {

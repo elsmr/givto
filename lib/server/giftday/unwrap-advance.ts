@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { SingleLine } from '../../schema/common';
+import { Id, SingleLine } from '../../schema/common';
 import type { Edition, SwapMove } from '../../schema/edition';
 import type { Group } from '../../schema/group';
 import { canMove, swapState } from '../../swap-turns';
@@ -17,11 +17,13 @@ import { unwrapPeople } from './giftday-view';
  * over, with gifts left or not (allAtOnce: always "last"; a known gift count (63) decides by itself).
  * White elephant (89) instead of more / last: open (a wrapped gift, `label` optional), steal (`giftNo`), keep (theirs, at the
  * final steal). back: undo the last step.
- * `turnsTaken` is what the presenter saw (turns, or swap moves), so a double tap or a second device can't skip anyone.
+ * `turnsTaken` is what the presenter saw (turns, or swap moves), so a double tap or a second device can't skip anyone;
+ * `currentMemberId` who it showed as up, so someone leaving mid-turn doesn't hand their step to the next person.
  */
 export const AdvanceInput = v.object({
   action: v.picklist(['start', 'spin', 'santa', 'more', 'last', 'open', 'steal', 'keep', 'back']),
   turnsTaken: v.pipe(v.number(), v.integer(), v.minValue(0)),
+  currentMemberId: v.nullable(Id),
   giftNo: v.optional(v.pipe(v.number(), v.integer(), v.minValue(1))),
   label: v.optional(SingleLine(60)),
 });
@@ -56,6 +58,7 @@ const advanceSwap = async (db: Collections, group: Group, edition: Edition, inpu
   const { people, progress } = checkedOrder(group, edition, input, 'moves');
   const moves = progress?.moves ?? [];
   const state = swapState(people, Boolean(progress), moves);
+  if (state.current !== input.currentMemberId) throw new AppError('EDITION_CHANGED');
   if ((action === 'open' || action === 'steal' || action === 'keep') && !canMove(state, action, giftNo)) throw new AppError('FORBIDDEN');
   // Nobody to spin between: a steal hands the turn to the person robbed, the final steal is the first player's, and the
   // last one in the order needs no reel.
@@ -100,6 +103,7 @@ export const advanceUnwrapping = async (db: Collections, group: Group, edition: 
   const turns = progress?.turns ?? [];
   const mode = edition.unwrapMode ?? 'allAtOnce';
   const state = unwrapState(people, mode, Boolean(progress), turns, counts);
+  if (state.current !== input.currentMemberId) throw new AppError('EDITION_CHANGED');
   if (action !== 'start' && action !== 'spin' && action !== 'back' && !state.current) throw new AppError('EDITION_CHANGED');
   const santaShownIds = progress?.santaShownIds ?? [];
   // With guessing on, a turn only ends once their Santa was shown; showing it needs the turn on screen.

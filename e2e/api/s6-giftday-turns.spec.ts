@@ -1,7 +1,7 @@
 // Gift day (part 2; 31, 32): turns one by one, the gift day job, status by
 // the edition's local date. Part 1: s6-giftday.spec.ts.
 import { expect, ok, runCron, runJob, test } from '../fixtures';
-import { code, drawnGroup, editionOf } from './s6-helpers';
+import { code, drawnGroup, editionOf, presenterSaw } from './s6-helpers';
 
 test('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same for everyone, organizer-only', async ({ signIn, db }) => {
   const [ann, bob, cee] = await Promise.all(['ann', 'bob', 'cee'].map((name) => signIn(name)));
@@ -14,12 +14,11 @@ test('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same for ever
   const [a, b, c] = (await presenter()).people.map((p) => p.memberId);
   const gifts = { [a]: 3, [b]: 1, [c]: 2 };
   const advance = async (action: 'start' | 'spin' | 'more' | 'last' | 'back', by = ann) => {
-    const { turnsTaken } = await presenter();
-    return by.trpc.mutate('giftday.advance', { ...at, action, turnsTaken });
+    return by.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(await presenter()) });
   };
   expect(code(await advance('start', bob))).toBe('NOT_ORGANIZER');
   ok(await advance('start'));
-  expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }))).toBe('EDITION_CHANGED');
+  expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0, currentMemberId: null }))).toBe('EDITION_CHANGED');
   const seen: string[] = [];
   for (let i = 0; i < 10; i++) {
     let order = await presenter();
@@ -41,7 +40,7 @@ test('one by one: A 3 gifts, B 1, C 2 → A,B,C,A,C,A; stored, the same for ever
     if (i === 2) {
       // A refresh (a fresh read) keeps the position, and a stale step is refused.
       expect((await presenter()).current!.memberId).toBe(current);
-      expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'more', turnsTaken: 0 }))).toBe('EDITION_CHANGED');
+      expect(code(await ann.trpc.mutate('giftday.advance', { ...at, action: 'more', turnsTaken: 0, currentMemberId: current }))).toBe('EDITION_CHANGED');
     }
     ok(await advance(gifts[current] > 0 ? 'more' : 'last'));
     if (seen.length === 5) expect((await presenter()).currentShown, 'one person left: no spin').toBe(true);

@@ -1,6 +1,8 @@
 import * as v from 'valibot';
 import { todayIn } from '../../local-date';
 import { LocalDate } from '../../schema/common';
+import { MIN_PARTICIPANTS } from '../../schema/group';
+import { playerIds } from '../draw/rules';
 import { finishEdition, toGiftDayToday, wrongStatus } from '../edition/status';
 import { AppError } from '../errors';
 import { giftDayUnderway } from '../giftday/giftday-view';
@@ -12,8 +14,14 @@ import { organizerEditionProcedure, router } from '../trpc';
  * who drew whom: the big reveal keeps its own switch and gift day gate.
  */
 export const manageRouter = router({
-  /** drawn → giftday now, without waiting for the gift day date (or when there is none). */
+  /**
+   * drawn → giftday now, without waiting for the gift day date (or when there is none). A White Elephant needs as many
+   * players as locking in did: people can leave after it.
+   */
   startGiftDay: organizerEditionProcedure.mutation(async ({ ctx }) => {
+    if (ctx.edition.kind === 'whiteElephant' && playerIds(ctx.group, ctx.edition).length < MIN_PARTICIPANTS) {
+      throw new AppError('TOO_FEW_PEOPLE', { details: { min: MIN_PARTICIPANTS } });
+    }
     await toGiftDayToday(ctx.db, ctx.group, ctx.edition, 'drawn');
     return { ok: true };
   }),

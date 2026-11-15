@@ -15,6 +15,7 @@ import { appErrorCode } from '../../group/app-error-code';
 import { GroupNotFound } from '../../group/group-not-found';
 import { useRequireSession } from '@/components/auth/use-require-session';
 import { ShuffleButton } from '../shuffle-button';
+import { useGiftDayStream } from '../use-gift-day';
 import { PresenterFrame } from './presenter-frame';
 import { PresenterLoading } from './presenter-loading';
 import { PresenterSettings } from './presenter-settings';
@@ -40,6 +41,7 @@ export const Presenter = ({ groupSlug }: { groupSlug: string }) => {
     ...trpc.giftday.presenter.queryOptions({ groupSlug, editionNumber }),
     enabled: isOrganizer && editionNumber > 0,
   });
+  useGiftDayStream({ groupSlug, editionNumber }, isOrganizer && editionNumber > 0);
   const [skipSpin, setSkipSpin] = useState(false);
   const edition = group.data?.edition;
   const order = view.data?.unwrapOrder;

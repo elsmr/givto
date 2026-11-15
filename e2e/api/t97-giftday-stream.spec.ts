@@ -54,7 +54,7 @@ test("a member's stream: the current view, then a new one after the presenter's 
   expect(first).toEqual(ok(await bob.trpc.query('giftday.get', at)));
   expect(first.unwrapOrder!.started).toBe(false);
 
-  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0 }));
+  ok(await ann.trpc.mutate('giftday.advance', { ...at, action: 'start', turnsTaken: 0, currentMemberId: null }));
   const second = await events.next();
   expect(second).toEqual(ok(await bob.trpc.query('giftday.get', at)));
   expect(second.unwrapOrder!.started).toBe(true);

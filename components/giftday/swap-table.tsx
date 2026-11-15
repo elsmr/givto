@@ -1,8 +1,10 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { IconCardTitle } from '@/components/ui/icon-card-title';
 import type { RouterOutputs } from '@/lib/client/trpc';
 import { MAX_STEALS } from '@/lib/swap-turns';
 import { cn } from '@/lib/utils';
-import { ArrowLeftRight, Hand, Snowflake } from 'lucide-react';
+import { ArrowLeftRight, Gift, Hand, Snowflake } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export type SwapTableData = NonNullable<RouterOutputs['giftday']['get']['swap']>;
@@ -30,7 +32,7 @@ export const SwapTable = ({ swap, stealable = [], onSteal, busy, large, classNam
             return (
               <li
                 key={gift.no}
-                className={cn('flex flex-col gap-1 bg-surface p-3 text-left text-ink bordered', large && 'w-60 p-4')}
+                className={cn('flex flex-col gap-1 bg-surface p-3 text-left text-ink bordered', large && 'w-56')}
               >
                 <p className={cn('flex items-center justify-between gap-2 font-semibold', large && 'text-xl')}>
                   {t('gift', { no: gift.no })}
@@ -42,7 +44,7 @@ export const SwapTable = ({ swap, stealable = [], onSteal, busy, large, classNam
                   )}
                 </p>
                 {gift.label && <p className="break-words text-muted">{gift.label}</p>}
-                <p className={cn('font-heading font-extrabold break-words', large ? 'text-3xl' : 'text-lg')}>{gift.holder.name}</p>
+                <p className={cn('font-heading font-extrabold break-words', large ? 'text-2xl' : 'text-lg')}>{gift.holder.name}</p>
                 <p className="flex items-center gap-1">
                   {Array.from({ length: MAX_STEALS }, (_, i) => (
                     <Hand key={i} aria-hidden="true" className={cn('size-4', i < gift.steals ? 'text-ink' : 'text-muted opacity-30')} />
@@ -62,5 +64,23 @@ export const SwapTable = ({ swap, stealable = [], onSteal, busy, large, classNam
       )}
       {swap.wrapped > 0 && <p className={cn('text-muted', large && 'text-xl')}>{t('wrapped', { count: swap.wrapped })}</p>}
     </div>
+  );
+};
+
+/** After the swap, on the group page and a past edition's: who went home with which gift. */
+export const SwapTableCard = ({ swap }: { swap: SwapTableData }) => {
+  const t = useTranslations('giftday.swap');
+
+  return (
+    <Card>
+      <CardHeader>
+        <IconCardTitle icon={Gift} tone="mint">
+          {t('table')}
+        </IconCardTitle>
+      </CardHeader>
+      <CardContent>
+        <SwapTable swap={swap} />
+      </CardContent>
+    </Card>
   );
 };

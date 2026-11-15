@@ -3,7 +3,7 @@
 // day on drive the one-by-one turns.
 import { newId } from '@/lib/server/db';
 import { expect, ok, test, type User } from '../fixtures';
-import { code, drawnGroup, editionOf } from './s6-helpers';
+import { code, drawnGroup, editionOf, presenterSaw } from './s6-helpers';
 
 const memberOf = async (db: Parameters<typeof editionOf>[0], slug: string) => {
   const group = (await db.groups.findOne({ slug }))!;
@@ -112,7 +112,7 @@ test('gift counts from gift day: "gift 2 of 3", one by one ends by itself; unkno
   expect(ok(await personOf(c).trpc.query('gift.toOpen', at)).count).toBeNull();
 
   const advance = async (action: 'start' | 'spin' | 'more' | 'last') =>
-    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, turnsTaken: (await presenter()).turnsTaken }));
+    ok(await ann.trpc.mutate('giftday.advance', { ...at, action, ...presenterSaw(await presenter()) }));
   await advance('start');
   const seen: string[] = [];
   let cGifts = 2;
